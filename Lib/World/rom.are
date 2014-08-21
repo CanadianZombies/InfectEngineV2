@@ -1,0 +1,232 @@
+#HELPS
+-1 NEWBIE INFO START~
+Welcome to The Infected City.
+
+We are still developing this mud, so please be patient.
+
+We will be beta testing Starting November 2014.  Our goal is the
+first 10 levels of gameplay should be within beta phase by then.
+More to follow.
+
+                                        Cheers
+                                 The Infected City Staff
+~
+
+-1 GREETING~
+.
+                           The Infected City
+        --------------------------------------------------------
+                              .|
+                              | |
+                              |'|            ._____
+                      ___    |  |            |.   |' .---\"
+              _    .-'   '-. |  |     .--'|  ||   | _|    |
+           .-'|  _.|  |    ||   '-__  |   |  |    ||	   |
+           |' | |.    |    ||       | |   |  |    ||	   |
+        ___|  '-'     '    ""       '-'   '-.'    '`	   |____
+        jgs-----------------------------------------------------
+
+
+                Powered by:  INFECT ENGINE Version: ^{
+                Build Date:        ^|
+
+
+   [-=-=-=-=-=-=- Obligatory and well deserved credits -=-=-=-=-=-=-=]
+    ^w     David Simmerson (Omega) : Lead Programmer | Game Designer ^n
+    ^w     Brandon (Uriel)         : Beta Tester / Scripter / Awesome ^n
+    ^W     Contact: TheInfectedCity@gmail.com  Twitter: @CombatMUD   ^n
+   [=-=-=-=-=- End of obligatory and well deserved credits -=-=-=-=-=]
+
+
+^yBy what name do you survive?  > ^n ~
+ 
+-1 MOTD~ 
+Place holder for Future MOTD code
+
+Shoot Return
+~ 
+
+52 IMOTD~
+Staff MOTD place holder
+
+Shoot Return
+~
+
+1 JOBS~
+We are currently seeking out beta testers for our upcoming closed beta.
+
+Until we enter closed beta this mud will be available to all, 
+with nothing in it.  The actual mud code comes online November 2014 for Beta.
+~
+
+-1 PKILL PKILLING PKILLER 'PLAYER KILLING' PSTEAL PSTEALING 'PLAYER STEALING'~
+Player killing and player stealing are allowed to all clan members 
+(including loners), provided the victim is is within 8 levels of the
+character and is also in a clan.  This will flag you as a "killer" or
+"thief", allowing any character to attack, and also provoking action
+from the city guard.
+~
+
+52 COMMANDMENTS LAWS 'GOD RULES' GODS~
+.
+                         **********************
+                         ** The Rules of ROM **
+                         **********************
+ 
+1)  Do not kill mortals, do not kill mortals, do not kill mortals.
+    This includes transferring/summoning them to aggressive mobs.
+ 
+2)  Do not cheat for ANY mortal in ANY way, especially your own. 
+    Unless of course you LIKE deletion. Yes this includes tanking,
+    healing/restoring, casting protection spells <armor, sanct>,    
+    and softening up or altering mobs.
+ 
+3)  Do not transfer or summon mobs to mortals or mortals to mobs.
+    They have legs, if they want to kill a mob, they can easilly
+    go there themselves.
+ 
+4)  DO NOT kill the shopkeepers for any reason at ALL.
+ 
+5)  DO NOT use reboot.  <--- Note, simple English.
+ 
+6)  Do not give out free equipment.  You don't need to win brownie
+    points with the mortals.  Quest are fine but handing out items
+    isn't.
+ 
+7)  A note on quests: Quests are a good thing, more or less, BUT 
+    do not give out overly extravagant prizes.  Exercise some 
+    common sense here folks.  Do not load items more than 4 levels
+    below their normal level (i.e. no level 5 ogre gauntlets).
+ 
+8)  Do not undermine the authority of a higher level god.  If you 
+    see that someone has been frozen or nochannelled do not restore
+    their priveleges.  They are being punished for a reason.
+ 
+9)  Do not try to overrule each other.  
+ 
+10) Trusted mortals:  Do not use your god powers to help your mortal
+    character.  If you do, your trust will be taken away.
+
+~
+
+-1 RULES~
+There is but one rule within the Infected City.... Survive..
+~
+
+0 SUICIDE DELETE~
+Use the delete command to erase unwanted characters, so the name will be
+available for use.  This command must be typed twice to delete a character,
+and you cannot be forced to delete.  Typing delete with an argument will
+return your character to 'safe' status if you change your mind after the
+first delete.
+~
+ 
+0 HEALER~
+The healer decided to grab a quick buck, and now charges for his heals.  Some
+services are still free to players of level 10 or below, however.  To see
+a full listing of the healer's services, type 'heal' at his residence. To
+receive healing, bring plenty of money, and type 'heal <spell>'.
+~ 
+
+
+-1 GAIN~
+The gain command is used to learn new skills, once the proper trainer has 
+been found. (Check New Thalos) The following options can be used with gain:
+
+gain list:    list all groups and skills that can be learned
+gain points:  lower your creation points by 1 (costs two sessions)
+gain <name>:  add a skill or skill group, at the listed cost
+gain convert: turns 10 practices into one training session
+
+Gain uses training sessions, not practices. (see 'help train')
+Gained skills and groups do NOT increase your experience per level or total
+number of creation points. 
+~
+
+52 CLONE~
+Syntax:
+  clone obj <object>
+  clone mob <mobile>
+  clone <name>
+
+The clone command duplicates an object or mobile.  The level of item or mobile
+that may be cloned depends on your level.  The target object or mob must be in
+the same room as you, or in your posession.  Strung and set information is
+preserved by clone, as well as any spell effects and container contents or
+mobile inventory, except for items which are too high for you to clone.  
+Strung extended descriptions on objects are not kept, however.
+~
+
+
+0 SKILLS SPELLS~
+The skills and spells commands are used to display your character's list
+of available skills (or spells, as the case may be).  They are listed in
+order of level, with mana cost (for spells) or percentage (for skills)
+listed where applicable.
+~
+
+0 AUTO AUTOLIST AUTOLOOT AUTOGOLD AUTOSAC AUTOEXIT AUTOASSIST AUTOSPLIT~
+ROM uses varies automatic actions, to ease the boredom of always splitting
+gold and sacrificing corpses.  The commands are as follows:
+
+autolist  : list all automatic actions
+autoloot  : take all equipment from dead mobiles
+autogold  : take all gold from dead mobiles
+autosac	  : sacrifice dead monsters (if autoloot is on, only empty corpes)
+autoexit  : display room exits upon entering a room
+autosplit : split up spoils from combat among your group members
+autoassit : makes you help group members in combat
+
+Typing a command sets the action , typing it again removes it. 
+~ 
+-1 CLAN~
+   A Clan is a collection of players, united to  follow and further
+a common cause.   Each clan has rules and  regulations, to find out
+more about clans and their 'beliefs' type "help <clan name>".  Only
+Clan  members can kill or steal from other players.  To join a Clan
+you  must be level 5 or above and level 25 or below.   Speak to the
+Clan Leader about joining.  If you go Loner before level 25 you may 
+join a Clan later.
+   Joining  a  Clan is a dangerous step.   Many adventurers live to 
+kill and torture others and chances are that your paths will cross.
+Remember, attacking or killing fellow clan members *IS* illegal except to 
+mutiny your Clan leader.
+   Existing  Clans may buy  special rooms and  mobiles by acquiring 
+diamonds as payment.   To see room prices, type "help prices".  New
+Clans  may be formed by  petitioning the immortals.   Please  remember that 
+their word is final on all matters not covered by this help.
+~
+-1 PRICES PRICE~
+New Clan Hall Rooms cost 50 diamonds.
+Boosting the mana or healing gains for a room costs 250 diamonds.
+Both in the same room costs double.
+Making the Healer or Store prices lower costs 1,000 diamonds.
+~
+
+-1 COUNT~
+The count command displays the number of people (that you can see) logged
+into the mud.  It also displays the highest number observed that day, if
+it is higher.
+~ 
+ 
+-1 GATE~
+The gate spell is a powerful transportation magic that opens up a portal 
+between your character and another person or creature somewhere else in the
+world.  This portal will transport you and any pet you might have, but not
+other members of your group.  Monsters recieve a save against gate, and
+monster or players more than 3 levels higher than you can not be gated to at 
+all.  God rooms, private rooms, and no recall rooms cannot be gated to, and
+no recall rooms cannot be gated out of.  Finally, any god or hero is also 
+immune to gate, as well as in player who has no summon set.  Clan members 
+may not be gated to except by their fellow Clan members.
+~
+
+-1 AFFECTS AFFECT~
+This command is used to show all the spells affecting your character. At
+low levels, only the spell name will be displayed, at higher levels the
+effects and duration of the spell will also be shown.  Spell effects
+are no longer shown on score (this can be changed by using 'show' command).
+~
+
+0 $~
+#$

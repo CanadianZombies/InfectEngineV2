@@ -1,0 +1,63 @@
+#PLAYER
+Name Omega~
+Id   1407161012
+LogO 1408649295
+Vers 5
+Prom <%hhp %mm %vmv> ~
+Race human~
+Sex  1
+Cla  3
+Levl 60
+Sec  9
+Plyd 1482314
+Not  0 0 0 0 0
+Scro 22
+Room 2
+HMV  20 20 100 100 100 100
+Gold 0
+Silv 0
+Exp  1000
+Act  CDEFGHQ
+Comm LNO
+Sitrep ABCE
+Pos  8
+Prac 5
+Trai 3
+Alig  0
+ACs 100 100 100 100
+Attr 25 25 25 25 25
+AMod 0 0 0 0 0
+Pass OmLtTe29L9oWQ~
+Titl  boobs are great!~
+Pnts 40
+TSex 1
+LLev 13
+HMVP 20 100 100
+Cnd  0 40 44 44
+Sk 1 'axe'
+Sk 1 'dagger'
+Sk 1 'flail'
+Sk 1 'mace'
+Sk 1 'polearm'
+Sk 1 'shield block'
+Sk 1 'spear'
+Sk 40 'sword'
+Sk 1 'whip'
+Sk 1 'bash'
+Sk 1 'disarm'
+Sk 1 'enhanced damage'
+Sk 1 'parry'
+Sk 1 'rescue'
+Sk 1 'second attack'
+Sk 1 'third attack'
+Sk 1 'scrolls'
+Sk 1 'staves'
+Sk 1 'wands'
+Sk 50 'recall'
+Gr 'rom basics'
+Gr 'warrior basics'
+Gr 'warrior default'
+Gr 'weaponsmaster'
+End
+
+#END
