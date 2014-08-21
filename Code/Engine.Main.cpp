@@ -320,8 +320,6 @@ bool	write_to_descriptor	args ( ( int desc, const char *txt, int length ) );
 #endif
 
 
-
-
 /*
  * Other local functions (OS-independent).
  */
@@ -599,7 +597,7 @@ void RunMudLoop ( int control )
 			d_next = d->next;
 
 			if ( ( d->fcommand || d->outtop > 0 )
-					&&   FD_ISSET ( d->descriptor, &out_set ) ) {
+			&&   FD_ISSET ( d->descriptor, &out_set ) ) {
 				if ( !process_output ( d, TRUE ) ) {
 					if ( d->character != NULL && d->connected == CON_PLAYING )
 					{ save_char_obj ( d->character ); }
@@ -845,8 +843,7 @@ bool read_from_descriptor ( Socket *d )
 		return FALSE;
 	}
 
-#if defined(MSDOS) || defined(unix)
-	for ( ; ; ) {
+	while(true) {
 		int nRead;
 
 		nRead = read ( d->descriptor, read_buf + iStart,
@@ -865,7 +862,6 @@ bool read_from_descriptor ( Socket *d )
 			return FALSE;
 		}
 	}
-#endif
 
 	read_buf[iStart] = '\0';
 	ProtocolInput ( d, read_buf, iStart, d->inbuf );
@@ -983,9 +979,7 @@ bool process_output ( Socket *d, bool fPrompt )
 {
 	extern bool is_shutdown;
 
-	/*
-	 * Bust a prompt.
-	 */
+	// -- display our prompt (if necessary)
 	if ( d->pProtocol->WriteOOB ) /* <-- Add this, and the ";" and "else" */
 		; /* The last sent data was OOB, so do NOT draw the prompt */
 	else if ( !is_shutdown && d->showstr_point )
@@ -1051,19 +1045,16 @@ bool process_output ( Socket *d, bool fPrompt )
 	if ( d->outtop == 0 )
 	{ return TRUE; }
 
-	/*
-	 * Snoop-o-rama.
-	 */
+	// -- snooping control
 	if ( d->snoop_by != NULL ) {
 		if ( d->character != NULL )
-		{ write_to_buffer ( d->snoop_by, d->character->name, 0 ); }
-		write_to_buffer ( d->snoop_by, "> ", 2 );
+		{ write_to_buffer ( d->snoop_by, Format("\ac{ \aR%s \ac}\r\n", d->character->name), 0 ); }
+		write_to_buffer ( d->snoop_by, "\ay-----------------------------------------------------\an\r\n", 0 );
 		write_to_buffer ( d->snoop_by, d->outbuf, d->outtop );
+		write_to_buffer ( d->snoop_by, "\ay-----------------------------------------------------\an\r\n", 0 );
 	}
 
-	/*
-	 * OS-dependent output.
-	 */
+	// -- write our output
 	if ( !write_to_descriptor ( d->descriptor, d->outbuf, d->outtop ) ) {
 		d->outtop = 0;
 		return FALSE;
@@ -1287,7 +1278,6 @@ void write_to_buffer ( Socket *d, const char *txt, int length )
 	d->outtop += length;
 	return;
 }
-
 
 
 /*
