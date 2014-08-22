@@ -983,7 +983,7 @@ bool process_output ( Socket *d, bool fPrompt )
 	if ( d->pProtocol->WriteOOB ) /* <-- Add this, and the ";" and "else" */
 		; /* The last sent data was OOB, so do NOT draw the prompt */
 	else if ( !is_shutdown && d->showstr_point )
-	{ write_to_buffer ( d, "\a[F500] { \a[F535]Shoot that Return Key } \an\n\r", 0 ); }
+	{ write_to_buffer ( d, "\a[F500] { \a[F535]Shoot that Return Key \a[F500]} \an\n\r", 0 ); }
 	else if ( fPrompt && d->pString && d->connected == CON_PLAYING )
 	{ write_to_buffer ( d, "> ", 2 ); }
 	else if ( fPrompt && d->connected == CON_PLAYING ) {
