@@ -159,6 +159,7 @@ version:
 	@echo "#define __Version_hpp" >> Version.h
 	@echo "const unsigned long mudVersion = $(shell cat $(VERSION_FILE))+1;" >> Version.h
 	@echo "#endif" >> Version.h
+	@mv Version.h $(H_DIR)/Version.h
 	@echo "$(COLOUR_LRED)Revision control completed!$(COLOUR_NORMAL)"
 
 #####################################################################################################
