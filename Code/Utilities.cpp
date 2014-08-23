@@ -97,7 +97,7 @@ void sitrep ( int bitvector, const std::string &str )
 }
 
 // ------------------------------------------------------------------------------
-// -- Function:     log_hd
+// -- Function:     _log_hd
 // -- Arguments:    flag identifier, logged string
 // -- Example:      log_hd(LOG_BASIC, "Generic Log Entry Here");
 // -- Example 2:    log_hd(LOG_BASIC|LOG_ERROR, "Multipurpose flagged log creates the log entry in two logfiles.");
@@ -122,7 +122,7 @@ void sitrep ( int bitvector, const std::string &str )
 // -- be made.  This can get spammy if staff are listening to too many sitrep channels at
 // -- once.
 // ------------------------------------------------------------------------------
-void log_hd ( long logFlag, const std::string &logStr )
+void _log_hd ( long logFlag, const char *mFile, const char *mFunction, int mLine, const std::string &logStr )
 {
 	try {
 		static bool called_tzset = false;
@@ -272,7 +272,7 @@ void log_hd ( long logFlag, const std::string &logStr )
 						debugCounter = 0;
 					}
 					if ( ( fp = fopen ( Format ( "%s%s/%d/%s", LOG_DIR, the_date, getpid(), DEBUG_FILE ), "a" ) ) != NULL ) {
-						fprintf ( fp, "\t(%d)%s : %s\n", debugCounter, the_time, C_STR ( logStr ) );
+						fprintf ( fp, "\t(%d)%s : %s : %s : %d : %s\n", debugCounter, the_time, mFile, mFunction, mLine, C_STR ( logStr ) );
 					}
 					// -- sitrep our log out to those who can listen to it.
 					sitrep ( log_table[logX].crFlagSitrep, Format ( "\a[F350](\a[F541]%s\a[F350]) (%d) %s%s : %s\an", log_table[logX].broadcast, debugCounter, log_table[logX].colour, the_time, C_STR ( logOutStr ) ) );
@@ -280,7 +280,7 @@ void log_hd ( long logFlag, const std::string &logStr )
 				} else {
 					// -- not a debug message? Log it to its appropriate log.
 					if ( ( fp = fopen ( Format ( "%s%s/%d/%s.log", LOG_DIR, the_date, getpid(), log_table[logX].extension ), "a" ) ) != NULL ) {
-						fprintf ( fp, "\t%s : %s\n", the_time, C_STR ( logStr ) );
+						fprintf ( fp, "\t%s : %s : %s : %d : %s\n", the_time, mFile, mFunction, mLine, C_STR ( logStr ) );
 					}
 					// -- sitrep our log out to those who can listen to it.
 					sitrep ( log_table[logX].crFlagSitrep, Format ( "\a[F350](\a[F541]%s\a[F350]) %s%s : %s\an", log_table[logX].broadcast, log_table[logX].colour, the_time, C_STR ( logOutStr ) ) );
@@ -296,7 +296,8 @@ void log_hd ( long logFlag, const std::string &logStr )
 			last_yday = current_yday;   // -- make us the current yday (julian date)
 		}
 	} catch ( ... ) {
-		std::cout << "Unknown error encountered during log_hd processing." << std::endl;
+		// -- at least log where the log was called from
+		std::cout << "Unknown error encountered during log_hd processing (" << mFile << " : " << mFunction << " : " << mLine << ")" << std::endl;
 	}
 
 	// -- Force a suicide after the logging is completed!

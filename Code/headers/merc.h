@@ -2496,7 +2496,8 @@ Prototype ( void _Error, ( const std::string &errorStr, const std::string &fileS
 void catchException ( bool willAbort, const std::string &file, const std::string &function, int lineATcatch );
 const char *Format ( const char *fmt, ... );
 void build_directories ( void );
-void log_hd ( long logFlag, const std::string &logStr );
+#define log_hd(logFlag, logStr) _log_hd(logFlag, __FILE__, __FUNCTION__, __LINE__, logStr)
+void _log_hd ( long logFlag, const char *mFile, const char *mFunction, int mLine, const std::string &logStr );
 const char *getVersion ( void );
 char *str_str ( const char *astr, const char *bstr );
 void announce ( const std::string &outStr );
