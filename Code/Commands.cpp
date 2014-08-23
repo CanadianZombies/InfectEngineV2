@@ -56,7 +56,96 @@ bool	check_social	args ( ( Creature *ch, const char *command,
  */
 bool				fLogAll		= FALSE;
 
+const struct staff_cmd_type staff_cmd_table[] = {
+	{ "sitrep",	cmd_sitrep,	CR_CODER, LOG_NORMAL, 1, "Sitrep displays system logs to the coder" },
+	{ "advance",	cmd_advance,	CR_HEAD,  LOG_ALWAYS, 1, "Advance allows raising/lowering of levels" },
+	{ "dump",	cmd_dump,	CR_CODER, LOG_ALWAYS, 1, "Dump drops current memory buckets to flatfile for debugging" },
+	{ "trust",	cmd_trust,	CR_HEAD,  LOG_ALWAYS, 1, "Trust allows you to raise/lower the trust value" },
+	{ "violate",	cmd_violate,	CR_SECURITY,  LOG_ALWAYS, 1, "Violate allows you to enter rooms you couldn't normally enter" },
 
+	{ "shutdow",	cmd_shutdow,	CR_CODER, LOG_NORMAL, 0, "" },
+	{ "shutdown",	cmd_shutdown,	CR_CODER, LOG_ALWAYS, 1, "Shutdown will powerdown the mud" },
+	{ "reboo",	cmd_reboo,	CR_CODER, LOG_NORMAL, 0, "" },
+	{ "reboot",	cmd_reboot,	CR_CODER, LOG_ALWAYS, 1, "Reboot will cause the mud to shutdown and restart" },
+	{ "log",	cmd_log,	CR_SECURITY, LOG_ALWAYS, 1, "Log allows you to log user input" },
+	{ "permban",	cmd_permban,	CR_SECURITY, LOG_ALWAYS, 1, "Permban will block a site forever" },
+	{ "protect",	cmd_protect,	CR_SECURITY, LOG_ALWAYS, 1, "Protect prevents selected user from being snooped" },
+	{ "deny",	cmd_deny,	CR_SECURITY, LOG_ALWAYS, 1, "Deny will block a players access to the mud" },
+
+	{ "allow",	cmd_allow,	CR_SECURITY, LOG_ALWAYS, 1, "Allow will revoke a siteban" },
+	{ "ban",	cmd_ban,	CR_SECURITY, LOG_ALWAYS, 1, "Ban will block a site from connecting" },
+	{ "lockdown",	cmd_lockdown,	CR_SECURITY, LOG_ALWAYS, 1, "Lockdown will prevent all non-staff from entering the MUD" },
+
+	{ "set",	cmd_set,	CR_RELATIONS, LOG_ALWAYS, 1, "Set will allow you to set the stats of items/players/npcs" },
+
+	{ "disconnect",	cmd_disconnect,	CR_SECURITY, LOG_ALWAYS, 1, "Disconnect will cause a connected player to disconnect" },
+	{ "pardon",	cmd_pardon,	CR_SECURITY, LOG_ALWAYS, 1, "Revoke a previous punishment" },
+	
+	{ "sla",	cmd_sla,	CR_BUILDER,  LOG_NORMAL, 0, "" },
+	{ "slay",	cmd_slay,	CR_BUILDER,  LOG_ALWAYS, 1, "Slay will terminate the life an NPC or Player (to be used in testing only)" },
+
+	{ "gecho",	cmd_echo,	CR_RELATIONS, LOG_ALWAYS, 1, "Globally echo a selected string" },
+	{ "load",	cmd_load, CR_RELATIONS|CR_BUILDER, LOG_ALWAYS, 1, "Load a NPC/Item into the game" },
+	{ "newbielockdown",	cmd_newbielockdown,	CR_SECURITY,  LOG_ALWAYS, 1, "Block newbies from entering the MUD" },
+
+	{ "flag",	cmd_flag,	CR_RELATIONS,	LOG_ALWAYS, 1, "Change assigned flags to a loaded Item or NPC/Player" },
+	{ "freeze",	cmd_freeze,	CR_SECURITY,	LOG_ALWAYS, 1, "Completely freeze a player in his/her place"},
+	{ "pecho",	cmd_pecho,	CR_RELATIONS,	LOG_ALWAYS, 1, "Echo a message" },
+	{ "purge",	cmd_purge,	CR_BUILDER,     LOG_ALWAYS, 1, "Purge a loaded Item/NPC from the MUD" },
+	{ "restore",	cmd_restore,	CR_RELATIONS,	LOG_ALWAYS, 1, "Restore a player to full health" },
+	{ "vnum",	cmd_vnum,	CR_RELATIONS|CR_BUILDER, LOG_NORMAL, 1, "Find the vnum of a Item/NPC" },
+	{ "zecho",	cmd_zecho,	CR_RELATIONS,	LOG_ALWAYS, 1, "Echo a message to a zone" },
+	{ "guild",	cmd_guild,	CR_RELATIONS,   LOG_ALWAYS, 1, "Move a player into a Guild" },
+	{ "sockets",    cmd_sockets,	CR_SECURITY|CR_HEAD, LOG_NORMAL, 1, "See the currently connected sockets" },
+
+	{ "peace",	cmd_peace,	CR_RELATIONS|CR_SECURITY,  LOG_NORMAL, 1, "Stop all fighting in a room" },
+	{ "snoop",	cmd_snoop,	CR_SECURITY,	LOG_ALWAYS, 1, "Personally review a players actions as if through their eyes" },
+	{ "string",	cmd_string,	CR_RELATIONS,	LOG_ALWAYS, 1, "Change the string values of Items/NPC's for quests" },
+	{ "clone",	cmd_clone,	CR_RELATIONS,	LOG_ALWAYS, 1, "Create a carbon copy of an Item" },
+	{ "nochannels",	cmd_nochannels,	CR_SECURITY,	LOG_ALWAYS, 1, "Strip away or Restore channel Privilages" },
+	{ "noemote",	cmd_noemote,	CR_SECURITY,	LOG_ALWAYS, 1, "Strip away or Restore emote Privilages" },
+	{ "noshout",	cmd_noshout,	CR_SECURITY,	LOG_ALWAYS, 1, "Strip away or Restore shout Privilages" },
+	{ "notell",	cmd_notell,	CR_SECURITY,	LOG_ALWAYS, 1, "Strip away or Restore tell Privilages" },
+	{ "transfer",	cmd_transfer,	CR_SECURITY|CR_RELATIONS, LOG_ALWAYS, 1, "Transfer a selected NPC/Player to your location" },
+
+	{ "at",         cmd_at,         CR_RELATIONS,   LOG_NORMAL, 1, "Perform a command as if you were at the selected NPC/Player" },
+	{ "echo",	cmd_recho,	CR_RELATIONS,	LOG_ALWAYS, 1, "Echo a message" },
+	{ "return",     cmd_return,     CR_RELATIONS,   LOG_NORMAL, 1, "Return from the switched state" },
+	{ "switch",	cmd_switch,	CR_RELATIONS,	LOG_ALWAYS, 1, "Switch into the body of a NPC" },
+
+	{ "penalty",	cmd_penalty,	CR_SECURITY,	LOG_NORMAL, 1, "Review security message board" },
+	{ "force",	cmd_force,	CR_STAFF,	LOG_ALWAYS, 1, "Force a player to perform an action" },
+	{ "goto",       cmd_goto,       CR_STAFF,       LOG_NORMAL, 1, "Goto a selected location" },
+
+	{ "poofin",	cmd_bamfin,	CR_STAFF,       LOG_NORMAL, 1, "Change the message for when you goto a room" },
+	{ "poofout",	cmd_bamfout,	CR_STAFF,       LOG_NORMAL, 1, "Change the message for when you use goto to leave a room" },
+
+	{ "godsight",	cmd_holylight,	CR_STAFF,	LOG_NORMAL, 1, "See special data about Items/Rooms/NPC's" },
+	{ "incognito",	cmd_incognito,	CR_STAFF,	LOG_NORMAL, 1, "Become invisible within the room only" },
+	{ "invis",	cmd_invis,	CR_STAFF,	LOG_NORMAL, 0, "Become invisible" },
+	{ "memory",	cmd_memory,	CR_CODER,	LOG_NORMAL, 1, "Review current memory usage" },
+	{ "mwhere",	cmd_mwhere,	CR_STAFF,	LOG_NORMAL, 1, "Find the location of a NPC" },
+	{ "owhere",	cmd_owhere,	CR_STAFF,	LOG_NORMAL, 1, "Find the location of a Item" },
+	{ "stat",	cmd_stat,	CR_STAFF,	LOG_NORMAL, 1, "Find the stats of an Item/NPC/Player" },
+	{ "wizinvis",	cmd_invis,	CR_STAFF,	LOG_NORMAL, 1, "Become invisible" },
+	{ "staffaid",	cmd_wiznet,	CR_STAFF,	LOG_NORMAL, 1, "Display special staff flagged messages" },
+	{ "stalk",	cmd_immtalk,	CR_STAFF,	LOG_NORMAL, 1, "Staff communication channel" },
+	{ "imotd",      cmd_imotd,      CR_STAFF,       LOG_NORMAL, 1, "Review the Staff Message of the Day" },
+	{ ":",		cmd_immtalk,	CR_STAFF,	LOG_NORMAL, 0, "" },
+	{ "smote",	cmd_smote,	CR_RELATIONS,	LOG_NORMAL, 1, "Exactly like pmote just requires you to enter your name" },
+	{ "prefi",	cmd_prefi,	CR_STAFF,	LOG_NORMAL, 0, "" },
+	{ "prefix",	cmd_prefix,	CR_STAFF,	LOG_NORMAL, 1, "Assign a prefix to staffaid" },
+	{ "mpdump",	cmd_mpdump,	CR_CODER,	LOG_NEVER,  1, "Dump mudprog data to flatfile" },
+	{ "mpstat",	cmd_mpstat,	CR_CODER,	LOG_NEVER,  1, "Get the status of current mudprogs" },
+	{ "wizhelp",	cmd_wizhelp,	CR_CODER,	LOG_NORMAL, 1, "See a list of staff commands" },
+
+	{ "edit",	cmd_olc,	CR_BUILDER,    LOG_NORMAL, 1, "Online creation suite" },
+	{ "asave",      cmd_asave,	CR_BUILDER,    LOG_NORMAL, 1, "Save work completed within the Online Creation Suite" },
+	{ "zlist",	cmd_alist,	CR_BUILDER,    LOG_NORMAL, 1, "List all zones within the MUD"},
+	{ "resets",	cmd_resets,	CR_BUILDER,    LOG_NORMAL, 1, "Review/Edit the resets of a given room" },
+	{ "hedit",	cmd_hedit,	CR_BUILDER,    LOG_NORMAL, 1, "Online Creation: Help Editor (Beta Build)" },
+	{ NULL, NULL, 0, 0, 0, NULL },
+};
 
 /*
  * Command table.
@@ -72,20 +161,13 @@ const	struct	cmd_type	cmd_table	[] = {
 	{ "up",		cmd_up,		POS_STANDING,	 0,  LOG_NEVER, 0 },
 	{ "down",		cmd_down,	POS_STANDING,	 0,  LOG_NEVER, 0 },
 
-	/*
-	 * Common other commands.
-	 * Placed here so one and two letter abbreviations work.
-	 */
-	{ "at",             cmd_at,          POS_DEAD,       L6,  LOG_NORMAL, 1 },
 	{ "cast",		cmd_cast,	POS_FIGHTING,	 0,  LOG_NORMAL, 1 },
 	{ "auction",        cmd_auction,     POS_SLEEPING,    0,  LOG_NORMAL, 1 },
 	{ "buy",		cmd_buy,		POS_RESTING,	 0,  LOG_NORMAL, 1 },
 	{ "channels",       cmd_channels,    POS_DEAD,        0,  LOG_NORMAL, 1 },
 	{ "exits",		cmd_exits,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
 	{ "get",		cmd_get,		POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "goto",           cmd_goto,        POS_DEAD,       L8,  LOG_NORMAL, 1 },
 	{ "group",          cmd_group,       POS_SLEEPING,    0,  LOG_NORMAL, 1 },
-	{ "guild",		cmd_guild,	POS_DEAD,	L4,  LOG_ALWAYS, 1 },
 	{ "hit",		cmd_kill,	POS_FIGHTING,	 0,  LOG_NORMAL, 0 },
 	{ "backpack",	cmd_inventory,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
 	{ "kill",		cmd_kill,	POS_FIGHTING,	 0,  LOG_NORMAL, 1 },
@@ -96,16 +178,11 @@ const	struct	cmd_type	cmd_table	[] = {
 	{ "practice",       cmd_practice,	POS_SLEEPING,    0,  LOG_NORMAL, 1 },
 	{ "rest",		cmd_rest,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
 	{ "sit",		cmd_sit,		POS_SLEEPING,    0,  LOG_NORMAL, 1 },
-	{ "sockets",        cmd_sockets,	POS_DEAD,       L4,  LOG_NORMAL, 1 },
 	{ "stand",		cmd_stand,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
 	{ "tell",		cmd_tell,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
 	{ "unlock",         cmd_unlock,      POS_RESTING,     0,  LOG_NORMAL, 1 },
 	{ "wield",		cmd_wear,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "wizhelp",	cmd_wizhelp,	POS_DEAD,	IM,  LOG_NORMAL, 1 },
 
-	/*
-	 * Informational commands.
-	 */
 	{ "affects",	cmd_affects,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
 	{ "zones",		cmd_areas,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
 	{ "changes",	cmd_changes,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
@@ -116,7 +193,6 @@ const	struct	cmd_type	cmd_table	[] = {
 	{ "credits",	cmd_credits,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
 	{ "gear",		cmd_equipment,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
 	{ "examine",	cmd_examine,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	/*  { "groups",		cmd_groups,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 }, */
 	{ "help",		cmd_help,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
 	{ "idea",		cmd_idea,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
 	{ "info",           cmd_groups,      POS_SLEEPING,    0,  LOG_NORMAL, 1 },
@@ -136,9 +212,6 @@ const	struct	cmd_type	cmd_table	[] = {
 	{ "users",		cmd_who,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
 	{ "worth",		cmd_worth,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
 
-	/*
-	 * Configuration commands.
-	 */
 	{ "alia",		cmd_alia,	POS_DEAD,	 0,  LOG_NORMAL, 0 },
 	{ "alias",		cmd_alias,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
 	{ "autolist",	cmd_autolist,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
@@ -165,9 +238,6 @@ const	struct	cmd_type	cmd_table	[] = {
 	{ "unalias",	cmd_unalias,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
 	{ "wimpy",		cmd_wimpy,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
 
-	/*
-	 * Communication commands.
-	 */
 	{ "afk",		cmd_afk,		POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
 	{ "answer",		cmd_answer,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
 	{ "deaf",		cmd_deaf,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
@@ -192,9 +262,6 @@ const	struct	cmd_type	cmd_table	[] = {
 	{ "unread",		cmd_unread,	POS_SLEEPING,    0,  LOG_NORMAL, 1 },
 	{ "yell",		cmd_yell,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
 
-	/*
-	 * Object manipulation commands.
-	 */
 	{ "brandish",	cmd_brandish,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
 	{ "close",		cmd_close,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
 	{ "drink",		cmd_drink,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
@@ -219,14 +286,10 @@ const	struct	cmd_type	cmd_table	[] = {
 	{ "sacrifice",	cmd_sacrifice,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
 	{ "junk",           cmd_sacrifice,   POS_RESTING,     0,  LOG_NORMAL, 0 },
 	{ "tap",      	cmd_sacrifice,   POS_RESTING,     0,  LOG_NORMAL, 0 },
-	/*  { "unlock",		cmd_unlock,	POS_RESTING,	 0,  LOG_NORMAL, 1 }, */
 	{ "value",		cmd_value,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
 	{ "wear",		cmd_wear,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
 	{ "zap",		cmd_zap,		POS_RESTING,	 0,  LOG_NORMAL, 1 },
 
-	/*
-	 * Combat commands.
-	 */
 	{ "backstab",	cmd_backstab,	POS_FIGHTING,	 0,  LOG_NORMAL, 1 },
 	{ "bash",		cmd_bash,	POS_FIGHTING,    0,  LOG_NORMAL, 1 },
 	{ "bs",		cmd_backstab,	POS_FIGHTING,	 0,  LOG_NORMAL, 0 },
@@ -241,23 +304,15 @@ const	struct	cmd_type	cmd_table	[] = {
 	{ "surrender",	cmd_surrender,	POS_FIGHTING,    0,  LOG_NORMAL, 1 },
 	{ "trip",		cmd_trip,	POS_FIGHTING,    0,  LOG_NORMAL, 1 },
 
-	/*
-	 * Mob command interpreter (placed here for faster scan...)
-	 */
 	{ "mob",		cmd_mob,		POS_DEAD,	 0,  LOG_NEVER,  0 },
 
-	/*
-	 * Miscellaneous commands.
-	 */
 	{ "enter", 		cmd_enter, 	POS_STANDING,	 0,  LOG_NORMAL, 1 },
 	{ "follow",		cmd_follow,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
 	{ "gain",		cmd_gain,	POS_STANDING,	 0,  LOG_NORMAL, 1 },
 	{ "go",		cmd_enter,	POS_STANDING,	 0,  LOG_NORMAL, 0 },
-	/*  { "group",		cmd_group,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 }, */
 	{ "groups",		cmd_groups,	POS_SLEEPING,    0,  LOG_NORMAL, 1 },
 	{ "hide",		cmd_hide,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
 	{ "play",		cmd_play,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	/*  { "practice",	cmd_practice,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 }, */
 	{ "qui",		cmd_qui,		POS_DEAD,	 0,  LOG_NORMAL, 0 },
 	{ "quit",		cmd_quit,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
 	{ "recall",		cmd_recall,	POS_FIGHTING,	 0,  LOG_NORMAL, 1 },
@@ -273,108 +328,49 @@ const	struct	cmd_type	cmd_table	[] = {
 	{ "wake",		cmd_wake,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
 	{ "where",		cmd_where,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
 
-
-
-	/*
-	 * Immortal commands.
-	 */
-	{ "advance",	cmd_advance,	POS_DEAD,	ML,  LOG_ALWAYS, 1 },
-	{ "dump",		cmd_dump,	POS_DEAD,	ML,  LOG_ALWAYS, 0 },
-	{ "trust",		cmd_trust,	POS_DEAD,	ML,  LOG_ALWAYS, 1 },
-	{ "violate",	cmd_violate,	POS_DEAD,	ML,  LOG_ALWAYS, 1 },
-
-	{ "allow",		cmd_allow,	POS_DEAD,	L2,  LOG_ALWAYS, 1 },
-	{ "ban",		cmd_ban,		POS_DEAD,	L2,  LOG_ALWAYS, 1 },
-	{ "deny",		cmd_deny,	POS_DEAD,	L1,  LOG_ALWAYS, 1 },
-	{ "disconnect",	cmd_disconnect,	POS_DEAD,	L3,  LOG_ALWAYS, 1 },
-	{ "flag",		cmd_flag,	POS_DEAD,	L4,  LOG_ALWAYS, 1 },
-	{ "freeze",		cmd_freeze,	POS_DEAD,	L4,  LOG_ALWAYS, 1 },
-	{ "permban",	cmd_permban,	POS_DEAD,	L1,  LOG_ALWAYS, 1 },
-	{ "protect",	cmd_protect,	POS_DEAD,	L1,  LOG_ALWAYS, 1 },
-	{ "reboo",		cmd_reboo,	POS_DEAD,	L1,  LOG_NORMAL, 0 },
-	{ "reboot",		cmd_reboot,	POS_DEAD,	L1,  LOG_ALWAYS, 1 },
-	{ "set",		cmd_set,		POS_DEAD,	L2,  LOG_ALWAYS, 1 },
-	{ "shutdow",	cmd_shutdow,	POS_DEAD,	L1,  LOG_NORMAL, 0 },
-	{ "shutdown",	cmd_shutdown,	POS_DEAD,	L1,  LOG_ALWAYS, 1 },
-	/*  { "sockets",	cmd_sockets,	POS_DEAD,	L4,  LOG_NORMAL, 1 }, */
-	{ "lockdown",	cmd_lockdown,	POS_DEAD,	L2,  LOG_ALWAYS, 1 },
-
-	{ "force",		cmd_force,	POS_DEAD,	L7,  LOG_ALWAYS, 1 },
-	{ "load",		cmd_load,	POS_DEAD,	L4,  LOG_ALWAYS, 1 },
-	{ "newbielockdown",	cmd_newbielockdown,	POS_DEAD,	L4,  LOG_ALWAYS, 1 },
-	{ "nochannels",	cmd_nochannels,	POS_DEAD,	L5,  LOG_ALWAYS, 1 },
-	{ "noemote",	cmd_noemote,	POS_DEAD,	L5,  LOG_ALWAYS, 1 },
-	{ "noshout",	cmd_noshout,	POS_DEAD,	L5,  LOG_ALWAYS, 1 },
-	{ "notell",		cmd_notell,	POS_DEAD,	L5,  LOG_ALWAYS, 1 },
-	{ "pecho",		cmd_pecho,	POS_DEAD,	L4,  LOG_ALWAYS, 1 },
-	{ "pardon",		cmd_pardon,	POS_DEAD,	L3,  LOG_ALWAYS, 1 },
-	{ "purge",		cmd_purge,	POS_DEAD,	L4,  LOG_ALWAYS, 1 },
-	{ "restore",	cmd_restore,	POS_DEAD,	L4,  LOG_ALWAYS, 1 },
-	{ "sla",		cmd_sla,		POS_DEAD,	L3,  LOG_NORMAL, 0 },
-	{ "slay",		cmd_slay,	POS_DEAD,	L3,  LOG_ALWAYS, 1 },
-	{ "teleport",	cmd_transfer,    POS_DEAD,	L5,  LOG_ALWAYS, 1 },
-	{ "transfer",	cmd_transfer,	POS_DEAD,	L5,  LOG_ALWAYS, 1 },
-
-	/*  { "at",		cmd_at,		POS_DEAD,	L6,  LOG_NORMAL, 1 }, */
-	{ "poofin",		cmd_bamfin,	POS_DEAD,	L8,  LOG_NORMAL, 1 },
-	{ "poofout",	cmd_bamfout,	POS_DEAD,	L8,  LOG_NORMAL, 1 },
-	{ "gecho",		cmd_echo,	POS_DEAD,	L4,  LOG_ALWAYS, 1 },
-	/*  { "goto",		cmd_goto,	POS_DEAD,	L8,  LOG_NORMAL, 1 }, */
-	{ "holylight",	cmd_holylight,	POS_DEAD,	IM,  LOG_NORMAL, 1 },
-	{ "incognito",	cmd_incognito,	POS_DEAD,	IM,  LOG_NORMAL, 1 },
-	{ "invis",		cmd_invis,	POS_DEAD,	IM,  LOG_NORMAL, 0 },
-	{ "log",		cmd_log,		POS_DEAD,	L1,  LOG_ALWAYS, 1 },
-	{ "memory",		cmd_memory,	POS_DEAD,	IM,  LOG_NORMAL, 1 },
-	{ "mwhere",		cmd_mwhere,	POS_DEAD,	IM,  LOG_NORMAL, 1 },
-	{ "owhere",		cmd_owhere,	POS_DEAD,	IM,  LOG_NORMAL, 1 },
-	{ "peace",		cmd_peace,	POS_DEAD,	L5,  LOG_NORMAL, 1 },
-	{ "penalty",	cmd_penalty,	POS_DEAD,	L7,  LOG_NORMAL, 1 },
-	{ "echo",		cmd_recho,	POS_DEAD,	L6,  LOG_ALWAYS, 1 },
-	{ "return",         cmd_return,      POS_DEAD,       L6,  LOG_NORMAL, 1 },
-	{ "snoop",		cmd_snoop,	POS_DEAD,	L5,  LOG_ALWAYS, 1 },
-	{ "stat",		cmd_stat,	POS_DEAD,	IM,  LOG_NORMAL, 1 },
-	{ "string",		cmd_string,	POS_DEAD,	L5,  LOG_ALWAYS, 1 },
-	{ "switch",		cmd_switch,	POS_DEAD,	L6,  LOG_ALWAYS, 1 },
-	{ "wizinvis",	cmd_invis,	POS_DEAD,	IM,  LOG_NORMAL, 1 },
-	{ "vnum",		cmd_vnum,	POS_DEAD,	L4,  LOG_NORMAL, 1 },
-	{ "zecho",		cmd_zecho,	POS_DEAD,	L4,  LOG_ALWAYS, 1 },
-
-	{ "clone",		cmd_clone,	POS_DEAD,	L5,  LOG_ALWAYS, 1 },
-
-	{ "staffaid",	cmd_wiznet,	POS_DEAD,	IM,  LOG_NORMAL, 1 },
-	{ "immtalk",	cmd_immtalk,	POS_DEAD,	IM,  LOG_NORMAL, 1 },
-	{ "imotd",          cmd_imotd,       POS_DEAD,       IM,  LOG_NORMAL, 1 },
-	{ ":",		cmd_immtalk,	POS_DEAD,	IM,  LOG_NORMAL, 0 },
-	{ "smote",		cmd_smote,	POS_DEAD,	IM,  LOG_NORMAL, 1 },
-	{ "prefi",		cmd_prefi,	POS_DEAD,	IM,  LOG_NORMAL, 0 },
-	{ "prefix",		cmd_prefix,	POS_DEAD,	IM,  LOG_NORMAL, 1 },
-	{ "mpdump",		cmd_mpdump,	POS_DEAD,	IM,  LOG_NEVER,  1 },
-	{ "mpstat",		cmd_mpstat,	POS_DEAD,	IM,  LOG_NEVER,  1 },
-
-	/*
-	 * OLC
-	 */
-	{ "edit",		cmd_olc,		POS_DEAD,    0,  LOG_NORMAL, 1 },
-	{ "asave",          cmd_asave,	POS_DEAD,    0,  LOG_NORMAL, 1 },
-	{ "alist",		cmd_alist,	POS_DEAD,    0,  LOG_NORMAL, 1 },
-	{ "resets",		cmd_resets,	POS_DEAD,    0,  LOG_NORMAL, 1 },
-	{ "redit",		cmd_redit,	POS_DEAD,    0,	 LOG_NORMAL, 1 },
-	{ "medit",		cmd_medit,	POS_DEAD,    0,	 LOG_NORMAL, 1 },
-	{ "aedit",		cmd_aedit,	POS_DEAD,    0,  LOG_NORMAL, 1 },
-	{ "oedit",		cmd_oedit,	POS_DEAD,    0,  LOG_NORMAL, 1 },
-	{ "mpedit",		cmd_mpedit,	POS_DEAD,    0,  LOG_NORMAL, 1 },
-	{ "hedit",		cmd_hedit,	POS_DEAD,    0,  LOG_NORMAL, 1 },
-
-	{ "sitrep",		cmd_sitrep,	POS_DEAD,   MAX_LEVEL, LOG_NORMAL, 1 },
-
-	/*
-	 * End of list.
-	 */
 	{ "",		0,		POS_DEAD,	 0,  LOG_NORMAL, 0 }
 };
 
 
+void attempt_staff_command(Creature *ch, const std::string &pcomm, const std::string &argument ) {
 
+	std::string staff_command = pcomm;
+        staff_command.erase ( 0, pcomm.find_first_not_of ( '/' ) );
+        int cmd = 0;
+	bool found = false;
+
+	log_hd(LOG_DEBUG, Format("Staff Command: %s     Args: %s", !pcomm.empty() ? pcomm.c_str() : "", !argument.empty() ? argument.c_str() : ""));
+
+        for ( cmd = 0; !IS_NULLSTR(staff_cmd_table[cmd].name); cmd++ ) {
+                if ( staff_command[0] == staff_cmd_table[cmd].name[0]
+                &&  !str_cmp ( staff_command.c_str(), staff_cmd_table[cmd].name )) {
+                	found = true;
+                        break;
+                }
+        }
+
+	// -- either it isn't found or we are not flagged for that command
+	if(!found || !IS_SET(ch->sflag, staff_cmd_table[cmd].flag)) {
+		writeBuffer("Unknown Option.\r\n",ch);
+		return;
+	}
+
+	// -- execute the command and log the details.
+	log_hd ( LOG_DEBUG, Format ( "Pre-Staff-Cmd:  %s(%p) executed by %s, args: %s", staff_command.c_str(), staff_cmd_table[cmd].cmd_fun, ch->name, !argument.empty() ? argument.c_str() : "{No Args}" ) );
+
+	// -- in case one of our commands throws an exception, we want to be careful and log what we can!
+	try {
+		( *staff_cmd_table[cmd].cmd_fun ) ( ch, staff_command.c_str(), argument.c_str() );
+	} catch ( ... ) {
+		CATCH ( false );
+	}
+	log_hd ( LOG_DEBUG, Format ( "Post-Staff-Cmd: %s(%p) executed by %s successfully!", staff_command.c_str(), staff_cmd_table[cmd].cmd_fun, ch ? ch->name : "{Creature non-existant post command}" ) );
+
+	tail_chain( );
+	return;
+
+
+}
 
 /*
  * The main entry point for executing commands.
@@ -409,6 +405,15 @@ void interpret ( Creature *ch, const char *argument )
 		return;
 	}
 
+	// -- are we utilizing a staff command? Lets find out today!?
+	if(argument[0] == '/') {
+		char argbuf[100000];
+		char *comm1;
+
+		comm1 = one_argument(argument, argbuf);
+		attempt_staff_command(ch, argbuf, comm1);
+		return;
+	}
 	/*
 	 * Grab the command word.
 	 * Special parsing so ' can be a command,

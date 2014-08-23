@@ -59,6 +59,15 @@ struct	cmd_type {
 	sh_int              show;
 };
 
+struct staff_cmd_type {
+	const char *name;
+	CmdData * cmd_fun;
+	long flag;
+	sh_int log;
+	bool show;
+	const char *helpmsg;
+};
+
 /* the command table itself */
 extern	const	struct	cmd_type	cmd_table	[];
 

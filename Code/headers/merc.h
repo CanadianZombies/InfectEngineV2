@@ -1331,6 +1331,15 @@ struct	kill_data {
 #define CF_SEE_SCRIPT		(F)
 #define CF_SEE_ABORT            (G)
 
+
+// -- Creature staff flags
+#define CR_STAFF (A)
+#define CR_BUILDER (B)
+#define CR_CODER (C)
+#define CR_RELATIONS (D)
+#define CR_SECURITY (E)
+#define CR_HEAD (F)
+
 /*
  * Prototype for a mob.
  * This is the in-memory version of #MOBILES.
@@ -1457,6 +1466,7 @@ struct	char_data {
 	long		imm_flags;
 	long		res_flags;
 	long		vuln_flags;
+	long		sflag;
 	sh_int		invis_level;
 	sh_int		incog_level;
 	long			affected_by;
@@ -1953,9 +1963,14 @@ extern sh_int  gsn_recall;
  * Character macros.
  */
 #define IS_NPC(ch)		(IS_SET((ch)->act, ACT_IS_NPC))
-#define IsStaff(ch)		(get_trust(ch) >= LEVEL_IMMORTAL)
+
+// -- staff is now controlled by flags, NOT by level!
+#define IsStaff(ch)		(IS_SET((ch)->sflag, CR_STAFF) )  // -- (get_trust(ch) >= LEVEL_IMMORTAL)
+
+
 #define IS_HERO(ch)		(get_trust(ch) >= LEVEL_HERO)
 #define IS_TRUSTED(ch,level)	(get_trust((ch)) >= (level))
+
 #define IS_AFFECTED(ch, sn)	(IS_SET((ch)->affected_by, (sn)))
 
 #define GET_AGE(ch)		((int) (17 + ((ch)->played \

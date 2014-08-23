@@ -209,6 +209,10 @@ void fwrite_char ( Creature *ch, FILE *fp )
 	{ fprintf ( fp, "Act  %s\n",   print_flags ( ch->act ) ); }
 	if ( ch->affected_by != 0 )
 	{ fprintf ( fp, "AfBy %s\n",   print_flags ( ch->affected_by ) ); }
+
+	// -- staff flags
+	if (ch->sflag != 0) { fprintf(fp, "SFlag %s\n", print_flags(ch->sflag) ); }
+
 	fprintf ( fp, "Comm %s\n",       print_flags ( ch->comm ) );
 	if ( ch->wiznet )
 	{ fprintf ( fp, "Wizn %s\n",   print_flags ( ch->wiznet ) ); }
@@ -534,6 +538,7 @@ bool load_char_obj ( Socket *d, char *name )
 	ch->id				= get_pc_id();
 	ch->race				= race_lookup ( "human" );
 	ch->act				= PLR_NOSUMMON;
+	ch->sflag				= 0;	// by default
 	ch->comm				= COMM_COMBINE
 							  | COMM_PROMPT;
 	ch->prompt 				= assign_string ( "<%hhp %mm %vmv> " );
@@ -1015,6 +1020,7 @@ void fread_char ( Creature *ch, FILE *fp )
 				KEY ( "Sec",         ch->pcdata->security,	fread_number ( fp ) );	/* OLC */
 				KEY ( "Silv",        ch->silver,             fread_number ( fp ) );
 				KEY ( "Sitrep",	ch->sitrep,		fread_flag ( fp ) );
+				KEY ( "SFlag", ch->sflag,		fread_flag ( fp ) );
 
 				if ( !str_cmp ( word, "Skill" ) || !str_cmp ( word, "Sk" ) ) {
 					int sn;
