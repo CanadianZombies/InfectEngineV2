@@ -3947,6 +3947,103 @@ DefineCommand ( cmd_prefix )
 	ch->prefix = assign_string ( argument );
 }
 
+DefineCommand( cmd_makestaff )
+{
+	if ( IS_NULLSTR(argument)) {
+		writeBuffer ( "Syntax: /makestaff <username> <flag> <on|off>\n\r",ch );
+		writeBuffer ( "Flags: staff, builder, relations, security, coder\n\r",ch );
+		return;
+	}
+
+	char first[1000];
+	char second[1000];
+
+	argument = one_argument ( argument, first );
+	argument = one_argument ( argument, second );
+
+
+	if ( IS_NULLSTR(first) || IS_NULLSTR(second) || IS_NULLSTR(argument) ) {
+		writeBuffer ( "Syntax: /makestaff <username> <flag> <on|off>\n\r",ch );
+		return;
+	}
+
+	if ( str_cmp ( argument, "on" ) && str_cmp ( argument, "off" ) ) {
+		writeBuffer ( "Toggle requires on or off.\n\r",ch );
+		return;
+	}
+
+	bool onOff = false;
+	if ( !str_cmp ( argument, "on" ) )
+	{ onOff = true; }
+
+	Creature *c, *cn;
+
+	for(c = char_list; c; c = cn) {
+		cn = c->next;
+
+		// -- skip NPC's
+		if ( IS_NPC(c)) { continue; }
+
+		if ( !str_cmp ( c->name, first ) ) {
+			if ( c == ch && !str_cmp ( c->name, "Omega" ) ) {
+				writeBuffer( "You cannot flag yourself with staff flags!\n\r", ch );
+				return;
+			}
+
+			if ( !str_cmp ( second, "staff" ) ) {
+				if(onOff == true)
+					SET_BIT( c->sflag, CR_STAFF);
+				else
+					REMOVE_BIT(c->sflag, CR_STAFF );
+				writeBuffer("Staff flag toggled.\n\r",ch );
+				return;
+			}
+
+			if ( !str_cmp ( second, "security" ) ) {
+				if(onOff == true)
+					SET_BIT( c->sflag, CR_SECURITY );
+				else
+					REMOVE_BIT( c->sflag, CR_SECURITY );
+				writeBuffer( "Vanguard flag toggled.\n\r", ch );
+				return;
+			}
+
+			if ( !str_cmp ( second, "relations" ) ) {
+				if(onOff == true)
+					SET_BIT(c->sflag, CR_RELATIONS );
+				else
+					REMOVE_BIT(c->sflag, CR_RELATIONS);
+				writeBuffer( "Player Relations flag toggled.\n\r",ch );
+				return;
+			}
+
+			if ( !str_cmp ( second, "builder" ) ) {
+				if(onOff == true)
+					SET_BIT(c->sflag, CR_BUILDER );
+				else
+					REMOVE_BIT(c->sflag, CR_BUILDER);
+				writeBuffer( "Builder flag toggled.\n\r",ch );
+				return;
+			}
+
+			if ( !str_cmp ( second, "coder" ) ) {
+				if(onOff == true)
+					SET_BIT(c->sflag, CR_CODER);
+				else
+					REMOVE_BIT(c->sflag, CR_CODER);
+				writeBuffer ( "Coder flag toggled.\n\r",ch );
+				return;
+			}
+
+			writeBuffer ( "Unknown flag option!\n\r",ch );
+			return;
+		}
+	}
+	writeBuffer ( "We couldn't find the player you wanted to adjust\n\r",ch );
+	return;
+}
+
+
 DefineCommand ( cmd_sitrep )
 {
 	Creature *cr = ch;

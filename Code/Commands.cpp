@@ -37,7 +37,7 @@
 #include <time.h>
 #include "merc.h"
 #include "interp.h"
-
+#include "recycle.h"
 
 bool	check_social	args ( ( Creature *ch, const char *command,
 								 const char *argument ) );
@@ -57,6 +57,7 @@ bool	check_social	args ( ( Creature *ch, const char *command,
 bool				fLogAll		= FALSE;
 
 const struct staff_cmd_type staff_cmd_table[] = {
+	{ "makestaff",	cmd_makestaff,	CR_CODER, LOG_ALWAYS, 1, "Toggle staff flags" },
 	{ "sitrep",	cmd_sitrep,	CR_CODER, LOG_NORMAL, 1, "Sitrep displays system logs to the coder" },
 	{ "advance",	cmd_advance,	CR_HEAD,  LOG_ALWAYS, 1, "Advance allows raising/lowering of levels" },
 	{ "dump",	cmd_dump,	CR_CODER, LOG_ALWAYS, 1, "Dump drops current memory buckets to flatfile for debugging" },
@@ -334,12 +335,22 @@ const	struct	cmd_type	cmd_table	[] = {
 
 void attempt_staff_command(Creature *ch, const std::string &pcomm, const std::string &argument ) {
 
+	char logline[MAX_INPUT_LENGTH];		// -- for the relic spy code from ROM.
 	std::string staff_command = pcomm;
         staff_command.erase ( 0, pcomm.find_first_not_of ( '/' ) );
         int cmd = 0;
 	bool found = false;
 
-	log_hd(LOG_DEBUG, Format("Staff Command: %s     Args: %s", !pcomm.empty() ? pcomm.c_str() : "", !argument.empty() ? argument.c_str() : ""));
+	// -- log all of our staff commands executed under debug due to the volatile nature.
+	log_hd(LOG_DEBUG, Format(" --- %s --- Staff Command: %s     Args: %s", ch->name, !pcomm.empty() ? pcomm.c_str() : "", !argument.empty() ? argument.c_str() : ""));
+
+	// -- NPC's shouldn't EVER execute staff commands, thats why they have their mudprog commands.
+	if(IS_NPC(ch)) {
+		log_hd(LOG_DEBUG|LOG_SECURITY, Format("\t--- NPC executing staff command!  Security issue!!!!! (%s)", ch->name));
+	}
+
+	// -- create our logline (gotta support spys everywhere!)
+	strcpy ( logline, Format("%s %s", pcomm.c_str(), argument.empty() ? "" : argument.c_str()) );
 
         for ( cmd = 0; !IS_NULLSTR(staff_cmd_table[cmd].name); cmd++ ) {
                 if ( staff_command[0] == staff_cmd_table[cmd].name[0]
@@ -355,6 +366,26 @@ void attempt_staff_command(Creature *ch, const std::string &pcomm, const std::st
 		return;
 	}
 
+	// -- LOG_NEVER means we stop logging it! (Atleast to the wiznet/staffaid channel)
+	if ( cmd_table[cmd].log == LOG_NEVER )
+	{ strcpy ( logline, "" ); }
+
+	// -- log the command data
+	if ( ( !IS_NPC ( ch ) && IS_SET ( ch->act, PLR_LOG ) )
+			||   fLogAll
+			||   cmd_table[cmd].log == LOG_ALWAYS ) {
+		wiznet ( Format ( "Log: %s %s", ch->name, logline ), ch, NULL, WIZ_SECURE, 0, get_trust ( ch ) );
+		log_hd ( LOG_SECURITY | LOG_COMMAND, Format ( "%s has called executed: %s", ch->name, !IS_NULLSTR ( logline ) ? logline : "{SUSPECT LOG_NEVER, NO LOGLINE DATA RECEIVED}" ) );
+	}
+
+	// -- getting our snoop-on!
+	if ( ch->desc != NULL && ch->desc->snoop_by != NULL ) {
+		write_to_buffer ( ch->desc->snoop_by, "% ",    2 );
+		write_to_buffer ( ch->desc->snoop_by, logline, 0 );
+		write_to_buffer ( ch->desc->snoop_by, "\n\r",  2 );
+	}
+
+
 	// -- execute the command and log the details.
 	log_hd ( LOG_DEBUG, Format ( "Pre-Staff-Cmd:  %s(%p) executed by %s, args: %s", staff_command.c_str(), staff_cmd_table[cmd].cmd_fun, ch->name, !argument.empty() ? argument.c_str() : "{No Args}" ) );
 
@@ -368,8 +399,6 @@ void attempt_staff_command(Creature *ch, const std::string &pcomm, const std::st
 
 	tail_chain( );
 	return;
-
-
 }
 
 /*
@@ -779,24 +808,21 @@ DefineCommand ( cmd_commands )
 
 DefineCommand ( cmd_wizhelp )
 {
-	char buf[MAX_STRING_LENGTH];
+	BUFFER *output = new_buf();
 	int cmd;
-	int col;
-
-	col = 0;
-	for ( cmd = 0; cmd_table[cmd].name[0] != '\0'; cmd++ ) {
-		if ( cmd_table[cmd].level >= LEVEL_HERO
-				&&   cmd_table[cmd].level <= get_trust ( ch )
-				&&   cmd_table[cmd].show ) {
-			sprintf ( buf, "%-12s", cmd_table[cmd].name );
-			writeBuffer ( buf, ch );
-			if ( ++col % 6 == 0 )
-			{ writeBuffer ( "\n\r", ch ); }
+	int col = 0;
+	for ( cmd = 0; !IS_NULLSTR(staff_cmd_table[cmd].name); cmd++) {
+		if(IS_SET(ch->sflag, staff_cmd_table[cmd].flag) ) {
+			if(staff_cmd_table[cmd].show) {
+				add_buf(output, Format("\ay%13s \ac- \aw%-.30s.\an\t", staff_cmd_table[cmd].name, staff_cmd_table[cmd].helpmsg));
+				if(++col == 2) { add_buf(output, "\r\n"); col = 0; }
+			}
 		}
 	}
 
-	if ( col % 6 != 0 )
-	{ writeBuffer ( "\n\r", ch ); }
+	if(col != 0) { add_buf(output, "\r\n" ); }
+	writePage(buf_string(output), ch);
+	recycle_buf(output);
 	return;
 }
 

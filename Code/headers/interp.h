@@ -316,3 +316,8 @@ Command ( cmd_oedit	);
 Command ( cmd_mpedit	);
 Command ( cmd_hedit	);
 Command ( cmd_sitrep	);
+Command ( cmd_makestaff );
+
+// -- EOF
+
+
