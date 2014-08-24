@@ -837,12 +837,14 @@ bool damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type,
 					 ( IS_NPC ( ch ) ? ch->short_descr : ch->name ),
 					 ch->in_room->vnum ) );
 
+			// -- how embarrassing!  Twitter knows!  Oh thats right, twitter knows all!
+			tweetStatement(Format("%s%s has been %s by %s.", !IS_NPC(ch) ? "[PK]:" : "", victim->name, !IS_NPC(ch) ? "murdered" : "slain", !IS_NPC(ch) ? ch->name : ch->short_descr));
+
 			/*
 			 * Dying penalty:
 			 * 2/3 way back to previous level.
 			 */
-			if ( victim->exp > exp_per_level ( victim, victim->pcdata->points )
-					* victim->level )
+			if ( victim->exp > exp_per_level ( victim, victim->pcdata->points ) * victim->level )
 				gain_exp ( victim, ( 2 * ( exp_per_level ( victim, victim->pcdata->points )
 										   * victim->level - victim->exp ) / 3 ) + 50 );
 		}
@@ -1592,7 +1594,6 @@ void raw_kill ( Creature *victim )
 void group_gain ( Creature *ch, Creature *victim )
 {
 	Creature *gch, *lch;
-	int xp;
 	int members;
 	int group_levels;
 
@@ -1639,9 +1640,7 @@ void group_gain ( Creature *ch, Creature *victim )
 			continue;
 		}
 
-		xp = xp_compute ( gch, victim, group_levels );
-		writeBuffer ( Format ( "Experience: %d experience points has been earned.\n\r", xp ), gch );
-		gain_exp ( gch, xp );
+		gain_exp(gch, xp_compute ( gch, victim, group_levels ));
 
 		for ( obj = ch->carrying; obj != NULL; obj = obj_next ) {
 			obj_next = obj->next_content;
@@ -1865,6 +1864,9 @@ int xp_compute ( Creature *gch, Creature *victim, int total_levels )
 
 	/* adjust for grouping */
 	xp = xp * gch->level / ( UMAX ( 1, total_levels - 1 ) );
+
+	// -- prevent crazy amounts of experience.
+	if(xp > 10) xp = (xp/3.5);
 
 	return xp;
 }

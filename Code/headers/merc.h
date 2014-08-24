@@ -1481,7 +1481,8 @@ struct	char_data {
 	sh_int		max_move;
 	long		gold;
 	long		silver;
-	int			exp;
+	int		exp;
+	int		exp_pool;
 	long		act;
 	long		comm;   /* RT added to pad the vector */
 	long		wiznet; /* wiz stuff */

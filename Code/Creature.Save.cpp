@@ -205,6 +205,7 @@ void fwrite_char ( Creature *ch, FILE *fp )
 	else
 	{ fprintf ( fp, "Silv %d\n", 0			); }
 	fprintf ( fp, "Exp  %d\n",	ch->exp			);
+	fprintf ( fp, "ExpPool %d\n",   ch->exp_pool );
 	if ( ch->act != 0 )
 	{ fprintf ( fp, "Act  %s\n",   print_flags ( ch->act ) ); }
 	if ( ch->affected_by != 0 )
@@ -904,6 +905,7 @@ void fread_char ( Creature *ch, FILE *fp )
 					return;
 				}
 				KEY ( "Exp",		ch->exp,		fread_number ( fp ) );
+				KEY ( "ExpPool",	ch->exp_pool,		fread_number ( fp ) );
 				break;
 
 			case 'G':

@@ -323,6 +323,7 @@ Creature *new_char ( void )
 	ch->move                    = 100;
 	ch->max_move                = 100;
 	ch->sitrep                  = 0;
+	ch->exp_pool		    = 0;
 
         // -- zeroize the structures.
         ch->queries.querydata = NULL;

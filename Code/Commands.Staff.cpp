@@ -1836,6 +1836,30 @@ DefineCommand ( cmd_reboot )
 					cmd_function ( ch, &cmd_echo, Format("Reboot by %s.", ch->name) );
 				}
 
+				{
+					const char *twit_table[] = {
+						"<< Infect Engine is undergoing a #reboot for #maintenance!",
+						"<< Infect Engine will now #reboot, please check back shortly!!",
+						"<< Infect Engine Core is rebooting for #maintenance",
+						"<< The mud is rebooting for server #maintenance!",
+						Format ( "<< %s is undergoing a #temporary #reboot!", "The Infected City" ),
+						Format ( "<< %s(%s) is undergoing a #reboot!", "The Infected City", getVersion() ),
+						Format ( "<< %s will reboot!", "The Infected City" ),
+						Format ( "<< %s: %s -- #reboot!", "The Infected City", getVersion() ),
+						NULL,
+					};
+
+					int cnt = 0;
+					for ( int y = 0; twit_table[y] != NULL; y++ )
+					{ cnt++; }
+
+				std::string tweetStr = twit_table[number_range ( 0, ( cnt - 1 ) )];
+				tweetStr = addTweetHashtags ( tweetStr );
+				issueSystemCommandNoReturn ( Format ( "curl -u %s:%s -d \"status=%s\" http://localhost:8080/1.1/statuses/update.json",
+						"CombatMUD", "temppassword", C_STR ( tweetStr ) ) );
+
+				}
+
 				is_shutdown = TRUE;
 				for ( d = socket_list; d != NULL; d = d_next ) {
 					d_next = d->next;
@@ -1868,10 +1892,38 @@ DefineCommand ( cmd_shutdown )
 				break;
 			case 'y':
 			case 'Y':
+				// -- just make sure it is in the log properly.
+				log_hd(LOG_SECURITY, Format("%s has agree'd to shutdown InfectEngine", ch->name));
+
 				append_file ( ch, SHUTDOWN_FILE, Format("Shutdown by %s.", ch->name) );
 				if ( ch->invis_level < LEVEL_HERO ) {
 					cmd_function ( ch, &cmd_echo, Format("Shutdown by %s.", ch->name) );
 				}
+
+				{
+					const char *twit_table[] = {
+						"<< Infect Engine is undergoing a #shutdown for #maintenance!",
+						"<< Infect Engine will now #hotreboot, please check back shortly!!",
+						"<< Infect Engine Core is shutting down for #maintenance",
+						"<< The mud is shutting down for server #maintenance!",
+						Format ( "<< %s is undergoing a #temporary #shutdown!", "The Infected City" ),
+						Format ( "<< %s(%s) is undergoing a #shutdown!", "The Infected City", getVersion() ),
+						Format ( "<< %s will shutdown!", "The Infected City" ),
+						Format ( "<< %s: %s -- #shutdown!", "The Infected City", getVersion() ),
+						NULL,
+					};
+
+					int cnt = 0;
+					for ( int y = 0; twit_table[y] != NULL; y++ )
+					{ cnt++; }
+
+				std::string tweetStr = twit_table[number_range ( 0, ( cnt - 1 ) )];
+				tweetStr = addTweetHashtags ( tweetStr );
+				issueSystemCommandNoReturn ( Format ( "curl -u %s:%s -d \"status=%s\" http://localhost:8080/1.1/statuses/update.json",
+						"CombatMUD", "temppassword", C_STR ( tweetStr ) ) );
+
+				}
+
 				is_shutdown = TRUE;
 				for ( d = socket_list; d != NULL; d = d_next ) {
 					d_next = d->next;
@@ -2214,7 +2266,6 @@ DefineCommand ( cmd_clone )
 }
 
 /* RT to replace the two load commands */
-
 DefineCommand ( cmd_load )
 {
 	char arg[MAX_INPUT_LENGTH];
@@ -2316,8 +2367,6 @@ DefineCommand ( cmd_oload )
 	writeBuffer ( "Ok.\n\r", ch );
 	return;
 }
-
-
 
 DefineCommand ( cmd_purge )
 {
@@ -2469,8 +2518,6 @@ DefineCommand ( cmd_advance )
 	save_char_obj ( victim );
 	return;
 }
-
-
 
 DefineCommand ( cmd_trust )
 {
@@ -4211,5 +4258,89 @@ DefineCommand ( cmd_os )
 	writePage ( C_STR ( cmpstring ), ch );
 	return;
 }
+
+DefineCommand(cmd_tweet)
+{
+        if ( cmd == 1000 ) {
+                if ( LOWER ( argument[0] ) == 'y' ) {
+                        // -- tweet on behalf of The Infected City
+                        tweetStatement ( ch->queries.query_string );
+                        writeBuffer ( "\r\nTweet has been added to the queue.\r\n",ch );
+                        // -- remove our old data
+                        PURGE_DATA ( ch->queries.query_string );
+                        ch->queries.querycommand = 0;
+                       	return;
+                }
+                // -- we selected anything BUT the Y option, that means
+               	// -- we are NOT doing it, so we clear out the memory applicable
+                // -- and attempt to avoid memory issues later on.
+               	ch->queries.querycommand = 0;
+                PURGE_DATA ( ch->queries.query_string );
+		return;
+       	}
+
+        if ( IS_NULLSTR(argument) ) {
+               	writeBuffer ( "Syntax: tweet <message under 140 characters>\n\r",ch );
+		return;
+        }
+
+        if ( strlen(argument) > 140 ) {
+                writeBuffer ( "Tweets must be under 140 characters in length.\n\r", ch );
+		return;
+        }
+
+
+        ch->queries.queryfunc = cmd_tweet;
+        strcpy ( ch->queries.queryprompt, Format ( "Are you sure you want to tweet '%s' behalf of %s? (y/n)>", argument, "The Infected City" ) );
+
+        // -- Assign the new new string to push
+        PURGE_DATA ( ch->queries.query_string );
+        ch->queries.query_string = assign_string ( argument );
+        ch->queries.querycommand = 1000;
+	return;
+}
+
+DefineCommand(cmd_twitlist)
+{
+	extern std::list<std::string>tweetList;
+        if ( IS_NULLSTR(argument ) ) {
+                std::string output ( "" );
+                std::list<std::string>::iterator iter, itern;
+                int cnt = 0;
+                for ( iter = tweetList.begin(); iter != tweetList.end(); iter = itern ) {
+                       	std::string s = ( *iter ).c_str();
+                        itern = ++iter;
+
+                        output.append ( Format ( "[%2d] - %s\n\r", cnt, C_STR ( s ) ) );
+                        cnt++;
+                }
+
+                output.append ( "Type /tweetlist [number] to remove a selected tweet.\n\r" );
+                writePage ( C_STR ( output ), ch );
+                return;
+        }
+
+        if ( !is_number ( argument ) ) {
+                writeBuffer ( "Tweets are numbered, please select the tweet you want to remove.\n\r",ch );
+                return;
+        }
+
+	std::list<std::string>::iterator iter, itern;
+        int cnt = 0;
+        for ( iter = tweetList.begin(); iter != tweetList.end(); iter = itern ) {
+                std::string s = ( *iter ).c_str();
+                itern = ++iter;
+
+                if ( cnt == atoi (argument) ) {
+                        tweetList.remove ( s );
+                        writeBuffer ( "Tweet removed from list.\n\r", ch );
+                        return;
+                }
+                cnt++;
+        }
+	writeBuffer ( "Tweet not found.\n\r",ch );
+        return;
+}
+
 
 

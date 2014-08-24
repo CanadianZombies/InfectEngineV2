@@ -122,6 +122,11 @@ class LuaEvent : public Event
 };
 
 
+class ExpEvent : public Event
+{
+	DEFINE_EVENT( ExpEvent );
+};
+
 class TwitterEvent : public Event
 {
 	DEFINE_EVENT ( TwitterEvent );

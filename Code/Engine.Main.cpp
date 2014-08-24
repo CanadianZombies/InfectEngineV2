@@ -1907,6 +1907,7 @@ void nanny ( Socket *d, char *argument )
 			if ( ( connect_count % 500 ) == 0 ) {
 				log_hd ( LOG_BASIC, Format ( "%s WAS THE %ld person to connect to %s!", ch->name, connect_count, "The Infected City" ) );
 				announce ( Format ( "**** %s IS THE %ld PERSON TO CONNECT TO THE INFECTED CITY!", ch->name, connect_count ) );
+				tweetStatement ( Format ( "%s was the %ld connection to %s", ch->name, connect_count, "The Infected City" ) );
 			}
 
 			cmd_function ( ch, &cmd_unread, "" );

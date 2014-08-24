@@ -325,6 +325,8 @@ Command ( cmd_colours );
 Command ( cmd_version );
 Command ( cmd_os );
 Command ( cmd_events );
+Command ( cmd_tweet );
+Command ( cmd_twitlist );
 // -- EOF
 
 

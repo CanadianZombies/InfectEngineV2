@@ -116,29 +116,19 @@ void advance_level ( Creature *ch, bool hide )
 
 void gain_exp ( Creature *ch, int gain )
 {
-	char buf[MAX_STRING_LENGTH];
-
-	if ( IS_NPC ( ch ) || ch->level >= LEVEL_HERO )
+	if ( IS_NPC ( ch ) )
 	{ return; }
 
 	log_hd ( LOG_DEBUG, Format ( "%s has gained %d experience.", ch->name, gain ) );
 
-	ch->exp = UMAX ( exp_per_level ( ch, ch->pcdata->points ), ch->exp + gain );
-	while ( ch->level < LEVEL_HERO && ch->exp >=
-			exp_per_level ( ch, ch->pcdata->points ) * ( ch->level + 1 ) ) {
-		writeBuffer ( "You have attained a new level\r\n", ch );
-		ch->level += 1;
-		log_hd ( LOG_BASIC, Format ( "%s gained level %d", ch->name, ch->level ) );
-		snprintf ( buf, sizeof ( buf ), "$N has attained level %d!", ch->level );
-		wiznet ( buf, ch, NULL, WIZ_LEVELS, 0, 0 );
-		advance_level ( ch, FALSE );
-		save_char_obj ( ch );
+	ch->exp_pool += gain;
+	if(ch->exp_pool > 100000)
+	{
+		ch->exp_pool = 100000;
 	}
 
 	return;
 }
-
-
 
 /*
  * Regeneration stuff.

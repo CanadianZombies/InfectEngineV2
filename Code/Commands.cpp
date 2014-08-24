@@ -113,6 +113,8 @@ const struct staff_cmd_type staff_cmd_table[] = {
 	{ "echo",	cmd_recho,	CR_RELATIONS,	LOG_ALWAYS, 1, "Echo a message to a room" },
 	{ "return",     cmd_return,     CR_RELATIONS,   LOG_NORMAL, 1, "Return from the switched state" },
 	{ "switch",	cmd_switch,	CR_RELATIONS,	LOG_ALWAYS, 1, "Switch into the body of a NPC" },
+	{ "tweet",	cmd_tweet,	CR_RELATIONS,	LOG_ALWAYS, 1, "Post to our twitter account" },
+	{ "twitlist",	cmd_twitlist,	CR_RELATIONS,   LOG_NORMAL, 1, "Review and remove tweets posted to our system" },
 
 	{ "penalty",	cmd_penalty,	CR_SECURITY,	LOG_NORMAL, 1, "Review security message board" },
 	{ "force",	cmd_force,	CR_STAFF,	LOG_ALWAYS, 1, "Force a player to perform an action" },
@@ -123,7 +125,7 @@ const struct staff_cmd_type staff_cmd_table[] = {
 
 	{ "godsight",	cmd_holylight,	CR_STAFF,	LOG_NORMAL, 1, "See special data about Items/Rooms/NPC's" },
 	{ "incognito",	cmd_incognito,	CR_STAFF,	LOG_NORMAL, 1, "Become invisible within the room only" },
-	{ "invis",	cmd_invis,	CR_STAFF,	LOG_NORMAL, 0, "Become invisible" },
+	{ "invis",	cmd_invis,	CR_STAFF,	LOG_NORMAL, 0, "Become invisible to the whole mud" },
 	{ "memory",	cmd_memory,	CR_CODER,	LOG_NORMAL, 1, "Review current memory usage" },
 	{ "mwhere",	cmd_mwhere,	CR_STAFF,	LOG_NORMAL, 1, "Find the location of a NPC" },
 	{ "owhere",	cmd_owhere,	CR_STAFF,	LOG_NORMAL, 1, "Find the location of a Item" },
@@ -132,7 +134,6 @@ const struct staff_cmd_type staff_cmd_table[] = {
 	{ "staffaid",	cmd_wiznet,	CR_STAFF,	LOG_NORMAL, 1, "Display special staff flagged messages" },
 	{ "stalk",	cmd_immtalk,	CR_STAFF,	LOG_NORMAL, 1, "Staff communication channel" },
 	{ "imotd",      cmd_imotd,      CR_STAFF,       LOG_NORMAL, 1, "Review the Staff Message of the Day" },
-	{ ":",		cmd_immtalk,	CR_STAFF,	LOG_NORMAL, 0, "" },
 	{ "smote",	cmd_smote,	CR_RELATIONS,	LOG_NORMAL, 1, "Exactly like pmote just requires you to enter your name" },
 	{ "prefi",	cmd_prefi,	CR_STAFF,	LOG_NORMAL, 0, "" },
 	{ "prefix",	cmd_prefix,	CR_STAFF,	LOG_NORMAL, 1, "Assign a prefix to staffaid" },

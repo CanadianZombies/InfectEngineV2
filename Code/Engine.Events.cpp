@@ -7,7 +7,8 @@ void EventManager::BootupEvents()
 {
 	// -- Event manager is now being tested with a repeating event every 15 minutes (60*15)
 	// -- if all works out, this will announce the time every 15 minutes to all connected sockets.
-	addEvent ( new TwitterEvent(), true, EV_MINUTE + ( EV_SECOND * 30 ) );		// every 1 and a half minutes
+	addEvent ( new TwitterEvent(), true, EV_MINUTE + ( EV_SECOND * 30 ) );		// Every 1 and a half minutes
+	addEvent ( new ExpEvent(), true, EV_MINUTE );					// Every minute
 	return;
 }
 
@@ -397,5 +398,123 @@ void TwitterEvent::Execute ( void )
 	return;
 }
 
+// -- -------------------------------------------------------------
+// -- EXP Bucket system, so experience gains happen periodically
+// -- and not all at once.  Ie, it can take some time to level up!
+// -- -------------------------------------------------------------
+void ExpEvent::Execute ( void )
+{
+	Creature *ch, *ch_n;
+	for ( ch = char_list; ch; ch = ch_n) {
+		ch_n = ch->next;
 
+		if ( !ch )	{ SUICIDE; }				// -- the impossible has happened
+		if ( IS_NPC(ch)) { continue; }				// -- NPC's do not gain
+		if ( ch->level >= MAX_LEVEL ) { continue; }		// -- Max Level does not gain
+		if ( ch->fighting ) { continue; }			// -- do not gain while in combat.
+
+		int totalGain = 0;
+		if ( number_range ( 0, 3 ) == number_range ( 0, 7 ) ) {
+			if ( ch->exp_pool != 0 && ch->exp < ( ch->level * 200 ) ) {
+				ch->exp_pool--;
+				totalGain++;
+
+				// -- chance for the bonus experience
+				if ( ch->exp_pool > 30 && number_range ( 0, 3 ) == number_range ( 0, 4 ) ) {
+					int jump = number_range ( 1, 30 );
+					ch->exp_pool = ( ch->exp_pool - jump );
+
+					totalGain += jump;
+
+					// -- bonus experience to help levelling along
+					if ( number_range ( 0, 3 ) == number_range ( 0, 15 ) ) {
+						ch->exp += ch->level;
+						totalGain += ch->level;
+					}
+				}
+
+				// -- lets try and give out some extra exp, leveling is crazy hard
+				// -- when all you get is 1xp every now and then.
+				if ( ch->exp_pool > 10 ) {
+					int jm = number_range ( 1, 10 );
+					ch->exp_pool = ( ch->exp_pool - jm );
+					totalGain += jm;
+				}
+
+				// -- assign the experience properly.
+				ch->exp += totalGain;
+	//			update_board ( ch, totalGain, BOARD_EXP );
+
+				writeBuffer ( Format ( "\n\r\ac*** \aYYour survival in \aG%s \aYhas yielded the reward of \aR%d\aY experience gained \ac***\an\n\r", "The Infected City", totalGain ), ch );
+
+				if ( ch->level < MAX_LEVEL && ch->exp >= ( ch->level * 200 ) ) {
+					ch->level++;
+
+					// -- announce our level gain!
+					announce ( Format ( "%s has attained level %d", ch->name, ch->level ) );
+
+					switch ( ch->level ) {
+						default:
+							break;
+						case 5:
+							tweetStatement ( Format ( "%s has survived the first 5 levels of %s.", 
+								ch->name, "The Infected City" ) );
+							break;
+						case 20:
+							tweetStatement ( Format ( "%s has achieved level 20 in %s.", ch->name, "The Infected City" ) );
+							break;
+						case 40:
+							tweetStatement ( Format ( "Level 40: %s has continued to survive in %s.",ch->name, "The Infected City" ) );
+							break;
+						case 50:
+							tweetStatement ( Format ( "Level 50: %s is a true suvivor of %s.", ch->name, "The Infected City"  ) );
+							break;
+						case 51:
+							tweetStatement ( Format ( "Level 51: %s is on the path to awesomeness in %s.", ch->name, "The Infected City"  ) );
+							break;
+						case 52:
+							tweetStatement ( Format ( "Level 52: %s has attained a truely amazing status in %s.", ch->name, "The Infected City"  ) );
+							break;
+						case 53:
+							tweetStatement ( Format ( "Level 53: %s has completed 93 levels of %s.", ch->name, "The Infected City"  ) );
+							break;
+						case 54:
+							tweetStatement ( Format ( "Level 54: %s has reached a powerful level of %s.", ch->name, "The Infected City"  ) );
+							break;
+						case 55:
+							tweetStatement ( Format ( "Level 55: %s has truly proven their worth in %s.", ch->name, "The Infected City"  ) );
+							break;
+						case 56:
+							tweetStatement ( Format ( "Level 56: %s survived 96 levels within %s.", ch->name, "The Infected City"  ) );
+							break;
+						case 57:
+							tweetStatement ( Format ( "Level 57: %s endured 97 levels of %s.", ch->name, "The Infected City"  ) );
+							break;
+						case 58:
+							tweetStatement ( Format ( "Level 58: %s has true suvivor instinct within %s.", ch->name, "The Infected City"  ) );
+							break;
+						case 59:
+							tweetStatement ( Format ( "Level 59: %s is one step away from MAX LEVEL!", ch->name ) );
+							break;
+						case 60:
+							tweetStatement ( Format ( "*** MAX LEVEL ATTAINED! *** %s has become a master survivor in %s. ", ch->name, "The Infected City"  ) );
+							break;
+					} // -- end switch
+
+					advance_level(ch, false);
+					ch->exp = 0;
+				} // -- end level gain
+			} // -- end can we gain exp
+		} // -- end random chance
+
+		// -- random standing experience gain (It just happens)
+		if ( number_range ( 0, 115 ) == number_percent() ) {
+			ch->exp_pool += number_range ( number_range ( 0, 3 ), number_range ( 3, 9 ) );
+		}
+
+		// -- save our character
+		SAVE_CHANCE ( ch );
+	} // -- end for-loop
+	return;
+}
 
