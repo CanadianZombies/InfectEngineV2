@@ -1641,6 +1641,54 @@ DefineCommand ( cmd_help )
 	recycle_buf ( output );
 }
 
+DefineCommand ( cmd_colours )
+{
+	int r, g, b, cnt;
+
+	cnt = r = g = b = 0;
+	writeBuffer ( Format ( "                  Colours of %s\n\r\n\r", "The Infected City" ),ch );
+
+	writeBuffer ( "Initiating Tag for colours: ^^\n\r",ch );
+	writeBuffer ( "                   Example: ^^R^RThis is bright red^n^^nThis is normal\n\r",ch );
+	writeBuffer ( "                       256: ^^[F211]^[F211]Some odd colour^n^^nThis is normal\n\r",ch );
+	writeBuffer ( "                     Reset: ^n^^n this will normalize all colours\n\r\n\r",ch );
+
+		// -- new feature, disable/enable colours, we like showing off a bit.
+//	writeBuffer ( "To turn colour on/off type 'colours [on|off]'\n\r\n\r" );
+
+	writeBuffer ( "Ansi Colours: \n\r",ch );
+	writeBuffer ( "^rr ^RR ^bb ^BB ^cc ^CC ^gg ^GG ^yy ^YY ^oo ^OO ^mm ^MM ^ww ^WW ^n\an\n\r",ch );
+
+	writeBuffer ( "\n\r256 Colour Support: \n\r",ch );
+	for ( r = 0; r <= 5; r++ ) {
+		for ( g = 0; g <= 5; g++ ) {
+			for ( b = 0; b <= 5; b++ ) {
+				writeBuffer ( Format ( "\a[f%d%d%d][F%d%d%d] ", r, g, b, r, g, b ), ch );
+				if ( ++cnt == 15 ) {
+					cnt = 0;
+					writeBuffer ( "\n\r",ch );
+				}
+			}
+		}
+	}
+/*
+	if ( SameString ( argument, "on" ) ) {
+		cr->bools.is_colourful = true;
+		cr->writeBuffer ( "Colours are now enabled!\n\r" );
+		END_COMMAND;
+	}
+
+	if ( SameString ( argument, "off" ) ) {
+		cr->bools.is_colourful = false;
+		cr->writeBuffer ( "Colours are now disabled.\n\r" );
+		END_COMMAND;
+	}
+
+	cr->writeBuffer ( "Unknown option!\n\r" ); */
+	return;
+}
+
+
 DefineCommand ( cmd_users )
 {
 	if ( atoi ( GetMSSP_Players() ) >= 50 ) {

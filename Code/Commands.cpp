@@ -225,6 +225,7 @@ const	struct	cmd_type	cmd_table	[] = {
 	{ "brief",		cmd_brief,	POS_DEAD,        0,  LOG_NORMAL, 1 },
 	{ "combine",	cmd_combine,	POS_DEAD,        0,  LOG_NORMAL, 1 },
 	{ "compact",	cmd_compact,	POS_DEAD,        0,  LOG_NORMAL, 1 },
+	{ "colours",	cmd_colours,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
 	{ "description",	cmd_description,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
 	{ "delet",		cmd_delet,	POS_DEAD,	 0,  LOG_ALWAYS, 0 },
 	{ "delete",		cmd_delete,	POS_STANDING,	 0,  LOG_ALWAYS, 1 },
