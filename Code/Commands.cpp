@@ -85,7 +85,7 @@ const struct staff_cmd_type staff_cmd_table[] = {
 
 	{ "gecho",	cmd_echo,	CR_RELATIONS, LOG_ALWAYS, 1, "Globally echo a selected string" },
 	{ "load",	cmd_load, CR_RELATIONS|CR_BUILDER, LOG_ALWAYS, 1, "Load a NPC/Item into the game" },
-	{ "newblockdown",	cmd_newbielockdown,	CR_SECURITY,  LOG_ALWAYS, 1, "Block newbies from entering the MUD" },
+	{ "newblockdown",cmd_newbielockdown,	CR_SECURITY,  LOG_ALWAYS, 1, "Block newbies from entering the MUD" },
 
 	{ "flag",	cmd_flag,	CR_RELATIONS,	LOG_ALWAYS, 1, "Change assigned flags to a loaded Item or NPC/Player" },
 	{ "freeze",	cmd_freeze,	CR_SECURITY,	LOG_ALWAYS, 1, "Completely freeze a player in his/her place"},
@@ -108,7 +108,7 @@ const struct staff_cmd_type staff_cmd_table[] = {
 	{ "transfer",	cmd_transfer,	CR_SECURITY|CR_RELATIONS, LOG_ALWAYS, 1, "Transfer a selected NPC/Player to your location" },
 
 	{ "at",         cmd_at,         CR_RELATIONS,   LOG_NORMAL, 1, "Perform a command as if you were at the selected NPC/Player" },
-	{ "echo",	cmd_recho,	CR_RELATIONS,	LOG_ALWAYS, 1, "Echo a message" },
+	{ "echo",	cmd_recho,	CR_RELATIONS,	LOG_ALWAYS, 1, "Echo a message to a room" },
 	{ "return",     cmd_return,     CR_RELATIONS,   LOG_NORMAL, 1, "Return from the switched state" },
 	{ "switch",	cmd_switch,	CR_RELATIONS,	LOG_ALWAYS, 1, "Switch into the body of a NPC" },
 

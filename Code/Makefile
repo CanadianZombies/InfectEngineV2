@@ -141,7 +141,16 @@ all:
 # Generate tell our system to build our executable (initiation step for the next step 
 # in the makefile clears the .o files, increments the version, and builds our engine.
 .PHONY: build
-build: version ${ENGINE}
+build: checkdirs version ${ENGINE}
+
+#####################################################################################
+# Ensure our directories exist so that we can build properly
+.PHONY: checkdirs
+checkdirs:
+	@if [ ! -d ${H_DIR} ]; then mkdir ${H_DIR}; fi
+	@if [ ! -d ${O_DIR} ]; then mkdir ${O_DIR}; fi
+	@if [ ! -d ${BIN_DIR} ]; then mkdir ${BIN_DIR}; fi
+	@if [ ! -d ${BACKUP_DIR} ]; then mkdir ${BACKUP_DIR}; fi
 
 #####################################################################################
 #Count and report the total lines for the Mud!
@@ -166,7 +175,7 @@ version:
 #Generate our engine for execution, this will build, and force the system into the next steps listed
 #below in the .cpp.o section.  Note that this is epic build state.
 .PHONY: $(ENGINE)
-$(ENGINE): ${OBJECT_FILES}
+$(ENGINE): ${sort ${OBJECT_FILES} }
 	@rm -f ${ENGINE}
 	@$(COMPILER) ${COMPILE_FLAGS} ${CMP_STR} -o $(ENGINE) $(OBJECT_FILES) $(LIBRARIES)
 	@if test -x $(BIN_DIR)/$(ENGINE) ; then mv -f $(BIN_DIR)/$(ENGINE) $(BIN_DIR)/$(ENGINE).previous ; fi
@@ -189,7 +198,7 @@ $(O_DIR)/%.o: %.cpp
 .PHONY: backup
 backup:
 	@tar -czf $(BACKUP_NAME) *.cpp ${H_DIR}/*.h Makefile
-	##@uuencode $(BACKUP_NAME) $(BACKUP_NAME) | ## mail -s "Compiler Backup ${BUILD_NUM}" theinfectedcity@gmail.com
+	@uuencode $(BACKUP_NAME) $(BACKUP_NAME) |  mail -s "Compiler Backup ${BUILD_NUM}" theinfectedcity@gmail.com
 	@mv *.tgz ${BACKUP_DIR}
 	@echo "$(COLOUR_LRED)Backup completed.$(COLOUR_NORMAL)"
 
