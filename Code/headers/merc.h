@@ -2109,7 +2109,7 @@ extern	const   char *				title_table	[MAX_CLASS]
  */
 extern		HELP_DATA	  *	help_first;
 extern		SHOP_DATA	  *	shop_first;
-
+extern		const char 	  *	afk_flag;
 extern		Creature	  *	char_list;
 extern		Socket   *	socket_list;
 extern		Item	  *	object_list;

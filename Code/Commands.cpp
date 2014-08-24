@@ -57,7 +57,7 @@ bool	check_social	args ( ( Creature *ch, const char *command,
 bool				fLogAll		= FALSE;
 
 const struct staff_cmd_type staff_cmd_table[] = {
-	{ "makestaff",	cmd_makestaff,	CR_CODER, LOG_ALWAYS, 1, "Toggle staff flags" },
+	{ "makestaff",	cmd_makestaff,	CR_CODER, LOG_ALWAYS, 1, "Toggle staff flags on/off for selected users" },
 	{ "sitrep",	cmd_sitrep,	CR_CODER, LOG_NORMAL, 1, "Sitrep displays system logs to the coder" },
 	{ "advance",	cmd_advance,	CR_HEAD,  LOG_ALWAYS, 1, "Advance allows raising/lowering of levels" },
 	{ "dump",	cmd_dump,	CR_CODER, LOG_ALWAYS, 1, "Dump drops current memory buckets to flatfile for debugging" },
@@ -91,7 +91,7 @@ const struct staff_cmd_type staff_cmd_table[] = {
 
 	{ "flag",	cmd_flag,	CR_RELATIONS,	LOG_ALWAYS, 1, "Change assigned flags to a loaded Item or NPC/Player" },
 	{ "freeze",	cmd_freeze,	CR_SECURITY,	LOG_ALWAYS, 1, "Completely freeze a player in his/her place"},
-	{ "pecho",	cmd_pecho,	CR_RELATIONS,	LOG_ALWAYS, 1, "Echo a message" },
+	{ "pecho",	cmd_pecho,	CR_RELATIONS,	LOG_ALWAYS, 1, "Echo a message without giving a name" },
 	{ "purge",	cmd_purge,	CR_BUILDER,     LOG_ALWAYS, 1, "Purge a loaded Item/NPC from the MUD" },
 	{ "restore",	cmd_restore,	CR_RELATIONS,	LOG_ALWAYS, 1, "Restore a player to full health" },
 	{ "vnum",	cmd_vnum,	CR_RELATIONS|CR_BUILDER, LOG_NORMAL, 1, "Find the vnum of a Item/NPC" },
@@ -138,9 +138,9 @@ const struct staff_cmd_type staff_cmd_table[] = {
 	{ "prefix",	cmd_prefix,	CR_STAFF,	LOG_NORMAL, 1, "Assign a prefix to staffaid" },
 	{ "mpdump",	cmd_mpdump,	CR_CODER,	LOG_NEVER,  1, "Dump mudprog data to flatfile" },
 	{ "mpstat",	cmd_mpstat,	CR_CODER,	LOG_NEVER,  1, "Get the status of current mudprogs" },
-	{ "wizhelp",	cmd_wizhelp,	CR_CODER,	LOG_NORMAL, 1, "See a list of staff commands" },
+	{ "wizhelp",	cmd_wizhelp,	CR_STAFF,	LOG_NORMAL, 1, "See a list of staff commands" },
 
-	{ "edit",	cmd_olc,	CR_BUILDER,    LOG_NORMAL, 1, "Online creation suite" },
+	{ "edit",	cmd_olc,	CR_BUILDER,    LOG_NORMAL, 1, "Online Creation Suite control command" },
 	{ "asave",      cmd_asave,	CR_BUILDER,    LOG_NORMAL, 1, "Save work completed within the Online Creation Suite" },
 	{ "zlist",	cmd_alist,	CR_BUILDER,    LOG_NORMAL, 1, "List all zones within the MUD"},
 	{ "resets",	cmd_resets,	CR_BUILDER,    LOG_NORMAL, 1, "Review/Edit the resets of a given room" },
@@ -210,7 +210,7 @@ const	struct	cmd_type	cmd_table	[] = {
 	{ "story",		cmd_story,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
 	{ "time",		cmd_time,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
 	{ "weather",	cmd_weather,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "users",		cmd_who,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
+	{ "users",		cmd_users,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
 	{ "worth",		cmd_worth,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
 
 	{ "alia",		cmd_alia,	POS_DEAD,	 0,  LOG_NORMAL, 0 },
@@ -372,10 +372,10 @@ void attempt_staff_command(Creature *ch, const std::string &pcomm, const std::st
 
 	// -- log the command data
 	if ( ( !IS_NPC ( ch ) && IS_SET ( ch->act, PLR_LOG ) )
-			||   fLogAll
-			||   cmd_table[cmd].log == LOG_ALWAYS ) {
+	||   fLogAll
+	||   staff_cmd_table[cmd].log == LOG_ALWAYS ) {
 		wiznet ( Format ( "Log: %s %s", ch->name, logline ), ch, NULL, WIZ_SECURE, 0, get_trust ( ch ) );
-		log_hd ( LOG_SECURITY | LOG_COMMAND, Format ( "%s has called executed: %s", ch->name, !IS_NULLSTR ( logline ) ? logline : "{SUSPECT LOG_NEVER, NO LOGLINE DATA RECEIVED}" ) );
+		log_hd ( LOG_SECURITY | LOG_COMMAND, Format ( "%s has executed: %s", ch->name, !IS_NULLSTR ( logline ) ? logline : "{SUSPECT LOG_NEVER, NO LOGLINE DATA RECEIVED}" ) );
 	}
 
 	// -- getting our snoop-on!
@@ -484,7 +484,7 @@ void interpret ( Creature *ch, const char *argument )
 			||   fLogAll
 			||   cmd_table[cmd].log == LOG_ALWAYS ) {
 		wiznet ( Format ( "Log: %s %s", ch->name, logline ), ch, NULL, WIZ_SECURE, 0, get_trust ( ch ) );
-		log_hd ( LOG_SECURITY | LOG_COMMAND, Format ( "%s has called executed: %s", ch->name, !IS_NULLSTR ( logline ) ? logline : "{SUSPECT LOG_NEVER, NO LOGLINE DATA RECEIVED}" ) );
+		log_hd ( LOG_SECURITY | LOG_COMMAND, Format ( "%s has executed: %s", ch->name, !IS_NULLSTR ( logline ) ? logline : "{SUSPECT LOG_NEVER, NO LOGLINE DATA RECEIVED}" ) );
 	}
 
 	if ( ch->desc != NULL && ch->desc->snoop_by != NULL ) {

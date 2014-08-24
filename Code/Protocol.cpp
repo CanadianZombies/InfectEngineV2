@@ -2267,7 +2267,7 @@ static void SendATCP ( descriptor_t *apDescriptor, const char *apVariable, const
  Local MSSP functions.
  ******************************************************************************/
 
-static const char *GetMSSP_Players()
+const char *GetMSSP_Players()
 {
 	static char Buffer[32];
 	sprintf ( Buffer, "%d", s_Players );

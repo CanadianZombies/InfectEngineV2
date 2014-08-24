@@ -1641,197 +1641,203 @@ DefineCommand ( cmd_help )
 	recycle_buf ( output );
 }
 
-/* whois command */
-DefineCommand ( cmd_who )
+DefineCommand ( cmd_users )
 {
-	char buf[MAX_STRING_LENGTH];
-	char buf2[MAX_STRING_LENGTH];
-	BUFFER *output;
-	Socket *d;
-	int iClass;
-	int iRace;
-	int iClan;
-	int iLevelLower;
-	int iLevelUpper;
-	int nNumber;
-	int nMatch;
-	bool rgfClass[MAX_CLASS];
-	bool rgfRace[MAX_PC_RACE];
-	bool rgfClan[MAX_CLAN];
-	bool fClassRestrict = FALSE;
-	bool fClanRestrict = FALSE;
-	bool fClan = FALSE;
-	bool fRaceRestrict = FALSE;
-	bool fImmortalOnly = FALSE;
+	if ( atoi ( GetMSSP_Players() ) >= 50 ) {
+		int col, cnt, staffcnt, jumps, afk;
 
-	/*
-	 * Set default arguments.
-	 */
-	iLevelLower    = 0;
-	iLevelUpper    = MAX_LEVEL;
-	for ( iClass = 0; iClass < MAX_CLASS; iClass++ )
-	{ rgfClass[iClass] = FALSE; }
-	for ( iRace = 0; iRace < MAX_PC_RACE; iRace++ )
-	{ rgfRace[iRace] = FALSE; }
-	for ( iClan = 0; iClan < MAX_CLAN; iClan++ )
-	{ rgfClan[iClan] = FALSE; }
+		bool staffFirst = false;
+		bool playerFirst = false;
+		std::string output ( "" );
 
-	/*
-	 * Parse arguments.
-	 */
-	nNumber = 0;
-	for ( ;; ) {
-		char arg[MAX_STRING_LENGTH];
+		col = cnt = staffcnt = jumps = afk = 0;
 
-		argument = one_argument ( argument, arg );
-		if ( arg[0] == '\0' )
-		{ break; }
+		output.append ( "\n\r" );
+		// 65 across..
+		output.append ( "\a[F341]****************************************************************\n\r"  );
+		Creature *c, *cn;
 
-		if ( is_number ( arg ) ) {
-			switch ( ++nNumber ) {
+		for(c = char_list; c; c = cn) {
+			Creature *u = c;
+			cn = c->next;
+
+			if ( IS_NPC(u) )
+			{ continue; }
+
+			if ( IS_SET(u->sflag, CR_STAFF ) ) {
+				if ( !staffFirst ) {
+					staffFirst = true;
+					//					 ******************************************************************
+					output.append ( "\a[F341]**                                                            **\n\r" );
+					output.append ( "\a[F341]**          ***                \a[F540]Staff              \a[F341] ***        \a[F341]**\n\r" );
+					output.append ( "\a[F341]**          ******************************************        \a[F341]**\n\r" );
+					output.append ( "\a[F341]**                                                            **\n\r" );
+				}
+				if ( col == 0 )
+				{ 	output.append ( "\a[F341]**" ); }
+				output.append ( Format ( "\a[F115]%15s%5s", u->name, IS_SET(u->comm, COMM_AFK) ? afk_flag : "" ) );
+				staffcnt++;
+				if ( IS_SET(u->comm, COMM_AFK ))
+				{ afk++; }
+				if ( ++col == 3 ) {
+					col = 0;
+					output.append ( "\a[F341]**\n\r" );
+				}
+			}
+		}
+		if ( col > 0 ) {
+			switch ( col ) {
+				default:
+					break;
 				case 1:
-					iLevelLower = atoi ( arg );
+					output.append ( Format ( "%40s\a[F341]**\n\r", "" ) );
 					break;
 				case 2:
-					iLevelUpper = atoi ( arg );
+					output.append ( Format ( "%20s\a[F341]**\n\r", "" ) );
 					break;
+			}
+		}
+
+		col = 0;
+		jumps = 0;
+
+		for(c = char_list; c; c = cn) {
+			Creature *u = c;
+			cn = c->next;
+
+			if ( IS_NPC(u))
+			{ continue; }
+
+			if ( IS_SET(u->sflag, CR_STAFF ) )
+			{ continue; }
+			if ( !playerFirst ) {
+				playerFirst = true;
+				output.append ( "\a[F341]**                                                            **\n\r" );
+				output.append ( "\a[F341]**          ***               \a[F540]Players              \a[F341]***        \a[F341]**\n\r" );
+				output.append ( "\a[F341]**          ******************************************        \a[F341]**\n\r" );
+				output.append ( "\a[F341]**                                                            **\n\r" );
+			}
+			cnt++;
+			if ( col == 0 )
+			{ 	output.append ( "\a[F341]**" ); }
+
+			output.append ( Format ( "\a[F115]%15s%5s", u->name, IS_SET(u->comm, COMM_AFK) ? afk_flag : "" ) );
+			if ( IS_SET(u->comm, COMM_AFK) )
+			{ afk++; }
+			if ( ++col == 3 ) {
+				col = 0;
+				output.append ( "\a[F341]**\n\r" );
+			}
+		}
+		if ( col > 0 ) {
+			switch ( col ) {
 				default:
-					writeBuffer ( "Only two level numbers allowed.\n\r", ch );
-					return;
-			}
-		} else {
-
-			/*
-			 * Look for archetypees to turn on.
-			 */
-			if ( !str_prefix ( arg, "immortals" ) ) {
-				fImmortalOnly = TRUE;
-			} else {
-				iClass = archetype_lookup ( arg );
-				if ( iClass == -1 ) {
-					iRace = race_lookup ( arg );
-
-					if ( iRace == 0 || iRace >= MAX_PC_RACE ) {
-						if ( !str_prefix ( arg, "clan" ) )
-						{ fClan = TRUE; }
-						else {
-							iClan = clan_lookup ( arg );
-							if ( iClan ) {
-								fClanRestrict = TRUE;
-								rgfClan[iClan] = TRUE;
-							} else {
-								writeBuffer (
-									"That's not a valid race, archetype, or clan.\n\r",
-									ch );
-								return;
-							}
-						}
-					} else {
-						fRaceRestrict = TRUE;
-						rgfRace[iRace] = TRUE;
-					}
-				} else {
-					fClassRestrict = TRUE;
-					rgfClass[iClass] = TRUE;
-				}
+					break;
+				case 1:
+					output.append ( Format ( "%40s\a[F431]**\n\r", "" ) );
+					break;
+				case 2:
+					output.append ( Format ( "%20s\a[F431]**\n\r", "" ) );
+					break;
 			}
 		}
+
+		output.append ( "\a[F341]**                                                            **\n\r" );
+		output.append ( "\a[F341]****************************************************************\n\r" );
+		output.append ( Format ( "\a[F301]There is currently \aR%d\a[F115] staff member(s) \a[F301]and \aR%d\a[F115] player(s)\a[F301] on %s\an.\n\r", staffcnt, cnt, "The Infected City" ) );
+
+		if ( afk > 0 ) {
+			output.append ( Format ( "\a[F301]Out of the \a[F115]%d \a[F301]users online, \a[F115]%d \a[F301]are AFK.\an\n\r", ( staffcnt + cnt ), afk ) );
+		}
+
+		writePage ( output.c_str(), ch );
+		return;
 	}
 
-	/*
-	 * Now show matching chars.
-	 */
-	nMatch = 0;
-	buf[0] = '\0';
-	output = new_buf();
-	for ( d = socket_list; d != NULL; d = d->next ) {
-		Creature *wch;
-		char const *archetype;
+	writeBuffer ( "\n\r\n\r\a[F532]",ch );
+	writeBuffer ( "                        _______ __          \n\r",ch );
+	writeBuffer ( "                       |_     _|  |--.-----.   \n\r",ch );
+	writeBuffer ( "                         |   | |     |  -__|   \n\r",ch );
+	writeBuffer ( "                         |___| |__|__|_____|   \n\r",ch );
+	writeBuffer ( " _______        ___            __            __      ______ __ __         \n\r",ch );
+	writeBuffer ( "|_     _.-----.'  _.-----.----|  |_.-----.--|  |    |      |__|  |_.--.--.\n\r",ch );
+	writeBuffer ( " _|   |_|     |   _|  -__|  __|   _|  -__|  _  |    |   ---|  |   _|  |  |\n\r",ch );
+	writeBuffer ( "|_______|__|__|__| |_____|____|____|_____|_____|    |______|__|____|___  |\n\r",ch );
+	writeBuffer ( "                                                                   |_____|\n\r\n\r^n",ch );
 
-		/*
-		 * Check for match against restrictions.
-		 * Don't use trust as that exposes trusted mortals.
-		 */
-		if ( d->connected != CON_PLAYING || !can_see ( ch, d->character ) )
-		{ continue; }
+	int staff, players, ste, str, agi, inte;
 
-		wch   = ( d->original != NULL ) ? d->original : d->character;
+	staff = players = ste = str = agi = inte = 0;
 
-		if ( !can_see ( ch, wch ) )
-		{ continue; }
+	writeBuffer ( "LV(Level)  ST(Survival Type) S(Sex)\n\r",ch );
+	writeBuffer ( Format ( " LV   ST    S  %13s Status........\n\r", "Name" ),ch );
+	writeBuffer ( "------------------------------------------------------------------------------\n\r",ch );
+	Creature *c, *cn;
 
-		if ( wch->level < iLevelLower
-				||   wch->level > iLevelUpper
-				|| ( fImmortalOnly  && wch->level < LEVEL_IMMORTAL )
-				|| ( fClassRestrict && !rgfClass[wch->archetype] )
-				|| ( fRaceRestrict && !rgfRace[wch->race] )
-				|| ( fClan && !is_clan ( wch ) )
-				|| ( fClanRestrict && !rgfClan[wch->clan] ) )
-		{ continue; }
+	for ( c = char_list; c; c = cn) {
+		cn = c->next;
 
-		nMatch++;
+		// -- reset every iteration.
+		std::string flag_string ( "" );
+		flag_string.clear();
 
-		/*
-		 * Figure out what to print for archetype.
-		*/
-		archetype = archetype_table[wch->archetype].who_name;
-		switch ( wch->level ) {
+		if ( c->level == 0 ) { continue; }
+
+		if ( IS_NPC(c) ) { continue; }
+		if ( IS_SET(c->comm, COMM_AFK) ) { flag_string.append ( " ^g{^YAFK^g}" ); }
+		if ( c->fighting != NULL )   { flag_string.append ( " \a[F112]{\a[F500]COMBAT\a[F112]}" ); }
+
+		std::string st ( "ALL" );
+		ste++;
+/* Disabled until completely ported from InfectEngineV1
+		switch ( c->integers.survival_type ) {
 			default:
+				st = "";
 				break;
-				{
-				case MAX_LEVEL - 0 :
-					archetype = "IMP";
-					break;
-				case MAX_LEVEL - 1 :
-					archetype = "CRE";
-					break;
-				case MAX_LEVEL - 2 :
-					archetype = "SUP";
-					break;
-				case MAX_LEVEL - 3 :
-					archetype = "DEI";
-					break;
-				case MAX_LEVEL - 4 :
-					archetype = "GOD";
-					break;
-				case MAX_LEVEL - 5 :
-					archetype = "IMM";
-					break;
-				case MAX_LEVEL - 6 :
-					archetype = "DEM";
-					break;
-				case MAX_LEVEL - 7 :
-					archetype = "ANG";
-					break;
-				case MAX_LEVEL - 8 :
-					archetype = "AVA";
-					break;
-				}
-		}
+			case SURVIVAL_STEALTH:
+				st = "STE";
+				ste++;
+				break;
+			case SURVIVAL_STRENGTH:
+				st = "STR";
+				str++;
+				break;
+			case SURVIVAL_AGILITY:
+				st = "AGI";
+				agi++;
+				break;
+			case SURVIVAL_INTELLIGENCE:
+				st = "INT";
+				inte++;
+				break;
+		} */
 
-		/*
-		 * Format it up.
-		 */
-		sprintf ( buf, "[%2d %6s %s] %s%s%s%s%s%s%s%s\n\r",
-				  wch->level,
-				  wch->race < MAX_PC_RACE ? pc_race_table[wch->race].who_name
-				  : "     ",
-				  archetype,
-				  wch->incog_level >= LEVEL_HERO ? "(Incog) " : "",
-				  wch->invis_level >= LEVEL_HERO ? "(Wizi) " : "",
-				  clan_table[wch->clan].who_name,
-				  IS_SET ( wch->comm, COMM_AFK ) ? "[AFK] " : "",
-				  IS_SET ( wch->act, PLR_KILLER ) ? "(KILLER) " : "",
-				  IS_SET ( wch->act, PLR_THIEF )  ? "(THIEF) "  : "",
-				  wch->name,
-				  IS_NPC ( wch ) ? "" : wch->pcdata->title );
-		add_buf ( output, buf );
+		writeBuffer ( Format ( "\a[F333][\a[F451]%2d\a[F333]] \a[F333][\a[F451]%3s\a[F333]] \a[F333][\a[F451]%s\a[F333]] \a[F351]%13s %s^n\n\r", c->level, st.c_str(), c->sex == SEX_MALE ? "M" : "F",  c->name, flag_string.c_str() ), ch );
+		if ( IS_SET(c->sflag, CR_STAFF)) {
+			staff++;
+		} else {
+			players++;
+		}
 	}
 
-	sprintf ( buf2, "\n\rPlayers found: %d\n\r", nMatch );
-	add_buf ( output, buf2 );
-	writePage ( buf_string ( output ), ch );
-	recycle_buf ( output );
+	writeBuffer ( Format ( "\n\r\a[F333][\a[F451]%d\a[F333]] Total Players \a[F333][\a[F451]%d\a[F333]] Total Staff \a[F333][\a[F451]%d\a[F333]]STE \a[F333][\a[F451]%d\a[F333]]STR \a[F333][\a[F451]%d\a[F333]]AGI \a[F333][\a[F451]%d\a[F333]]INT\an\n\r", players, staff, ste, str, agi, inte ), ch );
+
+/*
+	if ( System.pDoubleExp )
+	{ cr->writeBuffer ( "\a[F322]The Infected City is currently giving out double experience!^n\n\r" ); }
+	if ( System.pDoubleDamage )
+	{ cr->writeBuffer ( "\a[F322]The Infected City is currently giving out double damage!^n\n\r" ); }
+	if ( System.pQuadDamage )
+	{ cr->writeBuffer ( "\a[F322]The Infected City is currently giving out quad damage!^n\n\r" ); }
+	if ( System.pFreeMove )
+	{ cr->writeBuffer ( "\a[F322]The Infected City is currently giving out free movement!^n\n\r" ); }
+	if ( System.pQuickMove )
+	{ cr->writeBuffer ( "\a[F322]The Infected City is currently giving out quick movement!^n\n\r" ); }
+
+
+	if ( System.pDayMsg ) {
+		cr->writeBuffer ( Format ( "^Y%s^n\n\r", System.pDayMsg ) );
+	} */
 	return;
 }
 

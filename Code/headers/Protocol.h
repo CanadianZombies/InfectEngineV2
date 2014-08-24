@@ -490,6 +490,7 @@ void MSDPSetArray ( descriptor_t *apDescriptor, variable_t aMSDP, const char *ap
  * stores the uptime.
  */
 void MSSPSetPlayers ( int aPlayers );
+const char *GetMSSP_Players();
 
 /******************************************************************************
  MXP functions.

@@ -3904,10 +3904,10 @@ DefineCommand ( cmd_holylight )
 
 	if ( IS_SET ( ch->act, PLR_HOLYLIGHT ) ) {
 		REMOVE_BIT ( ch->act, PLR_HOLYLIGHT );
-		writeBuffer ( "Holy light mode off.\n\r", ch );
+		writeBuffer ( "God Sight has been disabled.\n\r", ch );
 	} else {
 		SET_BIT ( ch->act, PLR_HOLYLIGHT );
-		writeBuffer ( "Holy light mode on.\n\r", ch );
+		writeBuffer ( "God Sight has been enabled.\n\r", ch );
 	}
 
 	return;

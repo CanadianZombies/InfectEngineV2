@@ -296,7 +296,7 @@ Command (	cmd_wear		);
 Command (	cmd_weather	);
 Command (	cmd_west		);
 Command (	cmd_where	);
-Command (	cmd_who		);
+Command (	cmd_users		);
 Command (	cmd_wimpy	);
 Command (	cmd_wizhelp	);
 Command (	cmd_lockdown	);

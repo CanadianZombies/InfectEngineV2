@@ -36,6 +36,8 @@
 #include "magic.h"
 #include "interp.h"
 
+const char *afk_flag = "^y{^CAFK^y}^n";
+
 
 /* item type list */
 const struct item_type		item_table	[]	= {

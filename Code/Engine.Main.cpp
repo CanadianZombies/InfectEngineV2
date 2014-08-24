@@ -1095,6 +1095,12 @@ void bust_a_prompt ( Creature *ch )
 		return;
 	}
 
+	if(ch->desc && ch->desc->editor) {
+		writeBuffer(Format("\ac{\ay%s \aR: \ay%s\ac}\an ", olc_ed_name(ch), olc_ed_vnum(ch)), ch );
+		return;
+	}
+
+
 	while ( *str != '\0' ) {
 		if ( *str != '%' ) {
 			*point++ = *str++;
