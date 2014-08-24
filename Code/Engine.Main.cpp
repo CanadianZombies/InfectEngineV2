@@ -386,16 +386,24 @@ int main ( int argc, char **argv )
 		}
 	}
 
+	// -- attempt to generate our new event manager
+	new EventManager();
+
 	log_hd ( LOG_ALL, Format ( "Attempting to gain control of socket port #%d...", port ) );
 	control = init_socket ( port );
 
 	// -- boot_db does all its own processing
 	boot_db( );
 
+	EventManager::instance().BootupEvents();
+
 	log_hd ( LOG_ALL, Format ( "InfectEngine v%s is now accepting connections on port %d.", getVersion(), port ) );
 
 	RunMudLoop ( control );
 
+	if(EventManager::instancePtr()) {
+		delete EventManager::instancePtr();
+	}
 
 	log_hd ( LOG_ALL, Format ( "Control Value: %d is scheduled to be closed...", control ) );
 	close ( control );
@@ -598,6 +606,8 @@ void RunMudLoop ( int control )
 			CATCH ( false );
 		}
 
+		// -- push our EventManager
+		EventManager::instance().updateEvents();
 
 		// -- handle output
 		for ( d = socket_list; d != NULL; d = d_next ) {

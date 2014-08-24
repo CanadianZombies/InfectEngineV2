@@ -274,6 +274,8 @@ void recycle_obj ( Item *obj )
 	}
 	obj->extra_descr = NULL;
 
+	EventManager::instance().purgeFromOwner(obj);
+
 	PURGE_DATA ( obj->name        );
 	PURGE_DATA ( obj->description );
 	PURGE_DATA ( obj->short_descr );
@@ -368,6 +370,8 @@ void recycle_char ( Creature *ch )
 	PURGE_DATA ( ch->description );
 	PURGE_DATA ( ch->prompt );
 	PURGE_DATA ( ch->prefix );
+
+	EventManager::instance().purgeFromOwner(ch);
 
         // -- zeroize the structures.
         ch->queries.querydata = NULL;

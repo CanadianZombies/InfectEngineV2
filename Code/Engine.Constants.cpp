@@ -37,6 +37,15 @@
 #include "interp.h"
 
 const char *afk_flag = "^y{^CAFK^y}^n";
+const int EV_SECOND = 1;
+const int EV_HALF = ( EV_SECOND * 30 );
+const int EV_MINUTE = ( EV_SECOND * 60 );
+const int EV_FIVE = ( EV_MINUTE * 5 );
+const int EV_TEN = ( EV_MINUTE * 10 );
+const int EV_FIFTEEN = ( EV_MINUTE * 15 );
+const int EV_HOUR = ( EV_MINUTE * 60 );
+const int EV_DAY = ( EV_HOUR * 24 );
+const int EV_WEEK = ( EV_DAY * 7 );
 
 
 /* item type list */

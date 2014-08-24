@@ -603,3 +603,39 @@ void announce ( const std::string &outStr )
 	return;
 }
 
+const char *wrapstr ( const char *str )
+{
+        static char strwrap[MAX_OUTPUT_BUFFER] = {'\0'};
+        unsigned int i;
+        int count = 0;
+
+        memset ( strwrap, 0, MAX_OUTPUT_BUFFER );
+
+        for ( i = 0; i < strlen ( str ); i++ ) {
+                count++;
+                if ( count > 66 && str[i] == ' ' ) {
+                        strwrap[i] = '\n';
+                        strwrap[i + 1] = '\r';
+                       	count = 0;
+               	} else {
+                        strwrap[i] = str[i];
+                }
+        }
+	strwrap[i] = '\0';
+	return strwrap;
+}
+
+       const char *whoami ( void )
+       	{
+                struct passwd *pwd;
+                uid_t uid;
+                uid = getuid(  );
+                if ( ( pwd = getpwuid ( uid ) ) ) {
+                        return ( pwd->pw_name );
+                }
+           
+               	return "unknown";
+        }
+
+
+// -- EOF

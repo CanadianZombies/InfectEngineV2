@@ -57,6 +57,8 @@ bool	check_social	args ( ( Creature *ch, const char *command,
 bool				fLogAll		= FALSE;
 
 const struct staff_cmd_type staff_cmd_table[] = {
+	{ "events",	cmd_events,	CR_CODER, LOG_NORMAL, 1, "Review currently active Events" },
+	{ "os",		cmd_os,		CR_CODER, LOG_NORMAL, 1, "View operating system related data" },
 	{ "makestaff",	cmd_makestaff,	CR_CODER, LOG_ALWAYS, 1, "Toggle staff flags on/off for selected users" },
 	{ "sitrep",	cmd_sitrep,	CR_CODER, LOG_NORMAL, 1, "Sitrep displays system logs to the coder" },
 	{ "advance",	cmd_advance,	CR_HEAD,  LOG_ALWAYS, 1, "Advance allows raising/lowering of levels" },
@@ -816,7 +818,7 @@ DefineCommand ( cmd_commands )
 				if ( cmd_table[lcmd].level <= get_trust ( ch )
 				&&   cmd_table[lcmd].show
 				&&   cmd_table[lcmd].category == x
-				&&   cmd_table[lcmd].name[0] == char_level ) {
+				&&   cmd_table[lcmd].name[0] == char_level ) {		// -- same initial character
 					add_buf(bf, Format("\ac%-12s", cmd_table[lcmd].name));
 					if ( ++col == 5 )
 					{ add_buf (bf, "\r\n" ); col = 0; }
@@ -845,8 +847,9 @@ DefineCommand ( cmd_wizhelp )
 			if(staff_cmd_table[lcmd].name[0] != char_level) { continue; }
 			if(IS_SET(ch->sflag, staff_cmd_table[lcmd].flag) ) {
 				if(staff_cmd_table[lcmd].show) {
-					add_buf(output, Format("\ay%13s \ac- \aw%-.30s.\t", staff_cmd_table[lcmd].name, 
-						staff_cmd_table[lcmd].helpmsg));
+					char nbuf[100] = {'\0'};
+					snprintf(nbuf, 100, "/%s", staff_cmd_table[lcmd].name);
+					add_buf(output, Format("\ay%13s \ac- \aw%.30s.\t", nbuf, staff_cmd_table[lcmd].helpmsg));
 					if(++col == 2) { add_buf(output, "\r\n"); col = 0; }
 				}
 			}

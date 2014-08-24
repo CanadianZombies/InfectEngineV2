@@ -1836,6 +1836,9 @@ DefineCommand ( cmd_users )
 		if ( IS_SET(c->comm, COMM_AFK) ) { flag_string.append ( " ^g{^YAFK^g}" ); }
 		if ( c->fighting != NULL )   { flag_string.append ( " \a[F112]{\a[F500]COMBAT\a[F112]}" ); }
 		if ( c->desc && c->desc->editor) { flag_string.append ( " \ac[\aoOLC\ac]" ); }
+		if ( IS_HERO(c) && c->level != MAX_LEVEL) { flag_string.append( " \ar**\a[F210]H\a[F211]er\a[F210]o\ar**" ); }
+		if ( IS_HERO(c) && c->level == MAX_LEVEL) { flag_string.append( " \ar-\aR=\a[F211]{\a[F111]L\arE\aRGE\arN\a[F111]D\a[F211]}\aR=\ar- "); }
+		if ( IsStaff(c)) { flag_string.append( " \ac{ \a[F355]S\a[F211]TAF\a[F355]F \ac}"); }
 		std::string st ( "ALL" );
 		ste++;
 

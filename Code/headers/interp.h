@@ -323,6 +323,8 @@ Command ( cmd_sitrep	);
 Command ( cmd_makestaff );
 Command ( cmd_colours );
 Command ( cmd_version );
+Command ( cmd_os );
+Command ( cmd_events );
 // -- EOF
 
 

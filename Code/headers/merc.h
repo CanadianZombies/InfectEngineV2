@@ -29,6 +29,8 @@
 #include <cstdarg>
 #include <cstdlib>
 #include <cstring>
+#include <climits>
+#include <cfloat>
 
 #include <cassert>
 #include <cerrno>
@@ -51,6 +53,7 @@
 #include <sys/time.h>
 #endif
 
+#include <cxxabi.h>
 #include <sys/wait.h>
 #include <sys/resource.h>
 #include <sys/stat.h>
@@ -147,8 +150,7 @@ typedef	void CmdData	args ( ( Creature *ch, const char *L_command, const char *a
 typedef bool SPEC_FUN	args ( ( Creature *ch ) );
 typedef void SPELL_FUN	args ( ( int sn, int level, Creature *ch, void *vo,
 								 int target ) );
-
-
+typedef enum { EV_CPP = 0, EV_LUA } event_types;
 
 /*
  * String and memory management parameters.
@@ -184,6 +186,9 @@ typedef void SPELL_FUN	args ( ( int sn, int level, Creature *ch, void *vo,
 #define MAX_CLAN		    3
 #define MAX_DAMAGE_MESSAGE	   41
 #define MAX_LEVEL		   60
+#define MAX_EVENT_DATA             10
+
+
 #define LEVEL_HERO		   (MAX_LEVEL - 9)
 #define LEVEL_IMMORTAL		   (MAX_LEVEL - 8)
 
@@ -205,6 +210,9 @@ typedef void SPELL_FUN	args ( ( int sn, int level, Creature *ch, void *vo,
 #define AVATAR			(MAX_LEVEL - 8)
 #define HERO			LEVEL_HERO
 
+
+#include "Instance.h"
+#include "Events.h"
 
 
 /*
@@ -2067,6 +2075,16 @@ extern	const   char *				title_table	[MAX_CLASS]
 /*
  * Global variables.
  */
+extern const int EV_SECOND;
+extern const int EV_HALF;
+extern const int EV_MINUTE;
+extern const int EV_FIVE;
+extern const int EV_TEN;
+extern const int EV_FIFTEEN;
+extern const int EV_HOUR;
+extern const int EV_DAY;
+extern const int EV_WEEK;
+
 extern		HELP_DATA	  *	help_first;
 extern		SHOP_DATA	  *	shop_first;
 extern		const char 	  *	afk_flag;
@@ -2477,6 +2495,19 @@ const char *getVersion ( void );
 char *str_str ( const char *astr, const char *bstr );
 void announce ( const std::string &outStr );
 const char *grab_time_log ( time_t the_ttime );
+const char *wrapstr(const char *str);
+const char *whoami();
+
+// Utilities.Twitter.cpp
+const char *getDateTime ( time_t timeVal );
+char* all_capitalize ( const char *str );
+void issueSystemCommandNoReturn ( const std::string &argument );
+std::string ChopString ( const std::string &argument, std::string &first );
+bool SameString ( const std::string &a, const std::string &b );
+bool IsSameList ( const std::string &nameToFind, const std::string &namelist );
+std::string addTweetHashtags ( const std::string &tweetStr );
+void tweetStatement ( const std::string &tweet );
+
 
 
 /* save.c */

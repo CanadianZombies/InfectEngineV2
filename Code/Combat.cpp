@@ -1563,6 +1563,9 @@ void raw_kill ( Creature *victim )
 	death_cry ( victim );
 	make_corpse ( victim );
 
+	// -- yank out our events that are attached to the life of the victim
+	EventManager::instance().extractOnDeath(victim);
+
 	if ( IS_NPC ( victim ) ) {
 		victim->pIndexData->killed++;
 		kill_table[URANGE ( 0, victim->level, MAX_LEVEL - 1 )].killed++;

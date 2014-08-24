@@ -2851,8 +2851,7 @@ DefineCommand ( cmd_areas )
 	{ pArea2 = pArea2->next; }
 
 	for ( iArea = 0; iArea < iAreaHalf; iArea++ ) {
-		writeBuffer ( Format ( "%-39s%-39s\n\r",
-							   pArea1->name, ( pArea2 != NULL ) ? pArea2->name : "" ), ch );
+		writeBuffer ( Format ( "%-39s%-39s\n\r", pArea1->name, ( pArea2 != NULL ) ? pArea2->name : "" ), ch );
 		pArea1 = pArea1->next;
 		if ( pArea2 != NULL )
 		{ pArea2 = pArea2->next; }
