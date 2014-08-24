@@ -169,7 +169,7 @@ version:
 	@echo "const unsigned long mudVersion = $(shell cat $(VERSION_FILE))+1;" >> Version.h
 	@echo "#endif" >> Version.h
 	@mv Version.h $(H_DIR)/Version.h
-	@echo "$(COLOUR_LRED)Revision control completed!$(COLOUR_NORMAL)"
+	@echo "$(COLOUR_LRED)New build number assigned, attempting to build: $(COLOUR_NORMAL)"
 
 #####################################################################################################
 #Generate our engine for execution, this will build, and force the system into the next steps listed
@@ -187,7 +187,7 @@ $(ENGINE): ${sort ${OBJECT_FILES} }
 #Generate our .o (object) files based off of our .cpp files
 .PHONY: .cpp.o
 $(O_DIR)/%.o: %.cpp
-	@echo "$(COLOUR_LWHITE)`date +"%X"`$(COLOUR_LRED)  >>  Building $(COLOUR_DBLUE)$<$(COLOUR_LRED)..."
+	@echo "       $(COLOUR_LWHITE)`date +"%X"`$(COLOUR_LRED)  >>  Building $(COLOUR_DBLUE)$<$(COLOUR_LRED)..."
 	@${COMPILER} ${INCLUDE_FLAGS} -c $(COMPILE_FLAGS) ${CMP_STR} $<
 	@mv *.o $(O_DIR)
 

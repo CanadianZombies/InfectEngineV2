@@ -96,6 +96,22 @@ void sitrep ( int bitvector, const std::string &str )
 	return;
 }
 
+bool file_exists ( const char *name )
+{
+        struct stat fst;
+
+        if (IS_NULLSTR( name ) )
+        { return false; }
+
+        if ( stat ( name, &fst ) != -1 )
+        { return true; }
+        else
+        { return false; }
+
+        return false;
+}
+
+
 // ------------------------------------------------------------------------------
 // -- Function:     _log_hd
 // -- Arguments:    flag identifier, logged string
@@ -271,12 +287,12 @@ void _log_hd ( long logFlag, const char *mFile, const char *mFunction, int mLine
 					// -- the current stack leading up to a shutdown/crash/etc.
 					if ( ++debugCounter > 500 ) {
 						unlink ( Format ( "%s%s/%d/%s", LOG_DIR, the_date, getpid(), DEBUG_FILE ) );
-						debugCounter = 0;
+						debugCounter = 1;
 					}
 					if ( ( fp = fopen ( Format ( "%s%s/%d/%s", LOG_DIR, the_date, getpid(), DEBUG_FILE ), "a" ) ) != NULL ) {
 
 						// -- always ensure our Engine Version is associated with all new files
-						if(debugCounter == 0) {
+						if(debugCounter == 1) {
 							fprintf(fp, "Engine Version: %s\n", getVersion());
 						}
 						fprintf ( fp, "\t(%d)%s : %s : %s : %d : %s\n", debugCounter, the_time, mFile, mFunction, mLine, C_STR ( logStr ) );
@@ -285,8 +301,16 @@ void _log_hd ( long logFlag, const char *mFile, const char *mFunction, int mLine
 					sitrep ( log_table[logX].crFlagSitrep, Format ( "\a[F350](\a[F541]%s\a[F350]) (%d) %s%s : %s\an", log_table[logX].broadcast, debugCounter, log_table[logX].colour, the_time, C_STR ( logOutStr ) ) );
 
 				} else {
+					bool exists = true;
+					if(!file_exists(Format("%s%s/%d/%s.log", LOG_DIR, the_date, getpid(), log_table[logX].extension))) {
+						exists = false;
+					}
 					// -- not a debug message? Log it to its appropriate log.
 					if ( ( fp = fopen ( Format ( "%s%s/%d/%s.log", LOG_DIR, the_date, getpid(), log_table[logX].extension ), "a" ) ) != NULL ) {
+						// -- if we didn't exist, we put the engine version at the top of the log file
+						if(!exists) {
+							fprintf ( fp, "Engine Version: %s\n", getVersion());
+						}
 						fprintf ( fp, "\t%s : %s : %s : %d : %s\n", the_time, mFile, mFunction, mLine, C_STR ( logStr ) );
 					}
 					// -- sitrep our log out to those who can listen to it.

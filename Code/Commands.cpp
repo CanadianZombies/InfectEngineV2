@@ -804,7 +804,7 @@ DefineCommand ( cmd_commands )
 		switch(x) {
 			default:
 				break;
-			case CAT_MOVE: add_buf(bf, 	"\ay*** \aROMovement \ay***\an\r\n"); break;
+			case CAT_MOVE: add_buf(bf, 	"\ay*** \aRMovement \ay***\an\r\n"); break;
 			case CAT_COMM: add_buf(bf, 	"\ay*** \aRCommunication \ay***\an\r\n"); break;
 			case CAT_COMBAT: add_buf(bf, 	"\ay*** \aRCombat / Skills \ay***\an\r\n"); break;
 			case CAT_ITEM: add_buf(bf, 	"\ay*** \aRItem \ay***\an\r\n"); break;
