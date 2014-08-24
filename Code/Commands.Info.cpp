@@ -2350,9 +2350,9 @@ DefineCommand ( cmd_practice )
 			writeBuffer ( buf, ch );
 		} else {
 			ch->practice--;
-			ch->pcdata->learned[sn] +=
-				int_app[get_curr_stat ( ch, STAT_INT )].learn /
-				skill_table[sn].rating[ch->archetype];
+
+			// increment by ten!
+			ch->pcdata->learned[sn] += 10;
 			if ( ch->pcdata->learned[sn] < adept ) {
 				act ( "You practice $T.",
 					  ch, NULL, skill_table[sn].name, TO_CHAR );
@@ -2364,6 +2364,10 @@ DefineCommand ( cmd_practice )
 					  ch, NULL, skill_table[sn].name, TO_CHAR );
 				act ( "$n is now learned at $T.",
 					  ch, NULL, skill_table[sn].name, TO_ROOM );
+			}
+			if(ch->pcdata->learned[sn] >= 100) {
+				ch->pcdata->learned[sn] = 100;
+				writeBuffer(Format("You have mastered the skill: %s\r\n", skill_table[sn].name), ch);
 			}
 		}
 	}

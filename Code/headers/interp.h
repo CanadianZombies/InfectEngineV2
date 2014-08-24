@@ -46,17 +46,24 @@ void _cmd_function args ( ( Creature *ch, CmdData *cmd_fun, const char *L_comman
 
 #define COM_INGORE	1
 
-
+#define CAT_MOVE 	1
+#define CAT_COMM 	2
+#define CAT_COMBAT 	3
+#define CAT_ITEM 	4
+#define CAT_INFO	5
+#define CAT_CONFIG      6
+#define MAX_CATEGORY    7
 /*
  * Structure for a command in the command lookup table.
  */
 struct	cmd_type {
 	const char * 	name;
-	CmdData *		cmd_fun;
+	CmdData *	cmd_fun;
 	sh_int		position;
 	sh_int		level;
 	sh_int		log;
-	sh_int              show;
+	sh_int          show;
+	sh_int		category;
 };
 
 struct staff_cmd_type {
@@ -140,7 +147,6 @@ Command (	cmd_flee		);
 Command (	cmd_follow	);
 Command (	cmd_force	);
 Command (	cmd_freeze	);
-Command ( cmd_gain		);
 Command (	cmd_get		);
 Command (	cmd_give		);
 Command ( cmd_gossip	);

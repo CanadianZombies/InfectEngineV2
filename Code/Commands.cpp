@@ -87,7 +87,7 @@ const struct staff_cmd_type staff_cmd_table[] = {
 
 	{ "gecho",	cmd_echo,	CR_RELATIONS, LOG_ALWAYS, 1, "Globally echo a selected string" },
 	{ "load",	cmd_load, CR_RELATIONS|CR_BUILDER, LOG_ALWAYS, 1, "Load a NPC/Item into the game" },
-	{ "newbielockdown",	cmd_newbielockdown,	CR_SECURITY,  LOG_ALWAYS, 1, "Block newbies from entering the MUD" },
+	{ "newblockdown",	cmd_newbielockdown,	CR_SECURITY,  LOG_ALWAYS, 1, "Block newbies from entering the MUD" },
 
 	{ "flag",	cmd_flag,	CR_RELATIONS,	LOG_ALWAYS, 1, "Change assigned flags to a loaded Item or NPC/Player" },
 	{ "freeze",	cmd_freeze,	CR_SECURITY,	LOG_ALWAYS, 1, "Completely freeze a player in his/her place"},
@@ -152,186 +152,181 @@ const struct staff_cmd_type staff_cmd_table[] = {
  * Command table.
  */
 const	struct	cmd_type	cmd_table	[] = {
-	/*
-	 * Common movement commands.
-	 */
-	{ "north",		cmd_north,	POS_STANDING,    0,  LOG_NEVER, 0 },
-	{ "east",		cmd_east,	POS_STANDING,	 0,  LOG_NEVER, 0 },
-	{ "south",		cmd_south,	POS_STANDING,	 0,  LOG_NEVER, 0 },
-	{ "west",		cmd_west,	POS_STANDING,	 0,  LOG_NEVER, 0 },
-	{ "up",		cmd_up,		POS_STANDING,	 0,  LOG_NEVER, 0 },
-	{ "down",		cmd_down,	POS_STANDING,	 0,  LOG_NEVER, 0 },
 
-	{ "cast",		cmd_cast,	POS_FIGHTING,	 0,  LOG_NORMAL, 1 },
-	{ "auction",        cmd_auction,     POS_SLEEPING,    0,  LOG_NORMAL, 1 },
-	{ "buy",		cmd_buy,		POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "channels",       cmd_channels,    POS_DEAD,        0,  LOG_NORMAL, 1 },
-	{ "exits",		cmd_exits,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "get",		cmd_get,		POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "group",          cmd_group,       POS_SLEEPING,    0,  LOG_NORMAL, 1 },
-	{ "hit",		cmd_kill,	POS_FIGHTING,	 0,  LOG_NORMAL, 0 },
-	{ "backpack",	cmd_inventory,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "kill",		cmd_kill,	POS_FIGHTING,	 0,  LOG_NORMAL, 1 },
-	{ "look",		cmd_look,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "clan",		cmd_clantalk,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
-	{ "music",          cmd_music,   	POS_SLEEPING,    0,  LOG_NORMAL, 1 },
-	{ "order",		cmd_order,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "practice",       cmd_practice,	POS_SLEEPING,    0,  LOG_NORMAL, 1 },
-	{ "rest",		cmd_rest,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
-	{ "sit",		cmd_sit,		POS_SLEEPING,    0,  LOG_NORMAL, 1 },
-	{ "stand",		cmd_stand,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
-	{ "tell",		cmd_tell,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "unlock",         cmd_unlock,      POS_RESTING,     0,  LOG_NORMAL, 1 },
-	{ "wield",		cmd_wear,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
+	{ "north",		cmd_north,	POS_STANDING,    0,  LOG_NEVER, 1, CAT_MOVE },
+	{ "east",		cmd_east,	POS_STANDING,	 0,  LOG_NEVER, 1, CAT_MOVE },
+	{ "south",		cmd_south,	POS_STANDING,	 0,  LOG_NEVER, 1, CAT_MOVE },
+	{ "west",		cmd_west,	POS_STANDING,	 0,  LOG_NEVER, 1, CAT_MOVE },
+	{ "up",			cmd_up,		POS_STANDING,	 0,  LOG_NEVER, 1, CAT_MOVE },
+	{ "down",		cmd_down,	POS_STANDING,	 0,  LOG_NEVER, 1, CAT_MOVE },
 
-	{ "affects",	cmd_affects,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "zones",		cmd_areas,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "changes",	cmd_changes,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "commands",	cmd_commands,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "compare",	cmd_compare,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "consider",	cmd_consider,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "count",		cmd_count,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
-	{ "credits",	cmd_credits,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "gear",		cmd_equipment,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "examine",	cmd_examine,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "help",		cmd_help,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "idea",		cmd_idea,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "info",           cmd_groups,      POS_SLEEPING,    0,  LOG_NORMAL, 1 },
-	{ "motd",		cmd_motd,	POS_DEAD,        0,  LOG_NORMAL, 1 },
-	{ "news",		cmd_news,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "read",		cmd_read,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "report",		cmd_report,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "rules",		cmd_rules,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "sheet",		cmd_score,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "skills",		cmd_skills,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "socials",	cmd_socials,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "show",		cmd_show,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "spells",		cmd_spells,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "story",		cmd_story,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "time",		cmd_time,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "weather",	cmd_weather,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "users",		cmd_users,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "worth",		cmd_worth,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
+	{ "cast",		cmd_cast,	POS_FIGHTING,	 0,  LOG_NORMAL, 1, CAT_COMBAT },
+	{ "auction",        	cmd_auction,     POS_SLEEPING,    0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "buy",		cmd_buy,		POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "channels",       	cmd_channels,    POS_DEAD,        0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "exits",		cmd_exits,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "get",		cmd_get,		POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "group",          	cmd_group,       POS_SLEEPING,    0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "hit",		cmd_kill,	POS_FIGHTING,	 0,  LOG_NORMAL, 0, CAT_COMBAT },
+	{ "backpack",		cmd_inventory,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "kill",		cmd_kill,	POS_FIGHTING,	 0,  LOG_NORMAL, 1, CAT_COMBAT },
+	{ "look",		cmd_look,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "clan",		cmd_clantalk,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "music",          cmd_music,   	POS_SLEEPING,    0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "order",		cmd_order,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_COMBAT },
+	{ "practice",       cmd_practice,	POS_SLEEPING,    0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "rest",		cmd_rest,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_MOVE },
+	{ "sit",		cmd_sit,	POS_SLEEPING,    0,  LOG_NORMAL, 1, CAT_MOVE },
+	{ "stand",		cmd_stand,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_MOVE },
+	{ "tell",		cmd_tell,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "unlock",         	cmd_unlock,      POS_RESTING,    0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "wield",		cmd_wear,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
 
-	{ "alia",		cmd_alia,	POS_DEAD,	 0,  LOG_NORMAL, 0 },
-	{ "alias",		cmd_alias,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "autolist",	cmd_autolist,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "autoassist",	cmd_autoassist,	POS_DEAD,        0,  LOG_NORMAL, 1 },
-	{ "autoexit",	cmd_autoexit,	POS_DEAD,        0,  LOG_NORMAL, 1 },
-	{ "autogold",	cmd_autogold,	POS_DEAD,        0,  LOG_NORMAL, 1 },
-	{ "autoloot",	cmd_autoloot,	POS_DEAD,        0,  LOG_NORMAL, 1 },
-	{ "autosac",	cmd_autosac,	POS_DEAD,        0,  LOG_NORMAL, 1 },
-	{ "autosplit",	cmd_autosplit,	POS_DEAD,        0,  LOG_NORMAL, 1 },
-	{ "brief",		cmd_brief,	POS_DEAD,        0,  LOG_NORMAL, 1 },
-	{ "combine",	cmd_combine,	POS_DEAD,        0,  LOG_NORMAL, 1 },
-	{ "compact",	cmd_compact,	POS_DEAD,        0,  LOG_NORMAL, 1 },
-	{ "colours",	cmd_colours,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "description",	cmd_description,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "delet",		cmd_delet,	POS_DEAD,	 0,  LOG_ALWAYS, 0 },
-	{ "delete",		cmd_delete,	POS_STANDING,	 0,  LOG_ALWAYS, 1 },
-	{ "nofollow",	cmd_nofollow,	POS_DEAD,        0,  LOG_NORMAL, 1 },
-	{ "noloot",		cmd_noloot,	POS_DEAD,        0,  LOG_NORMAL, 1 },
-	{ "nosummon",	cmd_nosummon,	POS_DEAD,        0,  LOG_NORMAL, 1 },
-	{ "outfit",		cmd_outfit,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "password",	cmd_password,	POS_DEAD,	 0,  LOG_NEVER,  1 },
-	{ "prompt",		cmd_prompt,	POS_DEAD,        0,  LOG_NORMAL, 1 },
-	{ "scroll",		cmd_scroll,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "title",		cmd_title,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "unalias",	cmd_unalias,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "wimpy",		cmd_wimpy,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
+	{ "affects",		cmd_affects,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "zones",		cmd_areas,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "changes",		cmd_changes,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "commands",		cmd_commands,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "compare",		cmd_compare,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "consider",		cmd_consider,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "count",		cmd_count,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "credits",		cmd_credits,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "gear",		cmd_equipment,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "examine",		cmd_examine,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "help",		cmd_help,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "idea",		cmd_idea,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "info",           	cmd_groups,     POS_SLEEPING,    0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "motd",		cmd_motd,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "news",		cmd_news,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "read",		cmd_read,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "report",		cmd_report,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "rules",		cmd_rules,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "sheet",		cmd_score,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "skills",		cmd_skills,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "socials",		cmd_socials,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "show",		cmd_show,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "spells",		cmd_spells,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "story",		cmd_story,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "time",		cmd_time,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "weather",		cmd_weather,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "users",		cmd_users,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "worth",		cmd_worth,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_INFO },
 
-	{ "afk",		cmd_afk,		POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
-	{ "answer",		cmd_answer,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
-	{ "deaf",		cmd_deaf,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "emote",		cmd_emote,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "pmote",		cmd_pmote,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ ".",		cmd_gossip,	POS_SLEEPING,	 0,  LOG_NORMAL, 0 },
-	{ "gossip",		cmd_gossip,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
-	{ ",",		cmd_emote,	POS_RESTING,	 0,  LOG_NORMAL, 0 },
-	{ "grats",		cmd_grats,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
-	{ "gtell",		cmd_gtell,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ ";",		cmd_gtell,	POS_DEAD,	 0,  LOG_NORMAL, 0 },
-	{ "note",		cmd_note,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
-	{ "pose",		cmd_pose,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "question",	cmd_question,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
-	{ "quote",		cmd_quote,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
-	{ "quiet",		cmd_quiet,	POS_SLEEPING, 	 0,  LOG_NORMAL, 1 },
-	{ "reply",		cmd_reply,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
-	{ "replay",		cmd_replay,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
-	{ "say",		cmd_say,		POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "'",		cmd_say,		POS_RESTING,	 0,  LOG_NORMAL, 0 },
-	{ "shout",		cmd_shout,	POS_RESTING,	 3,  LOG_NORMAL, 1 },
-	{ "unread",		cmd_unread,	POS_SLEEPING,    0,  LOG_NORMAL, 1 },
-	{ "yell",		cmd_yell,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
+	{ "alia",		cmd_alia,	POS_DEAD,	 0,  LOG_NORMAL, 0, CAT_CONFIG },
+	{ "alias",		cmd_alias,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "autolist",	cmd_autolist,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "autoassist",	cmd_autoassist,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "autoexit",	cmd_autoexit,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "autogold",	cmd_autogold,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "autoloot",	cmd_autoloot,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "autosac",	cmd_autosac,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "autosplit",	cmd_autosplit,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "brief",		cmd_brief,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "combine",	cmd_combine,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "compact",	cmd_compact,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "colours",	cmd_colours,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "description",	cmd_description,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "delet",		cmd_delet,	POS_DEAD,	 0,  LOG_ALWAYS, 0, CAT_CONFIG },
+	{ "delete",		cmd_delete,	POS_STANDING,	 0,  LOG_ALWAYS, 1, CAT_CONFIG },
+	{ "nofollow",	cmd_nofollow,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "noloot",		cmd_noloot,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "nosummon",	cmd_nosummon,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "outfit",		cmd_outfit,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "password",	cmd_password,	POS_DEAD,	 0,  LOG_NEVER,  1, CAT_CONFIG },
+	{ "prompt",		cmd_prompt,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "scroll",		cmd_scroll,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "title",		cmd_title,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "unalias",	cmd_unalias,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "wimpy",		cmd_wimpy,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_CONFIG },
 
-	{ "brandish",	cmd_brandish,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "close",		cmd_close,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "drink",		cmd_drink,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "drop",		cmd_drop,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "eat",		cmd_eat,		POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "envenom",	cmd_envenom,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "fill",		cmd_fill,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "give",		cmd_give,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "heal",		cmd_heal,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "hold",		cmd_wear,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "list",		cmd_list,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "lock",		cmd_lock,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "open",		cmd_open,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "pick",		cmd_pick,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "pour",		cmd_pour,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "put",		cmd_put,		POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "quaff",		cmd_quaff,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "recite",		cmd_recite,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "remove",		cmd_remove,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "sell",		cmd_sell,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "take",		cmd_get,		POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "sacrifice",	cmd_sacrifice,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "junk",           cmd_sacrifice,   POS_RESTING,     0,  LOG_NORMAL, 0 },
-	{ "tap",      	cmd_sacrifice,   POS_RESTING,     0,  LOG_NORMAL, 0 },
-	{ "value",		cmd_value,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "wear",		cmd_wear,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "zap",		cmd_zap,		POS_RESTING,	 0,  LOG_NORMAL, 1 },
+	{ "afk",		cmd_afk,		POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "answer",		cmd_answer,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "deaf",		cmd_deaf,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "emote",		cmd_emote,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "pmote",		cmd_pmote,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ ".",			cmd_gossip,	POS_SLEEPING,	 0,  LOG_NORMAL, 0, CAT_COMM },
+	{ "gossip",		cmd_gossip,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ ",",			cmd_emote,	POS_RESTING,	 0,  LOG_NORMAL, 0, CAT_COMM },
+	{ "grats",		cmd_grats,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "gtell",		cmd_gtell,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ ";",			cmd_gtell,	POS_DEAD,	 0,  LOG_NORMAL, 0, CAT_COMM },
+	{ "note",		cmd_note,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "pose",		cmd_pose,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "question",		cmd_question,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "quote",		cmd_quote,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "quiet",		cmd_quiet,	POS_SLEEPING, 	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "reply",		cmd_reply,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "replay",		cmd_replay,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "say",		cmd_say,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "'",			cmd_say,	POS_RESTING,	 0,  LOG_NORMAL, 0, CAT_COMM },
+	{ "shout",		cmd_shout,	POS_RESTING,	 3,  LOG_NORMAL, 1, CAT_COMM },
+	{ "unread",		cmd_unread,	POS_SLEEPING,    0,  LOG_NORMAL, 1, CAT_COMM },
+	{ "yell",		cmd_yell,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_COMM },
 
-	{ "backstab",	cmd_backstab,	POS_FIGHTING,	 0,  LOG_NORMAL, 1 },
-	{ "bash",		cmd_bash,	POS_FIGHTING,    0,  LOG_NORMAL, 1 },
-	{ "bs",		cmd_backstab,	POS_FIGHTING,	 0,  LOG_NORMAL, 0 },
-	{ "berserk",	cmd_berserk,	POS_FIGHTING,	 0,  LOG_NORMAL, 1 },
-	{ "dirt",		cmd_dirt,	POS_FIGHTING,	 0,  LOG_NORMAL, 1 },
-	{ "disarm",		cmd_disarm,	POS_FIGHTING,	 0,  LOG_NORMAL, 1 },
-	{ "flee",		cmd_flee,	POS_FIGHTING,	 0,  LOG_NORMAL, 1 },
-	{ "kick",		cmd_kick,	POS_FIGHTING,	 0,  LOG_NORMAL, 1 },
-	{ "murde",		cmd_murde,	POS_FIGHTING,	 0,  LOG_NORMAL, 0 },
-	{ "murder",		cmd_murder,	POS_FIGHTING,	 5,  LOG_ALWAYS, 1 },
-	{ "rescue",		cmd_rescue,	POS_FIGHTING,	 0,  LOG_NORMAL, 0 },
-	{ "surrender",	cmd_surrender,	POS_FIGHTING,    0,  LOG_NORMAL, 1 },
-	{ "trip",		cmd_trip,	POS_FIGHTING,    0,  LOG_NORMAL, 1 },
+	{ "brandish",		cmd_brandish,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "close",		cmd_close,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "drink",		cmd_drink,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "drop",		cmd_drop,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "eat",		cmd_eat,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "envenom",		cmd_envenom,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "fill",		cmd_fill,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "give",		cmd_give,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "heal",		cmd_heal,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "hold",		cmd_wear,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "list",		cmd_list,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "lock",		cmd_lock,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "open",		cmd_open,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "pick",		cmd_pick,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "pour",		cmd_pour,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "put",		cmd_put,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "quaff",		cmd_quaff,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "recite",		cmd_recite,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "remove",		cmd_remove,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "sell",		cmd_sell,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "take",		cmd_get,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "sacrifice",		cmd_sacrifice,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "value",		cmd_value,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "wear",		cmd_wear,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "zap",		cmd_zap,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
 
-	{ "mob",		cmd_mob,		POS_DEAD,	 0,  LOG_NEVER,  0 },
+	{ "backstab",		cmd_backstab,	POS_FIGHTING,	 0,  LOG_NORMAL, 1, CAT_COMBAT },
+	{ "bash",		cmd_bash,	POS_FIGHTING,    0,  LOG_NORMAL, 1, CAT_COMBAT },
+	{ "bs",			cmd_backstab,	POS_FIGHTING,	 0,  LOG_NORMAL, 0, CAT_COMBAT },
+	{ "berserk",		cmd_berserk,	POS_FIGHTING,	 0,  LOG_NORMAL, 1, CAT_COMBAT },
+	{ "dirt",		cmd_dirt,	POS_FIGHTING,	 0,  LOG_NORMAL, 1, CAT_COMBAT },
+	{ "disarm",		cmd_disarm,	POS_FIGHTING,	 0,  LOG_NORMAL, 1, CAT_COMBAT },
+	{ "flee",		cmd_flee,	POS_FIGHTING,	 0,  LOG_NORMAL, 1, CAT_COMBAT },
+	{ "kick",		cmd_kick,	POS_FIGHTING,	 0,  LOG_NORMAL, 1, CAT_COMBAT },
+	{ "murde",		cmd_murde,	POS_FIGHTING,	 0,  LOG_NORMAL, 0, CAT_COMBAT },
+	{ "murder",		cmd_murder,	POS_FIGHTING,	 5,  LOG_ALWAYS, 1, CAT_COMBAT },
+	{ "rescue",		cmd_rescue,	POS_FIGHTING,	 0,  LOG_NORMAL, 0, CAT_COMBAT },
+	{ "surrender",		cmd_surrender,	POS_FIGHTING,    0,  LOG_NORMAL, 1, CAT_COMBAT },
+	{ "trip",		cmd_trip,	POS_FIGHTING,    0,  LOG_NORMAL, 1, CAT_COMBAT },
 
-	{ "enter", 		cmd_enter, 	POS_STANDING,	 0,  LOG_NORMAL, 1 },
-	{ "follow",		cmd_follow,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "gain",		cmd_gain,	POS_STANDING,	 0,  LOG_NORMAL, 1 },
-	{ "go",		cmd_enter,	POS_STANDING,	 0,  LOG_NORMAL, 0 },
-	{ "groups",		cmd_groups,	POS_SLEEPING,    0,  LOG_NORMAL, 1 },
-	{ "hide",		cmd_hide,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "play",		cmd_play,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "qui",		cmd_qui,		POS_DEAD,	 0,  LOG_NORMAL, 0 },
-	{ "quit",		cmd_quit,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "recall",		cmd_recall,	POS_FIGHTING,	 0,  LOG_NORMAL, 1 },
-	{ "/",		cmd_recall,	POS_FIGHTING,	 0,  LOG_NORMAL, 0 },
-	{ "rent",		cmd_rent,	POS_DEAD,	 0,  LOG_NORMAL, 0 },
-	{ "save",		cmd_save,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "sleep",		cmd_sleep,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
-	{ "sneak",		cmd_sneak,	POS_STANDING,	 0,  LOG_NORMAL, 1 },
-	{ "split",		cmd_split,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "steal",		cmd_steal,	POS_STANDING,	 0,  LOG_NORMAL, 1 },
-	{ "train",		cmd_train,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
-	{ "visible",	cmd_visible,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
-	{ "version",		cmd_version,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
-	{ "wake",		cmd_wake,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
-	{ "where",		cmd_where,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
+	{ "mob",		cmd_mob,	POS_DEAD,	 0,  LOG_NEVER,  0, CAT_INFO },
 
-	{ "",		0,		POS_DEAD,	 0,  LOG_NORMAL, 0 }
+	{ "enter", 		cmd_enter, 	POS_STANDING,	 0,  LOG_NORMAL, 1, CAT_MOVE },
+	{ "follow",		cmd_follow,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_MOVE },
+	{ "go",			cmd_enter,	POS_STANDING,	 0,  LOG_NORMAL, 0, CAT_MOVE },
+	{ "groups",		cmd_groups,	POS_SLEEPING,    0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "hide",		cmd_hide,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_COMBAT },
+	{ "play",		cmd_play,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "qui",		cmd_qui,	POS_DEAD,	 0,  LOG_NORMAL, 0, CAT_CONFIG },
+	{ "quit",		cmd_quit,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "recall",		cmd_recall,	POS_FIGHTING,	 0,  LOG_NORMAL, 1, CAT_MOVE },
+	{ "/",			cmd_recall,	POS_FIGHTING,	 0,  LOG_NORMAL, 0, CAT_MOVE },
+	{ "rent",		cmd_rent,	POS_DEAD,	 0,  LOG_NORMAL, 0, CAT_CONFIG },
+	{ "save",		cmd_save,	POS_DEAD,	 0,  LOG_NORMAL, 0, CAT_CONFIG },
+	{ "sleep",		cmd_sleep,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_MOVE },
+	{ "sneak",		cmd_sneak,	POS_STANDING,	 0,  LOG_NORMAL, 1, CAT_COMBAT },
+	{ "split",		cmd_split,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "steal",		cmd_steal,	POS_STANDING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "train",		cmd_train,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_COMBAT },
+	{ "visible",		cmd_visible,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_COMBAT },
+	{ "version",		cmd_version,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "wake",		cmd_wake,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_MOVE },
+	{ "where",		cmd_where,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_INFO },
+
+	{ "",		0,		POS_DEAD,	 0,  LOG_NORMAL, 0, CAT_INFO }
 };
 
 
@@ -782,29 +777,49 @@ char *one_argument ( const char *argument, char *arg_first )
 	return rargument;
 }
 
-/*
- * Contributed by Alander.
- */
 DefineCommand ( cmd_commands )
 {
-	char buf[MAX_STRING_LENGTH];
+	BUFFER *bf = new_buf();
 	int cmd;
 	int col;
+	char char_level;
 
 	col = 0;
-	for ( cmd = 0; cmd_table[cmd].name[0] != '\0'; cmd++ ) {
-		if ( cmd_table[cmd].level <  LEVEL_HERO
-				&&   cmd_table[cmd].level <= get_trust ( ch )
-				&&   cmd_table[cmd].show ) {
-			sprintf ( buf, "%-12s", cmd_table[cmd].name );
-			writeBuffer ( buf, ch );
-			if ( ++col % 6 == 0 )
-			{ writeBuffer ( "\n\r", ch ); }
+	for(int x = 0; x != MAX_CATEGORY; x++) {
+		if(col != 0) {
+			col = 0;
+			add_buf(bf, "\r\n");
+		}
+
+		switch(x) {
+			default:
+				break;
+			case CAT_MOVE: add_buf(bf, 	"\ay*** \aROMovement \ay***\an\r\n"); break;
+			case CAT_COMM: add_buf(bf, 	"\ay*** \aRCommunication \ay***\an\r\n"); break;
+			case CAT_COMBAT: add_buf(bf, 	"\ay*** \aRCombat / Skills \ay***\an\r\n"); break;
+			case CAT_ITEM: add_buf(bf, 	"\ay*** \aRItem \ay***\an\r\n"); break;
+			case CAT_INFO: add_buf(bf, 	"\ay*** \aRInformation \ay***\an\r\n"); break;
+			case CAT_CONFIG: add_buf(bf, 	"\ay*** \aRConfigurational \ay***\an\r\n"); break;
+		};
+		for(char_level = 'a'; char_level <= 'z'; char_level++) { 		// -- alphabetical sort (kind of)
+			for ( cmd = 0; cmd_table[cmd].name[0] != '\0'; cmd++ ) {	// -- loop through the actual commands
+				if ( cmd_table[cmd].level <= get_trust ( ch )
+				&&   cmd_table[cmd].show
+				&&   cmd_table[cmd].category == x
+				&&   cmd_table[cmd].name[0] == char_level ) {
+					add_buf(bf, Format("\ac%-12s", cmd_table[cmd].name));
+					if ( ++col == 5 )
+					{ add_buf (bf, "\r\n" ); col = 0; }
+				}
+			}
 		}
 	}
+	if ( col != 0 )
+	{ add_buf(bf, "\r\n" ); }
 
-	if ( col % 6 != 0 )
-	{ writeBuffer ( "\n\r", ch ); }
+	add_buf(bf, "\an");		// -- stop colour bleeding
+	writePage(buf_string(bf), ch);
+	recycle_buf(bf);
 	return;
 }
 
@@ -813,18 +828,28 @@ DefineCommand ( cmd_wizhelp )
 	BUFFER *output = new_buf();
 	int cmd;
 	int col = 0;
-	for ( cmd = 0; !IS_NULLSTR(staff_cmd_table[cmd].name); cmd++) {
-		if(IS_SET(ch->sflag, staff_cmd_table[cmd].flag) ) {
-			if(staff_cmd_table[cmd].show) {
-				add_buf(output, Format("\ay%13s \ac- \aw%-.30s.\an\t", staff_cmd_table[cmd].name, staff_cmd_table[cmd].helpmsg));
-				if(++col == 2) { add_buf(output, "\r\n"); col = 0; }
+	char char_level;
+
+	for(char_level = 'a'; char_level <= 'z'; char_level++) {
+		for ( cmd = 0; !IS_NULLSTR(staff_cmd_table[cmd].name); cmd++) {
+			if(staff_cmd_table[cmd].name[0] != char_level) { continue; }
+			if(IS_SET(ch->sflag, staff_cmd_table[cmd].flag) ) {
+				if(staff_cmd_table[cmd].show) {
+					add_buf(output, Format("\ay%13s \ac- \aw%-.30s.\t", staff_cmd_table[cmd].name, 
+						staff_cmd_table[cmd].helpmsg));
+					if(++col == 2) { add_buf(output, "\r\n"); col = 0; }
+				}
 			}
 		}
 	}
-
 	if(col != 0) { add_buf(output, "\r\n" ); }
+
+	add_buf(output, "\an");		// -- stop colour-bleed
 	writePage(buf_string(output), ch);
 	recycle_buf(output);
 	return;
 }
+
+
+// -- EOF
 
