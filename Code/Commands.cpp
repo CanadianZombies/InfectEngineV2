@@ -327,6 +327,7 @@ const	struct	cmd_type	cmd_table	[] = {
 	{ "steal",		cmd_steal,	POS_STANDING,	 0,  LOG_NORMAL, 1 },
 	{ "train",		cmd_train,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
 	{ "visible",	cmd_visible,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
+	{ "version",		cmd_version,	POS_DEAD,	 0,  LOG_NORMAL, 1 },
 	{ "wake",		cmd_wake,	POS_SLEEPING,	 0,  LOG_NORMAL, 1 },
 	{ "where",		cmd_where,	POS_RESTING,	 0,  LOG_NORMAL, 1 },
 

@@ -218,11 +218,13 @@ void _log_hd ( long logFlag, const char *mFile, const char *mFunction, int mLine
 					debugCounter = 0;
 					if ( ( fp = fopen ( Format ( "%s%s/%d/%s", LOG_DIR, the_date, getpid(), DEBUG_FILE ), "a" ) ) != NULL ) {
 						fprintf ( fp, "\t%s : %s\n", the_time, Format ( "Continuing new logfile from previous yday: %d", last_yday ) );
+						fprintf ( fp, "\tEngine Version: %s\n", getVersion());
 					}
 				} else {
 					// -- not a debug message? Log it to its appropriate log.
 					if ( ( fp = fopen ( Format ( "%s%s/%d/%s.log", LOG_DIR, the_date, getpid(), log_table[logX].extension ), "a" ) ) != NULL ) {
 						fprintf ( fp, "\t%s : %s\n", the_time, Format ( "Continuing new logfile from previous yday: %d", last_yday ) );
+						fprintf ( fp, "\tEngine Version: %s\n", getVersion());
 					}
 				}
 				fflush ( fp );
@@ -272,6 +274,11 @@ void _log_hd ( long logFlag, const char *mFile, const char *mFunction, int mLine
 						debugCounter = 0;
 					}
 					if ( ( fp = fopen ( Format ( "%s%s/%d/%s", LOG_DIR, the_date, getpid(), DEBUG_FILE ), "a" ) ) != NULL ) {
+
+						// -- always ensure our Engine Version is associated with all new files
+						if(debugCounter == 0) {
+							fprintf(fp, "Engine Version: %s\n", getVersion());
+						}
 						fprintf ( fp, "\t(%d)%s : %s : %s : %d : %s\n", debugCounter, the_time, mFile, mFunction, mLine, C_STR ( logStr ) );
 					}
 					// -- sitrep our log out to those who can listen to it.

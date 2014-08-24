@@ -318,6 +318,7 @@ Command ( cmd_hedit	);
 Command ( cmd_sitrep	);
 Command ( cmd_makestaff );
 Command ( cmd_colours );
+Command ( cmd_version );
 // -- EOF
 
 

@@ -1664,13 +1664,14 @@ DefineCommand ( cmd_colours )
 		for ( g = 0; g <= 5; g++ ) {
 			for ( b = 0; b <= 5; b++ ) {
 				writeBuffer ( Format ( "\a[f%d%d%d][F%d%d%d] ", r, g, b, r, g, b ), ch );
-				if ( ++cnt == 15 ) {
+				if ( ++cnt == 10 ) {
 					cnt = 0;
 					writeBuffer ( "\n\r",ch );
 				}
 			}
 		}
 	}
+	writeBuffer("\r\n",ch);
 /*
 	if ( SameString ( argument, "on" ) ) {
 		cr->bools.is_colourful = true;
@@ -1834,9 +1835,10 @@ DefineCommand ( cmd_users )
 		if ( IS_NPC(c) ) { continue; }
 		if ( IS_SET(c->comm, COMM_AFK) ) { flag_string.append ( " ^g{^YAFK^g}" ); }
 		if ( c->fighting != NULL )   { flag_string.append ( " \a[F112]{\a[F500]COMBAT\a[F112]}" ); }
-
+		if ( c->desc && c->desc->editor) { flag_string.append ( " \ac[\aoOLC\ac]" ); }
 		std::string st ( "ALL" );
 		ste++;
+
 /* Disabled until completely ported from InfectEngineV1
 		switch ( c->integers.survival_type ) {
 			default:
@@ -2035,8 +2037,21 @@ DefineCommand ( cmd_compare )
 
 DefineCommand ( cmd_credits )
 {
+	cmd_function ( ch, &cmd_version, "" );
 	cmd_function ( ch, &cmd_help, "diku" );
 	return;
+}
+
+DefineCommand ( cmd_version )
+{
+	time_t lt = time ( 0 );
+	struct tm *tmt_ptr = localtime ( &lt );
+
+	writeBuffer ( Format ( "+------------------------------------------------+\n\r" ),ch );
+	writeBuffer ( Format ( "| The Infected City: V%-25s  |\n\r", getVersion() ),ch );
+	writeBuffer ( Format ( "| Written by: David Simmerson  (Omega)           |\n\r" ),ch );
+	writeBuffer ( Format ( "| Infect Engine Copyright (c) 2013-%4d.         |\n\r", ( tmt_ptr->tm_year + 1900 ) ),ch );
+	writeBuffer ( Format ( "+------------------------------------------------+\n\r" ),ch );
 }
 
 DefineCommand ( cmd_where )
