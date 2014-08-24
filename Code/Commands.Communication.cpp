@@ -63,7 +63,7 @@ DefineCommand ( cmd_delete )
 			sprintf ( strsave, "%s%s", PLAYER_DIR, capitalize ( ch->name ) );
 			wiznet ( "$N turns $Mself into line noise.", ch, NULL, 0, 0, 0 );
 			stop_fighting ( ch, TRUE );
-			cmd_function ( ch, &cmd_quit, "" );
+			cmd_function ( ch, &cmd_quit, "delete" );
 			unlink ( strsave );
 			return;
 		}
@@ -1231,12 +1231,38 @@ DefineCommand ( cmd_qui )
 	return;
 }
 
-
-
 DefineCommand ( cmd_quit )
 {
 	Socket *d, *d_next;
 	int id;
+
+	if(!str_cmp(argument, "delete")) {
+		writeBuffer ("Alas, all good things must come to an end.\n\r", ch );
+		act ( "$n has left the game.", ch, NULL, NULL, TO_ROOM );
+		log_hd ( LOG_SECURITY,  Format ( "%s has quit.", ch->name ) );
+
+		wiznet ( "$N rejoins the real world.", ch, NULL, WIZ_LOGINS, 0, get_trust ( ch ) );
+
+		save_char_obj ( ch );
+		id = ch->id;
+		d = ch->desc;
+		extract_char ( ch, TRUE );
+		if ( d != NULL )
+		{ close_socket ( d ); }
+
+		/* toast evil cheating bastards */
+		for ( d = socket_list; d != NULL; d = d_next ) {
+			Creature *tch;
+
+			d_next = d->next;
+			tch = d->original ? d->original : d->character;
+			if ( tch && tch->id == id ) {
+				extract_char ( tch, TRUE );
+				close_socket ( d );
+			}
+		}
+		return;
+	}
 
 	if ( IS_NPC ( ch ) )
 	{ return; }
@@ -1250,35 +1276,45 @@ DefineCommand ( cmd_quit )
 		writeBuffer ( "You're not DEAD yet.\n\r", ch );
 		return;
 	}
-	writeBuffer (
-		"Alas, all good things must come to an end.\n\r", ch );
-	act ( "$n has left the game.", ch, NULL, NULL, TO_ROOM );
-	log_hd ( LOG_SECURITY,  Format ( "%s has quit.", ch->name ) );
 
-	wiznet ( "$N rejoins the real world.", ch, NULL, WIZ_LOGINS, 0, get_trust ( ch ) );
+	if(cmd == 1001) {
+		switch(argument[0]) {
+		default:
+			ch->queries.querycommand = 0;
+			return;
+		case 'y':
+		case 'Y':
+			writeBuffer ("Alas, all good things must come to an end.\n\r", ch );
+			act ( "$n has left the game.", ch, NULL, NULL, TO_ROOM );
+			log_hd ( LOG_SECURITY,  Format ( "%s has quit.", ch->name ) );
 
-	/*
-	 * After extract_char the ch is no longer valid!
-	 */
-	save_char_obj ( ch );
-	id = ch->id;
-	d = ch->desc;
-	extract_char ( ch, TRUE );
-	if ( d != NULL )
-	{ close_socket ( d ); }
+			wiznet ( "$N rejoins the real world.", ch, NULL, WIZ_LOGINS, 0, get_trust ( ch ) );
 
-	/* toast evil cheating bastards */
-	for ( d = socket_list; d != NULL; d = d_next ) {
-		Creature *tch;
+			save_char_obj ( ch );
+			id = ch->id;
+			d = ch->desc;
+			extract_char ( ch, TRUE );
+			if ( d != NULL )
+			{ close_socket ( d ); }
 
-		d_next = d->next;
-		tch = d->original ? d->original : d->character;
-		if ( tch && tch->id == id ) {
-			extract_char ( tch, TRUE );
-			close_socket ( d );
+			/* toast evil cheating bastards */
+			for ( d = socket_list; d != NULL; d = d_next ) {
+				Creature *tch;
+
+				d_next = d->next;
+				tch = d->original ? d->original : d->character;
+				if ( tch && tch->id == id ) {
+					extract_char ( tch, TRUE );
+					close_socket ( d );
+				}
+			}
+			return; // -- end case y
 		}
 	}
-
+	// -- set up the query prompt
+	ch->queries.queryfunc = cmd_quit;
+	strcpy(ch->queries.queryprompt, "Are you sure you want to quit? (Y/n)");
+	ch->queries.querycommand = 1001;
 	return;
 }
 

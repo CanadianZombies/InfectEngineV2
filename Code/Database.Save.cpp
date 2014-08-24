@@ -30,6 +30,7 @@
 #include <string.h>
 #include <time.h>
 #include "merc.h"
+#include "interp.h"
 #include "tables.h"
 #include "olc.h"
 
@@ -1038,7 +1039,7 @@ DefineCommand ( cmd_asave )
 	/* Show correct syntax. */
 	/* -------------------- */
 	if ( ch )
-	{ cmd_asave ( ch, STR ( cmd_asave ), "" ); }
+	{ cmd_function(ch, cmd_asave, "" ); }
 
 	return;
 }

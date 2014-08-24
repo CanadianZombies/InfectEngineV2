@@ -107,7 +107,7 @@ void mob_interpret ( Creature *ch, const char *argument )
 	for ( cmd = 0; mob_cmd_table[cmd].name[0] != '\0'; cmd++ ) {
 		if ( command[0] == mob_cmd_table[cmd].name[0]
 				&&   !str_prefix ( command, mob_cmd_table[cmd].name ) ) {
-			( *mob_cmd_table[cmd].cmd_fun ) ( ch, command, argument );
+			( *mob_cmd_table[cmd].cmd_fun ) ( ch, command, argument, cmd );
 			tail_chain( );
 			return;
 		}

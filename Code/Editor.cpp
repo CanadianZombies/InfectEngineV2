@@ -625,7 +625,7 @@ const struct editor_cmd_type editor_table[] = {
 DefineCommand ( cmd_olc )
 {
 	char command[MAX_INPUT_LENGTH];
-	int  cmd;
+	int  lcmd;
 
 	if ( IS_NPC ( ch ) )
 	{ return; }
@@ -638,9 +638,9 @@ DefineCommand ( cmd_olc )
 	}
 
 	/* Search Table and Dispatch Command. */
-	for ( cmd = 0; editor_table[cmd].name != NULL; cmd++ ) {
-		if ( !str_prefix ( command, editor_table[cmd].name ) ) {
-			( *editor_table[cmd].cmd_fun ) ( ch, command, argument );
+	for ( lcmd = 0; editor_table[lcmd].name != NULL; lcmd++ ) {
+		if ( !str_prefix ( command, editor_table[lcmd].name ) ) {
+			( *editor_table[lcmd].cmd_fun ) ( ch, command, argument, lcmd );
 			return;
 		}
 	}

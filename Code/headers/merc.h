@@ -143,7 +143,7 @@ typedef struct  mprog_code		MPROG_CODE;
 /*
  * Function types.
  */
-typedef	void CmdData	args ( ( Creature *ch, const char *L_command, const char *argument ) );
+typedef	void CmdData	args ( ( Creature *ch, const char *L_command, const char *argument, int cmd ) );
 typedef bool SPEC_FUN	args ( ( Creature *ch ) );
 typedef void SPELL_FUN	args ( ( int sn, int level, Creature *ch, void *vo,
 								 int target ) );
@@ -1402,6 +1402,18 @@ struct mem_data {
 	time_t 	when;
 };
 
+struct critter_query {
+	void *querydata;
+	void  ( *queryfunc ) ( Creature *c,  const char * L_command, const char *argument, int cmd );
+	int ( *queryintfunc ) ( Creature *c, int, const std::string & );
+
+	char queryprompt[1000];  /* prompt for special queries */
+	char queryprompt2[1000];  /* prompt for special queries */
+
+	const char *query_string; /* assign_string'd string that we want to carry over */
+	int querycommand;        /* command for queries */
+	int queryintcommand;     /* command for queries returning integers */
+};
 
 /*
  * One character (PC or NPC).
@@ -1415,6 +1427,9 @@ struct	char_data {
 	Creature *		reply;
 	Creature *		pet;
 	Creature *		mprog_target;
+
+	critter_query		queries;
+
 	MobMemory *		memory;
 	SPEC_FUN *		spec_fun;
 	NPCData *	pIndexData;
@@ -2419,7 +2434,7 @@ const char *  comm_bit_name	args ( ( int comm_flags ) );
 const char *	cont_bit_name	args ( ( int cont_flags ) );
 
 /* interp.c */
-#define DefineCommand(name)   void name (Creature *ch, const char *L_command, const char *argument)
+#define DefineCommand(name)   void name (Creature *ch, const char *L_command, const char *argument, int cmd)
 void	interpret	args ( ( Creature *ch, const char *argument ) );
 bool	is_number	args ( ( const char *arg ) );
 int	number_argument	args ( ( const char *argument, char *arg ) );

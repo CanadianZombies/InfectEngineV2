@@ -1819,67 +1819,75 @@ DefineCommand ( cmd_mwhere )
 	return;
 }
 
-
-
-DefineCommand ( cmd_reboo )
-{
-	writeBuffer ( "If you want to REBOOT, spell it out.\n\r", ch );
-	return;
-}
-
-
-
 DefineCommand ( cmd_reboot )
 {
-	char buf[MAX_STRING_LENGTH];
 	extern bool is_shutdown;
 	Socket *d, *d_next;
 	Creature *vch;
 
-	if ( ch->invis_level < LEVEL_HERO ) {
-		sprintf ( buf, "Reboot by %s.", ch->name );
-		cmd_function ( ch, &cmd_echo, buf );
-	}
+	if(cmd == 307) {
+		switch(argument[0]) {
+			default:
+				ch->queries.querycommand = 0;
+				break;
+			case 'y':
+			case 'Y':
+				if ( ch->invis_level < LEVEL_HERO ) {
+					cmd_function ( ch, &cmd_echo, Format("Reboot by %s.", ch->name) );
+				}
 
-	is_shutdown = TRUE;
-	for ( d = socket_list; d != NULL; d = d_next ) {
-		d_next = d->next;
-		vch = d->original ? d->original : d->character;
-		if ( vch != NULL )
-		{ save_char_obj ( vch ); }
-		close_socket ( d );
+				is_shutdown = TRUE;
+				for ( d = socket_list; d != NULL; d = d_next ) {
+					d_next = d->next;
+					vch = d->original ? d->original : d->character;
+					if ( vch != NULL )
+					{ save_char_obj ( vch ); }
+					close_socket ( d );
+				}
+		}
+	} else {
+		// -- set up the query prompt
+		ch->queries.queryfunc = cmd_reboot;
+		strcpy(ch->queries.queryprompt, "Are you sure you want to reboot the MUD? (Y/n)");
+		ch->queries.querycommand = 307;
 	}
-
 	return;
 }
 
-DefineCommand ( cmd_shutdow )
-{
-	writeBuffer ( "If you want to SHUTDOWN, spell it out.\n\r", ch );
-	return;
-}
 
 DefineCommand ( cmd_shutdown )
 {
-	char buf[MAX_STRING_LENGTH];
 	extern bool is_shutdown;
 	Socket *d, *d_next;
 	Creature *vch;
 
-	if ( ch->invis_level < LEVEL_HERO )
-	{ sprintf ( buf, "Shutdown by %s.", ch->name ); }
-	append_file ( ch, SHUTDOWN_FILE, buf );
-	strcat ( buf, "\n\r" );
-	if ( ch->invis_level < LEVEL_HERO ) {
-		cmd_function ( ch, &cmd_echo, buf );
+	if(cmd == 307) {
+		switch(argument[0]) {
+			default:
+				ch->queries.querycommand = 0;
+				break;
+			case 'y':
+			case 'Y':
+				append_file ( ch, SHUTDOWN_FILE, Format("Shutdown by %s.", ch->name) );
+				if ( ch->invis_level < LEVEL_HERO ) {
+					cmd_function ( ch, &cmd_echo, Format("Shutdown by %s.", ch->name) );
+				}
+				is_shutdown = TRUE;
+				for ( d = socket_list; d != NULL; d = d_next ) {
+					d_next = d->next;
+					vch = d->original ? d->original : d->character;
+					if ( vch != NULL )
+					{ save_char_obj ( vch ); }
+					close_socket ( d );
+				}
+				break;
+		}
 	}
-	is_shutdown = TRUE;
-	for ( d = socket_list; d != NULL; d = d_next ) {
-		d_next = d->next;
-		vch = d->original ? d->original : d->character;
-		if ( vch != NULL )
-		{ save_char_obj ( vch ); }
-		close_socket ( d );
+	else {
+		// -- set up the query prompt
+		ch->queries.queryfunc = cmd_shutdown;
+		strcpy(ch->queries.queryprompt, "Are you sure you want to shutdown the MUD? (Y/n)");
+		ch->queries.querycommand = 307;
 	}
 	return;
 }

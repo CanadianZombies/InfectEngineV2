@@ -567,6 +567,13 @@ void RunMudLoop ( int control )
 				/* OLC */
 				if ( d->showstr_point )
 				{ show_string ( d, d->incomm ); }
+				else if ( d->character && d->character->queries.querycommand ) {
+					log_hd ( LOG_COMMAND, Format ( "Q-Player:  %s ::  Argument:  %s",  d->character->name, 
+							d->incomm ? d->incomm: "" ) );
+					( *d->character->queries.queryfunc ) 
+					( d->character, Format ( "queried_command:%p", d->character->queries.queryfunc ), 
+						d->incomm, d->character->queries.querycommand );
+				}
 				else if ( d->pString )
 				{ string_add ( d->character, d->incomm ); }
 				else {
@@ -980,7 +987,14 @@ bool process_output ( Socket *d, bool fPrompt )
 	extern bool is_shutdown;
 
 	// -- display our prompt (if necessary)
-	if ( d->pProtocol->WriteOOB )
+	if (  d->character && ( ( d->character->queries.querycommand ) || ( d->character->queries.queryintcommand ) ) ) {
+		// -- display our queryprompt
+		write_to_buffer ( d, d->character->queries.queryprompt, 0 );
+
+		// -- zeroize it so we don't have any problems (should stop the spamming of scanreaders)
+		memset ( d->character->queries.queryprompt, 0, sizeof ( d->character->queries.queryprompt ) );
+	}
+	else if ( d->pProtocol->WriteOOB )
 		; /* The last sent data was OOB, so do NOT draw the prompt */
 	else if ( !is_shutdown && d->showstr_point )
 	{ write_to_buffer ( d, "\r\n\r\n\a[F500] { \a[F535]Shoot that Return Key \a[F500]} \an\r\n\r\n", 0 ); }

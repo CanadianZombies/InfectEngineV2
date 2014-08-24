@@ -64,9 +64,7 @@ const struct staff_cmd_type staff_cmd_table[] = {
 	{ "trust",	cmd_trust,	CR_HEAD,  LOG_ALWAYS, 1, "Trust allows you to raise/lower the trust value" },
 	{ "violate",	cmd_violate,	CR_SECURITY,  LOG_ALWAYS, 1, "Violate allows you to enter rooms you couldn't normally enter" },
 
-	{ "shutdow",	cmd_shutdow,	CR_CODER, LOG_NORMAL, 0, "" },
 	{ "shutdown",	cmd_shutdown,	CR_CODER, LOG_ALWAYS, 1, "Shutdown will powerdown the mud" },
-	{ "reboo",	cmd_reboo,	CR_CODER, LOG_NORMAL, 0, "" },
 	{ "reboot",	cmd_reboot,	CR_CODER, LOG_ALWAYS, 1, "Reboot will cause the mud to shutdown and restart" },
 	{ "log",	cmd_log,	CR_SECURITY, LOG_ALWAYS, 1, "Log allows you to log user input" },
 	{ "permban",	cmd_permban,	CR_SECURITY, LOG_ALWAYS, 1, "Permban will block a site forever" },
@@ -388,7 +386,7 @@ void attempt_staff_command(Creature *ch, const std::string &pcomm, const std::st
 
 	// -- in case one of our commands throws an exception, we want to be careful and log what we can!
 	try {
-		( *staff_cmd_table[cmd].cmd_fun ) ( ch, staff_command.c_str(), argument.c_str() );
+		( *staff_cmd_table[cmd].cmd_fun ) ( ch, staff_command.c_str(), argument.c_str(), cmd );
 	} catch ( ... ) {
 		CATCH ( false );
 	}
@@ -430,6 +428,18 @@ void interpret ( Creature *ch, const char *argument )
 		writeBuffer ( "You have been disabled, nothing you do will help!\n\r", ch );
 		return;
 	}
+
+        // -- handle the query system!
+        if ( !IS_NPC(ch)) {
+               	if ( ch->queries.queryintcommand ) {
+                       	if ( ( *ch->queries.queryintfunc ) ( ch, ch->queries.queryintcommand, argument ) )
+                       	{ return; }
+                }
+        }
+
+	ch->queries.querycommand = 0;
+	ch->queries.querydata = NULL;
+	ch->queries.queryfunc = NULL;
 
 	// -- are we utilizing a staff command? Lets find out today!?
 	if(argument[0] == '/') {
@@ -542,7 +552,7 @@ void interpret ( Creature *ch, const char *argument )
 
 	// -- in case one of our commands throws an exception, we want to be careful and log what we can!
 	try {
-		( *cmd_table[cmd].cmd_fun ) ( ch, command, argument );
+		( *cmd_table[cmd].cmd_fun ) ( ch, command, argument, cmd );
 	} catch ( ... ) {
 		CATCH ( false );
 	}
@@ -564,7 +574,7 @@ void _cmd_function ( Creature *ch, CmdData *cmd_fun, const char *L_command, cons
 	log_hd ( LOG_DEBUG, Format ( "%s->%s->%d->cmd_function->Cmd:%s(%p) Cr:%s(%p) Args:(%s)", file, function, line, L_command, cmd_fun, ch ? ch->name : "", ch, argument ? argument : "{NULL DATA}" ) );
 
 	/* dispatch the command */
-	( *cmd_fun ) ( ch, L_command, command_string );
+	( *cmd_fun ) ( ch, L_command, command_string, -1 );
 
 	/* free the string */
 	PURGE_DATA ( command_string );
@@ -780,7 +790,7 @@ char *one_argument ( const char *argument, char *arg_first )
 DefineCommand ( cmd_commands )
 {
 	BUFFER *bf = new_buf();
-	int cmd;
+	int lcmd;
 	int col;
 	char char_level;
 
@@ -802,12 +812,12 @@ DefineCommand ( cmd_commands )
 			case CAT_CONFIG: add_buf(bf, 	"\ay*** \aRConfigurational \ay***\an\r\n"); break;
 		};
 		for(char_level = 'a'; char_level <= 'z'; char_level++) { 		// -- alphabetical sort (kind of)
-			for ( cmd = 0; cmd_table[cmd].name[0] != '\0'; cmd++ ) {	// -- loop through the actual commands
-				if ( cmd_table[cmd].level <= get_trust ( ch )
-				&&   cmd_table[cmd].show
-				&&   cmd_table[cmd].category == x
-				&&   cmd_table[cmd].name[0] == char_level ) {
-					add_buf(bf, Format("\ac%-12s", cmd_table[cmd].name));
+			for ( lcmd = 0; cmd_table[lcmd].name[0] != '\0'; lcmd++ ) {	// -- loop through the actual commands
+				if ( cmd_table[lcmd].level <= get_trust ( ch )
+				&&   cmd_table[lcmd].show
+				&&   cmd_table[lcmd].category == x
+				&&   cmd_table[lcmd].name[0] == char_level ) {
+					add_buf(bf, Format("\ac%-12s", cmd_table[lcmd].name));
 					if ( ++col == 5 )
 					{ add_buf (bf, "\r\n" ); col = 0; }
 				}
@@ -826,17 +836,17 @@ DefineCommand ( cmd_commands )
 DefineCommand ( cmd_wizhelp )
 {
 	BUFFER *output = new_buf();
-	int cmd;
+	int lcmd;
 	int col = 0;
 	char char_level;
 
 	for(char_level = 'a'; char_level <= 'z'; char_level++) {
-		for ( cmd = 0; !IS_NULLSTR(staff_cmd_table[cmd].name); cmd++) {
-			if(staff_cmd_table[cmd].name[0] != char_level) { continue; }
-			if(IS_SET(ch->sflag, staff_cmd_table[cmd].flag) ) {
-				if(staff_cmd_table[cmd].show) {
-					add_buf(output, Format("\ay%13s \ac- \aw%-.30s.\t", staff_cmd_table[cmd].name, 
-						staff_cmd_table[cmd].helpmsg));
+		for ( lcmd = 0; !IS_NULLSTR(staff_cmd_table[lcmd].name); lcmd++) {
+			if(staff_cmd_table[lcmd].name[0] != char_level) { continue; }
+			if(IS_SET(ch->sflag, staff_cmd_table[lcmd].flag) ) {
+				if(staff_cmd_table[lcmd].show) {
+					add_buf(output, Format("\ay%13s \ac- \aw%-.30s.\t", staff_cmd_table[lcmd].name, 
+						staff_cmd_table[lcmd].helpmsg));
 					if(++col == 2) { add_buf(output, "\r\n"); col = 0; }
 				}
 			}

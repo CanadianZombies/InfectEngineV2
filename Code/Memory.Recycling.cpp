@@ -322,6 +322,14 @@ Creature *new_char ( void )
 	ch->max_move                = 100;
 	ch->sitrep                  = 0;
 
+        // -- zeroize the structures.
+        ch->queries.querydata = NULL;
+       	ch->queries.queryprompt[0] = '\0';
+       	ch->queries.queryprompt2[0] = '\0';
+        ch->queries.querycommand = 0;
+        ch->queries.queryintcommand = 0;
+        ch->queries.query_string = NULL;
+
 	for ( i = 0; i < MAX_STATS; i ++ ) {
 		ch->perm_stat[i] = 13;
 		ch->mod_stat[i] = 0;
@@ -360,6 +368,16 @@ void recycle_char ( Creature *ch )
 	PURGE_DATA ( ch->description );
 	PURGE_DATA ( ch->prompt );
 	PURGE_DATA ( ch->prefix );
+
+        // -- zeroize the structures.
+        ch->queries.querydata = NULL;
+       	ch->queries.queryprompt[0] = '\0';
+       	ch->queries.queryprompt2[0] = '\0';
+        ch->queries.querycommand = 0;
+        ch->queries.queryintcommand = 0;
+
+	PURGE_DATA ( ch->queries.query_string);
+
 	recycle_note  ( ch->pnote );
 	recycle_pcdata ( ch->pcdata );
 
