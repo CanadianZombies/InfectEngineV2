@@ -1,5 +1,41 @@
-#include "merc.h"
+/*###################################################################################
+#                    Infected City powered by InfectEngine                          #
+#            InfectEngine is powered by CombatMUD Core Infrastructure               #
+#  Original Diku Mud Copyright (c) 1990, 1991 by Sebastian Hammer, Michael Sifert   #
+#               Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe                  #
+# Merc Copyright (c) 1992, 1993 by Michael Chastain, Michael Quan, and Mitchell Tse #
+#      ROM 2.4 Copyright (c) 1993-1998 Russ Taylor, Brian Moore, Gabrielle Taylor   #
+#####################################################################################
+# InfectEngine and CombatMUD Engine are both ground up C++ MUDs by David Simmerson  #
+# InfectEngine V2 is an attempt to Hybrid ROM24B6 and InfectEngineV1 and CombatMUD  #
+# together.  All source falls under the DIKU license, Merc and ROM licences however #
+# if individual functions are retrieved from this base that were not originally part#
+#   of Diku, Merc or ROM they will fall under the MIT license as per the original   #
+#                      Licenses for CombatMUD and InfectEngine.                     #
+#####################################################################################
+# InfectEngine Copyright (c) 2010-2014 David Simmerson                              #
+# CombatMUD Copyright (c) 2007-2014 David Simmerson                                 #
+#                                                                                   #
+# Permission is hereby granted, A, to any person obtaining a copy                   #
+# of this software and associated documentation files (the "Software"), to deal     #
+# in the Software without restriction, including without limitation the rights      #
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell         #
+# copies of the Software, and to permit persons to whom the Software is             #
+# furnished to do so, subject to the following conditions:                          #
+#                                                                                   #
+# The above copyright notice and this permission notice shall be included in        #
+# all copies or substantial portions of the Software.                               #
+#                                                                                   #
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR        #
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,          #
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE       #
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER            #
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,     #
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN         #
+# THE SOFTWARE.                                                                     #
+###################################################################################*/
 
+#include "merc.h"
 
 template<>EventManager *Instance<EventManager>::ms_Singleton = 0;
 
@@ -448,61 +484,7 @@ void ExpEvent::Execute ( void )
 				writeBuffer ( Format ( "\n\r\ac*** \aYYour survival in \aG%s \aYhas yielded the reward of \aR%d\aY experience gained \ac***\an\n\r", "The Infected City", totalGain ), ch );
 
 				if ( ch->level < MAX_LEVEL && ch->exp >= ( ch->level * 200 ) ) {
-					ch->level++;
-
-					// -- announce our level gain!
-					announce ( Format ( "%s has attained level %d", ch->name, ch->level ) );
-
-					switch ( ch->level ) {
-						default:
-							break;
-						case 5:
-							tweetStatement ( Format ( "%s has survived the first 5 levels of %s.", 
-								ch->name, "The Infected City" ) );
-							break;
-						case 20:
-							tweetStatement ( Format ( "%s has achieved level 20 in %s.", ch->name, "The Infected City" ) );
-							break;
-						case 40:
-							tweetStatement ( Format ( "Level 40: %s has continued to survive in %s.",ch->name, "The Infected City" ) );
-							break;
-						case 50:
-							tweetStatement ( Format ( "Level 50: %s is a true suvivor of %s.", ch->name, "The Infected City"  ) );
-							break;
-						case 51:
-							tweetStatement ( Format ( "Level 51: %s is on the path to awesomeness in %s.", ch->name, "The Infected City"  ) );
-							break;
-						case 52:
-							tweetStatement ( Format ( "Level 52: %s has attained a truely amazing status in %s.", ch->name, "The Infected City"  ) );
-							break;
-						case 53:
-							tweetStatement ( Format ( "Level 53: %s has completed 93 levels of %s.", ch->name, "The Infected City"  ) );
-							break;
-						case 54:
-							tweetStatement ( Format ( "Level 54: %s has reached a powerful level of %s.", ch->name, "The Infected City"  ) );
-							break;
-						case 55:
-							tweetStatement ( Format ( "Level 55: %s has truly proven their worth in %s.", ch->name, "The Infected City"  ) );
-							break;
-						case 56:
-							tweetStatement ( Format ( "Level 56: %s survived 96 levels within %s.", ch->name, "The Infected City"  ) );
-							break;
-						case 57:
-							tweetStatement ( Format ( "Level 57: %s endured 97 levels of %s.", ch->name, "The Infected City"  ) );
-							break;
-						case 58:
-							tweetStatement ( Format ( "Level 58: %s has true suvivor instinct within %s.", ch->name, "The Infected City"  ) );
-							break;
-						case 59:
-							tweetStatement ( Format ( "Level 59: %s is one step away from MAX LEVEL!", ch->name ) );
-							break;
-						case 60:
-							tweetStatement ( Format ( "*** MAX LEVEL ATTAINED! *** %s has become a master survivor in %s. ", ch->name, "The Infected City"  ) );
-							break;
-					} // -- end switch
-
-					advance_level(ch, false);
-					ch->exp = 0;
+					writeBuffer("You are ready to level up! Please find a safe spot to level up!\r\n",ch);
 				} // -- end level gain
 			} // -- end can we gain exp
 		} // -- end random chance

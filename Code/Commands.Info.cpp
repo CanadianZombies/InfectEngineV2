@@ -1,29 +1,40 @@
-/***************************************************************************
- *  Original Diku Mud copyright (C) 1990, 1991 by Sebastian Hammer,        *
- *  Michael Seifert, Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe.   *
- *                                                                         *
- *  Merc Diku Mud improvments copyright (C) 1992, 1993 by Michael          *
- *  Chastain, Michael Quan, and Mitchell Tse.                              *
- *                                                                         *
- *  In order to use any part of this Merc Diku Mud, you must comply with   *
- *  both the original Diku license in 'license.doc' as well the Merc       *
- *  license in 'license.txt'.  In particular, you may not remove either of *
- *  these copyright notices.                                               *
- *                                                                         *
- *  Much time and thought has gone into this software and you are          *
- *  benefitting.  We hope that you share your changes too.  What goes      *
- *  around, comes around.                                                  *
- ***************************************************************************/
+/*###################################################################################
+#                    Infected City powered by InfectEngine                          #
+#            InfectEngine is powered by CombatMUD Core Infrastructure               #
+#  Original Diku Mud Copyright (c) 1990, 1991 by Sebastian Hammer, Michael Sifert   #
+#               Hans Henrik St{rfeldt, Tom Madsen, and Katja Nyboe                  #
+# Merc Copyright (c) 1992, 1993 by Michael Chastain, Michael Quan, and Mitchell Tse #
+#      ROM 2.4 Copyright (c) 1993-1998 Russ Taylor, Brian Moore, Gabrielle Taylor   #
+#####################################################################################
+# InfectEngine and CombatMUD Engine are both ground up C++ MUDs by David Simmerson  #
+# InfectEngine V2 is an attempt to Hybrid ROM24B6 and InfectEngineV1 and CombatMUD  #
+# together.  All source falls under the DIKU license, Merc and ROM licences however #
+# if individual functions are retrieved from this base that were not originally part#
+#   of Diku, Merc or ROM they will fall under the MIT license as per the original   #
+#                      Licenses for CombatMUD and InfectEngine.                     #
+#####################################################################################
+# InfectEngine Copyright (c) 2010-2014 David Simmerson                              #
+# CombatMUD Copyright (c) 2007-2014 David Simmerson                                 #
+#                                                                                   #
+# Permission is hereby granted, A, to any person obtaining a copy                   #
+# of this software and associated documentation files (the "Software"), to deal     #
+# in the Software without restriction, including without limitation the rights      #
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell         #
+# copies of the Software, and to permit persons to whom the Software is             #
+# furnished to do so, subject to the following conditions:                          #
+#                                                                                   #
+# The above copyright notice and this permission notice shall be included in        #
+# all copies or substantial portions of the Software.                               #
+#                                                                                   #
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR        #
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,          #
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE       #
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER            #
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,     #
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN         #
+# THE SOFTWARE.                                                                     #
+###################################################################################*/
 
-/***************************************************************************
-*	ROM 2.4 is copyright 1993-1998 Russ Taylor			   *
-*	ROM has been brought to you by the ROM consortium		   *
-*	    Russ Taylor (rtaylor@hypercube.org)				   *
-*	    Gabrielle Taylor (gtaylor@hypercube.org)			   *
-*	    Brian Moore (zump@rom.org)					   *
-*	By using this code, you have agreed to follow the terms of the	   *
-*	ROM license, in the file Rom24/doc/rom.license			   *
-***************************************************************************/
 
 #if defined(macintosh)
 #include <types.h>
@@ -2495,6 +2506,61 @@ DefineCommand ( cmd_password )
 	return;
 }
 
+DefineCommand(cmd_levelup) {
+	if(!IS_SET(ch->in_room->room_flags, ROOM_SAFE) ) {
+		writeBuffer("You must be in a room that is safe to level up!\r\n",ch);
+		return;
+	}
+
+	if(cmd == 101) {
+		switch(argument[0]) {
+			default:
+				ch->queries.querycommand = 0;
+				break;
+			case 'y': case 'Y':
+				if ( ch->level < MAX_LEVEL && ch->exp >= ( ch->level * 200 ) ) {
+					ch->level++;
+
+					// -- announce our level gain!
+					announce ( Format ( "%s has attained level %d", ch->name, ch->level ) );
+
+					switch ( ch->level ) {
+						default:
+							if(number_range(0,3) == number_range(0,7)) {
+								tweetStatement(Format("%s has attained a new level, %d.", ch->name, ch->level));
+							}
+							break;
+						case 5:	 tweetStatement(Format("%s has survived the first 5 levels of %s.", ch->name, "The Infected City" ) ); break;
+						case 20: tweetStatement(Format("%s has achieved level 20 in %s.", ch->name, "The Infected City" ) ); break;
+						case 40: tweetStatement(Format("Level 40: %s has continued to survive in %s.",ch->name, "The Infected City" ) ); break;
+						case 50: tweetStatement(Format("Level 50: %s is a true suvivor of %s.", ch->name, "The Infected City"  ) ); break;
+						case 51: tweetStatement(Format("Level 51: %s is on the path to awesomeness in %s.", ch->name, "The Infected City")); break;
+						case 52: tweetStatement(Format("Level 52: %s has attained a truely amazing status in %s.",ch->name,"The Infected City")); break;
+						case 53: tweetStatement(Format("Level 53: %s has completed 53 levels of %s.", ch->name, "The Infected City")); break;
+						case 54: tweetStatement(Format("Level 54: %s has reached a powerful level of %s.",ch->name,"The Infected City")); break;
+						case 55: tweetStatement(Format("Level 55: %s has truly proven their worth in %s.", ch->name, "The Infected City")); break;
+						case 56: tweetStatement(Format("Level 56: %s survived 96 levels within %s.", ch->name, "The Infected City"  ) ); break;
+						case 57: tweetStatement(Format("Level 57: %s endured 97 levels of %s.", ch->name, "The Infected City"  ) ); break;
+						case 58: tweetStatement(Format("Level 58: %s has true suvivor instinct within %s.",ch->name,"The Infected City")); break;
+						case 59: tweetStatement(Format("Level 59: %s is one step away from MAX LEVEL!", ch->name ) ); break;
+						case 60: tweetStatement(Format("*** MAX LEVEL ATTAINED! *** %s has become a master survivor in %s.", ch->name, "The Infected City"  ) ); 		break;
+					} // -- end switch
+					wiznet(Format("$N has attained level %d!",ch->level),ch,NULL,WIZ_LEVELS,0,0);
+					advance_level(ch, false);
+					ch->exp = 0;
+				} else {
+					writeBuffer("Your not ready to level up yet!\r\n",ch);
+				}
+				break;
+			} // -- end of the switch
+	} // -- end if
+	else {
+ 		ch->queries.queryfunc = cmd_levelup;
+ 		strcpy ( ch->queries.queryprompt, Format ( "Are you sure you want to level up? Warning, you may be prompted for changes, make sure you are ready first. (y/n)>" ) );
+		ch->queries.querycommand = 101;
+	}
+	return;
+}
 // -- EOF
 
 

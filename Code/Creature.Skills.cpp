@@ -661,7 +661,6 @@ void check_improve ( Creature *ch, int sn, bool success, int multiplier )
 			gain_exp ( ch, 2 * skill_table[sn].rating[ch->archetype] );
 		}
 	}
-
 	else {
 		chance = URANGE ( 5, ch->pcdata->learned[sn] / 2, 30 );
 		if ( number_percent() < chance ) {
