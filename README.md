@@ -24,9 +24,9 @@ Use of two races, with 3 sub-races as choices at level 30
 
 Use of three classes with 2 subclasses per class at level 15
 
-Staff use flags not levels
+*Staff use flags not levels
 
-Staff commands are granted not gained by level
+*Staff commands are granted not gained by level
 	- Use of system from InfectEngineV1 most likely unless we feel otherwise
 
 Hybrid C/C++
@@ -57,21 +57,20 @@ Levels gained from leveler MOB, upon reaching level 15/30 respectively
 
 Total of 60 playable levels
 
-Experience pool system (EXP gained all the time and trickles in)
-
+*Experience pool system (EXP gained all the time and trickles in)
 
 Other Systems to add:
 
 	* New log system from IEV1
 	* Format system from IEV1
-	Twitter System from IEV1 (Soon to be ported)
+	* Twitter System from IEV1 (Soon to be ported)
 	HotReboot System from IEV1
-	KaViR's Protocol System
+	* KaViR's Protocol System
 	InterMUD3 System from IEV1
-	Users command from IEV1 (Because we like it)
-	Event System from IEV1
-		-- EXP System from IEV1
-		-- Twitter integration
+	* Users command from IEV1 (Because we like it)
+	* Event System from IEV1
+		* -- EXP System from IEV1
+		* -- Twitter integration
 	* Ivans OLC for Rom24
 	* Kavirs Protocol Snippet (Huge time saver/life saver)
 	Various Snippets to expediate the development cycle.
@@ -84,24 +83,41 @@ Possible: MySQL Integration once all core functionality is done
 Possible: WebServer system from IEV1 (once all is sorted)
 
 Races			Sub Race at level 30
+
 	Human
+
 			Infected
+
 			Mutated
+
 			Survivor
+
 	Revanant
+
 			Specter
+
 			Bogeyman
+
 			Eidolon
 
-Classes			Sub Classes at level 15 (Classes are now known as Archetypes)
-	Stalker
-			Hunter
-			Thief
-	Soldier
-			Assaulter
-			Defender
-	Sorcerer
-			Archmage
-			Shaman
 
+Classes			Sub Classes at level 15 (Classes are now known as Archetypes)
+
+	Stalker
+
+			Hunter
+
+			Thief
+
+	Soldier
+
+			Assaulter
+
+			Defender
+
+	Sorcerer
+
+			Archmage
+
+			Shaman
 
