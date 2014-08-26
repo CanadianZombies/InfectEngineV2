@@ -35,20 +35,7 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
-
-#if defined(macintosh)
-#include <types.h>
-#include <time.h>
-#else
-#include <sys/types.h>
-#endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include "merc.h"
-#include "interp.h"
-#include "magic.h"
+#include "Engine.h"
 
 /*
  * The following special functions are available for mobiles.

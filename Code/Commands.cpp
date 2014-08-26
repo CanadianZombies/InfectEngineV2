@@ -35,19 +35,7 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#endif
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include "merc.h"
-#include "interp.h"
-#include "recycle.h"
+#include "Engine.h"
 
 bool	check_social	args ( ( Creature *ch, const char *command,
 								 const char *argument ) );

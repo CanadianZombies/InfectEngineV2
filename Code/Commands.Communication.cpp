@@ -35,20 +35,7 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#include <sys/time.h>
-#endif
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
-#include "merc.h"
-#include "interp.h"
-#include "recycle.h"
-#include "tables.h"
+#include "Engine.h"
 
 /* RT code to delete yourself */
 

@@ -35,7 +35,7 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
-#include "merc.h"
+#include "Engine.h"
 
 template<>EventManager *Instance<EventManager>::ms_Singleton = 0;
 

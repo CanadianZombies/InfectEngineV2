@@ -35,18 +35,9 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
-#include <sys/types.h>
-#include <sys/time.h>
-
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <cstdarg>
-#include <ctime>
+#include "Engine.h"
 
 #include <dirent.h>
-
-#include "merc.h"
 
 // -- External variables
 extern char                    strArea[MAX_INPUT_LENGTH];

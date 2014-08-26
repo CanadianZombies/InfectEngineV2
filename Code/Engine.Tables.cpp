@@ -35,16 +35,7 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
-
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#endif
-#include <stdio.h>
-#include <time.h>
-#include "merc.h"
-#include "tables.h"
+#include "Engine.h"
 
 /* for clans */
 const struct clan_type clan_table[MAX_CLAN] = {

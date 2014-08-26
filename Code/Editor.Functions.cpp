@@ -35,22 +35,7 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#endif
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include "merc.h"
-#include "interp.h"
-#include "tables.h"
-#include "olc.h"
-#include "recycle.h"
-#include "lookup.h"
+#include "Engine.h"
 
 const char * mprog_type_to_name ( int type );
 

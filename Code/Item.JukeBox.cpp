@@ -35,19 +35,7 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#include <sys/time.h>
-#endif
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <time.h>
-#include "merc.h"
-#include "music.h"
-#include "recycle.h"
+#include "Engine.h"
 
 int channel_songs[MAX_GLOBAL + 1];
 struct song_data song_table[MAX_SONGS];

@@ -34,19 +34,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN         #
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#endif
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include "merc.h"
-#include "tables.h"
-#include "olc.h"
+
+#include "Engine.h"
 
 char *string_linedel ( char *, int );
 char *string_lineadd ( char *, char *, int );

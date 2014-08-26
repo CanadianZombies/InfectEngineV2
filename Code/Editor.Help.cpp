@@ -35,23 +35,7 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#include <sys/time.h>
-#endif
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-
-#include "merc.h"
-#include "tables.h"
-#include "olc.h"
-#include "lookup.h"
-#include "recycle.h"
+#include "Engine.h"
 
 #define HEDIT( fun )           bool fun(Creature *ch, const char*argument)
 #define EDIT_HELP(ch, help)	( help = (HELP_DATA *) ch->desc->pEdit )

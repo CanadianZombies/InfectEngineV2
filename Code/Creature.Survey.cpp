@@ -35,17 +35,7 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
-
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include "merc.h"
+#include "Engine.h"
 
 const char *distance[4] = {
 	"right here.", "nearby to the %s.", "not far %s.", "off in the distance %s."

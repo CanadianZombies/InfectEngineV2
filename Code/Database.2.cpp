@@ -35,22 +35,7 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <time.h>
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#include <sys/time.h>
-#endif
-
-#include "merc.h"
-#include "db.h"
-#include "tables.h"
-#include "lookup.h"
+#include "Engine.h"
 
 extern int flag_lookup args ( ( const char *name, const struct flag_type *flag_table ) );
 

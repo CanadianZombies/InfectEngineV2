@@ -35,15 +35,7 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#endif
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include "merc.h"
+#include "Engine.h"
 
 /* does aliasing and other fun stuff */
 void substitute_alias ( Socket *d, char *argument )

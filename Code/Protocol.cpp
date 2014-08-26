@@ -69,7 +69,7 @@
  The following section is for Diku/Merc derivatives.  Replace as needed.
  ******************************************************************************/
 
-#include "merc.h"
+#include "Engine.h"
 
 static void Write ( descriptor_t *apDescriptor, const char *apData )
 {

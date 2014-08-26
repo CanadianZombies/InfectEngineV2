@@ -37,18 +37,18 @@
 
 #ifndef _Instance_Hpp
 #define _Instance_Hpp
-template<typename T>class Instance
+template<typename Tc>class Instance
 {
 	private:
-		Instance ( const Instance<T>& );
-		Instance&operator= ( const Instance<T>& );
+		Instance ( const Instance<Tc>& );
+		Instance&operator= ( const Instance<Tc>& );
 	protected:
-		static T*ms_Singleton;
+		static Tc*ms_Singleton;
 	public:
 		Instance ( void )
 		{
 			assert ( !ms_Singleton );
-			ms_Singleton = static_cast<T*> ( this );
+			ms_Singleton = static_cast<Tc*> ( this );
 		}
 		~Instance ( void )
 		{
@@ -56,13 +56,13 @@ template<typename T>class Instance
 		}
 
 		// modern naming convention
-		static T& instance ( void )
+		static Tc& instance ( void )
 		{
 			assert ( ms_Singleton );
 			return ( *ms_Singleton );
 		}
 
-		static T* instancePtr ( void )
+		static Tc* instancePtr ( void )
 		{
 			return ms_Singleton;
 		}

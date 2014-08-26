@@ -36,18 +36,111 @@
 ###################################################################################*/
 
 
-#define MAX_SONGS	20
-#define MAX_LINES	100 /* this boils down to about 1k per song */
-#define MAX_GLOBAL	10  /* max songs the global jukebox can hold */
+#ifndef _Typedefs_H
+#define _Typedefs_H
 
-struct song_data {
-	char *group;
-	char *name;
-	char *lyrics[MAX_LINES];
-	int lines;
+#if defined(TRADITIONAL)
+#define const
+#define args( list )			( )
+#define Command( fun )		void fun( )
+#define DECLARE_SPEC_FUN( fun )		bool fun( )
+#define DECLARE_SPELL_FUN( fun )	void fun( )
+#else
+#define args( list )			list
+#define Command( fun )		CmdData    fun
+#define DECLARE_SPEC_FUN( fun )		SPEC_FUN  fun
+#define DECLARE_SPELL_FUN( fun )	SPELL_FUN fun
+#endif
+
+/*
+ * Short scalar types.
+ * Diavolo reports AIX compiler has bugs with short types.
+ */
+#if	defined(_AIX)
+#if	!defined(const)
+#define const
+#endif
+typedef int				sh_int;
+
+#ifndef __cpluplus
+typedef int				bool;
+#endif
+#define unix
+#else
+typedef short   int			sh_int;
+
+#ifndef __cplusplus
+typedef unsigned char			bool;
+#endif
+#endif
+
+/* ea */
+#define MSL MAX_STRING_LENGTH
+#define MIL MAX_INPUT_LENGTH
+
+/*
+ * Structure types.
+ */
+typedef struct	affect_data		Affect;
+typedef struct	area_data		Zone;
+typedef struct	ban_data		Ban;
+typedef struct 	buf_type	 	BUFFER;
+typedef struct	char_data		Creature;
+typedef struct	descriptor_data		Socket;
+typedef struct	exit_data		Exit;
+typedef struct	extra_descr_data	DescriptionData;
+typedef struct	help_data		HELP_DATA;
+typedef struct	help_area_data		HELP_AREA;
+typedef struct	kill_data		KILL_DATA;
+typedef struct	mem_data		MobMemory;
+typedef struct	mob_index_data		NPCData;
+typedef struct	note_data		NOTE_DATA;
+typedef struct	obj_data		Item;
+typedef struct	obj_index_data		ItemData;
+typedef struct	pc_data			PlayerData;
+typedef struct  gen_data		GEN_DATA;
+typedef struct	reset_data		Reset;
+typedef struct	room_index_data		RoomData;
+typedef struct	shop_data		SHOP_DATA;
+typedef struct	time_info_data		TIME_INFO_DATA;
+typedef struct	weather_data		EnvironmentDataData;
+typedef struct  mprog_list		MPROG_LIST;
+typedef struct  mprog_code		MPROG_CODE;
+
+
+/*
+ * Function types.
+ */
+typedef	bool OLC_FUN		args ( ( Creature *ch, const char *argument ) );
+#define DECLARE_OLC_FUN( fun )	OLC_FUN    fun
+
+typedef	void CmdData	args ( ( Creature *ch, const char *L_command, const char *argument, int cmd ) );
+typedef bool SPEC_FUN	args ( ( Creature *ch ) );
+typedef void SPELL_FUN	args ( ( int sn, int level, Creature *ch, void *vo,
+								 int target ) );
+typedef enum { EV_CPP = 0, EV_LUA } event_types;
+
+#ifdef TELCMDS
+char *telcmds[] = {
+	"SE", "NOP", "DMARK", "BRK", "IP", "AO", "AYT", "EC",
+	"EL", "GA", "SB", "WILL", "WONT", "DO", "DONT", "IAC",
 };
+#endif
 
-extern struct song_data song_table[MAX_SONGS];
+#ifdef TELOPTS
+#define	NTELOPTS	(1+TELOPT_EOR)
+char *telopts[NTELOPTS] = {
+	"BINARY", "ECHO", "RCP", "SUPPRESS GO AHEAD", "NAME",
+	"STATUS", "TIMING MARK", "RCTE", "NAOL", "NAOP",
+	"NAOCRD", "NAOHTS", "NAOHTD", "NAOFFD", "NAOVTS",
+	"NAOVTD", "NAOLFD", "EXTEND ASCII", "LOGOUT", "BYTE MACRO",
+	"DATA ENTRY TERMINAL", "SUPDUP", "SUPDUP OUTPUT",
+	"SEND LOCATION", "TERMINAL TYPE", "END OF RECORD",
+};
+#endif
 
-void song_update args ( ( void ) );
-void load_songs	args ( ( void ) );
+
+#endif
+
+// -- EOF
+

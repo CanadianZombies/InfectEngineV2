@@ -34,20 +34,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN         #
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#endif
-#include <ctype.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include "merc.h"
-#include "tables.h"
-#include "olc.h"
-#include "recycle.h"
+
+#include "Engine.h"
 
 #define MPEDIT( fun )           bool fun(Creature *ch, const char*argument)
 

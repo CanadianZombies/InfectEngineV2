@@ -35,21 +35,7 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
-
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#endif
-#include <ctype.h>
-#include <stdio.h>
-#include <string.h>
-#include <time.h>
-#include "merc.h"
-#include "interp.h"
-#include "magic.h"
-#include "recycle.h"
-#include "tables.h"
+#include "Engine.h"
 
 /*
  * Local functions.

@@ -35,37 +35,102 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
+#ifndef _Externs_H
+#define _Externs_H
 
-struct flag_type {
-	const char *name;
-	int bit;
-	bool settable;
-};
+/*
+ * Global constants.
+ */
+extern	const	struct	str_app_type	str_app		[26];
+extern	const	struct	int_app_type	int_app		[26];
+extern	const	struct	wis_app_type	wis_app		[26];
+extern	const	struct	dex_app_type	dex_app		[26];
+extern	const	struct	con_app_type	con_app		[26];
 
-struct clan_type {
-	const char 	*name;
-	const char 	*who_name;
-	sh_int 	hall;
-	bool	independent; /* true for loners */
-};
+extern	const	struct	archetype_type	archetype_table	[MAX_CLASS];
+extern	const	struct	weapon_type	weapon_table	[];
+extern  const   struct  item_type	item_table	[];
+extern	const	struct	wiznet_type	wiznet_table	[];
+extern	const	struct	attack_type	attack_table	[];
+extern  const	struct  race_type	race_table	[];
+extern	const	struct	pc_race_type	pc_race_table	[];
+extern  const	struct	spec_type	spec_table	[];
+extern	const	struct	liq_type	liq_table	[];
+extern	const	struct	skill_type	skill_table	[MAX_SKILL];
+extern  const   struct  group_type      group_table	[MAX_GROUP];
+extern          struct social_type      social_table	[MAX_SOCIALS];
+extern	const   char *				title_table	[MAX_CLASS]
+[MAX_LEVEL + 1]
+[2];
 
-struct position_type {
-	const char *name;
-	const char *short_name;
-};
 
-struct sex_type {
-	const char *name;
-};
 
-struct size_type {
-	const char *name;
-};
+/*
+ * Global variables.
+ */
+extern const int EV_SECOND;
+extern const int EV_HALF;
+extern const int EV_MINUTE;
+extern const int EV_FIVE;
+extern const int EV_TEN;
+extern const int EV_FIFTEEN;
+extern const int EV_HOUR;
+extern const int EV_DAY;
+extern const int EV_WEEK;
 
-struct	bit_type {
-	const	struct	flag_type *	table;
-	const char *				help;
-};
+extern		HELP_DATA	  *	help_first;
+extern		SHOP_DATA	  *	shop_first;
+extern		const char 	  *	afk_flag;
+extern		Creature	  *	char_list;
+extern		Socket   *	socket_list;
+extern		Item	  *	object_list;
+
+extern		MPROG_CODE	  *	mprog_list;
+
+extern		time_t			current_time;
+extern		bool			fLogAll;
+extern		FILE *			fpReserve;
+extern		KILL_DATA		kill_table	[];
+extern		TIME_INFO_DATA		time_info;
+extern		EnvironmentDataData		weather_info;
+extern		bool			MOBtrigger;
+extern		unsigned long 		connect_count;
+
+
+/*
+ * Global Constants
+ */
+extern	const char *	dir_name        [];
+extern	const	sh_int	rev_dir         [];          /* sh_int - ROM OLC */
+extern	const	struct	spec_type	spec_table	[];
+
+/*
+ * Global variables
+ */
+extern		Zone *		area_first;
+extern		Zone *		area_last;
+extern		SHOP_DATA *		shop_last;
+
+extern		int			top_affect;
+extern		int			top_area;
+extern		int			top_ed;
+extern		int			top_exit;
+extern		int			top_help;
+extern		int			top_mob_index;
+extern		int			top_obj_index;
+extern		int			top_reset;
+extern		int			top_room;
+extern		int			top_shop;
+
+extern		int			top_vnum_mob;
+extern		int			top_vnum_obj;
+extern		int			top_vnum_room;
+
+extern		char			str_empty       [1];
+
+extern		NPCData *	mob_index_hash  [MAX_KEY_HASH];
+extern		ItemData *	obj_index_hash  [MAX_KEY_HASH];
+extern		RoomData *	room_index_hash [MAX_KEY_HASH];
 
 /* game tables */
 extern	const	struct	clan_type	clan_table[MAX_CLAN];
@@ -111,5 +176,39 @@ extern	const	struct	flag_type	position_flags[];
 extern	const	struct	flag_type	ac_type[];
 extern	const	struct	bit_type	bitvector_type[];
 
-// -- EOF
+/*
+ * OLC Interpreter Table Prototypes
+ */
+extern const struct olc_cmd_type	aedit_table[];
+extern const struct olc_cmd_type	redit_table[];
+extern const struct olc_cmd_type	oedit_table[];
+extern const struct olc_cmd_type	medit_table[];
+extern const struct olc_cmd_type	mpedit_table[];
+extern const struct olc_cmd_type	hedit_table[];
 
+
+extern struct song_data song_table[MAX_SONGS];
+/* the command table itself */
+extern	const	struct	mob_cmd_type	mob_cmd_table	[];
+
+
+extern bool fBootDb;
+extern int		newmobs;
+extern int		newobjs;
+extern NPCData 	* mob_index_hash          [MAX_KEY_HASH];
+extern ItemData 	* obj_index_hash          [MAX_KEY_HASH];
+extern int		top_mob_index;
+extern int		top_obj_index;
+extern int  		top_affect;
+extern int		top_ed;
+extern Zone 	* area_first;
+
+extern char str_empty[1];
+extern int mobile_count;
+
+
+/* from db2.c */
+extern int	social_count;
+extern	const	struct	cmd_type	cmd_table	[];
+
+#endif

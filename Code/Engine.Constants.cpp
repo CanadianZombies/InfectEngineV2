@@ -34,16 +34,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN         #
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#endif
-#include <stdio.h>
-#include <time.h>
-#include "merc.h"
-#include "magic.h"
-#include "interp.h"
+
+#include "Engine.h"
 
 const char *afk_flag = "^y{^CAFK^y}^n";
 const int EV_SECOND = 1;
@@ -109,26 +101,26 @@ const	struct	weapon_type	weapon_table	[]	= {
 
 /* wiznet table and prototype for future flag setting */
 const   struct wiznet_type      wiznet_table    []              = {
-	{    "on",           WIZ_ON,         IM },
-	{    "prefix",	WIZ_PREFIX,	IM },
-	{    "ticks",        WIZ_TICKS,      IM },
-	{    "logins",       WIZ_LOGINS,     IM },
-	{    "sites",        WIZ_SITES,      L4 },
-	{    "links",        WIZ_LINKS,      L7 },
-	{	"newbies",	WIZ_NEWBIE,	IM },
-	{	"spam",		WIZ_SPAM,	L5 },
-	{    "deaths",       WIZ_DEATHS,     IM },
-	{    "resets",       WIZ_RESETS,     L4 },
-	{    "mobdeaths",    WIZ_MOBDEATHS,  L4 },
-	{    "flags",	WIZ_FLAGS,	L5 },
-	{	"penalties",	WIZ_PENALTIES,	L5 },
-	{	"saccing",	WIZ_SACCING,	L5 },
-	{	"levels",	WIZ_LEVELS,	IM },
-	{	"load",		WIZ_LOAD,	L2 },
-	{	"restore",	WIZ_RESTORE,	L2 },
-	{	"snoops",	WIZ_SNOOPS,	L2 },
-	{	"switches",	WIZ_SWITCHES,	L2 },
-	{	"secure",	WIZ_SECURE,	L1 },
+	{    "on",           WIZ_ON,         60 },
+	{    "prefix",	WIZ_PREFIX,	60 },
+	{    "ticks",        WIZ_TICKS,      60 },
+	{    "logins",       WIZ_LOGINS,     60 },
+	{    "sites",        WIZ_SITES,      60 },
+	{    "links",        WIZ_LINKS,      60 },
+	{	"newbies",	WIZ_NEWBIE,	60 },
+	{	"spam",		WIZ_SPAM,	60 },
+	{    "deaths",       WIZ_DEATHS,     60 },
+	{    "resets",       WIZ_RESETS,     60 },
+	{    "mobdeaths",    WIZ_MOBDEATHS,  60 },
+	{    "flags",	WIZ_FLAGS,	60 },
+	{	"penalties",	WIZ_PENALTIES,	60 },
+	{	"saccing",	WIZ_SACCING,	60 },
+	{	"levels",	WIZ_LEVELS,	60 },
+	{	"load",		WIZ_LOAD,	60 },
+	{	"restore",	WIZ_RESTORE,	60 },
+	{	"snoops",	WIZ_SNOOPS,	60 },
+	{	"switches",	WIZ_SWITCHES,	60 },
+	{	"secure",	WIZ_SECURE,	60 },
 	{	NULL,		0,		0  }
 };
 

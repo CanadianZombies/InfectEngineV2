@@ -39,29 +39,8 @@
 // -- for SkillNumbering
 #ifndef Database_Cpp
 #define Database_Cpp
-
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <time.h>
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#include <sys/time.h>
-#include <sys/resource.h>
-#endif
-
-#include "merc.h"
+	#include "Engine.h"
 #undef Database_Cpp
-
-#include "db.h"
-#include "recycle.h"
-#include "music.h"
-#include "tables.h"
-#include "lookup.h"
-#include "olc.h"
 
 #if !defined(macintosh)
 extern	int	_filbuf		args ( ( FILE * ) );

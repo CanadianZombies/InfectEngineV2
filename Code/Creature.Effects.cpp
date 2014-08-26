@@ -35,18 +35,7 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
-
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#endif
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include "merc.h"
-#include "recycle.h"
+#include "Engine.h"
 
 void acid_effect ( void *vo, int level, int dam, int target )
 {

@@ -35,17 +35,7 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
-
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#endif
-#include <stdio.h>
-#include <time.h>
-#include <string.h>
-#include "merc.h"
-#include "tables.h"
+#include "Engine.h"
 
 int flag_lookup ( const char *name, const struct flag_type *flag_table )
 {

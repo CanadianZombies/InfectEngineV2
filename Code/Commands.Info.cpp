@@ -35,24 +35,7 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
-
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#include <sys/time.h>
-#endif
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <ctype.h>
-#include <time.h>
-#include "merc.h"
-#include "interp.h"
-#include "magic.h"
-#include "recycle.h"
-#include "tables.h"
-#include "lookup.h"
+#include "Engine.h"
 
 const char *	where_name	[] = {
 	"<used as light>     ",

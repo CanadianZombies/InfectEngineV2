@@ -35,38 +35,66 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
+#ifndef _Engine_H
+#define _Engine_H
 
-/* vals from db.c */
-extern bool fBootDb;
-extern int		newmobs;
-extern int		newobjs;
-extern NPCData 	* mob_index_hash          [MAX_KEY_HASH];
-extern ItemData 	* obj_index_hash          [MAX_KEY_HASH];
-extern int		top_mob_index;
-extern int		top_obj_index;
-extern int  		top_affect;
-extern int		top_ed;
-extern Zone 	* area_first;
+// -- C Headers (actual .h files)
+#if defined(macintosh)
+#include <types.h>
+#else
+#include <sys/types.h>
+#include <sys/time.h>
+#endif
+
+#include <cxxabi.h>
+#include <sys/wait.h>
+#include <sys/resource.h>
+#include <sys/stat.h>
+#include <sys/utsname.h>
+// -- #include <sys/prctl.h>
+
+#include <unistd.h>
+#include <pwd.h>
+#include <dlfcn.h>
+#include <execinfo.h>
+#include <limits.h>
+
+#include <cstdio>
+#include <cstdarg>
+#include <cstdlib>
+#include <cstring>
+#include <climits>
+#include <cfloat>
+
+#include <cassert>
+#include <cerrno>
+#include <unistd.h>
+#include <new>
+#include <list>
+#include <string>
+#include <map>
+#include <exception>
+#include <stdexcept>
+#include <iostream>
+#include <fstream>
+#include <typeinfo>
+
+#include "FixPrototypes.h"
+#include "Version.h"
+#include "Protocol.h"
+#include "Typedefs.h"
+#include "Defines.h"
+#include "Instance.h"
+#include "Events.h"
+#include "Vnums.h"
+
+#include "Structures.h"
+
+#include "FixSkillNumbers.h"
+#include "Macros.h"
 
 
-/* from db2.c */
-extern int	social_count;
+#include "Externs.h"
+#include "Prototypes.h"
 
-/* conversion from db.h */
-void	convert_mob ( NPCData *mob );
-void	convert_obj ( ItemData *obj );
-
-/* macro for flag swapping */
-#define GET_UNSET(flag1,flag2)	(~(flag1)&((flag1)|(flag2)))
-
-/* Magic number for memory allocation */
-#define MAGIC_NUM 52571214
-
-/* func from db.c */
-extern void assign_area_vnum ( int vnum );                   /* OLC */
-
-/* from db2.c */
-
-void convert_mobile ( NPCData *pMobIndex );           /* OLC ROM */
-void convert_objects ( void );                               /* OLC ROM */
-void convert_object ( ItemData *pObjIndex );           /* OLC ROM */
+#endif

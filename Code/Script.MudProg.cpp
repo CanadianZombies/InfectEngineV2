@@ -46,15 +46,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <time.h>
-#include <sys/types.h>
-#include <ctype.h>
-#include "merc.h"
-#include "tables.h"
-#include "lookup.h"
+#include "Engine.h"
 
 extern int flag_lookup ( const char *word, const struct flag_type *flag_table );
 

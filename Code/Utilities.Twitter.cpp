@@ -1,5 +1,3 @@
-
-#include "merc.h"
 /*###################################################################################
 #                    Infected City powered by InfectEngine                          #
 #            InfectEngine is powered by CombatMUD Core Infrastructure               #
@@ -36,6 +34,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN         #
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
+
+#include "Engine.h"
 
 std::list<std::string>tweetList;
 

@@ -44,13 +44,7 @@
  *                                                                         *
  ***************************************************************************/
 
-#include <sys/types.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include "merc.h"
-#include "interp.h"
-#include "mob_cmds.h"
+#include "Engine.h"
 
 Command ( cmd_look 	);
 extern RoomData *find_location ( Creature *, const char * );
