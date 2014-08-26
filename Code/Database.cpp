@@ -2531,195 +2531,109 @@ long flag_convert ( char letter )
 	return bitsum;
 }
 
-
-
-
-/*
- * Read and allocate space for a string from a file.
- * These strings are read-only and shared.
- * Strings are hashed:
- *   each string prepended with hash pointer to prev string,
- *   hash code is simply the string length.
- *   this function takes 40% to 50% of boot-up time.
- */
-char *fread_string ( FILE *fp )
+char *fread_string ( FILE * fp )
 {
-	char *plast;
-	char c;
-
-	plast = top_string + sizeof ( char * );
-	if ( plast > &string_space[MAX_STRING - MAX_STRING_LENGTH] ) {
-		log_hd ( LOG_ERROR, Format ( "Fread_string: MAX_STRING %d exceeded.", MAX_STRING ) );
-		exit ( 1 );
-	}
+	static char buf[MAX_STRING_LENGTH] = {'\0'};
 
 	/*
-	 * Skip blanks.
-	 * Read first char.
+	 * extra 2 bytes on the end for \0
+	 * and 1b slack
+	 */
+	size_t i = 0;
+	register char c;
+	bool sFull = false;
+	FILE *gfp = fp;
+
+	/*
+	 * skip blanks
 	 */
 	do {
-		c = getc ( fp );
+		c = getc ( gfp );
 	} while ( isspace ( c ) );
 
-	if ( ( *plast++ = c ) == '~' )
-	{ return &str_empty[0]; }
+	/*
+	 * empty string
+	 */
+	if ( c == '~' )
+	{ return NULL; }
+
+	buf[i++] = c;
 
 	for ( ;; ) {
-		/*
-		 * Back off the char type lookup,
-		 *   it was too dirty for portability.
-		 *   -- Furey
-		 */
-
-		switch ( *plast = getc ( fp ) ) {
+		if ( i >= MAX_STRING_LENGTH && !sFull ) {
+			log_hd ( LOG_ERROR, Format ( "String [%20.20s...] exceeded [%d] MAX_STRING_LENGTH", buf, MAX_STRING_LENGTH ) );
+			sFull = true;
+			SUICIDE;
+		}
+		switch ( c = getc ( gfp ) ) {
 			default:
-				plast++;
+				if ( !sFull ) {
+					buf[i++] = c;
+				}
 				break;
 
-			case EOF:
-				/* temp fix */
-				log_hd ( LOG_ERROR, "Fread_string: EOF" );
-				return NULL;
-				/* exit( 1 ); */
+			case '\0':
+				SUICIDE;
 				break;
 
 			case '\n':
-				plast++;
-				*plast++ = '\r';
+				if ( !sFull ) {
+					buf[i++] = '\n';
+					buf[i++] = '\r';
+				}
 				break;
 
 			case '\r':
 				break;
 
 			case '~':
-				plast++;
-				{
-					union {
-						char *	pc;
-						char	rgc[sizeof ( char * )];
-					} u1;
-					int ic;
-					int iHash;
-					char *pHash;
-					char *pHashPrev;
-					char *pString;
+				buf[i] = '\0';
 
-					plast[-1] = '\0';
-					iHash     = UMIN ( MAX_KEY_HASH - 1, plast - 1 - top_string );
-					for ( pHash = string_hash[iHash]; pHash; pHash = pHashPrev ) {
-						for ( ic = 0; ic < ( signed int ) sizeof ( char * ); ic++ )
-						{ u1.rgc[ic] = pHash[ic]; }
-						pHashPrev = u1.pc;
-						pHash    += sizeof ( char * );
+				if ( buf[0] == '\0' )
+				{ return NULL; }
 
-						if ( top_string[sizeof ( char * )] == pHash[0]
-								&&   !strcmp ( top_string + sizeof ( char * ) + 1, pHash + 1 ) )
-						{ return pHash; }
-					}
+				if ( SameString ( buf, "(null)" ) )
+				{ return NULL; }
 
-					if ( fBootDb ) {
-						pString		= top_string;
-						top_string		= plast;
-						u1.pc		= string_hash[iHash];
-						for ( ic = 0; ic < ( signed int ) sizeof ( char * ); ic++ )
-						{ pString[ic] = u1.rgc[ic]; }
-						string_hash[iHash]	= pString;
-
-						nAllocString += 1;
-						sAllocString += top_string - pString;
-						return pString + sizeof ( char * );
-					} else {
-						return assign_string ( top_string + sizeof ( char * ) );
-					}
-				}
+				return assign_string ( buf );
 		}
 	}
+	return NULL;
 }
 
 char *fread_string_eol ( FILE *fp )
 {
-	static bool char_special[256 - EOF];
-	char *plast;
-	char c;
+	char buf[MAX_STRING_LENGTH] = {'\0'};
+	char *ptr = buf;
+	FILE *gfp = fp;
+	int c;
 
-	if ( char_special[EOF - EOF] != TRUE ) {
-		char_special[EOF -  EOF] = TRUE;
-		char_special['\n' - EOF] = TRUE;
-		char_special['\r' - EOF] = TRUE;
-	}
-
-	plast = top_string + sizeof ( char * );
-	if ( plast > &string_space[MAX_STRING - MAX_STRING_LENGTH] ) {
-		log_hd ( LOG_ERROR, Format ( "Fread_string_eol: MAX_STRING %d exceeded.", MAX_STRING ) );
-		exit ( 1 );
-	}
-
-	/*
-	 * Skip blanks.
-	 * Read first char.
-	 */
 	do {
-		c = getc ( fp );
+		c = getc ( gfp );
+		*ptr = c;
 	} while ( isspace ( c ) );
-
-	if ( ( *plast++ = c ) == '\n' )
-	{ return &str_empty[0]; }
-
+	if ( ( *ptr++ = c ) == '\n' )
+	{ return NULL; }
 	for ( ;; ) {
-		if ( !char_special[ ( *plast++ = getc ( fp ) ) - EOF ] )
-		{ continue; }
-
-		switch ( plast[-1] ) {
+		switch ( *ptr = getc ( gfp ) ) {
 			default:
+				ptr++;
 				break;
-
 			case EOF:
-				log_hd ( LOG_ERROR, Format ( "Fread_string_eol  EOF" ) );
-				exit ( 1 );
+				log_hd ( LOG_ERROR, "readStringEOL: EOF" );
+				SUICIDE;
 				break;
-
 			case '\n':
-			case '\r': {
-					union {
-						char *      pc;
-						char        rgc[sizeof ( char * )];
-					} u1;
-					int ic;
-					int iHash;
-					char *pHash;
-					char *pHashPrev;
-					char *pString;
+			case '\r':
+				*ptr = '\0';
+				if ( SameString ( buf, "(null)" ) )
+				{ return NULL; }
 
-					plast[-1] = '\0';
-					iHash     = UMIN ( MAX_KEY_HASH - 1, plast - 1 - top_string );
-					for ( pHash = string_hash[iHash]; pHash; pHash = pHashPrev ) {
-						for ( ic = 0; ic < ( signed int ) sizeof ( char * ); ic++ )
-						{ u1.rgc[ic] = pHash[ic]; }
-						pHashPrev = u1.pc;
-						pHash    += sizeof ( char * );
-
-						if ( top_string[sizeof ( char * )] == pHash[0]
-								&&   !strcmp ( top_string + sizeof ( char * ) + 1, pHash + 1 ) )
-						{ return pHash; }
-					}
-
-					if ( fBootDb ) {
-						pString             = top_string;
-						top_string          = plast;
-						u1.pc               = string_hash[iHash];
-						for ( ic = 0; ic < ( signed int ) sizeof ( char * ); ic++ )
-						{ pString[ic] = u1.rgc[ic]; }
-						string_hash[iHash]  = pString;
-
-						nAllocString += 1;
-						sAllocString += top_string - pString;
-						return pString + sizeof ( char * );
-					} else {
-						return assign_string ( top_string + sizeof ( char * ) );
-					}
-				}
+				ptr = ( char * ) assign_string ( buf );
+				return ptr;
 		}
 	}
+	return NULL;
 }
 
 
@@ -2785,16 +2699,14 @@ char *fread_word ( FILE *fp )
 /*
  * Duplicate a string into dynamic memory.
  * Fread_strings are read-only and shared.
+ * Ignoring string-space now
  */
 char *assign_string ( const char *str )
 {
 	char *str_new;
 
-	if ( str[0] == '\0' )
-	{ return &str_empty[0]; }
-
-	if ( str >= string_space && str < top_string )
-	{ return ( char * ) str; }
+	if ( IS_NULLSTR(str))
+	{ return NULL; }
 
 	ALLOC_DATA ( str_new, char, strlen ( str ) + 1 );
 
