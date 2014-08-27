@@ -215,14 +215,7 @@
 #define PURGE_DATA(data) \
 	do { \
 		if(data) { \
-			if(typeid(data) == typeid(char *) || typeid(data) == typeid(const char *)) \
-			{ \
-				freeSharedString((char *)data); \
-			} \
-			else \
-			{ \
 				ACTUAL_PURGE(data);  \
-			} \
 		} \
 	} while(0)
 
