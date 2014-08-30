@@ -47,7 +47,7 @@ DefineCommand ( cmd_wiznet )
 	int flag;
 	char buf[MAX_STRING_LENGTH];
 
-	if ( IS_NULLSTR(argument) ) {
+	if ( IS_NULLSTR ( argument ) ) {
 		if ( IS_SET ( ch->wiznet, WIZ_ON ) ) {
 			writeBuffer ( "Staff Aid turned on.\n\r", ch );
 			REMOVE_BIT ( ch->wiznet, WIZ_ON );
@@ -1821,15 +1821,15 @@ DefineCommand ( cmd_reboot )
 	Socket *d, *d_next;
 	Creature *vch;
 
-	if(cmd == 307) {
-		switch(argument[0]) {
+	if ( cmd == 307 ) {
+		switch ( argument[0] ) {
 			default:
 				ch->queries.querycommand = 0;
 				break;
 			case 'y':
 			case 'Y':
 				if ( ch->invis_level < LEVEL_HERO ) {
-					cmd_function ( ch, &cmd_echo, Format("Reboot by %s.", ch->name) );
+					cmd_function ( ch, &cmd_echo, Format ( "Reboot by %s.", ch->name ) );
 				}
 
 				{
@@ -1849,10 +1849,10 @@ DefineCommand ( cmd_reboot )
 					for ( int y = 0; twit_table[y] != NULL; y++ )
 					{ cnt++; }
 
-				std::string tweetStr = twit_table[number_range ( 0, ( cnt - 1 ) )];
-				tweetStr = addTweetHashtags ( tweetStr );
-				issueSystemCommandNoReturn ( Format ( "curl -u %s:%s -d \"status=%s\" http://localhost:8080/1.1/statuses/update.json",
-						"CombatMUD", "temppassword", C_STR ( tweetStr ) ) );
+					std::string tweetStr = twit_table[number_range ( 0, ( cnt - 1 ) )];
+					tweetStr = addTweetHashtags ( tweetStr );
+					issueSystemCommandNoReturn ( Format ( "curl -u %s:%s -d \"status=%s\" http://localhost:8080/1.1/statuses/update.json",
+														  "CombatMUD", "temppassword", C_STR ( tweetStr ) ) );
 
 				}
 
@@ -1868,7 +1868,7 @@ DefineCommand ( cmd_reboot )
 	} else {
 		// -- set up the query prompt
 		ch->queries.queryfunc = cmd_reboot;
-		strcpy(ch->queries.queryprompt, "Are you sure you want to reboot the MUD? (Y/n)");
+		strcpy ( ch->queries.queryprompt, "Are you sure you want to reboot the MUD? (Y/n)" );
 		ch->queries.querycommand = 307;
 	}
 	return;
@@ -1881,19 +1881,19 @@ DefineCommand ( cmd_shutdown )
 	Socket *d, *d_next;
 	Creature *vch;
 
-	if(cmd == 307) {
-		switch(argument[0]) {
+	if ( cmd == 307 ) {
+		switch ( argument[0] ) {
 			default:
 				ch->queries.querycommand = 0;
 				break;
 			case 'y':
 			case 'Y':
 				// -- just make sure it is in the log properly.
-				log_hd(LOG_SECURITY, Format("%s has agree'd to shutdown InfectEngine", ch->name));
+				log_hd ( LOG_SECURITY, Format ( "%s has agree'd to shutdown InfectEngine", ch->name ) );
 
-				append_file ( ch, SHUTDOWN_FILE, Format("Shutdown by %s.", ch->name) );
+				append_file ( ch, SHUTDOWN_FILE, Format ( "Shutdown by %s.", ch->name ) );
 				if ( ch->invis_level < LEVEL_HERO ) {
-					cmd_function ( ch, &cmd_echo, Format("Shutdown by %s.", ch->name) );
+					cmd_function ( ch, &cmd_echo, Format ( "Shutdown by %s.", ch->name ) );
 				}
 
 				{
@@ -1913,10 +1913,10 @@ DefineCommand ( cmd_shutdown )
 					for ( int y = 0; twit_table[y] != NULL; y++ )
 					{ cnt++; }
 
-				std::string tweetStr = twit_table[number_range ( 0, ( cnt - 1 ) )];
-				tweetStr = addTweetHashtags ( tweetStr );
-				issueSystemCommandNoReturn ( Format ( "curl -u %s:%s -d \"status=%s\" http://localhost:8080/1.1/statuses/update.json",
-						"CombatMUD", "temppassword", C_STR ( tweetStr ) ) );
+					std::string tweetStr = twit_table[number_range ( 0, ( cnt - 1 ) )];
+					tweetStr = addTweetHashtags ( tweetStr );
+					issueSystemCommandNoReturn ( Format ( "curl -u %s:%s -d \"status=%s\" http://localhost:8080/1.1/statuses/update.json",
+														  "CombatMUD", "temppassword", C_STR ( tweetStr ) ) );
 
 				}
 
@@ -1930,11 +1930,10 @@ DefineCommand ( cmd_shutdown )
 				}
 				break;
 		}
-	}
-	else {
+	} else {
 		// -- set up the query prompt
 		ch->queries.queryfunc = cmd_shutdown;
-		strcpy(ch->queries.queryprompt, "Are you sure you want to shutdown the MUD? (Y/n)");
+		strcpy ( ch->queries.queryprompt, "Are you sure you want to shutdown the MUD? (Y/n)" );
 		ch->queries.querycommand = 307;
 	}
 	return;
@@ -2462,7 +2461,7 @@ DefineCommand ( cmd_advance )
 	}
 
 	if ( ( level = atoi ( arg2 ) ) < 1 || level > MAX_LEVEL ) {
-		writeBuffer ( Format("Level must be 1 to %d.\n\r", MAX_LEVEL), ch );
+		writeBuffer ( Format ( "Level must be 1 to %d.\n\r", MAX_LEVEL ), ch );
 		return;
 	}
 
@@ -2504,7 +2503,7 @@ DefineCommand ( cmd_advance )
 		victim->level += 1;
 		advance_level ( victim, TRUE );
 	}
-	writeBuffer(Format("You are now level %d.\n\r", victim->level), victim);
+	writeBuffer ( Format ( "You are now level %d.\n\r", victim->level ), victim );
 	victim->exp   = exp_per_level ( victim, victim->pcdata->points )
 					* UMAX ( 1, victim->level );
 	victim->trust = 0;
@@ -3991,15 +3990,15 @@ DefineCommand ( cmd_prefix )
 	} else {
 		snprintf ( buf, sizeof ( buf ), "Prefix set to %s.\r\n", argument );
 	}
-  writeBuffer(buf,ch);
+	writeBuffer ( buf, ch );
 	ch->prefix = assign_string ( argument );
 }
 
-DefineCommand( cmd_makestaff )
+DefineCommand ( cmd_makestaff )
 {
-	if ( IS_NULLSTR(argument)) {
-		writeBuffer ( "Syntax: /makestaff <username> <flag> <on|off>\n\r",ch );
-		writeBuffer ( "Flags: staff, builder, relations, security, coder\n\r",ch );
+	if ( IS_NULLSTR ( argument ) ) {
+		writeBuffer ( "Syntax: /makestaff <username> <flag> <on|off>\n\r", ch );
+		writeBuffer ( "Flags: staff, builder, relations, security, coder\n\r", ch );
 		return;
 	}
 
@@ -4010,13 +4009,13 @@ DefineCommand( cmd_makestaff )
 	argument = one_argument ( argument, second );
 
 
-	if ( IS_NULLSTR(first) || IS_NULLSTR(second) || IS_NULLSTR(argument) ) {
-		writeBuffer ( "Syntax: /makestaff <username> <flag> <on|off>\n\r",ch );
+	if ( IS_NULLSTR ( first ) || IS_NULLSTR ( second ) || IS_NULLSTR ( argument ) ) {
+		writeBuffer ( "Syntax: /makestaff <username> <flag> <on|off>\n\r", ch );
 		return;
 	}
 
 	if ( str_cmp ( argument, "on" ) && str_cmp ( argument, "off" ) ) {
-		writeBuffer ( "Toggle requires on or off.\n\r",ch );
+		writeBuffer ( "Toggle requires on or off.\n\r", ch );
 		return;
 	}
 
@@ -4026,68 +4025,68 @@ DefineCommand( cmd_makestaff )
 
 	Creature *c, *cn;
 
-	for(c = char_list; c; c = cn) {
+	for ( c = char_list; c; c = cn ) {
 		cn = c->next;
 
 		// -- skip NPC's
-		if ( IS_NPC(c)) { continue; }
+		if ( IS_NPC ( c ) ) { continue; }
 
 		if ( !str_cmp ( c->name, first ) ) {
 			if ( c == ch && !str_cmp ( c->name, "Omega" ) ) {
-				writeBuffer( "You cannot flag yourself with staff flags!\n\r", ch );
+				writeBuffer ( "You cannot flag yourself with staff flags!\n\r", ch );
 				return;
 			}
 
 			if ( !str_cmp ( second, "staff" ) ) {
-				if(onOff == true)
-					SET_BIT( c->sflag, CR_STAFF);
+				if ( onOff == true )
+				{ SET_BIT ( c->sflag, CR_STAFF ); }
 				else
-					REMOVE_BIT(c->sflag, CR_STAFF );
-				writeBuffer("Staff flag toggled.\n\r",ch );
+				{ REMOVE_BIT ( c->sflag, CR_STAFF ); }
+				writeBuffer ( "Staff flag toggled.\n\r", ch );
 				return;
 			}
 
 			if ( !str_cmp ( second, "security" ) ) {
-				if(onOff == true)
-					SET_BIT( c->sflag, CR_SECURITY );
+				if ( onOff == true )
+				{ SET_BIT ( c->sflag, CR_SECURITY ); }
 				else
-					REMOVE_BIT( c->sflag, CR_SECURITY );
-				writeBuffer( "Vanguard flag toggled.\n\r", ch );
+				{ REMOVE_BIT ( c->sflag, CR_SECURITY ); }
+				writeBuffer ( "Vanguard flag toggled.\n\r", ch );
 				return;
 			}
 
 			if ( !str_cmp ( second, "relations" ) ) {
-				if(onOff == true)
-					SET_BIT(c->sflag, CR_RELATIONS );
+				if ( onOff == true )
+				{ SET_BIT ( c->sflag, CR_RELATIONS ); }
 				else
-					REMOVE_BIT(c->sflag, CR_RELATIONS);
-				writeBuffer( "Player Relations flag toggled.\n\r",ch );
+				{ REMOVE_BIT ( c->sflag, CR_RELATIONS ); }
+				writeBuffer ( "Player Relations flag toggled.\n\r", ch );
 				return;
 			}
 
 			if ( !str_cmp ( second, "builder" ) ) {
-				if(onOff == true)
-					SET_BIT(c->sflag, CR_BUILDER );
+				if ( onOff == true )
+				{ SET_BIT ( c->sflag, CR_BUILDER ); }
 				else
-					REMOVE_BIT(c->sflag, CR_BUILDER);
-				writeBuffer( "Builder flag toggled.\n\r",ch );
+				{ REMOVE_BIT ( c->sflag, CR_BUILDER ); }
+				writeBuffer ( "Builder flag toggled.\n\r", ch );
 				return;
 			}
 
 			if ( !str_cmp ( second, "coder" ) ) {
-				if(onOff == true)
-					SET_BIT(c->sflag, CR_CODER);
+				if ( onOff == true )
+				{ SET_BIT ( c->sflag, CR_CODER ); }
 				else
-					REMOVE_BIT(c->sflag, CR_CODER);
-				writeBuffer ( "Coder flag toggled.\n\r",ch );
+				{ REMOVE_BIT ( c->sflag, CR_CODER ); }
+				writeBuffer ( "Coder flag toggled.\n\r", ch );
 				return;
 			}
 
-			writeBuffer ( "Unknown flag option!\n\r",ch );
+			writeBuffer ( "Unknown flag option!\n\r", ch );
 			return;
 		}
 	}
-	writeBuffer ( "We couldn't find the player you wanted to adjust\n\r",ch );
+	writeBuffer ( "We couldn't find the player you wanted to adjust\n\r", ch );
 	return;
 }
 
@@ -4151,8 +4150,9 @@ DefineCommand ( cmd_sitrep )
 	writeBuffer ( "Unknown option!\n\r", cr );
 }
 
-DefineCommand ( cmd_events ) {
-	EventManager::instance().reportEvents(ch);
+DefineCommand ( cmd_events )
+{
+	EventManager::instance().reportEvents ( ch );
 	return;
 }
 
@@ -4253,88 +4253,88 @@ DefineCommand ( cmd_os )
 	return;
 }
 
-DefineCommand(cmd_tweet)
+DefineCommand ( cmd_tweet )
 {
-        if ( cmd == 1000 ) {
-                if ( LOWER ( argument[0] ) == 'y' ) {
-												log_hd(LOG_DEBUG, Format("%s has added '%s' to the twitlist query!", ch->name, ch->queries.query_string));
-                        // -- tweet on behalf of The Infected City
-                        tweetStatement ( ch->queries.query_string );
-                        writeBuffer ( "\r\nTweet has been added to the queue.\r\n",ch );
-                        // -- remove our old data
-                        PURGE_DATA ( ch->queries.query_string );
-                        ch->queries.querycommand = 0;
-                       	return;
-                }
-                // -- we selected anything BUT the Y option, that means
-               	// -- we are NOT doing it, so we clear out the memory applicable
-                // -- and attempt to avoid memory issues later on.
-               	ch->queries.querycommand = 0;
-                PURGE_DATA ( ch->queries.query_string );
+	if ( cmd == 1000 ) {
+		if ( LOWER ( argument[0] ) == 'y' ) {
+			log_hd ( LOG_DEBUG, Format ( "%s has added '%s' to the twitlist query!", ch->name, ch->queries.query_string ) );
+			// -- tweet on behalf of The Infected City
+			tweetStatement ( ch->queries.query_string );
+			writeBuffer ( "\r\nTweet has been added to the queue.\r\n", ch );
+			// -- remove our old data
+			PURGE_DATA ( ch->queries.query_string );
+			ch->queries.querycommand = 0;
+			return;
+		}
+		// -- we selected anything BUT the Y option, that means
+		// -- we are NOT doing it, so we clear out the memory applicable
+		// -- and attempt to avoid memory issues later on.
+		ch->queries.querycommand = 0;
+		PURGE_DATA ( ch->queries.query_string );
 		return;
-       	}
+	}
 
-        if ( IS_NULLSTR(argument) ) {
-               	writeBuffer ( "Syntax: tweet <message under 140 characters>\n\r",ch );
+	if ( IS_NULLSTR ( argument ) ) {
+		writeBuffer ( "Syntax: tweet <message under 140 characters>\n\r", ch );
 		return;
-        }
+	}
 
-        if ( strlen(argument) > 140 ) {
-                writeBuffer ( "Tweets must be under 140 characters in length.\n\r", ch );
+	if ( strlen ( argument ) > 140 ) {
+		writeBuffer ( "Tweets must be under 140 characters in length.\n\r", ch );
 		return;
-        }
+	}
 
 
-        ch->queries.queryfunc = cmd_tweet;
-        strcpy ( ch->queries.queryprompt, Format ( "Are you sure you want to tweet '%s' behalf of %s? (y/n)>", argument, "The Infected City" ) );
+	ch->queries.queryfunc = cmd_tweet;
+	strcpy ( ch->queries.queryprompt, Format ( "Are you sure you want to tweet '%s' behalf of %s? (y/n)>", argument, "The Infected City" ) );
 
-        // -- Assign the new new string to push
-        PURGE_DATA ( ch->queries.query_string );
-        ch->queries.query_string = assign_string ( argument );
-        ch->queries.querycommand = 1000;
+	// -- Assign the new new string to push
+	PURGE_DATA ( ch->queries.query_string );
+	ch->queries.query_string = assign_string ( argument );
+	ch->queries.querycommand = 1000;
 	return;
 }
 
-DefineCommand(cmd_twitlist)
+DefineCommand ( cmd_twitlist )
 {
 	extern std::list<std::string>tweetList;
-        if ( IS_NULLSTR(argument ) ) {
-                std::string output ( "" );
-                std::list<std::string>::iterator iter, itern;
-                int cnt = 0;
-                for ( iter = tweetList.begin(); iter != tweetList.end(); iter = itern ) {
-                       	std::string s = ( *iter ).c_str();
-                        itern = ++iter;
+	if ( IS_NULLSTR ( argument ) ) {
+		std::string output ( "" );
+		std::list<std::string>::iterator iter, itern;
+		int cnt = 0;
+		for ( iter = tweetList.begin(); iter != tweetList.end(); iter = itern ) {
+			std::string s = ( *iter ).c_str();
+			itern = ++iter;
 
-                        output.append ( Format ( "[%2d] - %s\n\r", cnt, C_STR ( s ) ) );
-                        cnt++;
-                }
+			output.append ( Format ( "[%2d] - %s\n\r", cnt, C_STR ( s ) ) );
+			cnt++;
+		}
 
-                output.append ( "Type /tweetlist [number] to remove a selected tweet.\n\r" );
-                writePage ( C_STR ( output ), ch );
-                return;
-        }
+		output.append ( "Type /tweetlist [number] to remove a selected tweet.\n\r" );
+		writePage ( C_STR ( output ), ch );
+		return;
+	}
 
-        if ( !is_number ( argument ) ) {
-                writeBuffer ( "Tweets are numbered, please select the tweet you want to remove.\n\r",ch );
-                return;
-        }
+	if ( !is_number ( argument ) ) {
+		writeBuffer ( "Tweets are numbered, please select the tweet you want to remove.\n\r", ch );
+		return;
+	}
 
 	std::list<std::string>::iterator iter, itern;
-        int cnt = 0;
-        for ( iter = tweetList.begin(); iter != tweetList.end(); iter = itern ) {
-                std::string s = ( *iter ).c_str();
-                itern = ++iter;
+	int cnt = 0;
+	for ( iter = tweetList.begin(); iter != tweetList.end(); iter = itern ) {
+		std::string s = ( *iter ).c_str();
+		itern = ++iter;
 
-                if ( cnt == atoi (argument) ) {
-                        tweetList.remove ( s );
-                        writeBuffer ( "Tweet removed from list.\n\r", ch );
-                        return;
-                }
-                cnt++;
-        }
-	writeBuffer ( "Tweet not found.\n\r",ch );
-        return;
+		if ( cnt == atoi ( argument ) ) {
+			tweetList.remove ( s );
+			writeBuffer ( "Tweet removed from list.\n\r", ch );
+			return;
+		}
+		cnt++;
+	}
+	writeBuffer ( "Tweet not found.\n\r", ch );
+	return;
 }
 
 

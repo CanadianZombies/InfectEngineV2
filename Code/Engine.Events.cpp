@@ -60,10 +60,10 @@ int EventManager::updateEvents ( void )
 			emptyUpdateList++;
 			if ( emptyUpdateList > 10 ) {
 				log_hd ( LOG_ERROR | LOG_DEBUG, "EventManager::updateEvents: the event list is empty!  Major glitch suspected, shutting down." );
-				
+
 				return POLL_ERROR;
 			}
-			
+
 			return POLL_SUCCESS;
 		}
 #endif
@@ -91,8 +91,7 @@ int EventManager::updateEvents ( void )
 				char* demangled_name = __cxxabiv1::__cxa_demangle ( mangled_name, 0, 0, &status );
 
 				log_hd ( LOG_DEBUG, Format ( "Running Event: (%p)%s", ev, demangled_name ) );
-				if ( demangled_name )
-				{
+				if ( demangled_name ) {
 					free ( demangled_name );
 					demangled_name = NULL;
 				}
@@ -117,7 +116,7 @@ int EventManager::updateEvents ( void )
 
 	// -- chain so that we don't break the lldb calls.
 	tail_chain();
-	
+
 	// -- a typical action to ensure the debugger doesn't spaz out like a little hooker.
 	return 1;
 }
@@ -209,14 +208,14 @@ void EventManager::reportEvents ( Creature *c )
 		if ( ev->getType() == EV_LUA ) {
 			LuaEvent *le = ( LuaEvent * ) ev;
 			writeBuffer ( Format ( "\a[F504]Ev: \a[F152]%25s \a[F504] (\a[F531]%p\a[F504]) \a[F504]Repeats: \a[F152]%s - \a[F504]Start: \a[F152]%s - \a[F504]Executes in \a[F152]%f \a[F504]seconds \ay(\a[F500]%s\ay)\a[F504].\an\n\r",
-											   status ? mangled_name : demangled_name, ev,
-											   ev->isRestart() ? "Yes" : "No",
-											   getDateTime ( ev->getInitTime() ), ExecutesIn, C_STR ( le->getScriptName() ) ),c );
+								   status ? mangled_name : demangled_name, ev,
+								   ev->isRestart() ? "Yes" : "No",
+								   getDateTime ( ev->getInitTime() ), ExecutesIn, C_STR ( le->getScriptName() ) ), c );
 		} else {
 			writeBuffer ( Format ( "\a[F504]Ev: \a[F152]%25s \a[F504] (\a[F531]%p\a[F504]) \a[F504]Repeats: \a[F152]%s - \a[F504]Start: \a[F152]%s - \a[F504]Executes in \a[F152]%f \a[F504]seconds.\an\n\r",
-											   status ? mangled_name : demangled_name, ev,
-											   ev->isRestart() ? "Yes" : "No",
-											   getDateTime ( ev->getInitTime() ), ExecutesIn ),c );
+								   status ? mangled_name : demangled_name, ev,
+								   ev->isRestart() ? "Yes" : "No",
+								   getDateTime ( ev->getInitTime() ), ExecutesIn ), c );
 		}
 		cnt++;
 
@@ -226,7 +225,7 @@ void EventManager::reportEvents ( Creature *c )
 			demangled_name = NULL;
 		}
 	}
-	writeBuffer ( Format ( "There are %d events in queue with a total of %f seconds.\an\n\r", cnt, totSeconds ),c );
+	writeBuffer ( Format ( "There are %d events in queue with a total of %f seconds.\an\n\r", cnt, totSeconds ), c );
 	return;
 }
 
@@ -248,7 +247,7 @@ Event *EventManager::addEvent ( Event *ev, bool repeat, double seconds )
 	ev->setSeconds ( seconds );
 	ev->setInitTime ( time ( NULL ) );
 	ev->setType ( EV_CPP );
-	
+
 	return ev;
 }
 
@@ -265,12 +264,12 @@ void EventManager::stopEventType ( int ev_type )
 				// -- brace for impact, this has the potential to crash the mud if something
 				// -- is not flagged properly and the system assumes it is a LUA event when it
 				// -- really isn't.
-//				LuaEvent *ev = ( LuaEvent * ) e;
+				//				LuaEvent *ev = ( LuaEvent * ) e;
 				// -- force the event to run, that way we can kill out all the co-routines
 				// -- attached to it following execution.
 				// -- this *SHOULD* allow for missions to not be corrupted.
-//				if ( ScriptEngine::instancePtr() )
-//				{ ScriptEngine::instance().runEvent ( ev->getScriptName() ); }
+				//				if ( ScriptEngine::instancePtr() )
+				//				{ ScriptEngine::instance().runEvent ( ev->getScriptName() ); }
 			}
 			mEventList.remove ( e );
 			delete e;
@@ -441,11 +440,11 @@ void TwitterEvent::Execute ( void )
 void ExpEvent::Execute ( void )
 {
 	Creature *ch, *ch_n;
-	for ( ch = char_list; ch; ch = ch_n) {
+	for ( ch = char_list; ch; ch = ch_n ) {
 		ch_n = ch->next;
 
 		if ( !ch )	{ SUICIDE; }				// -- the impossible has happened
-		if ( IS_NPC(ch)) { continue; }				// -- NPC's do not gain
+		if ( IS_NPC ( ch ) ) { continue; }				// -- NPC's do not gain
 		if ( ch->level >= MAX_LEVEL ) { continue; }		// -- Max Level does not gain
 		if ( ch->fighting ) { continue; }			// -- do not gain while in combat.
 
@@ -479,12 +478,12 @@ void ExpEvent::Execute ( void )
 
 				// -- assign the experience properly.
 				ch->exp += totalGain;
-	//			update_board ( ch, totalGain, BOARD_EXP );
+				//			update_board ( ch, totalGain, BOARD_EXP );
 
 				writeBuffer ( Format ( "\n\r\ac*** \aYYour survival in \aG%s \aYhas yielded the reward of \aR%d\aY experience gained \ac***\an\n\r", "The Infected City", totalGain ), ch );
 
 				if ( ch->level < MAX_LEVEL && ch->exp >= ( ch->level * 200 ) ) {
-					writeBuffer("You are ready to level up! Please find a safe spot to level up!\r\n",ch);
+					writeBuffer ( "You are ready to level up! Please find a safe spot to level up!\r\n", ch );
 				} // -- end level gain
 			} // -- end can we gain exp
 		} // -- end random chance

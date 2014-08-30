@@ -75,11 +75,11 @@ extern	int	malloc_verify	args ( ( void ) );
  * Socket and TCP/IP stuff.
  */
 #if	defined(unix)
-	#include <fcntl.h>
-	#include <netdb.h>
-	#include <netinet/in.h>
-	#include <sys/socket.h>
-	const	char 	go_ahead_str	[] = { ( char ) IAC, ( char ) GA, '\0' };
+#include <fcntl.h>
+#include <netdb.h>
+#include <netinet/in.h>
+#include <sys/socket.h>
+const	char 	go_ahead_str	[] = { ( char ) IAC, ( char ) GA, '\0' };
 #endif
 
 
@@ -212,7 +212,7 @@ int main ( int argc, char **argv )
 
 	RunMudLoop ( control );
 
-	if(EventManager::instancePtr()) {
+	if ( EventManager::instancePtr() ) {
 		delete EventManager::instancePtr();
 	}
 
@@ -387,13 +387,12 @@ void RunMudLoop ( int control )
 				if ( d->showstr_point )
 				{ show_string ( d, d->incomm ); }
 				else if ( d->character && d->character->queries.querycommand ) {
-					log_hd ( LOG_COMMAND, Format ( "Q-Player:  %s ::  Argument:  %s",  d->character->name, 
-							d->incomm ? d->incomm: "" ) );
-					( *d->character->queries.queryfunc ) 
-					( d->character, Format ( "queried_command:%p", d->character->queries.queryfunc ), 
-						d->incomm, d->character->queries.querycommand );
-				}
-				else if ( d->pString )
+					log_hd ( LOG_COMMAND, Format ( "Q-Player:  %s ::  Argument:  %s",  d->character->name,
+												   d->incomm ? d->incomm : "" ) );
+					( *d->character->queries.queryfunc )
+					( d->character, Format ( "queried_command:%p", d->character->queries.queryfunc ),
+					  d->incomm, d->character->queries.querycommand );
+				} else if ( d->pString )
 				{ string_add ( d->character, d->incomm ); }
 				else {
 					switch ( d->connected ) {
@@ -425,7 +424,7 @@ void RunMudLoop ( int control )
 			d_next = d->next;
 
 			if ( ( d->fcommand || d->outtop > 0 )
-			&&   FD_ISSET ( d->descriptor, &out_set ) ) {
+					&&   FD_ISSET ( d->descriptor, &out_set ) ) {
 				if ( !process_output ( d, TRUE ) ) {
 					if ( d->character != NULL && d->connected == CON_PLAYING )
 					{ save_char_obj ( d->character ); }
@@ -671,7 +670,7 @@ bool read_from_descriptor ( Socket *d )
 		return FALSE;
 	}
 
-	while(true) {
+	while ( true ) {
 		int nRead;
 
 		nRead = read ( d->descriptor, read_buf + iStart,
@@ -814,8 +813,7 @@ bool process_output ( Socket *d, bool fPrompt )
 
 		// -- zeroize it so we don't have any problems (should stop the spamming of scanreaders)
 		memset ( d->character->queries.queryprompt, 0, sizeof ( d->character->queries.queryprompt ) );
-	}
-	else if ( d->pProtocol->WriteOOB )
+	} else if ( d->pProtocol->WriteOOB )
 		; /* The last sent data was OOB, so do NOT draw the prompt */
 	else if ( !is_shutdown && d->showstr_point )
 	{ write_to_buffer ( d, "\r\n\r\n\a[F500] { \a[F535]Shoot that Return Key \a[F500]} \an\r\n\r\n", 0 ); }
@@ -883,7 +881,7 @@ bool process_output ( Socket *d, bool fPrompt )
 	// -- snooping control
 	if ( d->snoop_by != NULL ) {
 		if ( d->character != NULL )
-		{ write_to_buffer ( d->snoop_by, Format("\ac{ \aR%s \ac}\r\n", d->character->name), 0 ); }
+		{ write_to_buffer ( d->snoop_by, Format ( "\ac{ \aR%s \ac}\r\n", d->character->name ), 0 ); }
 		write_to_buffer ( d->snoop_by, "\ay-----------------------------------------------------\an\r\n", 0 );
 		write_to_buffer ( d->snoop_by, d->outbuf, d->outtop );
 		write_to_buffer ( d->snoop_by, "\ay-----------------------------------------------------\an\r\n", 0 );
@@ -930,8 +928,8 @@ void bust_a_prompt ( Creature *ch )
 		return;
 	}
 
-	if(ch->desc && ch->desc->editor) {
-		writeBuffer(Format("\ac{\ay%s \aR: \ay%s\ac}\an ", olc_ed_name(ch), olc_ed_vnum(ch)), ch );
+	if ( ch->desc && ch->desc->editor ) {
+		writeBuffer ( Format ( "\ac{\ay%s \aR: \ay%s\ac}\an ", olc_ed_name ( ch ), olc_ed_vnum ( ch ) ), ch );
 		return;
 	}
 
@@ -1351,19 +1349,19 @@ void nanny ( Socket *d, char *argument )
 				return;
 			}
 
-        if ( !strstr ( argument, "1" ) &&
-                        !strstr ( argument, "2" ) &&
-                        !strstr ( argument, "3" ) &&
-                        !strstr ( argument, "4" ) &&
-                        !strstr ( argument, "5" ) &&
-                        !strstr ( argument, "6" ) &&
-                        !strstr ( argument, "7" ) &&
-                        !strstr ( argument, "8" ) &&
-                        !strstr ( argument, "9" ) &&
-                        !strstr ( argument, "0" ) ) {
-                write_to_buffer (d, "You must have a number in your password.\r\nPassword: ",0 );
-                return;
-        }
+			if ( !strstr ( argument, "1" ) &&
+					!strstr ( argument, "2" ) &&
+					!strstr ( argument, "3" ) &&
+					!strstr ( argument, "4" ) &&
+					!strstr ( argument, "5" ) &&
+					!strstr ( argument, "6" ) &&
+					!strstr ( argument, "7" ) &&
+					!strstr ( argument, "8" ) &&
+					!strstr ( argument, "9" ) &&
+					!strstr ( argument, "0" ) ) {
+				write_to_buffer ( d, "You must have a number in your password.\r\nPassword: ", 0 );
+				return;
+			}
 
 			pwdnew = crypt ( argument, ch->name );
 			for ( p = pwdnew; *p != '\0'; p++ ) {

@@ -39,7 +39,7 @@
 // -- for SkillNumbering
 #ifndef Database_Cpp
 #define Database_Cpp
-	#include "Engine.h"
+#include "Engine.h"
 #undef Database_Cpp
 
 #if !defined(macintosh)
@@ -250,7 +250,7 @@ void boot_db ( void )
 		log_hd ( LOG_ALL, "Attempting to load world district data..." );
 
 		if ( ( fpList = fopen ( Format ( "%s%s", WORLD_DIR, AREA_LIST ), "r" ) ) == NULL ) {
-			ReportErrno( AREA_LIST );
+			ReportErrno ( AREA_LIST );
 			exit ( 1 );
 		}
 
@@ -263,7 +263,7 @@ void boot_db ( void )
 				fpArea = stdin;
 			} else {
 				if ( ( fpArea = fopen ( Format ( "%s%s", WORLD_DIR, strArea ), "r" ) ) == NULL ) {
-					ReportErrno( strArea );
+					ReportErrno ( strArea );
 					exit ( 1 );
 				}
 			}
@@ -2705,7 +2705,7 @@ char *assign_string ( const char *str )
 {
 	char *str_new;
 
-	if ( IS_NULLSTR(str))
+	if ( IS_NULLSTR ( str ) )
 	{ return NULL; }
 
 	ALLOC_DATA ( str_new, char, strlen ( str ) + 1 );

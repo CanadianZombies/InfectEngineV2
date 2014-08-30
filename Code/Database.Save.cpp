@@ -1042,7 +1042,7 @@ DefineCommand ( cmd_asave )
 	/* Show correct syntax. */
 	/* -------------------- */
 	if ( ch )
-	{ cmd_function(ch, cmd_asave, "" ); }
+	{ cmd_function ( ch, cmd_asave, "" ); }
 
 	return;
 }

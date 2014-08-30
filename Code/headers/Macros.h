@@ -95,12 +95,12 @@
 // -- A random chance to save your character.  This makes it so that
 // -- we have more frequent saves in-case of stability problems arising.
 #define SAVE_CHANCE(ch) \
-        do { \
-                if(!IS_NPC(ch)) { \
-                        if(number_percent() == number_range(0,125)) \
-                        { save_char_obj(ch); } \
-                } \
-        } while(0)
+	do { \
+		if(!IS_NPC(ch)) { \
+			if(number_percent() == number_range(0,125)) \
+			{ save_char_obj(ch); } \
+		} \
+	} while(0)
 
 
 #define IS_VALID(data)		((data) != NULL && (data)->valid)
@@ -215,7 +215,7 @@
 #define PURGE_DATA(data) \
 	do { \
 		if(data) { \
-				ACTUAL_PURGE(data);  \
+			ACTUAL_PURGE(data);  \
 		} \
 	} while(0)
 

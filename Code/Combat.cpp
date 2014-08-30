@@ -839,7 +839,7 @@ bool damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type,
 					 ch->in_room->vnum ) );
 
 			// -- how embarrassing!  Twitter knows!  Oh thats right, twitter knows all!
-			tweetStatement(Format("%s%s has been %s by %s.", !IS_NPC(ch) ? "[PK]:" : "", victim->name, !IS_NPC(ch) ? "murdered" : "slain", !IS_NPC(ch) ? ch->name : ch->short_descr));
+			tweetStatement ( Format ( "%s%s has been %s by %s.", !IS_NPC ( ch ) ? "[PK]:" : "", victim->name, !IS_NPC ( ch ) ? "murdered" : "slain", !IS_NPC ( ch ) ? ch->name : ch->short_descr ) );
 
 			/*
 			 * Dying penalty:
@@ -1567,7 +1567,7 @@ void raw_kill ( Creature *victim )
 	make_corpse ( victim );
 
 	// -- yank out our events that are attached to the life of the victim
-	EventManager::instance().extractOnDeath(victim);
+	EventManager::instance().extractOnDeath ( victim );
 
 	if ( IS_NPC ( victim ) ) {
 		victim->pIndexData->killed++;
@@ -1641,7 +1641,7 @@ void group_gain ( Creature *ch, Creature *victim )
 			continue;
 		}
 
-		gain_exp(gch, xp_compute ( gch, victim, group_levels ));
+		gain_exp ( gch, xp_compute ( gch, victim, group_levels ) );
 
 		for ( obj = ch->carrying; obj != NULL; obj = obj_next ) {
 			obj_next = obj->next_content;
@@ -1867,7 +1867,7 @@ int xp_compute ( Creature *gch, Creature *victim, int total_levels )
 	xp = xp * gch->level / ( UMAX ( 1, total_levels - 1 ) );
 
 	// -- prevent crazy amounts of experience.
-	if(xp > 10) xp = (xp/3.5);
+	if ( xp > 10 ) { xp = ( xp / 3.5 ); }
 
 	return xp;
 }

@@ -150,23 +150,23 @@ class EventManager :  public Instance<EventManager>
 	 
 class LuaEvent : public Event
 {
-                DEFINE_EVENT ( LuaEvent );
-        private:
-               	std::string mScriptName;
-        public:
-               	void setScriptName ( const char *mName ) { mScriptName = mName; }
-                std::string getScriptName ( void ) { return mScriptName; }
+		DEFINE_EVENT ( LuaEvent );
+	private:
+		std::string mScriptName;
+	public:
+		void setScriptName ( const char *mName ) { mScriptName = mName; }
+		std::string getScriptName ( void ) { return mScriptName; }
 };
 
 
 class ExpEvent : public Event
 {
-	DEFINE_EVENT( ExpEvent );
+		DEFINE_EVENT ( ExpEvent );
 };
 
 class TwitterEvent : public Event
 {
-	DEFINE_EVENT ( TwitterEvent );
+		DEFINE_EVENT ( TwitterEvent );
 };
 
 #endif

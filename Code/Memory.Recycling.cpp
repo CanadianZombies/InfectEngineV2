@@ -273,7 +273,7 @@ void recycle_obj ( Item *obj )
 	}
 	obj->extra_descr = NULL;
 
-	EventManager::instance().purgeFromOwner(obj);
+	EventManager::instance().purgeFromOwner ( obj );
 
 	PURGE_DATA ( obj->name        );
 	PURGE_DATA ( obj->description );
@@ -324,13 +324,13 @@ Creature *new_char ( void )
 	ch->sitrep                  = 0;
 	ch->exp_pool		    = 0;
 
-        // -- zeroize the structures.
-        ch->queries.querydata = NULL;
-       	ch->queries.queryprompt[0] = '\0';
-       	ch->queries.queryprompt2[0] = '\0';
-        ch->queries.querycommand = 0;
-        ch->queries.queryintcommand = 0;
-        ch->queries.query_string = NULL;
+	// -- zeroize the structures.
+	ch->queries.querydata = NULL;
+	ch->queries.queryprompt[0] = '\0';
+	ch->queries.queryprompt2[0] = '\0';
+	ch->queries.querycommand = 0;
+	ch->queries.queryintcommand = 0;
+	ch->queries.query_string = NULL;
 
 	for ( i = 0; i < MAX_STATS; i ++ ) {
 		ch->perm_stat[i] = 13;
@@ -371,16 +371,16 @@ void recycle_char ( Creature *ch )
 	PURGE_DATA ( ch->prompt );
 	PURGE_DATA ( ch->prefix );
 
-	EventManager::instance().purgeFromOwner(ch);
+	EventManager::instance().purgeFromOwner ( ch );
 
-        // -- zeroize the structures.
-        ch->queries.querydata = NULL;
-       	ch->queries.queryprompt[0] = '\0';
-       	ch->queries.queryprompt2[0] = '\0';
-        ch->queries.querycommand = 0;
-        ch->queries.queryintcommand = 0;
+	// -- zeroize the structures.
+	ch->queries.querydata = NULL;
+	ch->queries.queryprompt[0] = '\0';
+	ch->queries.queryprompt2[0] = '\0';
+	ch->queries.querycommand = 0;
+	ch->queries.queryintcommand = 0;
 
-	PURGE_DATA ( ch->queries.query_string);
+	PURGE_DATA ( ch->queries.query_string );
 
 	recycle_note  ( ch->pnote );
 	recycle_pcdata ( ch->pcdata );

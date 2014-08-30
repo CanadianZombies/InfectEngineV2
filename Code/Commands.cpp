@@ -79,25 +79,25 @@ const struct staff_cmd_type staff_cmd_table[] = {
 
 	{ "disconnect",	cmd_disconnect,	CR_SECURITY, LOG_ALWAYS, 1, "Disconnect will cause a connected player to disconnect" },
 	{ "pardon",	cmd_pardon,	CR_SECURITY, LOG_ALWAYS, 1, "Revoke a previous punishment" },
-	
+
 	{ "sla",	cmd_sla,	CR_BUILDER,  LOG_NORMAL, 0, "" },
 	{ "slay",	cmd_slay,	CR_BUILDER,  LOG_ALWAYS, 1, "Slay will terminate the life an NPC or Player (to be used in testing only)" },
 
 	{ "gecho",	cmd_echo,	CR_RELATIONS, LOG_ALWAYS, 1, "Globally echo a selected string" },
-	{ "load",	cmd_load, CR_RELATIONS|CR_BUILDER, LOG_ALWAYS, 1, "Load a NPC/Item into the game" },
-	{ "newblockdown",cmd_newbielockdown,	CR_SECURITY,  LOG_ALWAYS, 1, "Block newbies from entering the MUD" },
+	{ "load",	cmd_load, CR_RELATIONS | CR_BUILDER, LOG_ALWAYS, 1, "Load a NPC/Item into the game" },
+	{ "newblockdown", cmd_newbielockdown,	CR_SECURITY,  LOG_ALWAYS, 1, "Block newbies from entering the MUD" },
 
 	{ "flag",	cmd_flag,	CR_RELATIONS,	LOG_ALWAYS, 1, "Change assigned flags to a loaded Item or NPC/Player" },
 	{ "freeze",	cmd_freeze,	CR_SECURITY,	LOG_ALWAYS, 1, "Completely freeze a player in his/her place"},
 	{ "pecho",	cmd_pecho,	CR_RELATIONS,	LOG_ALWAYS, 1, "Echo a message without giving a name" },
 	{ "purge",	cmd_purge,	CR_BUILDER,     LOG_ALWAYS, 1, "Purge a loaded Item/NPC from the MUD" },
 	{ "restore",	cmd_restore,	CR_RELATIONS,	LOG_ALWAYS, 1, "Restore a player to full health" },
-	{ "vnum",	cmd_vnum,	CR_RELATIONS|CR_BUILDER, LOG_NORMAL, 1, "Find the vnum of a Item/NPC" },
+	{ "vnum",	cmd_vnum,	CR_RELATIONS | CR_BUILDER, LOG_NORMAL, 1, "Find the vnum of a Item/NPC" },
 	{ "zecho",	cmd_zecho,	CR_RELATIONS,	LOG_ALWAYS, 1, "Echo a message to a zone" },
 	{ "guild",	cmd_guild,	CR_RELATIONS,   LOG_ALWAYS, 1, "Move a player into a Guild" },
-	{ "sockets",    cmd_sockets,	CR_SECURITY|CR_HEAD, LOG_NORMAL, 1, "See the currently connected sockets" },
+	{ "sockets",    cmd_sockets,	CR_SECURITY | CR_HEAD, LOG_NORMAL, 1, "See the currently connected sockets" },
 
-	{ "peace",	cmd_peace,	CR_RELATIONS|CR_SECURITY,  LOG_NORMAL, 1, "Stop all fighting in a room" },
+	{ "peace",	cmd_peace,	CR_RELATIONS | CR_SECURITY,  LOG_NORMAL, 1, "Stop all fighting in a room" },
 	{ "snoop",	cmd_snoop,	CR_SECURITY,	LOG_ALWAYS, 1, "Personally review a players actions as if through their eyes" },
 	{ "string",	cmd_string,	CR_RELATIONS,	LOG_ALWAYS, 1, "Change the string values of Items/NPC's for quests" },
 	{ "clone",	cmd_clone,	CR_RELATIONS,	LOG_ALWAYS, 1, "Create a carbon copy of an Item" },
@@ -105,7 +105,7 @@ const struct staff_cmd_type staff_cmd_table[] = {
 	{ "noemote",	cmd_noemote,	CR_SECURITY,	LOG_ALWAYS, 1, "Strip away or Restore emote Privilages" },
 	{ "noshout",	cmd_noshout,	CR_SECURITY,	LOG_ALWAYS, 1, "Strip away or Restore shout Privilages" },
 	{ "notell",	cmd_notell,	CR_SECURITY,	LOG_ALWAYS, 1, "Strip away or Restore tell Privilages" },
-	{ "transfer",	cmd_transfer,	CR_SECURITY|CR_RELATIONS, LOG_ALWAYS, 1, "Transfer a selected NPC/Player to your location" },
+	{ "transfer",	cmd_transfer,	CR_SECURITY | CR_RELATIONS, LOG_ALWAYS, 1, "Transfer a selected NPC/Player to your location" },
 
 	{ "at",         cmd_at,         CR_RELATIONS,   LOG_NORMAL, 1, "Perform a command as if you were at the selected NPC/Player" },
 	{ "echo",	cmd_recho,	CR_RELATIONS,	LOG_ALWAYS, 1, "Echo a message to a room" },
@@ -326,36 +326,37 @@ const	struct	cmd_type	cmd_table	[] = {
 };
 
 
-void attempt_staff_command(Creature *ch, const std::string &pcomm, const std::string &argument ) {
+void attempt_staff_command ( Creature *ch, const std::string &pcomm, const std::string &argument )
+{
 
 	char logline[MAX_INPUT_LENGTH];		// -- for the relic spy code from ROM.
 	std::string staff_command = pcomm;
-        staff_command.erase ( 0, pcomm.find_first_not_of ( '/' ) );
-        int cmd = 0;
+	staff_command.erase ( 0, pcomm.find_first_not_of ( '/' ) );
+	int cmd = 0;
 	bool found = false;
 
 	// -- log all of our staff commands executed under debug due to the volatile nature.
-	log_hd(LOG_DEBUG, Format(" --- %s --- Staff Command: %s     Args: %s", ch->name, !pcomm.empty() ? pcomm.c_str() : "", !argument.empty() ? argument.c_str() : ""));
+	log_hd ( LOG_DEBUG, Format ( " --- %s --- Staff Command: %s     Args: %s", ch->name, !pcomm.empty() ? pcomm.c_str() : "", !argument.empty() ? argument.c_str() : "" ) );
 
 	// -- NPC's shouldn't EVER execute staff commands, thats why they have their mudprog commands.
-	if(IS_NPC(ch)) {
-		log_hd(LOG_DEBUG|LOG_SECURITY, Format("\t--- NPC executing staff command!  Security issue!!!!! (%s)", ch->name));
+	if ( IS_NPC ( ch ) ) {
+		log_hd ( LOG_DEBUG | LOG_SECURITY, Format ( "\t--- NPC executing staff command!  Security issue!!!!! (%s)", ch->name ) );
 	}
 
 	// -- create our logline (gotta support spys everywhere!)
-	strcpy ( logline, Format("%s %s", pcomm.c_str(), argument.empty() ? "" : argument.c_str()) );
+	strcpy ( logline, Format ( "%s %s", pcomm.c_str(), argument.empty() ? "" : argument.c_str() ) );
 
-        for ( cmd = 0; !IS_NULLSTR(staff_cmd_table[cmd].name); cmd++ ) {
-                if ( staff_command[0] == staff_cmd_table[cmd].name[0]
-                &&  !str_cmp ( staff_command.c_str(), staff_cmd_table[cmd].name )) {
-                	found = true;
-                        break;
-                }
-        }
+	for ( cmd = 0; !IS_NULLSTR ( staff_cmd_table[cmd].name ); cmd++ ) {
+		if ( staff_command[0] == staff_cmd_table[cmd].name[0]
+				&&  !str_cmp ( staff_command.c_str(), staff_cmd_table[cmd].name ) ) {
+			found = true;
+			break;
+		}
+	}
 
 	// -- either it isn't found or we are not flagged for that command
-	if(!found || !IS_SET(ch->sflag, staff_cmd_table[cmd].flag)) {
-		writeBuffer("Unknown Option.\r\n",ch);
+	if ( !found || !IS_SET ( ch->sflag, staff_cmd_table[cmd].flag ) ) {
+		writeBuffer ( "Unknown Option.\r\n", ch );
 		return;
 	}
 
@@ -365,8 +366,8 @@ void attempt_staff_command(Creature *ch, const std::string &pcomm, const std::st
 
 	// -- log the command data
 	if ( ( !IS_NPC ( ch ) && IS_SET ( ch->act, PLR_LOG ) )
-	||   fLogAll
-	||   staff_cmd_table[cmd].log == LOG_ALWAYS ) {
+			||   fLogAll
+			||   staff_cmd_table[cmd].log == LOG_ALWAYS ) {
 		wiznet ( Format ( "Log: %s %s", ch->name, logline ), ch, NULL, WIZ_SECURE, 0, get_trust ( ch ) );
 		log_hd ( LOG_SECURITY | LOG_COMMAND, Format ( "%s has executed: %s", ch->name, !IS_NULLSTR ( logline ) ? logline : "{SUSPECT LOG_NEVER, NO LOGLINE DATA RECEIVED}" ) );
 	}
@@ -427,25 +428,25 @@ void interpret ( Creature *ch, const char *argument )
 		return;
 	}
 
-        // -- handle the query system!
-        if ( !IS_NPC(ch)) {
-               	if ( ch->queries.queryintcommand ) {
-                       	if ( ( *ch->queries.queryintfunc ) ( ch, ch->queries.queryintcommand, argument ) )
-                       	{ return; }
-                }
-        }
+	// -- handle the query system!
+	if ( !IS_NPC ( ch ) ) {
+		if ( ch->queries.queryintcommand ) {
+			if ( ( *ch->queries.queryintfunc ) ( ch, ch->queries.queryintcommand, argument ) )
+			{ return; }
+		}
+	}
 
 	ch->queries.querycommand = 0;
 	ch->queries.querydata = NULL;
 	ch->queries.queryfunc = NULL;
 
 	// -- are we utilizing a staff command? Lets find out today!?
-	if(argument[0] == '/') {
+	if ( argument[0] == '/' ) {
 		char argbuf[100000];
 		char *comm1;
 
-		comm1 = one_argument(argument, argbuf);
-		attempt_staff_command(ch, argbuf, comm1);
+		comm1 = one_argument ( argument, argbuf );
+		attempt_staff_command ( ch, argbuf, comm1 );
 		return;
 	}
 	/*
@@ -793,41 +794,53 @@ DefineCommand ( cmd_commands )
 	char char_level;
 
 	col = 0;
-	for(int x = 0; x != MAX_CATEGORY; x++) {
-		if(col != 0) {
+	for ( int x = 0; x != MAX_CATEGORY; x++ ) {
+		if ( col != 0 ) {
 			col = 0;
-			add_buf(bf, "\r\n");
+			add_buf ( bf, "\r\n" );
 		}
 
-		switch(x) {
+		switch ( x ) {
 			default:
 				break;
-			case CAT_MOVE: add_buf(bf, 	"\ay*** \aRMovement \ay***\an\r\n"); break;
-			case CAT_COMM: add_buf(bf, 	"\ay*** \aRCommunication \ay***\an\r\n"); break;
-			case CAT_COMBAT: add_buf(bf, 	"\ay*** \aRCombat / Skills \ay***\an\r\n"); break;
-			case CAT_ITEM: add_buf(bf, 	"\ay*** \aRItem \ay***\an\r\n"); break;
-			case CAT_INFO: add_buf(bf, 	"\ay*** \aRInformation \ay***\an\r\n"); break;
-			case CAT_CONFIG: add_buf(bf, 	"\ay*** \aRConfigurational \ay***\an\r\n"); break;
+			case CAT_MOVE:
+				add_buf ( bf, 	"\ay*** \aRMovement \ay***\an\r\n" );
+				break;
+			case CAT_COMM:
+				add_buf ( bf, 	"\ay*** \aRCommunication \ay***\an\r\n" );
+				break;
+			case CAT_COMBAT:
+				add_buf ( bf, 	"\ay*** \aRCombat / Skills \ay***\an\r\n" );
+				break;
+			case CAT_ITEM:
+				add_buf ( bf, 	"\ay*** \aRItem \ay***\an\r\n" );
+				break;
+			case CAT_INFO:
+				add_buf ( bf, 	"\ay*** \aRInformation \ay***\an\r\n" );
+				break;
+			case CAT_CONFIG:
+				add_buf ( bf, 	"\ay*** \aRConfigurational \ay***\an\r\n" );
+				break;
 		};
-		for(char_level = 'a'; char_level <= 'z'; char_level++) { 		// -- alphabetical sort (kind of)
+		for ( char_level = 'a'; char_level <= 'z'; char_level++ ) { 		// -- alphabetical sort (kind of)
 			for ( lcmd = 0; cmd_table[lcmd].name[0] != '\0'; lcmd++ ) {	// -- loop through the actual commands
 				if ( cmd_table[lcmd].level <= get_trust ( ch )
-				&&   cmd_table[lcmd].show
-				&&   cmd_table[lcmd].category == x
-				&&   cmd_table[lcmd].name[0] == char_level ) {		// -- same initial character
-					add_buf(bf, Format("\ac%-12s", cmd_table[lcmd].name));
+						&&   cmd_table[lcmd].show
+						&&   cmd_table[lcmd].category == x
+						&&   cmd_table[lcmd].name[0] == char_level ) {		// -- same initial character
+					add_buf ( bf, Format ( "\ac%-12s", cmd_table[lcmd].name ) );
 					if ( ++col == 5 )
-					{ add_buf (bf, "\r\n" ); col = 0; }
+					{ add_buf ( bf, "\r\n" ); col = 0; }
 				}
 			}
 		}
 	}
 	if ( col != 0 )
-	{ add_buf(bf, "\r\n" ); }
+	{ add_buf ( bf, "\r\n" ); }
 
-	add_buf(bf, "\an");		// -- stop colour bleeding
-	writePage(buf_string(bf), ch);
-	recycle_buf(bf);
+	add_buf ( bf, "\an" );		// -- stop colour bleeding
+	writePage ( buf_string ( bf ), ch );
+	recycle_buf ( bf );
 	return;
 }
 
@@ -838,24 +851,24 @@ DefineCommand ( cmd_wizhelp )
 	int col = 0;
 	char char_level;
 
-	for(char_level = 'a'; char_level <= 'z'; char_level++) {
-		for ( lcmd = 0; !IS_NULLSTR(staff_cmd_table[lcmd].name); lcmd++) {
-			if(staff_cmd_table[lcmd].name[0] != char_level) { continue; }
-			if(IS_SET(ch->sflag, staff_cmd_table[lcmd].flag) ) {
-				if(staff_cmd_table[lcmd].show) {
+	for ( char_level = 'a'; char_level <= 'z'; char_level++ ) {
+		for ( lcmd = 0; !IS_NULLSTR ( staff_cmd_table[lcmd].name ); lcmd++ ) {
+			if ( staff_cmd_table[lcmd].name[0] != char_level ) { continue; }
+			if ( IS_SET ( ch->sflag, staff_cmd_table[lcmd].flag ) ) {
+				if ( staff_cmd_table[lcmd].show ) {
 					char nbuf[100] = {'\0'};
-					snprintf(nbuf, 100, "/%s", staff_cmd_table[lcmd].name);
-					add_buf(output, Format("\ay%13s \ac- \aw%.30s.\t", nbuf, staff_cmd_table[lcmd].helpmsg));
-					if(++col == 2) { add_buf(output, "\r\n"); col = 0; }
+					snprintf ( nbuf, 100, "/%s", staff_cmd_table[lcmd].name );
+					add_buf ( output, Format ( "\ay%13s \ac- \aw%.30s.\t", nbuf, staff_cmd_table[lcmd].helpmsg ) );
+					if ( ++col == 2 ) { add_buf ( output, "\r\n" ); col = 0; }
 				}
 			}
 		}
 	}
-	if(col != 0) { add_buf(output, "\r\n" ); }
+	if ( col != 0 ) { add_buf ( output, "\r\n" ); }
 
-	add_buf(output, "\an");		// -- stop colour-bleed
-	writePage(buf_string(output), ch);
-	recycle_buf(output);
+	add_buf ( output, "\an" );		// -- stop colour-bleed
+	writePage ( buf_string ( output ), ch );
+	recycle_buf ( output );
 	return;
 }
 

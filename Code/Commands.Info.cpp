@@ -1640,46 +1640,46 @@ DefineCommand ( cmd_colours )
 	int r, g, b, cnt;
 
 	cnt = r = g = b = 0;
-	writeBuffer ( Format ( "                  Colours of %s\n\r\n\r", "The Infected City" ),ch );
+	writeBuffer ( Format ( "                  Colours of %s\n\r\n\r", "The Infected City" ), ch );
 
-	writeBuffer ( "Initiating Tag for colours: ^^\n\r",ch );
-	writeBuffer ( "                   Example: ^^R^RThis is bright red^n^^nThis is normal\n\r",ch );
-	writeBuffer ( "                       256: ^^[F211]^[F211]Some odd colour^n^^nThis is normal\n\r",ch );
-	writeBuffer ( "                     Reset: ^n^^n this will normalize all colours\n\r\n\r",ch );
+	writeBuffer ( "Initiating Tag for colours: ^^\n\r", ch );
+	writeBuffer ( "                   Example: ^^R^RThis is bright red^n^^nThis is normal\n\r", ch );
+	writeBuffer ( "                       256: ^^[F211]^[F211]Some odd colour^n^^nThis is normal\n\r", ch );
+	writeBuffer ( "                     Reset: ^n^^n this will normalize all colours\n\r\n\r", ch );
 
-		// -- new feature, disable/enable colours, we like showing off a bit.
-//	writeBuffer ( "To turn colour on/off type 'colours [on|off]'\n\r\n\r" );
+	// -- new feature, disable/enable colours, we like showing off a bit.
+	//	writeBuffer ( "To turn colour on/off type 'colours [on|off]'\n\r\n\r" );
 
-	writeBuffer ( "Ansi Colours: \n\r",ch );
-	writeBuffer ( "^rr ^RR ^bb ^BB ^cc ^CC ^gg ^GG ^yy ^YY ^oo ^OO ^mm ^MM ^ww ^WW ^n\an\n\r",ch );
+	writeBuffer ( "Ansi Colours: \n\r", ch );
+	writeBuffer ( "^rr ^RR ^bb ^BB ^cc ^CC ^gg ^GG ^yy ^YY ^oo ^OO ^mm ^MM ^ww ^WW ^n\an\n\r", ch );
 
-	writeBuffer ( "\n\r256 Colour Support: \n\r",ch );
+	writeBuffer ( "\n\r256 Colour Support: \n\r", ch );
 	for ( r = 0; r <= 5; r++ ) {
 		for ( g = 0; g <= 5; g++ ) {
 			for ( b = 0; b <= 5; b++ ) {
 				writeBuffer ( Format ( "\a[f%d%d%d][F%d%d%d] ", r, g, b, r, g, b ), ch );
 				if ( ++cnt == 10 ) {
 					cnt = 0;
-					writeBuffer ( "\n\r",ch );
+					writeBuffer ( "\n\r", ch );
 				}
 			}
 		}
 	}
-	writeBuffer("\r\n",ch);
-/*
-	if ( SameString ( argument, "on" ) ) {
-		cr->bools.is_colourful = true;
-		cr->writeBuffer ( "Colours are now enabled!\n\r" );
-		END_COMMAND;
-	}
+	writeBuffer ( "\r\n", ch );
+	/*
+		if ( SameString ( argument, "on" ) ) {
+			cr->bools.is_colourful = true;
+			cr->writeBuffer ( "Colours are now enabled!\n\r" );
+			END_COMMAND;
+		}
 
-	if ( SameString ( argument, "off" ) ) {
-		cr->bools.is_colourful = false;
-		cr->writeBuffer ( "Colours are now disabled.\n\r" );
-		END_COMMAND;
-	}
+		if ( SameString ( argument, "off" ) ) {
+			cr->bools.is_colourful = false;
+			cr->writeBuffer ( "Colours are now disabled.\n\r" );
+			END_COMMAND;
+		}
 
-	cr->writeBuffer ( "Unknown option!\n\r" ); */
+		cr->writeBuffer ( "Unknown option!\n\r" ); */
 	return;
 }
 
@@ -1700,14 +1700,14 @@ DefineCommand ( cmd_users )
 		output.append ( "\a[F341]****************************************************************\n\r"  );
 		Creature *c, *cn;
 
-		for(c = char_list; c; c = cn) {
+		for ( c = char_list; c; c = cn ) {
 			Creature *u = c;
 			cn = c->next;
 
-			if ( IS_NPC(u) )
+			if ( IS_NPC ( u ) )
 			{ continue; }
 
-			if ( IS_SET(u->sflag, CR_STAFF ) ) {
+			if ( IS_SET ( u->sflag, CR_STAFF ) ) {
 				if ( !staffFirst ) {
 					staffFirst = true;
 					//					 ******************************************************************
@@ -1718,9 +1718,9 @@ DefineCommand ( cmd_users )
 				}
 				if ( col == 0 )
 				{ 	output.append ( "\a[F341]**" ); }
-				output.append ( Format ( "\a[F115]%15s%5s", u->name, IS_SET(u->comm, COMM_AFK) ? afk_flag : "" ) );
+				output.append ( Format ( "\a[F115]%15s%5s", u->name, IS_SET ( u->comm, COMM_AFK ) ? afk_flag : "" ) );
 				staffcnt++;
-				if ( IS_SET(u->comm, COMM_AFK ))
+				if ( IS_SET ( u->comm, COMM_AFK ) )
 				{ afk++; }
 				if ( ++col == 3 ) {
 					col = 0;
@@ -1744,14 +1744,14 @@ DefineCommand ( cmd_users )
 		col = 0;
 		jumps = 0;
 
-		for(c = char_list; c; c = cn) {
+		for ( c = char_list; c; c = cn ) {
 			Creature *u = c;
 			cn = c->next;
 
-			if ( IS_NPC(u))
+			if ( IS_NPC ( u ) )
 			{ continue; }
 
-			if ( IS_SET(u->sflag, CR_STAFF ) )
+			if ( IS_SET ( u->sflag, CR_STAFF ) )
 			{ continue; }
 			if ( !playerFirst ) {
 				playerFirst = true;
@@ -1764,8 +1764,8 @@ DefineCommand ( cmd_users )
 			if ( col == 0 )
 			{ 	output.append ( "\a[F341]**" ); }
 
-			output.append ( Format ( "\a[F115]%15s%5s", u->name, IS_SET(u->comm, COMM_AFK) ? afk_flag : "" ) );
-			if ( IS_SET(u->comm, COMM_AFK) )
+			output.append ( Format ( "\a[F115]%15s%5s", u->name, IS_SET ( u->comm, COMM_AFK ) ? afk_flag : "" ) );
+			if ( IS_SET ( u->comm, COMM_AFK ) )
 			{ afk++; }
 			if ( ++col == 3 ) {
 				col = 0;
@@ -1797,27 +1797,27 @@ DefineCommand ( cmd_users )
 		return;
 	}
 
-	writeBuffer ( "\n\r\n\r\a[F532]",ch );
-	writeBuffer ( "                        _______ __          \n\r",ch );
-	writeBuffer ( "                       |_     _|  |--.-----.   \n\r",ch );
-	writeBuffer ( "                         |   | |     |  -__|   \n\r",ch );
-	writeBuffer ( "                         |___| |__|__|_____|   \n\r",ch );
-	writeBuffer ( " _______        ___            __            __      ______ __ __         \n\r",ch );
-	writeBuffer ( "|_     _.-----.'  _.-----.----|  |_.-----.--|  |    |      |__|  |_.--.--.\n\r",ch );
-	writeBuffer ( " _|   |_|     |   _|  -__|  __|   _|  -__|  _  |    |   ---|  |   _|  |  |\n\r",ch );
-	writeBuffer ( "|_______|__|__|__| |_____|____|____|_____|_____|    |______|__|____|___  |\n\r",ch );
-	writeBuffer ( "                                                                   |_____|\n\r\n\r^n",ch );
+	writeBuffer ( "\n\r\n\r\a[F532]", ch );
+	writeBuffer ( "                        _______ __          \n\r", ch );
+	writeBuffer ( "                       |_     _|  |--.-----.   \n\r", ch );
+	writeBuffer ( "                         |   | |     |  -__|   \n\r", ch );
+	writeBuffer ( "                         |___| |__|__|_____|   \n\r", ch );
+	writeBuffer ( " _______        ___            __            __      ______ __ __         \n\r", ch );
+	writeBuffer ( "|_     _.-----.'  _.-----.----|  |_.-----.--|  |    |      |__|  |_.--.--.\n\r", ch );
+	writeBuffer ( " _|   |_|     |   _|  -__|  __|   _|  -__|  _  |    |   ---|  |   _|  |  |\n\r", ch );
+	writeBuffer ( "|_______|__|__|__| |_____|____|____|_____|_____|    |______|__|____|___  |\n\r", ch );
+	writeBuffer ( "                                                                   |_____|\n\r\n\r^n", ch );
 
 	int staff, players, ste, str, agi, inte;
 
 	staff = players = ste = str = agi = inte = 0;
 
-	writeBuffer ( "LV(Level)  ST(Survival Type) S(Sex)\n\r",ch );
-	writeBuffer ( Format ( " LV   ST    S  %13s Status........\n\r", "Name" ),ch );
-	writeBuffer ( "------------------------------------------------------------------------------\n\r",ch );
+	writeBuffer ( "LV(Level)  ST(Survival Type) S(Sex)\n\r", ch );
+	writeBuffer ( Format ( " LV   ST    S  %13s Status........\n\r", "Name" ), ch );
+	writeBuffer ( "------------------------------------------------------------------------------\n\r", ch );
 	Creature *c, *cn;
 
-	for ( c = char_list; c; c = cn) {
+	for ( c = char_list; c; c = cn ) {
 		cn = c->next;
 
 		// -- reset every iteration.
@@ -1826,41 +1826,41 @@ DefineCommand ( cmd_users )
 
 		if ( c->level == 0 ) { continue; }
 
-		if ( IS_NPC(c) ) { continue; }
-		if ( IS_SET(c->comm, COMM_AFK) ) { flag_string.append ( " ^g{^YAFK^g}" ); }
+		if ( IS_NPC ( c ) ) { continue; }
+		if ( IS_SET ( c->comm, COMM_AFK ) ) { flag_string.append ( " ^g{^YAFK^g}" ); }
 		if ( c->fighting != NULL )   { flag_string.append ( " \a[F112]{\a[F500]COMBAT\a[F112]}" ); }
-		if ( c->desc && c->desc->editor) { flag_string.append ( " \ac[\aoOLC\ac]" ); }
-		if ( IS_HERO(c) && c->level != MAX_LEVEL) { flag_string.append( " \ar**\a[F210]H\a[F211]er\a[F210]o\ar**" ); }
-		if ( IS_HERO(c) && c->level == MAX_LEVEL) { flag_string.append( " \ar-\aR=\a[F211]{\a[F111]L\arE\aRGE\arN\a[F111]D\a[F211]}\aR=\ar- "); }
-		if ( IsStaff(c)) { flag_string.append( " \ac{ \a[F355]S\a[F211]TAF\a[F355]F \ac}"); }
+		if ( c->desc && c->desc->editor ) { flag_string.append ( " \ac[\aoOLC\ac]" ); }
+		if ( IS_HERO ( c ) && c->level != MAX_LEVEL ) { flag_string.append ( " \ar**\a[F210]H\a[F211]er\a[F210]o\ar**" ); }
+		if ( IS_HERO ( c ) && c->level == MAX_LEVEL ) { flag_string.append ( " \ar-\aR=\a[F211]{\a[F111]L\arE\aRGE\arN\a[F111]D\a[F211]}\aR=\ar- " ); }
+		if ( IsStaff ( c ) ) { flag_string.append ( " \ac{ \a[F355]S\a[F211]TAF\a[F355]F \ac}" ); }
 		std::string st ( "ALL" );
 		ste++;
 
-/* Disabled until completely ported from InfectEngineV1
-		switch ( c->integers.survival_type ) {
-			default:
-				st = "";
-				break;
-			case SURVIVAL_STEALTH:
-				st = "STE";
-				ste++;
-				break;
-			case SURVIVAL_STRENGTH:
-				st = "STR";
-				str++;
-				break;
-			case SURVIVAL_AGILITY:
-				st = "AGI";
-				agi++;
-				break;
-			case SURVIVAL_INTELLIGENCE:
-				st = "INT";
-				inte++;
-				break;
-		} */
+		/* Disabled until completely ported from InfectEngineV1
+				switch ( c->integers.survival_type ) {
+					default:
+						st = "";
+						break;
+					case SURVIVAL_STEALTH:
+						st = "STE";
+						ste++;
+						break;
+					case SURVIVAL_STRENGTH:
+						st = "STR";
+						str++;
+						break;
+					case SURVIVAL_AGILITY:
+						st = "AGI";
+						agi++;
+						break;
+					case SURVIVAL_INTELLIGENCE:
+						st = "INT";
+						inte++;
+						break;
+				} */
 
 		writeBuffer ( Format ( "\a[F333][\a[F451]%2d\a[F333]] \a[F333][\a[F451]%3s\a[F333]] \a[F333][\a[F451]%s\a[F333]] \a[F351]%13s %s^n\n\r", c->level, st.c_str(), c->sex == SEX_MALE ? "M" : "F",  c->name, flag_string.c_str() ), ch );
-		if ( IS_SET(c->sflag, CR_STAFF)) {
+		if ( IS_SET ( c->sflag, CR_STAFF ) ) {
 			staff++;
 		} else {
 			players++;
@@ -1869,22 +1869,22 @@ DefineCommand ( cmd_users )
 
 	writeBuffer ( Format ( "\n\r\a[F333][\a[F451]%d\a[F333]] Total Players \a[F333][\a[F451]%d\a[F333]] Total Staff \a[F333][\a[F451]%d\a[F333]]STE \a[F333][\a[F451]%d\a[F333]]STR \a[F333][\a[F451]%d\a[F333]]AGI \a[F333][\a[F451]%d\a[F333]]INT\an\n\r", players, staff, ste, str, agi, inte ), ch );
 
-/*
-	if ( System.pDoubleExp )
-	{ cr->writeBuffer ( "\a[F322]The Infected City is currently giving out double experience!^n\n\r" ); }
-	if ( System.pDoubleDamage )
-	{ cr->writeBuffer ( "\a[F322]The Infected City is currently giving out double damage!^n\n\r" ); }
-	if ( System.pQuadDamage )
-	{ cr->writeBuffer ( "\a[F322]The Infected City is currently giving out quad damage!^n\n\r" ); }
-	if ( System.pFreeMove )
-	{ cr->writeBuffer ( "\a[F322]The Infected City is currently giving out free movement!^n\n\r" ); }
-	if ( System.pQuickMove )
-	{ cr->writeBuffer ( "\a[F322]The Infected City is currently giving out quick movement!^n\n\r" ); }
+	/*
+		if ( System.pDoubleExp )
+		{ cr->writeBuffer ( "\a[F322]The Infected City is currently giving out double experience!^n\n\r" ); }
+		if ( System.pDoubleDamage )
+		{ cr->writeBuffer ( "\a[F322]The Infected City is currently giving out double damage!^n\n\r" ); }
+		if ( System.pQuadDamage )
+		{ cr->writeBuffer ( "\a[F322]The Infected City is currently giving out quad damage!^n\n\r" ); }
+		if ( System.pFreeMove )
+		{ cr->writeBuffer ( "\a[F322]The Infected City is currently giving out free movement!^n\n\r" ); }
+		if ( System.pQuickMove )
+		{ cr->writeBuffer ( "\a[F322]The Infected City is currently giving out quick movement!^n\n\r" ); }
 
 
-	if ( System.pDayMsg ) {
-		cr->writeBuffer ( Format ( "^Y%s^n\n\r", System.pDayMsg ) );
-	} */
+		if ( System.pDayMsg ) {
+			cr->writeBuffer ( Format ( "^Y%s^n\n\r", System.pDayMsg ) );
+		} */
 	return;
 }
 
@@ -2044,11 +2044,11 @@ DefineCommand ( cmd_version )
 	time_t lt = time ( 0 );
 	struct tm *tmt_ptr = localtime ( &lt );
 
-	writeBuffer ( Format ( "+------------------------------------------------+\n\r" ),ch );
-	writeBuffer ( Format ( "| The Infected City: V%-25s  |\n\r", getVersion() ),ch );
-	writeBuffer ( Format ( "| Written by: David Simmerson  (Omega)           |\n\r" ),ch );
-	writeBuffer ( Format ( "| Infect Engine Copyright (c) 2013-%4d.         |\n\r", ( tmt_ptr->tm_year + 1900 ) ),ch );
-	writeBuffer ( Format ( "+------------------------------------------------+\n\r" ),ch );
+	writeBuffer ( Format ( "+------------------------------------------------+\n\r" ), ch );
+	writeBuffer ( Format ( "| The Infected City: V%-25s  |\n\r", getVersion() ), ch );
+	writeBuffer ( Format ( "| Written by: David Simmerson  (Omega)           |\n\r" ), ch );
+	writeBuffer ( Format ( "| Infect Engine Copyright (c) 2013-%4d.         |\n\r", ( tmt_ptr->tm_year + 1900 ) ), ch );
+	writeBuffer ( Format ( "+------------------------------------------------+\n\r" ), ch );
 }
 
 DefineCommand ( cmd_where )
@@ -2362,9 +2362,9 @@ DefineCommand ( cmd_practice )
 				act ( "$n is now learned at $T.",
 					  ch, NULL, skill_table[sn].name, TO_ROOM );
 			}
-			if(ch->pcdata->learned[sn] >= 100) {
+			if ( ch->pcdata->learned[sn] >= 100 ) {
 				ch->pcdata->learned[sn] = 100;
-				writeBuffer(Format("You have mastered the skill: %s\r\n", skill_table[sn].name), ch);
+				writeBuffer ( Format ( "You have mastered the skill: %s\r\n", skill_table[sn].name ), ch );
 			}
 		}
 	}
@@ -2470,19 +2470,19 @@ DefineCommand ( cmd_password )
 		return;
 	}
 
-        if ( !strstr ( arg2, "1" ) &&
-                        !strstr ( arg2, "2" ) &&
-                        !strstr ( arg2, "3" ) &&
-                        !strstr ( arg2, "4" ) &&
-                        !strstr ( arg2, "5" ) &&
-                        !strstr ( arg2, "6" ) &&
-                        !strstr ( arg2, "7" ) &&
-                        !strstr ( arg2, "8" ) &&
-                        !strstr ( arg2, "9" ) &&
-                        !strstr ( arg2, "0" ) ) {
-                writeBuffer ( "You must have a number in your password.\r\n",ch );
-                return;
-        }
+	if ( !strstr ( arg2, "1" ) &&
+			!strstr ( arg2, "2" ) &&
+			!strstr ( arg2, "3" ) &&
+			!strstr ( arg2, "4" ) &&
+			!strstr ( arg2, "5" ) &&
+			!strstr ( arg2, "6" ) &&
+			!strstr ( arg2, "7" ) &&
+			!strstr ( arg2, "8" ) &&
+			!strstr ( arg2, "9" ) &&
+			!strstr ( arg2, "0" ) ) {
+		writeBuffer ( "You must have a number in your password.\r\n", ch );
+		return;
+	}
 
 
 
@@ -2505,18 +2505,20 @@ DefineCommand ( cmd_password )
 	return;
 }
 
-DefineCommand(cmd_levelup) {
-	if(!IS_SET(ch->in_room->room_flags, ROOM_SAFE) ) {
-		writeBuffer("You must be in a room that is safe to level up!\r\n",ch);
+DefineCommand ( cmd_levelup )
+{
+	if ( !IS_SET ( ch->in_room->room_flags, ROOM_SAFE ) ) {
+		writeBuffer ( "You must be in a room that is safe to level up!\r\n", ch );
 		return;
 	}
 
-	if(cmd == 101) {
-		switch(argument[0]) {
+	if ( cmd == 101 ) {
+		switch ( argument[0] ) {
 			default:
 				ch->queries.querycommand = 0;
 				break;
-			case 'y': case 'Y':
+			case 'y':
+			case 'Y':
 				if ( ch->level < MAX_LEVEL && ch->exp >= ( ch->level * 200 ) ) {
 					int old_level = ch->level;
 					ch->level++;
@@ -2526,55 +2528,84 @@ DefineCommand(cmd_levelup) {
 
 					switch ( ch->level ) {
 						default:
-							if(number_range(0,3) == number_range(0,7)) {
-								tweetStatement(Format("%s has attained a new level, %d.", ch->name, ch->level));
+							if ( number_range ( 0, 3 ) == number_range ( 0, 7 ) ) {
+								tweetStatement ( Format ( "%s has attained a new level, %d.", ch->name, ch->level ) );
 							}
 							break;
-						case 5:	 tweetStatement(Format("%s has survived the first 5 levels of %s.", ch->name, "The Infected City" ) ); break;
-						case 20: tweetStatement(Format("%s has achieved level 20 in %s.", ch->name, "The Infected City" ) ); break;
-						case 40: tweetStatement(Format("Level 40: %s has continued to survive in %s.",ch->name, "The Infected City" ) ); break;
-						case 50: tweetStatement(Format("Level 50: %s is a true suvivor of %s.", ch->name, "The Infected City"  ) ); break;
-						case 51: tweetStatement(Format("Level 51: %s is on the path to awesomeness in %s.", ch->name, "The Infected City")); break;
-						case 52: tweetStatement(Format("Level 52: %s has attained a truely amazing status in %s.",ch->name,"The Infected City")); break;
-						case 53: tweetStatement(Format("Level 53: %s has completed 53 levels of %s.", ch->name, "The Infected City")); break;
-						case 54: tweetStatement(Format("Level 54: %s has reached a powerful level of %s.",ch->name,"The Infected City")); break;
-						case 55: tweetStatement(Format("Level 55: %s has truly proven their worth in %s.", ch->name, "The Infected City")); break;
-						case 56: tweetStatement(Format("Level 56: %s survived 56 levels within %s.", ch->name, "The Infected City"  ) ); break;
-						case 57: tweetStatement(Format("Level 57: %s endured 57 levels of %s.", ch->name, "The Infected City"  ) ); break;
-						case 58: tweetStatement(Format("Level 58: %s has true suvivor instinct within %s.",ch->name,"The Infected City")); break;
-						case 59: tweetStatement(Format("Level 59: %s is one step away from MAX LEVEL!", ch->name ) ); break;
-						case 60: tweetStatement(Format("*** MAX LEVEL ATTAINED! *** %s has become a master survivor in %s.", ch->name, "The Infected City"  ) ); 		break;
+						case 5:
+							tweetStatement ( Format ( "%s has survived the first 5 levels of %s.", ch->name, "The Infected City" ) );
+							break;
+						case 20:
+							tweetStatement ( Format ( "%s has achieved level 20 in %s.", ch->name, "The Infected City" ) );
+							break;
+						case 40:
+							tweetStatement ( Format ( "Level 40: %s has continued to survive in %s.", ch->name, "The Infected City" ) );
+							break;
+						case 50:
+							tweetStatement ( Format ( "Level 50: %s is a true suvivor of %s.", ch->name, "The Infected City"  ) );
+							break;
+						case 51:
+							tweetStatement ( Format ( "Level 51: %s is on the path to awesomeness in %s.", ch->name, "The Infected City" ) );
+							break;
+						case 52:
+							tweetStatement ( Format ( "Level 52: %s has attained a truely amazing status in %s.", ch->name, "The Infected City" ) );
+							break;
+						case 53:
+							tweetStatement ( Format ( "Level 53: %s has completed 53 levels of %s.", ch->name, "The Infected City" ) );
+							break;
+						case 54:
+							tweetStatement ( Format ( "Level 54: %s has reached a powerful level of %s.", ch->name, "The Infected City" ) );
+							break;
+						case 55:
+							tweetStatement ( Format ( "Level 55: %s has truly proven their worth in %s.", ch->name, "The Infected City" ) );
+							break;
+						case 56:
+							tweetStatement ( Format ( "Level 56: %s survived 56 levels within %s.", ch->name, "The Infected City"  ) );
+							break;
+						case 57:
+							tweetStatement ( Format ( "Level 57: %s endured 57 levels of %s.", ch->name, "The Infected City"  ) );
+							break;
+						case 58:
+							tweetStatement ( Format ( "Level 58: %s has true suvivor instinct within %s.", ch->name, "The Infected City" ) );
+							break;
+						case 59:
+							tweetStatement ( Format ( "Level 59: %s is one step away from MAX LEVEL!", ch->name ) );
+							break;
+						case 60:
+							tweetStatement ( Format ( "*** MAX LEVEL ATTAINED! *** %s has become a master survivor in %s.", ch->name, "The Infected City"  ) );
+							break;
 					} // -- end switch
-					wiznet(Format("$N has attained level %d!",ch->level),ch,NULL,WIZ_LEVELS,0,0);
-					advance_level(ch, false);
-					
+					wiznet ( Format ( "$N has attained level %d!", ch->level ), ch, NULL, WIZ_LEVELS, 0, 0 );
+					advance_level ( ch, false );
+
 					// -- take away the right portion of experience!
-					ch->exp = (ch->exp - (old_level *200)) ;
-					
-					switch(ch->level) {
-						default: break;
-						
+					ch->exp = ( ch->exp - ( old_level * 200 ) ) ;
+
+					switch ( ch->level ) {
+						default:
+							break;
+
 						case 15:
-								// -- sub-class picking will go here.
-								break;
+							// -- sub-class picking will go here.
+							break;
 						case 30:
-								// -- sub-race picking will go here.
-								break;
+							// -- sub-race picking will go here.
+							break;
 						case MAX_LEVEL:
-								// -- My little secret will go here!
-								break;	
+							// -- My little secret will go here!
+							break;
 					}
-					
-					
+
+
 				} else {
-					writeBuffer("Your not ready to level up yet!\r\n",ch);
+					writeBuffer ( "Your not ready to level up yet!\r\n", ch );
 				}
 				break;
-			} // -- end of the switch
+		} // -- end of the switch
 	} // -- end if
 	else {
- 		ch->queries.queryfunc = cmd_levelup;
- 		strcpy ( ch->queries.queryprompt, Format ( "\aRWarning, \acyou may be prompted for changes, make sure you are ready first.\an\r\nAre you sure you want to level up? (y/n)>" ) );
+		ch->queries.queryfunc = cmd_levelup;
+		strcpy ( ch->queries.queryprompt, Format ( "\aRWarning, \acyou may be prompted for changes, make sure you are ready first.\an\r\nAre you sure you want to level up? (y/n)>" ) );
 		ch->queries.querycommand = 101;
 	}
 	return;

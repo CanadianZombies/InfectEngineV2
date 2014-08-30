@@ -141,6 +141,14 @@ all:
 	@echo " Pull                            -- Downloads source from github revision system                             "
 	@echo "+===========================================================================================================+"
 
+
+######################################################################################################
+#Format the files like a boss!
+.PHONY: style
+style:
+	@astyle --style=kr --indent=force-tab --indent-namespaces --indent-preprocessor --indent-col1-comments --indent-classes --indent-switches --indent-cases --pad-paren --pad-oper --add-one-line-brackets Code/*.cpp ${H_DIR}/*.h
+	@echo "Files have been styled like a boss!"
+
 ######################################################################################################
 #Retrieve our commited files from github - updating our local copy to the global git-copy.
 .PHONY: commit

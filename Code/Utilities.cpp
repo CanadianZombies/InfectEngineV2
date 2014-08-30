@@ -45,8 +45,8 @@ extern FILE *                  fpArea;
 
 void _Error ( const std::string &errorStr, const std::string &fileStr, const std::string &funcStr, int lineOfFile )
 {
-        // -- log with p-error, ensure we have our time and all pertinent associated data.
-        perror ( Format ( "(%s)%s:%s:%d : Errno: (%d):(%s), %s", grab_time_log ( time ( 0 ) ), C_STR ( fileStr ), C_STR ( funcStr ), lineOfFile, errno, strerror(errno), C_STR ( errorStr ) ) );
+	// -- log with p-error, ensure we have our time and all pertinent associated data.
+	perror ( Format ( "(%s)%s:%s:%d : Errno: (%d):(%s), %s", grab_time_log ( time ( 0 ) ), C_STR ( fileStr ), C_STR ( funcStr ), lineOfFile, errno, strerror ( errno ), C_STR ( errorStr ) ) );
 	errno = 0; // -- reset our errno value
 }
 
@@ -126,17 +126,17 @@ void sitrep ( int bitvector, const std::string &str )
 
 bool file_exists ( const char *name )
 {
-        struct stat fst;
+	struct stat fst;
 
-        if (IS_NULLSTR( name ) )
-        { return false; }
+	if ( IS_NULLSTR ( name ) )
+	{ return false; }
 
-        if ( stat ( name, &fst ) != -1 )
-        { return true; }
-        else
-        { return false; }
+	if ( stat ( name, &fst ) != -1 )
+	{ return true; }
+	else
+	{ return false; }
 
-        return false;
+	return false;
 }
 
 
@@ -262,13 +262,13 @@ void _log_hd ( long logFlag, const char *mFile, const char *mFunction, int mLine
 					debugCounter = 0;
 					if ( ( fp = fopen ( Format ( "%s%s/%d/%s", LOG_DIR, the_date, getpid(), DEBUG_FILE ), "a" ) ) != NULL ) {
 						fprintf ( fp, "\t%s : %s\n", the_time, Format ( "Continuing new logfile from previous yday: %d", last_yday ) );
-						fprintf ( fp, "\tEngine Version: %s\n", getVersion());
+						fprintf ( fp, "\tEngine Version: %s\n", getVersion() );
 					}
 				} else {
 					// -- not a debug message? Log it to its appropriate log.
 					if ( ( fp = fopen ( Format ( "%s%s/%d/%s.log", LOG_DIR, the_date, getpid(), log_table[logX].extension ), "a" ) ) != NULL ) {
 						fprintf ( fp, "\t%s : %s\n", the_time, Format ( "Continuing new logfile from previous yday: %d", last_yday ) );
-						fprintf ( fp, "\tEngine Version: %s\n", getVersion());
+						fprintf ( fp, "\tEngine Version: %s\n", getVersion() );
 					}
 				}
 				fflush ( fp );
@@ -320,8 +320,8 @@ void _log_hd ( long logFlag, const char *mFile, const char *mFunction, int mLine
 					if ( ( fp = fopen ( Format ( "%s%s/%d/%s", LOG_DIR, the_date, getpid(), DEBUG_FILE ), "a" ) ) != NULL ) {
 
 						// -- always ensure our Engine Version is associated with all new files
-						if(debugCounter == 1) {
-							fprintf(fp, "Engine Version: %s\n", getVersion());
+						if ( debugCounter == 1 ) {
+							fprintf ( fp, "Engine Version: %s\n", getVersion() );
 						}
 						fprintf ( fp, "\t(%d)%s : %s : %s : %d : %s\n", debugCounter, the_time, mFile, mFunction, mLine, C_STR ( logStr ) );
 					}
@@ -330,14 +330,14 @@ void _log_hd ( long logFlag, const char *mFile, const char *mFunction, int mLine
 
 				} else {
 					bool exists = true;
-					if(!file_exists(Format("%s%s/%d/%s.log", LOG_DIR, the_date, getpid(), log_table[logX].extension))) {
+					if ( !file_exists ( Format ( "%s%s/%d/%s.log", LOG_DIR, the_date, getpid(), log_table[logX].extension ) ) ) {
 						exists = false;
 					}
 					// -- not a debug message? Log it to its appropriate log.
 					if ( ( fp = fopen ( Format ( "%s%s/%d/%s.log", LOG_DIR, the_date, getpid(), log_table[logX].extension ), "a" ) ) != NULL ) {
 						// -- if we didn't exist, we put the engine version at the top of the log file
-						if(!exists) {
-							fprintf ( fp, "Engine Version: %s\n", getVersion());
+						if ( !exists ) {
+							fprintf ( fp, "Engine Version: %s\n", getVersion() );
 						}
 						fprintf ( fp, "\t%s : %s : %s : %d : %s\n", the_time, mFile, mFunction, mLine, C_STR ( logStr ) );
 					}
@@ -633,37 +633,37 @@ void announce ( const std::string &outStr )
 
 const char *wrapstr ( const char *str )
 {
-        static char strwrap[MAX_OUTPUT_BUFFER] = {'\0'};
-        unsigned int i;
-        int count = 0;
+	static char strwrap[MAX_OUTPUT_BUFFER] = {'\0'};
+	unsigned int i;
+	int count = 0;
 
-        memset ( strwrap, 0, MAX_OUTPUT_BUFFER );
+	memset ( strwrap, 0, MAX_OUTPUT_BUFFER );
 
-        for ( i = 0; i < strlen ( str ); i++ ) {
-                count++;
-                if ( count > 66 && str[i] == ' ' ) {
-                        strwrap[i] = '\n';
-                        strwrap[i + 1] = '\r';
-                       	count = 0;
-               	} else {
-                        strwrap[i] = str[i];
-                }
-        }
+	for ( i = 0; i < strlen ( str ); i++ ) {
+		count++;
+		if ( count > 66 && str[i] == ' ' ) {
+			strwrap[i] = '\n';
+			strwrap[i + 1] = '\r';
+			count = 0;
+		} else {
+			strwrap[i] = str[i];
+		}
+	}
 	strwrap[i] = '\0';
 	return strwrap;
 }
 
-       const char *whoami ( void )
-       	{
-                struct passwd *pwd;
-                uid_t uid;
-                uid = getuid(  );
-                if ( ( pwd = getpwuid ( uid ) ) ) {
-                        return ( pwd->pw_name );
-                }
-           
-               	return "unknown";
-        }
+const char *whoami ( void )
+{
+	struct passwd *pwd;
+	uid_t uid;
+	uid = getuid(  );
+	if ( ( pwd = getpwuid ( uid ) ) ) {
+		return ( pwd->pw_name );
+	}
+
+	return "unknown";
+}
 
 
 // -- EOF

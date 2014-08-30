@@ -117,53 +117,53 @@ std::string ChopString ( const std::string &argument, std::string &first )
 // case-insensitive string comparisons
 bool SameString ( const std::string &a, const std::string &b )
 {
-        try {
-             	// they are not the same if they are empty
-                if ( a.empty() ) { return false; }
-                if ( b.empty() ) { return false; }
+	try {
+		// they are not the same if they are empty
+		if ( a.empty() ) { return false; }
+		if ( b.empty() ) { return false; }
 
-                if ( a.length() != b.length() )
-                { return false; }
+		if ( a.length() != b.length() )
+		{ return false; }
 
-                for ( int x = 0; ( a[x] != '\0' && b[x] != '\0' ); x++ ) {
-                        if ( tolower ( a[x] ) != tolower ( b[x] ) )
-                        { return false; }
-                }
-        } catch ( ... ) {
-                CATCH ( false );
-                return false;
-        }
+		for ( int x = 0; ( a[x] != '\0' && b[x] != '\0' ); x++ ) {
+			if ( tolower ( a[x] ) != tolower ( b[x] ) )
+			{ return false; }
+		}
+	} catch ( ... ) {
+		CATCH ( false );
+		return false;
+	}
 	return true;
 }
 
 // is the keyword/name within the 'namelist'
 bool IsSameList ( const std::string &nameToFind, const std::string &namelist )
 {
-        try {
-             	if ( namelist.empty() )
-                { return false; }
+	try {
+		if ( namelist.empty() )
+		{ return false; }
 
-                std::string nList = namelist;
-                std::string name;
+		std::string nList = namelist;
+		std::string name;
 
-                while ( true ) {
-                        // chop chop, each word.
-                        nList = ChopString ( nList, name );
+		while ( true ) {
+			// chop chop, each word.
+			nList = ChopString ( nList, name );
 
-                        // is the name empty? break.
-                        if ( name.empty() )
-                        { break; }
+			// is the name empty? break.
+			if ( name.empty() )
+			{ break; }
 
-                        // are the string the same?
-                        if ( SameString ( nameToFind, name ) )
-                        { return false; }
+			// are the string the same?
+			if ( SameString ( nameToFind, name ) )
+			{ return false; }
 
-                        // is the namelist empty now?
-                        if ( nList.empty() )
-                        { break; }
-                }
-        } catch ( ... ) {
-                CATCH ( false );
+			// is the namelist empty now?
+			if ( nList.empty() )
+			{ break; }
+		}
+	} catch ( ... ) {
+		CATCH ( false );
 		return false;
 	}
 	return false;
@@ -171,34 +171,34 @@ bool IsSameList ( const std::string &nameToFind, const std::string &namelist )
 
 const char *getDateTime ( time_t timeVal )
 {
-        static char lickmenow[200] = {'\0'};
-        struct tm *tm_ptr;
-        tm_ptr = localtime ( &timeVal );
-       	//* Easier then my ex girlfriend. *//
-        snprintf ( lickmenow, 200, "%02d/%02d/%02d - %02d:%02d:%02d", tm_ptr->tm_year + 1900,
-                           tm_ptr->tm_mon + 1, tm_ptr->tm_mday,
-                           tm_ptr->tm_hour, tm_ptr->tm_min, tm_ptr->tm_sec );
-        return lickmenow;
+	static char lickmenow[200] = {'\0'};
+	struct tm *tm_ptr;
+	tm_ptr = localtime ( &timeVal );
+	//* Easier then my ex girlfriend. *//
+	snprintf ( lickmenow, 200, "%02d/%02d/%02d - %02d:%02d:%02d", tm_ptr->tm_year + 1900,
+			   tm_ptr->tm_mon + 1, tm_ptr->tm_mday,
+			   tm_ptr->tm_hour, tm_ptr->tm_min, tm_ptr->tm_sec );
+	return lickmenow;
 }
 
 
-	void issueSystemCommandNoReturn ( const std::string &argument )
-        {
-                if ( argument.empty() ) { return; }
+void issueSystemCommandNoReturn ( const std::string &argument )
+{
+	if ( argument.empty() ) { return; }
 
-                // -- possibly fix a glitch in popen
-                fflush ( NULL );
+	// -- possibly fix a glitch in popen
+	fflush ( NULL );
 
-                // -- causes infinite loop! (Drr)
-                FILE *fp = popen ( C_STR ( argument ), "r" );
-                if ( !fp ) {
-                        std::cerr << "issueSystemCommand failed  Unable to execute the command string supplied." << std::endl;
-                        return;
-                }
+	// -- causes infinite loop! (Drr)
+	FILE *fp = popen ( C_STR ( argument ), "r" );
+	if ( !fp ) {
+		std::cerr << "issueSystemCommand failed  Unable to execute the command string supplied." << std::endl;
+		return;
+	}
 
-                pclose ( fp );
-                return;
-        }
+	pclose ( fp );
+	return;
+}
 
 std::string addTweetHashtags ( const std::string &tweetStr )
 {
