@@ -161,13 +161,13 @@ void fwrite_char ( Creature *ch, FILE *fp )
 	fprintf ( fp, "Id   %ld\n", ch->id			);
 	fprintf ( fp, "LogO %ld\n",	current_time		);
 	fprintf ( fp, "Vers %d\n",   5			);
-	if ( ch->short_descr[0] != '\0' )
+	if ( !IS_NULLSTR(ch->short_descr) )
 	{ fprintf ( fp, "ShD  %s~\n",	ch->short_descr	); }
-	if ( ch->long_descr[0] != '\0' )
+	if ( !IS_NULLSTR(ch->long_descr) )
 	{ fprintf ( fp, "LnD  %s~\n",	ch->long_descr	); }
-	if ( ch->description[0] != '\0' )
+	if ( !IS_NULLSTR(ch->description) )
 	{ fprintf ( fp, "Desc %s~\n",	ch->description	); }
-	if ( ch->prompt != NULL || !str_cmp ( ch->prompt, "<%hhp %mm %vmv> " ) )
+	if ( !IS_NULLSTR(ch->prompt) || !str_cmp ( ch->prompt, "<%hhp %mm %vmv> " ) )
 	{ fprintf ( fp, "Prom %s~\n",      ch->prompt  	); }
 	fprintf ( fp, "Race %s~\n", pc_race_table[ch->race].name );
 	if ( ch->clan )
@@ -255,9 +255,9 @@ void fwrite_char ( Creature *ch, FILE *fp )
 		fprintf ( fp, "Vnum %d\n",	ch->pIndexData->vnum	);
 	} else {
 		fprintf ( fp, "Pass %s~\n",	ch->pcdata->pwd		);
-		if ( ch->pcdata->bamfin[0] != '\0' )
+		if ( !IS_NULLSTR(ch->pcdata->bamfin))
 		{ fprintf ( fp, "Bin  %s~\n",	ch->pcdata->bamfin ); }
-		if ( ch->pcdata->bamfout[0] != '\0' )
+		if ( !IS_NULLSTR(ch->pcdata->bamfout) )
 		{ fprintf ( fp, "Bout %s~\n",	ch->pcdata->bamfout ); }
 		fprintf ( fp, "Titl %s~\n",	ch->pcdata->title	);
 		fprintf ( fp, "Pnts %d\n",   	ch->pcdata->points      );

@@ -1344,12 +1344,26 @@ void nanny ( Socket *d, char *argument )
 			write_to_buffer ( d, "\n\r", 2 );
 #endif
 
-			if ( strlen ( argument ) < 5 ) {
+			if ( strlen ( argument ) < 7 ) {
 				write_to_buffer ( d,
-								  "Password must be at least five characters long.\n\rPassword: ",
+								  "Password must be at least seven characters long.\n\rPassword: ",
 								  0 );
 				return;
 			}
+
+        if ( !strstr ( argument, "1" ) &&
+                        !strstr ( argument, "2" ) &&
+                        !strstr ( argument, "3" ) &&
+                        !strstr ( argument, "4" ) &&
+                        !strstr ( argument, "5" ) &&
+                        !strstr ( argument, "6" ) &&
+                        !strstr ( argument, "7" ) &&
+                        !strstr ( argument, "8" ) &&
+                        !strstr ( argument, "9" ) &&
+                        !strstr ( argument, "0" ) ) {
+                write_to_buffer (d, "You must have a number in your password.\r\nPassword: ",0 );
+                return;
+        }
 
 			pwdnew = crypt ( argument, ch->name );
 			for ( p = pwdnew; *p != '\0'; p++ ) {

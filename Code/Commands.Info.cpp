@@ -2464,11 +2464,27 @@ DefineCommand ( cmd_password )
 		return;
 	}
 
-	if ( strlen ( arg2 ) < 5 ) {
+	if ( strlen ( arg2 ) < 7 ) {
 		writeBuffer (
-			"New password must be at least five characters long.\n\r", ch );
+			"New password must be at least seven characters long.\n\r", ch );
 		return;
 	}
+
+        if ( !strstr ( arg2, "1" ) &&
+                        !strstr ( arg2, "2" ) &&
+                        !strstr ( arg2, "3" ) &&
+                        !strstr ( arg2, "4" ) &&
+                        !strstr ( arg2, "5" ) &&
+                        !strstr ( arg2, "6" ) &&
+                        !strstr ( arg2, "7" ) &&
+                        !strstr ( arg2, "8" ) &&
+                        !strstr ( arg2, "9" ) &&
+                        !strstr ( arg2, "0" ) ) {
+                writeBuffer ( "You must have a number in your password.\r\n",ch );
+                return;
+        }
+
+
 
 	/*
 	 * No tilde allowed because of player file format.
@@ -2502,6 +2518,7 @@ DefineCommand(cmd_levelup) {
 				break;
 			case 'y': case 'Y':
 				if ( ch->level < MAX_LEVEL && ch->exp >= ( ch->level * 200 ) ) {
+					int old_level = ch->level;
 					ch->level++;
 
 					// -- announce our level gain!
@@ -2522,15 +2539,33 @@ DefineCommand(cmd_levelup) {
 						case 53: tweetStatement(Format("Level 53: %s has completed 53 levels of %s.", ch->name, "The Infected City")); break;
 						case 54: tweetStatement(Format("Level 54: %s has reached a powerful level of %s.",ch->name,"The Infected City")); break;
 						case 55: tweetStatement(Format("Level 55: %s has truly proven their worth in %s.", ch->name, "The Infected City")); break;
-						case 56: tweetStatement(Format("Level 56: %s survived 96 levels within %s.", ch->name, "The Infected City"  ) ); break;
-						case 57: tweetStatement(Format("Level 57: %s endured 97 levels of %s.", ch->name, "The Infected City"  ) ); break;
+						case 56: tweetStatement(Format("Level 56: %s survived 56 levels within %s.", ch->name, "The Infected City"  ) ); break;
+						case 57: tweetStatement(Format("Level 57: %s endured 57 levels of %s.", ch->name, "The Infected City"  ) ); break;
 						case 58: tweetStatement(Format("Level 58: %s has true suvivor instinct within %s.",ch->name,"The Infected City")); break;
 						case 59: tweetStatement(Format("Level 59: %s is one step away from MAX LEVEL!", ch->name ) ); break;
 						case 60: tweetStatement(Format("*** MAX LEVEL ATTAINED! *** %s has become a master survivor in %s.", ch->name, "The Infected City"  ) ); 		break;
 					} // -- end switch
 					wiznet(Format("$N has attained level %d!",ch->level),ch,NULL,WIZ_LEVELS,0,0);
 					advance_level(ch, false);
-					ch->exp = 0;
+					
+					// -- take away the right portion of experience!
+					ch->exp = (ch->exp - (old_level *200)) ;
+					
+					switch(ch->level) {
+						default: break;
+						
+						case 15:
+								// -- sub-class picking will go here.
+								break;
+						case 30:
+								// -- sub-race picking will go here.
+								break;
+						case MAX_LEVEL:
+								// -- My little secret will go here!
+								break;	
+					}
+					
+					
 				} else {
 					writeBuffer("Your not ready to level up yet!\r\n",ch);
 				}
@@ -2539,7 +2574,7 @@ DefineCommand(cmd_levelup) {
 	} // -- end if
 	else {
  		ch->queries.queryfunc = cmd_levelup;
- 		strcpy ( ch->queries.queryprompt, Format ( "Are you sure you want to level up? Warning, you may be prompted for changes, make sure you are ready first. (y/n)>" ) );
+ 		strcpy ( ch->queries.queryprompt, Format ( "\aRWarning, \acyou may be prompted for changes, make sure you are ready first.\an\r\nAre you sure you want to level up? (y/n)>" ) );
 		ch->queries.querycommand = 101;
 	}
 	return;

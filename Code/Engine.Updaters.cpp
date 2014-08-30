@@ -119,6 +119,8 @@ void gain_exp ( Creature *ch, int gain )
 	if ( IS_NPC ( ch ) )
 	{ return; }
 
+	if(ch->level == MAX_LEVEL) { return; }
+
 	log_hd ( LOG_DEBUG, Format ( "%s has gained %d experience.", ch->name, gain ) );
 
 	ch->exp_pool += gain;

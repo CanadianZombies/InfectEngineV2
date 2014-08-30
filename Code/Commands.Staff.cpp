@@ -47,7 +47,7 @@ DefineCommand ( cmd_wiznet )
 	int flag;
 	char buf[MAX_STRING_LENGTH];
 
-	if ( argument[0] == '\0' ) {
+	if ( IS_NULLSTR(argument) ) {
 		if ( IS_SET ( ch->wiznet, WIZ_ON ) ) {
 			writeBuffer ( "Staff Aid turned on.\n\r", ch );
 			REMOVE_BIT ( ch->wiznet, WIZ_ON );
@@ -2437,7 +2437,6 @@ DefineCommand ( cmd_purge )
 
 DefineCommand ( cmd_advance )
 {
-	char buf[MAX_STRING_LENGTH];
 	char arg1[MAX_INPUT_LENGTH];
 	char arg2[MAX_INPUT_LENGTH];
 	Creature *victim;
@@ -2448,7 +2447,7 @@ DefineCommand ( cmd_advance )
 	argument = one_argument ( argument, arg2 );
 
 	if ( arg1[0] == '\0' || arg2[0] == '\0' || !is_number ( arg2 ) ) {
-		writeBuffer ( "Syntax: advance <char> <level>.\n\r", ch );
+		writeBuffer ( "Syntax: levelset <player> <level>.\n\r", ch );
 		return;
 	}
 
@@ -2484,7 +2483,7 @@ DefineCommand ( cmd_advance )
 		int temp_prac;
 
 		writeBuffer ( "Lowering a player's level!\n\r", ch );
-		writeBuffer ( "**** OOOOHHHHHHHHHH  NNNNOOOO ****\n\r", victim );
+		writeBuffer ( "Your level has been changed.\n\r", victim );
 		temp_prac = victim->practice;
 		victim->level    = 1;
 		victim->exp      = exp_per_level ( victim, victim->pcdata->points );
@@ -2499,15 +2498,14 @@ DefineCommand ( cmd_advance )
 		victim->practice = temp_prac;
 	} else {
 		writeBuffer ( "Raising a player's level!\n\r", ch );
-		writeBuffer ( "**** OOOOHHHHHHHHHH  YYYYEEEESSS ****\n\r", victim );
+		writeBuffer ( "Your level has been changed\n\r", victim );
 	}
 
 	for ( iLevel = victim->level ; iLevel < level; iLevel++ ) {
 		victim->level += 1;
 		advance_level ( victim, TRUE );
 	}
-	snprintf ( buf, sizeof ( buf ), "You are now level %d.\n\r", victim->level );
-	writeBuffer ( buf, victim );
+	writeBuffer(Format("You are now level %d.\n\r", victim->level), victim);
 	victim->exp   = exp_per_level ( victim, victim->pcdata->points )
 					* UMAX ( 1, victim->level );
 	victim->trust = 0;
@@ -3955,10 +3953,10 @@ DefineCommand ( cmd_holylight )
 
 	if ( IS_SET ( ch->act, PLR_HOLYLIGHT ) ) {
 		REMOVE_BIT ( ch->act, PLR_HOLYLIGHT );
-		writeBuffer ( "God Sight has been disabled.\n\r", ch );
+		writeBuffer ( "God Sight has been disabled.\r\n", ch );
 	} else {
 		SET_BIT ( ch->act, PLR_HOLYLIGHT );
-		writeBuffer ( "God Sight has been enabled.\n\r", ch );
+		writeBuffer ( "God Sight has been enabled.\r\n", ch );
 	}
 
 	return;
@@ -3994,7 +3992,7 @@ DefineCommand ( cmd_prefix )
 	} else {
 		snprintf ( buf, sizeof ( buf ), "Prefix set to %s.\r\n", argument );
 	}
-
+  writeBuffer(buf,ch);
 	ch->prefix = assign_string ( argument );
 }
 
@@ -4156,6 +4154,7 @@ DefineCommand ( cmd_sitrep )
 
 DefineCommand ( cmd_events ) {
 	EventManager::instance().reportEvents(ch);
+	return;
 }
 
 DefineCommand ( cmd_os )
@@ -4259,6 +4258,7 @@ DefineCommand(cmd_tweet)
 {
         if ( cmd == 1000 ) {
                 if ( LOWER ( argument[0] ) == 'y' ) {
+												log_hd(LOG_DEBUG, Format("%s has added '%s' to the twitlist query!", ch->name, ch->queries.query_string));
                         // -- tweet on behalf of The Infected City
                         tweetStatement ( ch->queries.query_string );
                         writeBuffer ( "\r\nTweet has been added to the queue.\r\n",ch );
