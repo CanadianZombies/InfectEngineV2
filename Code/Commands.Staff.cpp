@@ -2462,8 +2462,7 @@ DefineCommand ( cmd_advance )
 	}
 
 	if ( ( level = atoi ( arg2 ) ) < 1 || level > MAX_LEVEL ) {
-		snprintf ( buf, sizeof ( buf ), "Level must be 1 to %d.\n\r", MAX_LEVEL );
-		writeBuffer ( buf, ch );
+		writeBuffer ( Format("Level must be 1 to %d.\n\r", MAX_LEVEL), ch );
 		return;
 	}
 

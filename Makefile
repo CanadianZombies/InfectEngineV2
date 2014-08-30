@@ -65,10 +65,10 @@ COLOUR_LCYAN        =
 endif
 #####################################################################################
 # DIRECTORIES
-BIN_DIR    = ../Bin
-BACKUP_DIR = ../Backups
-H_DIR      = headers
-O_DIR      = obj
+BIN_DIR    = Bin
+BACKUP_DIR = Backups
+H_DIR      = Code/headers
+O_DIR      = Code/obj
 
 #####################################################################################
 # COMPILER SPECIFICS
@@ -84,7 +84,7 @@ LIBRARIES     = -lcrypt -ldl
 #####################################################################################
 # VERSION SUPPORT: allow us to control our revisions of the executable being built.
 # name of our version file
-VERSION_FILE            = .version
+VERSION_FILE            = Code/.version
 
 # Ensure we are built properly with the correct data
 BUILD_DATE              = $(shell date +'%Y%m%d')
@@ -113,8 +113,8 @@ ENGINE = InfectEngine
 
 #####################################################################################
 # Generate a list of our required OBJECT files (.o)
-C_FILES                         = ${wildcard *.c}
-CPP_FILES                       = ${wildcard *.cpp}
+C_FILES                         = ${wildcard Code/*.c}
+CPP_FILES                       = ${wildcard Code/*.cpp}
 H_FILES 			= $(wildcard $(H_DIR)/*.h)
 
 OBJECT_FILES                    = $(patsubst %.c, $(O_DIR)/%.o, ${C_FILES})
@@ -136,6 +136,32 @@ all:
 	@echo " Count                           -- Counts all lines of code associated with .hpp and .cpp files and Makefile"
 	@echo " Grind                           -- Generate our grind script (execute valgrind)"
 	@echo "+===========================================================================================================+"
+	@echo " Commit                          -- Makes a generic github commit; nothing special                           "
+	@echo " Push                            -- Submits newest source code to github revision system                     "
+	@echo " Pull                            -- Downloads source from github revision system                             "
+	@echo "+===========================================================================================================+"
+
+######################################################################################################
+#Retrieve our commited files from github - updating our local copy to the global git-copy.
+.PHONY: commit
+commit:
+	@git commit -a -v -m "Compiler auto-update for successful build."
+	@echo "$(COLOUR_LRED)Done commiting files to github (requires push).$(COLOUR_NORMAL)"
+
+#####################################################################################################
+#Pushes any updated files to github (any local changes will be seen on github moments later)
+.PHONY: push
+push:
+	@git push origin master
+	@echo "$(COLOUR_LRED)Done pushing files to github.$(COLOUR_NORMAL)"
+
+######################################################################################################
+#Retrieve our commited files from github - updating our local copy to the global git-copy.
+.PHONY: pull
+pull:
+	@git pull
+	@echo "$(COLOUR_LRED)Done retrieving files from github.$(COLOUR_NORMAL)"
+
 
 #####################################################################################
 # Generate tell our system to build our executable (initiation step for the next step 
@@ -156,7 +182,7 @@ checkdirs:
 #Count and report the total lines for the Mud!
 .PHONY: count
 count:
-	@wc -l *.h *.cpp Makefile
+	@wc -l ${H_DIR}/*.h Code/*.cpp Makefile
 
 #####################################################################################
 #Generate our version file (generates a .version file, and a .hpp file)
@@ -164,11 +190,11 @@ count:
 version:
 	@if ! test -f $(VERSION_FILE); then echo 0 > $(VERSION_FILE); fi
 	@echo $$(($$(cat $(VERSION_FILE)) + 1)) > $(VERSION_FILE)
-	@echo "#ifndef __Version_Hpp" > Version.h
-	@echo "#define __Version_hpp" >> Version.h
-	@echo "const unsigned long mudVersion = $(shell cat $(VERSION_FILE))+1;" >> Version.h
-	@echo "#endif" >> Version.h
-	@mv Version.h $(H_DIR)/Version.h
+	@echo "#ifndef __Version_Hpp" > Code/Version.h
+	@echo "#define __Version_hpp" >> Code/Version.h
+	@echo "const unsigned long mudVersion = $(shell cat $(VERSION_FILE))+1;" >> Code/Version.h
+	@echo "#endif" >> Code/Version.h
+	@mv Code/Version.h $(H_DIR)/Version.h
 	@echo "$(COLOUR_LRED)New build number assigned, attempting to build: $(COLOUR_NORMAL)"
 
 #####################################################################################################
@@ -189,7 +215,7 @@ $(ENGINE): ${sort ${OBJECT_FILES} }
 $(O_DIR)/%.o: %.cpp
 	@echo "       $(COLOUR_LWHITE)`date +"%X"`$(COLOUR_LRED)  >>  Building $(COLOUR_DBLUE)$<$(COLOUR_LRED)..."
 	@${COMPILER} ${INCLUDE_FLAGS} -c $(COMPILE_FLAGS) ${CMP_STR} $<
-	@mv *.o $(O_DIR)
+	@mv *.o $(O_DIR)/Code/
 
 #####################################################################################
 # Generate a backup of the source code for today's date and move it to the backup folder!
@@ -197,7 +223,7 @@ $(O_DIR)/%.o: %.cpp
 # a good copy for ourselves
 .PHONY: backup
 backup:
-	@tar -czf $(BACKUP_NAME) *.cpp ${H_DIR}/*.h Makefile
+	@tar -czf $(BACKUP_NAME) Code/*.cpp ${H_DIR}/*.h Makefile
 	@uuencode $(BACKUP_NAME) $(BACKUP_NAME) |  mail -s "Compiler Backup ${BUILD_NUM}" theinfectedcity@gmail.com
 	@mv *.tgz ${BACKUP_DIR}
 	@echo "$(COLOUR_LRED)Backup completed.$(COLOUR_NORMAL)"
