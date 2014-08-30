@@ -38,7 +38,6 @@
 #include "Engine.h"
 
 /* RT code to delete yourself */
-
 DefineCommand ( cmd_delet )
 {
 	writeBuffer ( "You must type the full command to delete yourself.\n\r", ch );

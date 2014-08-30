@@ -130,6 +130,7 @@ all:
 	@echo "+================================================INFECT ENGINE===============================================+"
 	@echo " Build                           -- Generates $(ENGINE) executable file from Source files (updates version)"
 	@echo " Depend                          -- Generates $(DEPEND) file for inclusion in make process"
+	@echo " Style                           -- Formats the source files like a boss then moves the .orig files"
 	@echo " Clean                           -- Cleans the source of all backup files (~) and object(.o) files"
 	@echo " Backup                          -- Creates a backup of the days work and moves it to the backup directory"
 	@echo " Version                         -- Takes our old .version file and generates Version.cpp"
@@ -147,7 +148,9 @@ all:
 .PHONY: style
 style:
 	@astyle --style=kr --indent=force-tab --indent-namespaces --indent-preprocessor --indent-col1-comments --indent-classes --indent-switches --indent-cases --pad-paren --pad-oper --add-one-line-brackets Code/*.cpp ${H_DIR}/*.h
-	@echo "Files have been styled like a boss!"
+	@mv Code/*.orig Code/orig/
+	@mv ${H_DIR}/*.orig Code/orig/
+	@echo "Files have been styled and moved like a boss!"
 
 ######################################################################################################
 #Retrieve our commited files from github - updating our local copy to the global git-copy.
