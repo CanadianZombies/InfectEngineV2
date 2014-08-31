@@ -621,10 +621,10 @@ const struct editor_cmd_type editor_table[] = {
 
 	{   "area",		cmd_aedit	},
 	{   "room",		cmd_redit	},
-	{   "object",	cmd_oedit	},
-	{   "mobile",	cmd_medit	},
-	{	"mpcode",	cmd_mpedit	},
-	{	"hedit",	cmd_hedit	},
+	{   "item",		cmd_oedit	},
+	{   "mobile",		cmd_medit	},
+	{   "mpcode",	cmd_mpedit	},
+	{   "hedit",	cmd_hedit	},
 
 	{	NULL,		0,		}
 };
