@@ -2131,7 +2131,8 @@ Item *create_object ( ItemData *pObjIndex, int level )
 	obj->value[3]	= pObjIndex->value[3];
 	obj->value[4]	= pObjIndex->value[4];
 	obj->weight		= pObjIndex->weight;
-
+	obj->condition  = pObjIndex->condition; // -- bug-fix
+	
 	if ( level == -1 || pObjIndex->new_format )
 	{ obj->cost	= pObjIndex->cost; }
 	else
