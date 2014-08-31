@@ -156,7 +156,7 @@ style:
 #Retrieve our commited files from github - updating our local copy to the global git-copy.
 .PHONY: commit
 commit:
-	@git commit -a -v -m "Compiler auto-update for successful build."
+	@git commit -a -v -m "Compiler auto-update for successful release build."
 	@echo "$(COLOUR_LRED)Done commiting files to github (requires push).$(COLOUR_NORMAL)"
 
 #####################################################################################################
@@ -218,8 +218,6 @@ $(ENGINE): ${sort ${OBJECT_FILES} }
 	@if test -x $(BIN_DIR)/$(ENGINE) ; then mv -f $(BIN_DIR)/$(ENGINE) $(BIN_DIR)/$(ENGINE).previous ; fi
 	@mv $(ENGINE) $(BIN_DIR)
 	@make backup
-	@make commit
-	@make push
 	@echo "$(COLOUR_LRED)Compiling Completed for build $(BUILD_NUM) at $(COLOUR_LWHITE)`date +"%y-%m-%d @ %X"`$(COLOUR_LRED) and copied to ${BIN_DIR}."
 
 #####################################################################################
@@ -246,7 +244,7 @@ backup:
 # is clean
 .PHONY: clean
 clean:
-	@rm -rf ${O_DIR}/*.o *~ ${H_DIR}/*~
+	@rm -rf ${O_DIR}/Code/*.o *~ ${H_DIR}/*~
 	@echo "$(COLOUR_LRED)Done Cleaning.$(COLOUR_NORMAL)"
 
 

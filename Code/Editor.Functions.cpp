@@ -3130,6 +3130,120 @@ OEDIT ( oedit_wear )     /* Moved out of oedit() due to naming conflicts -- Hugi
 }
 
 
+OEDIT ( autoweapon )
+{
+	ItemData *pObj;
+	Affect *pAf, *pAfN;
+	int dice, size, bonus;
+	double avg;
+
+	EDIT_OBJ ( ch, pObj );
+	if ( pObj->item_type != ITEM_WEAPON ) {
+		return FALSE;
+	}
+	if ( pObj->level < 1 ) {
+		return FALSE;
+	}
+	bonus = UMAX ( 0, pObj->level / 10 - 1 );
+	/* adjust this next line to change the avg dmg your weapons will get! */
+	avg = ( pObj->level * .76 );
+	dice = ( pObj->level / 10 + 1 );
+	size = dice / 2;
+	/* loop through dice sizes until we find that the Next dice size's avg
+	will be too high... ie, find the "best fit" */
+	for ( size = dice / 2 ; dice * ( size + 2 ) / 2 < avg ; size++ )
+	{ }
+
+	dice = UMAX ( 1, dice );
+	size = UMAX ( 2, size );
+
+	switch ( pObj->value[0] ) {
+		default:
+		case WEAPON_EXOTIC:
+		case WEAPON_SWORD:
+			break;
+		case WEAPON_DAGGER:
+			dice = UMAX ( 1, dice - 1 );
+			size = UMAX ( 2, size - 1 );
+			break;
+		case WEAPON_SPEAR:
+		case WEAPON_POLEARM:
+			size++;
+			break;
+		case WEAPON_MACE:
+		case WEAPON_AXE:
+			size = UMAX ( 2, size - 1 );
+			break;
+		case WEAPON_FLAIL:
+		case WEAPON_WHIP:
+			dice = UMAX ( 1, dice - 1 );
+			break;
+	}
+	dice = UMAX ( 1, dice );
+	size = UMAX ( 2, size );
+
+
+	pObj->cost = 25 * ( size * ( dice + 1 ) ) + 20 * bonus + 20 * pObj->level;
+	pObj->weight = pObj->level + 1;
+	pObj->value[1] = dice;
+	pObj->value[2] = size;
+
+	for ( pAf = pObj->affected; pAf; pAf = pAfN ) {
+		pAfN = pAf->next;
+		recycle_affect ( pAf );
+	}
+	pObj->affected = NULL;
+
+	if ( bonus > 0 ) {
+		pAf = new_affect();
+		pAf->location = APPLY_DAMROLL;
+		pAf->modifier = bonus;
+		pAf->where = TO_OBJECT;
+		pAf->type = -1;
+		pAf->duration = -1;
+		pAf->bitvector = 0;
+		pAf->level = pObj->level;
+		pAf->next = pObj->affected;
+		pObj->affected = pAf;
+
+		pAf = new_affect();
+		pAf->location = APPLY_HITROLL;
+		pAf->modifier = bonus;
+		pAf->where = TO_OBJECT;
+		pAf->type = -1;
+		pAf->duration = -1;
+		pAf->bitvector = 0;
+		pAf->level = pObj->level;
+		pAf->next = pObj->affected;
+		pObj->affected = pAf;
+	}
+	writeBuffer ( "\aRExperimental values set for this weapon.\an\r\n", ch );
+	return TRUE;
+}
+
+OEDIT ( autoarmor )
+{
+	ItemData *pObj;
+	int size;
+
+	EDIT_OBJ ( ch, pObj );
+	if ( pObj->item_type != ITEM_ARMOR ) {
+		return FALSE;
+	}
+	if ( pObj->level < 1 ) {
+		return FALSE;
+	}
+	size = UMAX ( 1, pObj->level / 2.8 + 1 );
+	pObj->weight = pObj->level + 1;
+	pObj->cost = pObj->level ^ 2 * 2;
+	pObj->value[0] = size;
+	pObj->value[1] = size;
+	pObj->value[2] = size;
+	pObj->value[3] = ( size - 1 );
+	writeBuffer ( "\aRExperimental values for armor have been set.\r\n", ch );
+	return TRUE;
+}
+
 OEDIT ( oedit_type )     /* Moved out of oedit() due to naming conflicts -- Hugin */
 {
 	ItemData *pObj;
@@ -3151,6 +3265,13 @@ OEDIT ( oedit_type )     /* Moved out of oedit() due to naming conflicts -- Hugi
 			pObj->value[2] = 0;
 			pObj->value[3] = 0;
 			pObj->value[4] = 0;     /* ROM */
+
+			if ( pObj->item_type == ITEM_WEAPON ) {
+				autoweapon ( ch, "" );
+			}
+			if ( pObj->item_type == ITEM_ARMOR ) {
+				autoarmor ( ch, "" );
+			}
 
 			return TRUE;
 		}
@@ -3192,7 +3313,15 @@ OEDIT ( oedit_level )
 
 	pObj->level = atoi ( argument );
 
-	writeBuffer ( "Level set.\n\r", ch );
+	if ( pObj->item_type == ITEM_WEAPON ) {
+		autoweapon ( ch, "" );
+	}
+
+	if ( pObj->item_type == ITEM_ARMOR ) {
+		autoarmor ( ch, "" );
+	}
+
+	writeBuffer ( "Level set.\r\n", ch );
 	return TRUE;
 }
 
