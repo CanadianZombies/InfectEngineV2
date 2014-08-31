@@ -335,7 +335,7 @@ REDIT ( redit_rlist )
 		if ( ( pRoomIndex = get_room_index ( vnum ) ) ) {
 			found = TRUE;
 			sprintf ( buf, "[%5d] %-17.16s",
-					  vnum, capitalize ( pRoomIndex->name ) );
+					  vnum, pRoomIndex->name ? capitalize ( pRoomIndex->name ) : "[No Name]" );
 			add_buf ( buf1, buf );
 			if ( ++col % 3 == 0 )
 			{ add_buf ( buf1, "\n\r" ); }
@@ -383,7 +383,7 @@ REDIT ( redit_mlist )
 			if ( fAll || is_name ( arg, pMobIndex->player_name ) ) {
 				found = TRUE;
 				sprintf ( buf, "[%5d] %-17.16s",
-						  pMobIndex->vnum, capitalize ( pMobIndex->short_descr ) );
+						  pMobIndex->vnum, pMobIndex->short_descr ? capitalize ( pMobIndex->short_descr ) : "[No Name]" );
 				add_buf ( buf1, buf );
 				if ( ++col % 3 == 0 )
 				{ add_buf ( buf1, "\n\r" ); }
@@ -435,7 +435,7 @@ REDIT ( redit_olist )
 					|| flag_value ( type_flags, arg ) == pObjIndex->item_type ) {
 				found = TRUE;
 				sprintf ( buf, "[%5d] %-17.16s",
-						  pObjIndex->vnum, capitalize ( pObjIndex->short_descr ) );
+						  pObjIndex->vnum, pObjIndex->short_descr ? capitalize ( pObjIndex->short_descr ) : "[No Name]" );
 				add_buf ( buf1, buf );
 				if ( ++col % 3 == 0 )
 				{ add_buf ( buf1, "\n\r" ); }
@@ -575,13 +575,6 @@ AEDIT ( aedit_show )
 
 	sprintf ( buf, "Name:     [%5d] %s\n\r", pArea->vnum, pArea->name );
 	writeBuffer ( buf, ch );
-
-#if 0  /* ROM OLC */
-	sprintf ( buf, "Recall:   [%5d] %s\n\r", pArea->recall,
-			  get_room_index ( pArea->recall )
-			  ? get_room_index ( pArea->recall )->name : "none" );
-	writeBuffer ( buf, ch );
-#endif /* ROM */
 
 	sprintf ( buf, "File:     %s\n\r", pArea->file_name );
 	writeBuffer ( buf, ch );
@@ -742,38 +735,6 @@ AEDIT ( aedit_age )
 	writeBuffer ( "Age set.\n\r", ch );
 	return TRUE;
 }
-
-
-#if 0 /* ROM OLC */
-AEDIT ( aedit_recall )
-{
-	Zone *pArea;
-	char room[MAX_STRING_LENGTH];
-	int  value;
-
-	EDIT_AREA ( ch, pArea );
-
-	one_argument ( argument, room );
-
-	if ( !is_number ( argument ) || argument[0] == '\0' ) {
-		writeBuffer ( "Syntax:  recall [#xrvnum]\n\r", ch );
-		return FALSE;
-	}
-
-	value = atoi ( room );
-
-	if ( !get_room_index ( value ) ) {
-		writeBuffer ( "AEdit:  Room vnum does not exist.\n\r", ch );
-		return FALSE;
-	}
-
-	pArea->recall = value;
-
-	writeBuffer ( "Recall set.\n\r", ch );
-	return TRUE;
-}
-#endif /* ROM OLC */
-
 
 AEDIT ( aedit_security )
 {
@@ -2042,10 +2003,7 @@ REDIT ( redit_oreset )
 }
 
 
-
-/*
- * Object Editor Functions.
- */
+//-- show the values of the item you are editing.
 void show_obj_values ( Creature *ch, ItemData *obj )
 {
 	char buf[MAX_STRING_LENGTH];
@@ -3568,7 +3526,8 @@ MEDIT ( medit_align )
 MEDIT ( medit_level )
 {
 	NPCData *pMob;
-
+	int argfun;
+	
 	EDIT_MOB ( ch, pMob );
 
 	if ( argument[0] == '\0' || !is_number ( argument ) ) {
@@ -3576,9 +3535,25 @@ MEDIT ( medit_level )
 		return FALSE;
 	}
 
-	pMob->level = atoi ( argument );
+	argfun = atoi (argument);
 
-	writeBuffer ( "Level set.\n\r", ch );
+	pMob->level = argfun;
+
+ 	pMob->hit[DICE_NUMBER] = ( argfun );    
+ 	pMob->hit[DICE_TYPE] = ( argfun * 2 );    
+ 	pMob->hit[DICE_BONUS] = 1;   
+ 	pMob->damage[DICE_NUMBER] = ( argfun );    
+ 	pMob->damage[DICE_TYPE] = ( argfun / 20 );    
+ 	pMob->damage[DICE_BONUS] = number_range (1, 4);    
+ 	pMob->hitroll = ( argfun * 2 / 6 );    
+ 	pMob->wealth = ( argfun * 10);    
+ 	
+ 	pMob->ac[AC_PIERCE] = ( argfun - ( argfun * 2 ) * 2 );    
+ 	pMob->ac[AC_BASH] = ( argfun - ( argfun * 2 ) * 2 );    
+ 	pMob->ac[AC_SLASH] = ( argfun - ( argfun * 2 ) * 2 );    
+ 	pMob->ac[AC_EXOTIC] = ( argfun - ( argfun * 2 ) * 2 );
+
+	writeBuffer ( "Level set : Experimental Values set.\r\n", ch);
 	return TRUE;
 }
 

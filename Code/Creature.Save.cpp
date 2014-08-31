@@ -539,7 +539,7 @@ bool load_char_obj ( Socket *d, char *name )
 	ch->comm				= COMM_COMBINE
 							  | COMM_PROMPT;
 	ch->prompt 				= assign_string ( "<%hhp %mm %vmv> " );
-	ch->pcdata->confirm_delete		= FALSE;
+
 	ch->pcdata->pwd			= assign_string ( "" );
 	ch->pcdata->bamfin			= assign_string ( "" );
 	ch->pcdata->bamfout			= assign_string ( "" );

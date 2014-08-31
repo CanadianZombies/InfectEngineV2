@@ -2,7 +2,7 @@
 -1 OLC EDIT~
 Syntax: EDIT AREA [create/reset] [vnum]		- Area Creation and Repoping.
 Syntax: EDIT ROOM ( [create] [vnum] )		- Room Creation and Editing.
-Syntax: EDIT OBJ  [create] <vnum>		- Object Creation and Editing.
+Syntax: EDIT ITEM  [create] <vnum>		- Object Creation and Editing.
 Syntax: EDIT MOB  [create] <vnum>		- Mobile Creation and Editing.
 Syntax: EDIT MP   [create] <vnum>               - MobProg Creation/Editing.
 

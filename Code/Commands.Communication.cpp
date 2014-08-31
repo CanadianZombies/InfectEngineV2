@@ -45,37 +45,29 @@ DefineCommand ( cmd_delet )
 
 DefineCommand ( cmd_delete )
 {
-	char strsave[MAX_INPUT_LENGTH];
-
 	if ( IS_NPC ( ch ) )
 	{ return; }
 
-	if ( ch->pcdata->confirm_delete ) {
-		if ( argument[0] != '\0' ) {
-			writeBuffer ( "Delete status removed.\n\r", ch );
-			ch->pcdata->confirm_delete = FALSE;
-			return;
-		} else {
-			sprintf ( strsave, "%s%s", PLAYER_DIR, capitalize ( ch->name ) );
+	if(cmd != 837) {
+		wiznet ( "$N is contemplating deletion.", ch, NULL, 0, 0, get_trust ( ch ) );
+		ch->queries.queryfunc = cmd_delete;
+		cr->queries.querycommand = 837;
+		strcpy(ch->queries.queryprompt, "\aRWarning\aw: \acThis cannot be undone!\an\r\nAre you absolutely sure you want to delete? (Y/n) ");
+	} else {
+		
+		if(argument[0] == 'y' || argument[0] == 'Y') {
 			wiznet ( "$N turns $Mself into line noise.", ch, NULL, 0, 0, 0 );
 			stop_fighting ( ch, TRUE );
 			cmd_function ( ch, &cmd_quit, "delete" );
-			unlink ( strsave );
+			log_hd(LOG_DEBUG|LOG_SECURITY, Format("%s has deleted their pfile", ch->name));
+			unlink ( Format( "%s%c/%s", PLAYER_DIR, LOWER(ch->name[0]), capitalize ( ch->name )) );
 			return;
+		} else {
+			writeBuffer("Deletion aborted!\r\n",ch);
+			log_hd(LOG_DEBUG|LOG_SECURITY, Format("%s has abandoned their attempt to delete", ch->name));
 		}
 	}
-
-	if ( argument[0] != '\0' ) {
-		writeBuffer ( "Just type delete. No argument.\n\r", ch );
-		return;
-	}
-
-	writeBuffer ( "Type delete again to confirm this command.\n\r", ch );
-	writeBuffer ( "WARNING: this command is irreversible.\n\r", ch );
-	writeBuffer ( "Typing delete with an argument will undo delete status.\n\r",
-				  ch );
-	ch->pcdata->confirm_delete = TRUE;
-	wiznet ( "$N is contemplating deletion.", ch, NULL, 0, 0, get_trust ( ch ) );
+	return;
 }
 
 
@@ -125,7 +117,7 @@ DefineCommand ( cmd_channels )
 	{ writeBuffer ( "OFF\n\r", ch ); }
 
 	if ( IsStaff ( ch ) ) {
-		writeBuffer ( "god channel    ", ch );
+		writeBuffer ( "staff channel    ", ch );
 		if ( !IS_SET ( ch->comm, COMM_NOWIZ ) )
 		{ writeBuffer ( "ON\n\r", ch ); }
 		else
