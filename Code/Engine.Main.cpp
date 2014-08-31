@@ -51,24 +51,9 @@ extern	int	malloc_verify	args ( ( void ) );
 #endif
 
 
-
-/*
- * Signal handling.
- * Apollo has a problem with __attribute(atomic) in signal.h,
- *   I dance around it.
- */
-#if defined(apollo)
-#define __attribute(x)
-#endif
-
 #if defined(unix)
 #include <signal.h>
 #endif
-
-#if defined(apollo)
-#undef __attribute
-#endif
-
 
 
 /*
@@ -501,7 +486,7 @@ void init_descriptor ( int control )
 	size = sizeof ( sock );
 	getsockname ( control, ( struct sockaddr * ) &sock, &size );
 	if ( ( desc = accept ( control, ( struct sockaddr * ) &sock, &size ) ) < 0 ) {
-		ReportErrno ( "New_descriptor: accept" );
+		ReportErrno ( "init_descriptor: accept" );
 		return;
 	}
 
@@ -510,7 +495,7 @@ void init_descriptor ( int control )
 #endif
 
 	if ( fcntl ( desc, F_SETFL, FNDELAY ) == -1 ) {
-		ReportErrno ( "New_descriptor: fcntl: FNDELAY" );
+		ReportErrno ( "init_descriptor: fcntl: FNDELAY" );
 		return;
 	}
 
@@ -532,7 +517,7 @@ void init_descriptor ( int control )
 
 	size = sizeof ( sock );
 	if ( getpeername ( desc, ( struct sockaddr * ) &sock, &size ) < 0 ) {
-		ReportErrno ( "New_descriptor: getpeername" );
+		ReportErrno ( "init_descriptor: getpeername" );
 		dnew->host = assign_string ( "(unknown)" );
 	} else {
 		/*
@@ -561,23 +546,18 @@ void init_descriptor ( int control )
 	 * Furey: added suffix check by request of Nickel of HiddenWorlds.
 	 */
 	if ( check_ban ( dnew->host, BAN_ALL ) ) {
-		write_to_descriptor ( desc,
-							  "Your site has been banned from this mud.\n\r", 0 );
+		write_to_descriptor ( desc, "Your site has been banned from this mud.\n\r", 0 );
 		close ( desc );
 		recycle_descriptor ( dnew );
 		return;
 	}
-	/*
-	 * Init descriptor data.
-	 */
-	dnew->next			= socket_list;
+	// -- add our sockets to the list
+	dnew->next		= socket_list;
 	socket_list		= dnew;
 
 	ProtocolNegotiate ( dnew );
 
-	/*
-	 * Send the greeting.
-	 */
+	// -- send our greeting message
 	{
 		extern char * help_greeting;
 		if ( help_greeting[0] == '.' )
@@ -710,9 +690,7 @@ void read_from_buffer ( Socket *d )
 	if ( d->incomm[0] != '\0' )
 	{ return; }
 
-	/*
-	 * Look for at least one new line.
-	 */
+	// -- look for a new line.
 	for ( i = 0; d->inbuf[i] != '\n' && d->inbuf[i] != '\r'; i++ ) {
 		if ( d->inbuf[i] == '\0' )
 		{ return; }
@@ -759,7 +737,7 @@ void read_from_buffer ( Socket *d )
 			if ( ++d->repeat >= 25 && d->character
 					&&  d->connected == CON_PLAYING ) {
 				log_hd ( LOG_SECURITY, Format ( "%s input spamming!", d->host ) );
-				wiznet ( "Spam spam spam $N spam spam spam spam spam!",
+				wiznet ( "$N is input spamming!!",
 						 d->character, NULL, WIZ_SPAM, 0, get_trust ( d->character ) );
 				if ( d->incomm[0] == '!' )
 					wiznet ( d->inlast, d->character, NULL, WIZ_SPAM, 0,
@@ -811,7 +789,7 @@ bool process_output ( Socket *d, bool fPrompt )
 		// -- display our queryprompt
 		write_to_buffer ( d, d->character->queries.queryprompt, 0 );
 
-		// -- zeroize it so we don't have any problems (should stop the spamming of scanreaders)
+		// -- zeroize it so we don't have any problems (should stop the spamming of screenreaders)
 		memset ( d->character->queries.queryprompt, 0, sizeof ( d->character->queries.queryprompt ) );
 	} else if ( d->pProtocol->WriteOOB )
 		; /* The last sent data was OOB, so do NOT draw the prompt */
@@ -1098,7 +1076,8 @@ void write_to_buffer ( Socket *d, const char *txt, int length )
 		char *outbuf;
 
 		if ( d->outsize >= 32000 ) {
-			log_hd ( LOG_ERROR, "Buffer overflow. Closing.\n\r" );
+			// -- attempt to get the buffer overflow logged properly.
+			log_hd ( LOG_ERROR, Format("Buffer overflow: %d/%s\n\r",d->descriptor, d->host) );
 			close_socket ( d );
 			return;
 		}
@@ -1166,7 +1145,7 @@ void nanny ( Socket *d, char *argument )
 	switch ( d->connected ) {
 
 		default:
-			log_hd ( LOG_ERROR, Format ( "Nanny: bad d->connected %d.", d->connected ) );
+			log_hd ( LOG_ERROR, Format ( "Nanny: bad d(%d)(%p)->connected %d.", d->descriptor, d, d->connected ) );
 			close_socket ( d );
 			return;
 
@@ -1202,7 +1181,7 @@ void nanny ( Socket *d, char *argument )
 				fOld = TRUE;
 			} else {
 				if ( lockdown && !IsStaff ( ch ) ) {
-					write_to_buffer ( d, "The game is lockdowned.\n\r", 0 );
+					write_to_buffer ( d, "The game is currently in lockdown.\n\r", 0 );
 					close_socket ( d );
 					return;
 				}
@@ -1218,7 +1197,7 @@ void nanny ( Socket *d, char *argument )
 			} else {
 				/* New player */
 				if ( newbielockdown ) {
-					write_to_buffer ( d, "The game is newbielockdowned.\n\r", 0 );
+					write_to_buffer ( d, "The game is currently blocking new players.\n\r", 0 );
 					close_socket ( d );
 					return;
 				}
@@ -1659,8 +1638,7 @@ void nanny ( Socket *d, char *argument )
 			if ( ch->pcdata == NULL || ch->pcdata->pwd[0] == '\0' ) {
 				write_to_buffer ( d, "Warning! Null password!\n\r", 0 );
 				write_to_buffer ( d, "Please report old password with bug.\n\r", 0 );
-				write_to_buffer ( d,
-								  "Type 'password null <new password>' to fix.\n\r", 0 );
+				write_to_buffer ( d, "Type 'password null <new password>' to fix.\n\r", 0 );
 			}
 
 			write_to_buffer ( d, "\n\r\awThe \arI\aRn\arf\aRe\arc\aRt\ar\aRe\ard \awCity welcomes you to the chaos!\an\n\r", 0 );
@@ -1682,10 +1660,8 @@ void nanny ( Socket *d, char *argument )
 				ch->move	= ch->max_move;
 				ch->train	 = 3;
 				ch->practice = 5;
-				sprintf ( buf, "the %s",
-						  title_table [ch->archetype] [ch->level]
-						  [ch->sex == SEX_FEMALE ? 1 : 0] );
-				set_title ( ch, buf );
+
+				set_title ( ch, "is attempting to survive level 1." );
 
 				cmd_function ( ch, &cmd_outfit, "" );
 				obj_to_char ( create_object ( get_obj_index ( OBJ_VNUM_MAP ), 0 ), ch );
@@ -1752,7 +1728,7 @@ bool check_parse_name ( char *name )
 	/*
 	 * Reserved words.
 	 */
-	if ( is_exact_name ( name, "all auto immortal self someone something the you loner none" ) ) {
+	if ( is_exact_name ( name, "all auto immortal self someone something the you loner none new delete" ) ) {
 		return FALSE;
 	}
 
@@ -1783,6 +1759,13 @@ bool check_parse_name ( char *name )
 	if ( strlen ( name ) > 12 )
 	{ return FALSE; }
 #endif
+
+	// -- no naming ourselves after commands.
+	for(int cmd = 0; cmd_table[cmd].name; cmd++) {
+		if(!str_cmp(name, cmd_table[cmd].name)) {
+			return false;
+		}
+	}
 
 	/*
 	 * Alphanumerics only.
@@ -1947,14 +1930,12 @@ void writePage ( const char *txt, Creature *ch )
 		return;
 	}
 
-#if defined(macintosh)
-	writeBuffer ( txt, ch );
-#else
+
 	ALLOC_DATA ( ch->desc->showstr_head, char, strlen ( txt ) + 1 );
 	strcpy ( ch->desc->showstr_head, txt );
 	ch->desc->showstr_point = ch->desc->showstr_head;
 	show_string ( ch->desc, "" );
-#endif
+	return;
 }
 
 
@@ -2159,18 +2140,6 @@ void act_new ( const char *format, Creature *ch, const void *arg1,
 	return;
 }
 
-
-
-/*
- * Macintosh support functions.
- */
-#if defined(macintosh)
-int gettimeofday ( struct timeval *tp, void *tzp )
-{
-	tp->tv_sec  = time ( NULL );
-	tp->tv_usec = 0;
-}
-#endif
 
 /* source: EOD, by John Booth <???> */
 
