@@ -38,25 +38,25 @@
 #include "Engine.h"
 
 const char *	where_name	[] = {
-	"<used as light>     ",
-	"<worn on finger>    ",
-	"<worn on finger>    ",
-	"<worn around neck>  ",
-	"<worn around neck>  ",
-	"<worn on torso>     ",
-	"<worn on head>      ",
-	"<worn on legs>      ",
-	"<worn on feet>      ",
-	"<worn on hands>     ",
-	"<worn on arms>      ",
-	"<worn as shield>    ",
-	"<worn about body>   ",
-	"<worn about waist>  ",
-	"<worn around wrist> ",
-	"<worn around wrist> ",
-	"<wielded>           ",
-	"<held>              ",
-	"<floating nearby>   ",
+	"\aw{\aYo\aw}\aY--=\ag[\aoLight Source\aB:     ",
+	"\aw{\aYo\aw}\aY--=\ag[\aoRing Finger L\aB:    ",
+	"\aw{\aYo\aw}\aY--=\ag[\aoRing Finger R\aB:    ",
+	"\aw{\aYo\aw}\aY--=\ag[\aoNeck\aB:             ",
+	"\aw{\aYo\aw}\aY--=\ag[\aoNeck\aB:             "
+	"\aw{\aYo\aw}\aY--=\ag[\aoUpper Body\aB:       ",
+	"\aw{\aYo\aw}\aY--=\ag[\aoHeadwear\aB:         ",
+	"\aw{\aYo\aw}\aY--=\ag[\aoLegs\aB:             ",
+	"\aw{\aYo\aw}\aY--=\ag[\aoFeet\aB:             ",
+	"\aw{\aYo\aw}\aY--=\ag[\aoHands\aB:            ",
+	"\aw{\aYo\aw}\aY--=\ag[\aoArms\aB:             ",
+	"\aw{\aYo\aw}\aY--=\ag[\aoShield\aB:           ",
+	"\aw{\aYo\aw}\aY--=\ag[\aoCovering Body\aB:    ",
+	"\aw{\aYo\aw}\aY--=\ag[\aoWaist\aB:            ",
+	"\aw{\aYo\aw}\aY--=\ag[\aoWrist L\aB:          ",
+	"\aw{\aYo\aw}\aY--=\ag[\aoWrist R\aB:          ",
+	"\aw{\aYo\aw}\aY--=\ag[\aoWeapon\aB:           ",
+	"\aw{\aYo\aw}\aY--=\ag[\aoHolding\aB:          ",
+	"\aw{\aYo\aw}\aY--=\ag[\aoHovering\aB:         ",
 };
 
 
@@ -1928,15 +1928,18 @@ DefineCommand ( cmd_equipment )
 	writeBuffer ( "Your currently equipped gear:\n\r", ch );
 	found = FALSE;
 	for ( iWear = 0; iWear < MAX_WEAR; iWear++ ) {
-		if ( ( obj = get_eq_char ( ch, iWear ) ) == NULL )
-		{ continue; }
+        	if ((obj = get_eq_char (ch, iWear)) == NULL) {                
+        		send_to_char("\aW", ch);                
+        		send_to_char(where_name[iWear], ch);                
+        		send_to_char("     ---\r\n", ch);                
+        		continue;
+	        }
 
-		writeBuffer ( where_name[iWear], ch );
+		writeBuffer ( Format("%s\an", where_name[iWear]), ch );
 		if ( can_see_obj ( ch, obj ) ) {
-			writeBuffer ( format_obj_to_char ( obj, ch, TRUE ), ch );
-			writeBuffer ( "\n\r", ch );
+			writeBuffer ( Format("\ac%s\r\n", format_obj_to_char ( obj, ch, TRUE )), ch );
 		} else {
-			writeBuffer ( "something.\n\r", ch );
+			writeBuffer ( "\acsomething.\r\n", ch );
 		}
 		found = TRUE;
 	}
