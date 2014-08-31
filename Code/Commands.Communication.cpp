@@ -48,25 +48,29 @@ DefineCommand ( cmd_delete )
 	if ( IS_NPC ( ch ) )
 	{ return; }
 
-	if(cmd != 837) {
+	if ( cmd != 837 ) {
 		wiznet ( "$N is contemplating deletion.", ch, NULL, 0, 0, get_trust ( ch ) );
 		ch->queries.queryfunc = cmd_delete;
-		cr->queries.querycommand = 837;
-		strcpy(ch->queries.queryprompt, "\aRWarning\aw: \acThis cannot be undone!\an\r\nAre you absolutely sure you want to delete? (Y/n) ");
+		ch->queries.querycommand = 837;
+		strcpy ( ch->queries.queryprompt, "\aRWarning\aw: \acThis cannot be undone!\an\r\nAre you absolutely sure you want to delete? (Y/n) " );
+		return;
 	} else {
-		
-		if(argument[0] == 'y' || argument[0] == 'Y') {
+
+		if ( argument[0] == 'y' || argument[0] == 'Y' ) {
 			wiznet ( "$N turns $Mself into line noise.", ch, NULL, 0, 0, 0 );
 			stop_fighting ( ch, TRUE );
 			cmd_function ( ch, &cmd_quit, "delete" );
-			log_hd(LOG_DEBUG|LOG_SECURITY, Format("%s has deleted their pfile", ch->name));
-			unlink ( Format( "%s%c/%s", PLAYER_DIR, LOWER(ch->name[0]), capitalize ( ch->name )) );
-			return;
+			log_hd ( LOG_DEBUG | LOG_SECURITY, Format ( "%s has deleted their pfile", ch->name ) );
+			unlink ( Format ( "%s%c/%s", PLAYER_DIR, LOWER ( ch->name[0] ), capitalize ( ch->name ) ) );
+			ch->queries.queryfunc = NULL;
+			ch->queries.querycommand = 0;
 		} else {
-			writeBuffer("Deletion aborted!\r\n",ch);
-			log_hd(LOG_DEBUG|LOG_SECURITY, Format("%s has abandoned their attempt to delete", ch->name));
+			writeBuffer ( "Deletion aborted!\r\n", ch );
+			log_hd ( LOG_DEBUG | LOG_SECURITY, Format ( "%s has abandoned their attempt to delete", ch->name ) );
 		}
 	}
+	ch->queries.queryfunc = NULL;
+	ch->queries.querycommand = 0;
 	return;
 }
 
@@ -1539,14 +1543,13 @@ DefineCommand ( cmd_group )
 		writeBuffer ( buf, ch );
 
 		for ( gch = char_list; gch != NULL; gch = gch->next ) {
- 			if (is_same_group (gch, ch))
-			{
-				writeBuffer(Format( "\aC[\ac%s\aC]\ar %4d%% \aohp \am%4d\ar%% mana \ab%4d\ar%% mv \aY%5d\antnl\n\r",
-					capitalize (PERS (gch, ch)),
-					gch->hit * 100 / gch->max_hit,
-					gch->mana * 100 / gch->max_mana,
-					gch->move * 100 / gch->max_move,
-					(ch->level)), ch);
+			if ( is_same_group ( gch, ch ) ) {
+				writeBuffer ( Format ( "\aC[\ac%s\aC]\ar %4d%% \aohp \am%4d\ar%% mana \ab%4d\ar%% mv \aY%5d\antnl\n\r",
+									   capitalize ( PERS ( gch, ch ) ),
+									   gch->hit * 100 / gch->max_hit,
+									   gch->mana * 100 / gch->max_mana,
+									   gch->move * 100 / gch->max_move,
+									   ( ch->level ) ), ch );
 			}
 		}
 		return;

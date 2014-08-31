@@ -1077,7 +1077,7 @@ void write_to_buffer ( Socket *d, const char *txt, int length )
 
 		if ( d->outsize >= 32000 ) {
 			// -- attempt to get the buffer overflow logged properly.
-			log_hd ( LOG_ERROR, Format("Buffer overflow: %d/%s\n\r",d->descriptor, d->host) );
+			log_hd ( LOG_ERROR, Format ( "Buffer overflow: %d/%s\n\r", d->descriptor, d->host ) );
 			close_socket ( d );
 			return;
 		}
@@ -1761,8 +1761,8 @@ bool check_parse_name ( char *name )
 #endif
 
 	// -- no naming ourselves after commands.
-	for(int cmd = 0; cmd_table[cmd].name; cmd++) {
-		if(!str_cmp(name, cmd_table[cmd].name)) {
+	for ( int cmd = 0; cmd_table[cmd].name; cmd++ ) {
+		if ( !str_cmp ( name, cmd_table[cmd].name ) ) {
 			return false;
 		}
 	}

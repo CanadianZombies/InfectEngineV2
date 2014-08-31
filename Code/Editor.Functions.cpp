@@ -3527,7 +3527,7 @@ MEDIT ( medit_level )
 {
 	NPCData *pMob;
 	int argfun;
-	
+
 	EDIT_MOB ( ch, pMob );
 
 	if ( argument[0] == '\0' || !is_number ( argument ) ) {
@@ -3535,25 +3535,25 @@ MEDIT ( medit_level )
 		return FALSE;
 	}
 
-	argfun = atoi (argument);
+	argfun = atoi ( argument );
 
 	pMob->level = argfun;
 
- 	pMob->hit[DICE_NUMBER] = ( argfun );    
- 	pMob->hit[DICE_TYPE] = ( argfun * 2 );    
- 	pMob->hit[DICE_BONUS] = 1;   
- 	pMob->damage[DICE_NUMBER] = ( argfun );    
- 	pMob->damage[DICE_TYPE] = ( argfun / 20 );    
- 	pMob->damage[DICE_BONUS] = number_range (1, 4);    
- 	pMob->hitroll = ( argfun * 2 / 6 );    
- 	pMob->wealth = ( argfun * 10);    
- 	
- 	pMob->ac[AC_PIERCE] = ( argfun - ( argfun * 2 ) * 2 );    
- 	pMob->ac[AC_BASH] = ( argfun - ( argfun * 2 ) * 2 );    
- 	pMob->ac[AC_SLASH] = ( argfun - ( argfun * 2 ) * 2 );    
- 	pMob->ac[AC_EXOTIC] = ( argfun - ( argfun * 2 ) * 2 );
+	pMob->hit[DICE_NUMBER] = ( argfun );
+	pMob->hit[DICE_TYPE] = ( argfun * 2 );
+	pMob->hit[DICE_BONUS] = 1;
+	pMob->damage[DICE_NUMBER] = ( argfun );
+	pMob->damage[DICE_TYPE] = ( argfun / 20 );
+	pMob->damage[DICE_BONUS] = number_range ( 1, 4 );
+	pMob->hitroll = ( argfun * 2 / 6 );
+	pMob->wealth = ( argfun * 10 );
 
-	writeBuffer ( "Level set : Experimental Values set.\r\n", ch);
+	pMob->ac[AC_PIERCE] = ( argfun - ( argfun * 2 ) * 2 );
+	pMob->ac[AC_BASH] = ( argfun - ( argfun * 2 ) * 2 );
+	pMob->ac[AC_SLASH] = ( argfun - ( argfun * 2 ) * 2 );
+	pMob->ac[AC_EXOTIC] = ( argfun - ( argfun * 2 ) * 2 );
+
+	writeBuffer ( "Level set : Experimental Values set.\r\n", ch );
 	return TRUE;
 }
 

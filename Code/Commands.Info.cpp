@@ -1928,16 +1928,16 @@ DefineCommand ( cmd_equipment )
 	writeBuffer ( "Your currently equipped gear:\n\r", ch );
 	found = FALSE;
 	for ( iWear = 0; iWear < MAX_WEAR; iWear++ ) {
-        	if ((obj = get_eq_char (ch, iWear)) == NULL) {                
-        		send_to_char("\aW", ch);                
-        		send_to_char(where_name[iWear], ch);                
-        		send_to_char("     ---\r\n", ch);                
-        		continue;
-	        }
+		if ( ( obj = get_eq_char ( ch, iWear ) ) == NULL ) {
+			writeBuffer ( "\aW", ch );
+			writeBuffer ( where_name[iWear], ch );
+			writeBuffer ( "     ---\r\n", ch );
+			continue;
+		}
 
-		writeBuffer ( Format("%s\an", where_name[iWear]), ch );
+		writeBuffer ( Format ( "%s\an", where_name[iWear] ), ch );
 		if ( can_see_obj ( ch, obj ) ) {
-			writeBuffer ( Format("\ac%s\r\n", format_obj_to_char ( obj, ch, TRUE )), ch );
+			writeBuffer ( Format ( "\ac%s\r\n", format_obj_to_char ( obj, ch, TRUE ) ), ch );
 		} else {
 			writeBuffer ( "\acsomething.\r\n", ch );
 		}
@@ -2576,7 +2576,7 @@ DefineCommand ( cmd_levelup )
 							tweetStatement ( Format ( "*** MAX LEVEL ATTAINED! *** %s has become a master survivor in %s.", ch->name, "The Infected City"  ) );
 							break;
 					} // -- end switch
-					
+
 					wiznet ( Format ( "$N has attained level %d!", ch->level ), ch, NULL, WIZ_LEVELS, 0, 0 );
 					advance_level ( ch, false );
 
@@ -2584,7 +2584,7 @@ DefineCommand ( cmd_levelup )
 					ch->exp = ( ch->exp - ( old_level * 200 ) ) ;
 
 					// -- for debugging purposes, we log it all!
-					log_hd(LOG_DEBUG, Format("%s has leveled up to level %d, %d experience remains, %d experience tnl.", ch->name, ch->level, ch->exp, ( ch->level * 200 )));
+					log_hd ( LOG_DEBUG, Format ( "%s has leveled up to level %d, %d experience remains, %d experience tnl.", ch->name, ch->level, ch->exp, ( ch->level * 200 ) ) );
 
 					switch ( ch->level ) {
 						default:
@@ -2597,7 +2597,7 @@ DefineCommand ( cmd_levelup )
 							// -- sub-race picking will go here.
 							break;
 						case MAX_LEVEL:
-							tweetStatement(Format("%s has survived!",ch->name));
+							tweetStatement ( Format ( "%s has survived!", ch->name ) );
 							// -- My little secret will go here!
 							break;
 					}
