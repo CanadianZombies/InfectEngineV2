@@ -175,7 +175,8 @@ extern	const	struct	flag_type	size_flags[];
 extern	const	struct	flag_type	position_flags[];
 extern	const	struct	flag_type	ac_type[];
 extern	const	struct	bit_type	bitvector_type[];
-
+extern	const	struct 	flag_type material_flags[];
+extern  const struct  flag_type random_eq_flags[];
 /*
  * OLC Interpreter Table Prototypes
  */

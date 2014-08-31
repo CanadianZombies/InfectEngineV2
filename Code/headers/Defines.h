@@ -349,6 +349,7 @@
 #define ACT_IS_NPC		(A)		/* Auto set for mobs	*/
 #define ACT_SENTINEL	    	(B)		/* Stays in one room	*/
 #define ACT_SCAVENGER	      	(C)		/* Picks up objects	*/
+#define ACT_RANDOM_EQ (D)
 #define ACT_AGGRESSIVE		(F)    		/* Attacks PC's		*/
 #define ACT_STAY_AREA		(G)		/* Won't leave area	*/
 #define ACT_WIMPY		(H)
@@ -368,6 +369,58 @@
 #define ACT_GAIN		(bb)
 #define ACT_UPDATE_ALWAYS	(cc)
 #define ACT_IS_CHANGER		(dd)
+
+/*merc.h*/
+/*
+ * Equipment Material types
+ */
+#define MAT_PRACTICE (A) //For practice weapons, nobody wants a leather sword:)
+#define MAT_FOOD (B) //can be eaten
+#define MAT_LIQUID (C) //can be drank
+#define MAT_GLASS (D) //For Potions and things to break on drop
+/*armor*/
+#define MAT_LEATHER (E)
+#define MAT_WOOD (F)
+#define MAT_BONE (G)
+#define MAT_EBONY (H)
+#define MAT_IVORY (I)
+#define MAT_DRAGONSCALE (J)
+#define MAT_COPPER (K)
+#define MAT_BRASS (L)
+#define MAT_BRONZE (M)
+#define MAT_IRON (N)
+#define MAT_STEEL (O)
+#define MAT_TAINTED_MITHRIL (P)
+#define MAT_MITHRIL (Q)
+#define MAT_OBSIDIAN (R)
+#define MAT_ONYX (S)
+#define MAT_OPAL (T)
+#define MAT_DOUBLE_PLATED (U)
+#define MAT_SILVER (V)
+#define MAT_GOLD (W)
+#define MAT_PLATINUM (X)
+#define MAT_TITANIUM (Y)
+#define MAT_ADAMANTANIUM (Z)
+
+/* RANDOM EQUIPMENT */
+#define RANDOM_HELM (A)
+#define RANDOM_TORSO (B)
+#define RANDOM_ARMS (C)
+#define RANDOM_HANDS (D)
+#define RANDOM_LEGS (E)
+#define RANDOM_FEET (F)
+#define RANDOM_WAIST (G)
+#define RANDOM_ABOUT (H)
+#define RANDOM_WRIST (I)
+#define RANDOM_NECK (J)
+#define RANDOM_LIGHT (K)
+#define RANDOM_RING (L)
+#define RANDOM_TRINKET (M)
+#define RANDOM_WEAPON (N)
+#define RANDOM_SHIELD (O)
+#define RANDOM_WAND (P)
+#define RANDOM_STAFF (Q)
+
 
 /* damage archetypees */
 #define DAM_NONE                0

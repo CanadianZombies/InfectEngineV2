@@ -43,6 +43,7 @@
 #define SkillNumber(gsn) extern sh_int gsn;
 #endif
 
+SkillNumber ( gsn_reserved );
 SkillNumber ( gsn_backstab );
 SkillNumber ( gsn_dodge );
 SkillNumber ( gsn_envenom );

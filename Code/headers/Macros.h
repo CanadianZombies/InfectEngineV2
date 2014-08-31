@@ -142,6 +142,8 @@
 			log_hd(LOG_ERROR, Format("CHECK_POS : " c " == %d < 0", a) );	\
 	}							\
 	 
+#define nelems(x)  (sizeof(x) / sizeof(x[0]))
+
 #define IS_NPC(ch)		(IS_SET((ch)->act, ACT_IS_NPC))
 
 // -- staff is now controlled by flags, NOT by level!

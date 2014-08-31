@@ -85,6 +85,7 @@ const struct flag_type act_flags[] = {
 	{	"npc",			A,	FALSE	},
 	{	"sentinel",		B,	TRUE	},
 	{	"scavenger",		C,	TRUE	},
+	{	"random_eq",	ACT_RANDOM_EQ,	TRUE },
 	{	"aggressive",		F,	TRUE	},
 	{	"stay_area",		G,	TRUE	},
 	{	"wimpy",		H,	TRUE	},
@@ -105,6 +106,27 @@ const struct flag_type act_flags[] = {
 	{	"update_always",	cc,	TRUE	},
 	{	"changer",		dd,	TRUE	},
 	{	NULL,			0,	FALSE	}
+};
+
+const struct flag_type random_eq_flags[] = {
+	{	"helm",	RANDOM_HELM,	TRUE },
+	{	"torso",	RANDOM_TORSO,	TRUE },
+	{	"arms",	RANDOM_ARMS,	TRUE },
+	{	"hands",	RANDOM_HANDS,	TRUE },
+	{	"legs",	RANDOM_LEGS,	TRUE },
+	{	"feet",	RANDOM_FEET,	TRUE },
+	{	"waist",	RANDOM_WAIST,	TRUE },
+	{	"about",	RANDOM_ABOUT,	TRUE },
+	{	"wrist",	RANDOM_WRIST,	TRUE },
+	{	"neck",	RANDOM_NECK,	TRUE },
+	{	"light",	RANDOM_LIGHT,	TRUE },
+	{	"ring",	RANDOM_RING,	TRUE },
+	{	"trinket",	RANDOM_TRINKET,	TRUE },
+	{	"weapon",	RANDOM_WEAPON,	TRUE },
+	{	"shield",	RANDOM_SHIELD,	TRUE },
+	{	"wand",	RANDOM_WAND,	TRUE },
+	{	"staff",	RANDOM_STAFF,	TRUE },
+	{	NULL,	0,	0 }
 };
 
 const struct flag_type plr_flags[] = {
@@ -748,4 +770,36 @@ const	struct	bit_type	bitvector_type	[]	= {
 	{	res_flags,	"res"		},
 	{	vuln_flags,	"vuln"		},
 	{	weapon_type2,	"weapon"	}
+};
+
+const struct flag_type material_flags[] = {
+	{	"practice",	MAT_PRACTICE,	TRUE },
+	{	"food",	MAT_FOOD,	TRUE },
+	{	"liquid",	MAT_LIQUID,	TRUE },
+	{	"glass",	MAT_GLASS,	TRUE },
+
+	{	"leather",	MAT_LEATHER,	TRUE },
+	{	"wood",	MAT_WOOD,	TRUE },
+	{	"bone",	MAT_BONE,	TRUE },
+	{	"ebony",	MAT_EBONY,	TRUE },
+	{	"ivory",	MAT_IVORY,	TRUE },
+	{	"dragonscale",	MAT_DRAGONSCALE,	TRUE },
+	{	"copper",	MAT_COPPER,	TRUE },
+	{	"brass",	MAT_BRASS,	TRUE },
+	{	"bronze",	MAT_BRONZE,	TRUE },
+	{	"iron",	MAT_IRON,	TRUE },
+	{	"steel",	MAT_STEEL,	TRUE },
+	{	"tainted mithril",	MAT_TAINTED_MITHRIL,	TRUE },
+	{	"mithril",	MAT_MITHRIL,	TRUE },
+	{	"obsidian",	MAT_OBSIDIAN,	TRUE },
+	{	"onyx",	MAT_ONYX,	TRUE },
+	{	"opal",	MAT_OPAL,	TRUE },
+	{	"double plated", MAT_DOUBLE_PLATED,	TRUE },
+	{	"silver",	MAT_SILVER,	TRUE },
+	{	"gold",	MAT_GOLD,	TRUE },
+	{	"platinum",	MAT_PLATINUM,	TRUE },
+	{	"titanium",	MAT_TITANIUM,	TRUE },
+	{	"adamantanium",	MAT_ADAMANTANIUM,	TRUE },
+
+	{	NULL,	0,	0 }
 };

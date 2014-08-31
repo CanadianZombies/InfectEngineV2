@@ -210,6 +210,8 @@ void load_mobiles ( FILE *fp )
 		pMobIndex->long_descr[0]        = UPPER ( pMobIndex->long_descr[0] );
 		pMobIndex->description[0]       = UPPER ( pMobIndex->description[0] );
 
+		pMobIndex->material_flags				= fread_flag ( fp );
+		pMobIndex->random								= fread_flag ( fp );
 		pMobIndex->act                  = fread_flag ( fp ) | ACT_IS_NPC
 										  | race_table[pMobIndex->race].act;
 		pMobIndex->affected_by          = fread_flag ( fp )
@@ -273,7 +275,6 @@ void load_mobiles ( FILE *fp )
 		/* size */
 		CHECK_POS ( pMobIndex->size, size_lookup ( fread_word ( fp ) ), "size" );
 		/*	pMobIndex->size			= size_lookup(fread_word(fp)); */
-		pMobIndex->material		= assign_string ( fread_word ( fp ) );
 
 		for ( ; ; ) {
 			letter = fread_letter ( fp );
@@ -385,11 +386,11 @@ void load_objects ( FILE *fp )
 		pObjIndex->name                 = fread_string ( fp );
 		pObjIndex->short_descr          = fread_string ( fp );
 		pObjIndex->description          = fread_string ( fp );
-		pObjIndex->material		= fread_string ( fp );
 
 		CHECK_POS ( pObjIndex->item_type, item_lookup ( fread_word ( fp ) ), "item_type" );
 		pObjIndex->extra_flags          = fread_flag ( fp );
 		pObjIndex->wear_flags           = fread_flag ( fp );
+		pObjIndex->material_flags       = fread_flag ( fp );
 		switch ( pObjIndex->item_type ) {
 			case ITEM_WEAPON:
 				pObjIndex->value[0]		= weapon_type ( fread_word ( fp ) );
@@ -880,7 +881,6 @@ void convert_mobile ( NPCData *pMobIndex )
 
 	pMobIndex->wealth           /= 100;
 	pMobIndex->size              = SIZE_MEDIUM;
-	pMobIndex->material          = assign_string ( "none" );
 
 	pMobIndex->new_format        = TRUE;
 	++newmobs;

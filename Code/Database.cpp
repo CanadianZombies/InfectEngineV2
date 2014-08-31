@@ -166,6 +166,8 @@ void    fix_mobprogs	args ( ( void ) );
 void	reset_area	args ( ( Zone * pArea ) );
 void    load_connections ();
 
+void create_random_equipment ( Creature * mob );
+
 /*
  * Big mama top level function.
  */
@@ -769,7 +771,6 @@ void load_old_obj ( FILE *fp )
 
 		pObjIndex->short_descr[0]	= LOWER ( pObjIndex->short_descr[0] );
 		pObjIndex->description[0]	= UPPER ( pObjIndex->description[0] );
-		pObjIndex->material		= assign_string ( "" );
 
 		pObjIndex->item_type		= fread_number ( fp );
 		pObjIndex->extra_flags		= fread_flag ( fp );
@@ -1851,6 +1852,8 @@ Creature *create_mobile ( NPCData *pMobIndex )
 		mob->damage[DICE_NUMBER] = pMobIndex->damage[DICE_NUMBER];
 		mob->damage[DICE_TYPE]	= pMobIndex->damage[DICE_TYPE];
 		mob->dam_type		= pMobIndex->dam_type;
+		mob->random = pMobIndex->random;
+
 		if ( mob->dam_type == 0 )
 			switch ( number_range ( 1, 3 ) ) {
 				case ( 1 ) :
@@ -1878,7 +1881,6 @@ Creature *create_mobile ( NPCData *pMobIndex )
 		mob->form		= pMobIndex->form;
 		mob->parts		= pMobIndex->parts;
 		mob->size		= pMobIndex->size;
-		mob->material		= assign_string ( pMobIndex->material );
 
 		/* computed on the spot */
 
@@ -1999,7 +2001,6 @@ Creature *create_mobile ( NPCData *pMobIndex )
 		mob->form		= pMobIndex->form;
 		mob->parts		= pMobIndex->parts;
 		mob->size		= SIZE_MEDIUM;
-		mob->material		= ( char * ) "";
 
 		for ( i = 0; i < MAX_STATS; i ++ )
 		{ mob->perm_stat[i] = 11 + mob->level / 4; }
@@ -2007,6 +2008,8 @@ Creature *create_mobile ( NPCData *pMobIndex )
 
 	mob->position = mob->start_pos;
 
+	if ( IS_SET ( mob->act, ACT_RANDOM_EQ ) )
+	{ create_random_equipment ( mob ); }
 
 	/* link the mob to the world list */
 	mob->next		= char_list;
@@ -2065,7 +2068,6 @@ void clone_mobile ( Creature *parent, Creature *clone )
 	clone->form		= parent->form;
 	clone->parts	= parent->parts;
 	clone->size		= parent->size;
-	clone->material	= assign_string ( parent->material );
 	clone->off_flags	= parent->off_flags;
 	clone->dam_type	= parent->dam_type;
 	clone->start_pos	= parent->start_pos;
@@ -2121,7 +2123,6 @@ Item *create_object ( ItemData *pObjIndex, int level )
 	obj->name		= assign_string ( pObjIndex->name );          /* OLC */
 	obj->short_descr	= assign_string ( pObjIndex->short_descr );   /* OLC */
 	obj->description	= assign_string ( pObjIndex->description );   /* OLC */
-	obj->material	= assign_string ( pObjIndex->material );
 	obj->item_type	= pObjIndex->item_type;
 	obj->extra_flags	= pObjIndex->extra_flags;
 	obj->wear_flags	= pObjIndex->wear_flags;
@@ -2256,7 +2257,6 @@ void clone_object ( Item *parent, Item *clone )
 	clone->cost		= parent->cost;
 	clone->level	= parent->level;
 	clone->condition	= parent->condition;
-	clone->material	= assign_string ( parent->material );
 	clone->timer	= parent->timer;
 
 	for ( i = 0;  i < 5; i ++ )

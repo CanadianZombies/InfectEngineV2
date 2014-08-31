@@ -97,6 +97,10 @@
 #define OBJ_VNUM_MAP		   45
 #define OBJ_VNUM_WHISTLE	   46
 
+// -- random item generation, didn't use vnum_dummy for these so that we could track their usage.
+#define OBJ_VNUM_RANDOM_ARMOR 47
+#define OBJ_VNUM_RANDOM_LIGHT 48
+#define OBJ_VNUM_RANDOM_WEAPON 49
 
 /*
  * Well known room virtual numbers.

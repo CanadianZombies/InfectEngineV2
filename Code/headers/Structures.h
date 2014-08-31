@@ -319,8 +319,9 @@ struct	mob_index_data {
 	long		form;
 	long		parts;
 	sh_int		size;
-	char *		material;
 	long		mprog_flags;
+	int material_flags;
+	int random;
 };
 
 /* memory for mobs */
@@ -434,15 +435,15 @@ struct	char_data {
 	long		form;
 	long		parts;
 	sh_int		size;
-	char*		material;
 	/* mobile stuff */
 	long		off_flags;
 	sh_int		damage[3];
 	sh_int		dam_type;
 	sh_int		start_pos;
 	sh_int		default_pos;
-
 	sh_int		mprog_delay;
+	int material_flags;
+	int random;
 };
 
 
@@ -526,7 +527,6 @@ struct	obj_index_data {
 	char *		description;
 	sh_int		vnum;
 	sh_int		reset_num;
-	char *		material;
 	sh_int		item_type;
 	int			extra_flags;
 	int			wear_flags;
@@ -536,6 +536,7 @@ struct	obj_index_data {
 	sh_int		weight;
 	int			cost;
 	int			value[5];
+	int material_flags;
 };
 
 
@@ -568,8 +569,8 @@ struct	obj_data {
 	int			cost;
 	sh_int		level;
 	sh_int 		condition;
-	char *		material;
 	sh_int		timer;
+	int material_flags;
 	int			value	[5];
 };
 

@@ -17,13 +17,12 @@ A small loyal kitten is here.
 The kitten looks like a cute, little, fierce fighter.
 ~
 cat~
-ABU Z 400 0
+B 0 ABU Z 400 0
 1 2 2d6+11 1d1+99 1d4+0 scratch
 8 8 8 10
 FH 0 C 0
 stand stand either 0
-AGV ACDEFHJKQUV tiny unknown
-#2
+AGV ACDEFHJKQUV tiny #2
 cityguard guard~
 the cityguard~
 A cityguard stands here.
@@ -31,13 +30,12 @@ A cityguard stands here.
 A big, strong, helpful, trustworthy guard.
 ~
 human~
-ACGT 0 1000 3000
+0 0 ACGT 0 1000 3000
 15 3 15d15+160 1d1+149 2d4+4 punch
 0 0 0 8
 CDEKLTU 0 C 0
 stand stand either 150
-AHMV ABCDEFGHIJK medium unknown
-#3
+AHMV ABCDEFGHIJK medium #3
 oldstyle undead guardian vampire~
 The guardian vampire~
 A vampire is here hiding his face from your light source.
@@ -46,13 +44,12 @@ The guardian vampire looks quite EVIL.  Just by looking at him the hair on your
 arms raises. He looks mighty tough to be just a minor minion.
 ~
 human~
-ABF DF -1000 0
+0 0 ABF DF -1000 0
 28 0 6d12+703 14d9+100 5d4+8 none
 -8 -8 -8 6
 EFNU 0 0 0
 stand stand male 750
-AHMV ABCDEFGHIJK medium unknown
-#4
+AHMV ABCDEFGHIJK medium #4
 patrolman patrol man~
 a patrolman~
 A patrolman is trying to keep the peace.
@@ -60,13 +57,12 @@ A patrolman is trying to keep the peace.
 He'd rather be at the local pub then out here with these nasty kids.
 ~
 human~
-AGT 0 700 0
+0 0 AGT 0 700 0
 8 0 2d7+115 1d1+99 1d7+2 punch
 3 3 3 9
 CKLU 0 0 0
 stand stand male 350
-AHMV ABCDEFGHIJK medium unknown
-#0
+AHMV ABCDEFGHIJK medium #0
 
 
 
@@ -75,161 +71,141 @@ AHMV ABCDEFGHIJK medium unknown
 coin silver gcash~
 a silver coin~
 One miserable silver coin.~
-silver~
 money 0 A
-A 0 0 0 0
+0 A 0 0 0 0
 0 10 0 P
 #2
 coin gold gcash~
 a gold coin~
 One valuable gold coin.~
-gold~
 money 0 A
-0 A 0 0 0
+0 0 A 0 0 0
 0 10 0 P
 #3
 coins gold gcash~
 %d gold coins~
 A pile of gold coins.~
-gold~
 money 0 A
-0 0 0 0 0
+0 0 0 0 0 0
 0 10 0 P
 #4
 coins silver gcash~
 %d silver coins~
 A pile of silver coins.~
-silver~
 money 0 A
-0 0 0 0 0
+0 0 0 0 0 0
 0 10 0 P
 #5
 coins silver gold gcash~
 %d silver coins and %d gold coins~
 A pile of coins.~
-gold~
 money 0 A
-0 0 0 0 0
+0 0 0 0 0 0
 0 10 0 P
 #10
 corpse~
 the corpse of %s~
 The corpse of %s is lying here.~
-meat~
 npc_corpse 0 A
-0 0 0 A 0
+0 0 0 0 A 0
 0 1000 0 D
 #11
 corpse~
 the corpse of %s~
 The corpse of %s is lying here.~
-meat~
 pc_corpse O A
-0 0 0 A 0
+0 0 0 0 A 0
 0 1000 0 D
 #12
 head~
 the head of %s~
 The severed head of %s is lying here.~
-meat~
 trash 0 A
-0 0 0 0 0
+0 0 0 0 0 0
 0 50 0 D
 #13
 heart~
 the heart of %s~
 The torn-out heart of %s is lying here.~
-meat~
 food 0 A
-E E 0 0 0
+0 E E 0 0 0
 0 20 0 D
 #14
 arm~
 the arm of %s~
 The sliced-off arm of %s is lying here.~
-meat~
 food 0 A
-CE CE 0 0 0
+0 CE CE 0 0 0
 0 50 0 D
 #15
 leg~
 the leg of %s~
 The sliced-off leg of %s is lying here.~
-meat~
 food 0 A
-CE CE 0 0 0
+0 CE CE 0 0 0
 0 50 0 D
 #16
 guts entrails~
 the guts of %s~
 A steaming pile of %s's entrails is lying here.~
-meat~
 food 0 A
-AC AC 0 A 0
+0 AC AC 0 A 0
 0 20 0 D
 #17
 brains brain~
 the brains of %s~
 The splattered brains of %s are lying here.~
-meat~
 food 0 A
-BD BD 0 0 0
+0 BD BD 0 0 0
 0 20 0 D
 #20
 mushroom~
 a Magic Mushroom~
 A delicious magic mushroom is here.~
-food~
 food 0 A
-D D 0 0 0
+0 D D 0 0 0
 0 10 0 P
 #21
 ball light~
 a bright ball of light~
 A bright ball of light shimmers in the air.~
-energy~
 light A A
-0 0 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef 0 0
+0 0 0 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef 0 0
 0 0 0 P
 #22
 spring~
 a magical spring~
 A magical spring flows from the ground here.~
-water~
 fountain G 0
-100000 100000 'water' 0 0
+0 100000 100000 'water' 0 0
 0 0 0 P
 #23
 disc disk floating black~
 a floating disc~
 A floating black disc hangs in the air.~
-energy~
 container GMPUYZ AQ
-0 E 0 0 0
+0 0 E 0 0 0
 0 0 0 P
 #25
 gate portal~
 a shimmering gate~
 A shimmering black gate rises from the ground, leading to parts unknown.~
-shadow~
 portal GOT 0
-0 0 0 0 0
+0 0 0 0 0 0
 0 0 0 P
 #30
 dummy object~
 a dummy object~
 Dummy object is used for loading non-existent objects~
-~
 trash 0 0
-0 0 0 0 0
+0 0 0 0 0 0
 0 0 0 P
 #31
 rose~
 a red rose~
 A red rose is lying on the ground.~
-oldstyle~
 treasure 0 AE
-BC 0 0 0 0
+0 BC 0 0 0 0
 0 80 0 P
 E
 rose~
@@ -239,9 +215,8 @@ It's a beautiful red rose, with a soft and romantic fragrance.
 pit~
 the donation pit~
 A pit for sacrifices is in front of the altar.~
-~
 container O 0
-10000 0 0 1000 100
+0 10000 0 0 1000 100
 0 0 0 P
 E
 pit~
@@ -252,9 +227,8 @@ convert more people to the belief of Mota, lord of the gods.
 mace sub merc~
 a sub issue mace~
 You see a sub issue mace here.~
-bronze~
 weapon U AN
-mace 1 6 pound 0
+A mace 1 6 pound 0
 1 60 250 P
 A
 18 1
@@ -267,9 +241,8 @@ Merc Industries
 dagger sub merc~
 a sub issue dagger~
 You see a sub issue dagger here.~
-bronze~
 weapon U AN
-dagger 1 4 pierce 0
+A dagger 1 4 pierce 0
 0 10 210 P
 A
 18 1
@@ -282,9 +255,8 @@ Merc Industries
 sword sub merc~
 a sub issue sword~
 You see a sub issue sword here.~
-bronze~
 weapon U AN
-sword 1 6 slash 0
+A sword 1 6 slash 0
 1 30 360 P
 A
 18 1
@@ -297,9 +269,8 @@ Merc Industries
 vest sub merc~
 a sub issue vest~
 You see a sub issue vest here.~
-leather~
 armor U AD
-A A A 0 0
+A A A A 0 0
 0 50 144 P
 E
 vest~
@@ -310,9 +281,8 @@ Merc Industries
 shield sub merc~
 a sub issue shield~
 You see a sub issue shield here.~
-wood~
 armor U AJ
-A A A 0 0
+A A A A 0 0
 0 30 108 P
 E
 shield~
@@ -323,14 +293,13 @@ Merc Industries
 banner war merc~
 a war banner~
 A war banner is on the floor here.~
-cloth~
 light AG A
-0 0 DGH 0 0
+A 0 0 DGH 0 0
 0 20 380 P
 A
-20 -1
-A
 17 -1
+A
+20 -1
 E
 banner~
 This is the official Merc war banner to see you through the darkest realm!
@@ -339,9 +308,8 @@ This is the official Merc war banner to see you through the darkest realm!
 spear sub merc~
 a sub issue spear~
 You see a sub issue spear here.~
-wood~
 weapon U AN
-staff 1 6 thrust 0
+A staff 1 6 thrust 0
 1 50 111 P
 A
 18 1
@@ -354,14 +322,13 @@ Merc Industries
 staff sub merc~
 a sub issue staff~
 You see a sub issue staff here.~
-wood~
 weapon U AN
-staff 1 5 pound F
+A staff 1 5 pound F
 1 40 290 P
 A
-19 1
-A
 18 2
+A
+19 1
 E
 staff~
 You see a staff of great but cheap craftsmanship.  Imprinted on the side is:
@@ -371,9 +338,8 @@ Merc Industries
 axe sub merc~
 a sub issue axe~
 You see a sub issue axe here.~
-bronze~
 weapon U AN
-axe 1 6 chop 0
+A axe 1 6 chop 0
 1 50 350 P
 A
 18 1
@@ -386,9 +352,8 @@ Merc Industries
 flail sub merc~
 a sub issue flail~
 You see a sub issue flail here.~
-bronze~
 weapon U AN
-flail 1 5 crush 0
+A flail 1 5 crush 0
 1 50 310 P
 A
 19 1
@@ -401,9 +366,8 @@ Merc Industries
 whip sub merc~
 a sub issue whip~
 You see a sub issue whip here.~
-leather~
 weapon U AN
-whip 2 2 whip 0
+A whip 2 2 whip 0
 1 20 330 P
 A
 18 2
@@ -416,9 +380,8 @@ Merc Industries
 glaive sub merc~
 a sub issue glaive~
 You see a sub issue glaive here.~
-wood~
 weapon U AN
-polearm 1 7 slash F
+A polearm 1 7 slash F
 1 80 183 P
 A
 19 1
@@ -431,9 +394,8 @@ Merc Industries
 helmet sub merc~
 a sub issue helmet~
 You see a sub issue helmet here.~
-leather~
 armor U AE
-A A A 0 0
+A A A A 0 0
 0 30 72 P
 E
 helmet~
@@ -444,10 +406,30 @@ Merc Industries
 whistle steel police~
 a police whistle~
 You spot a steel whistle on a fine silver chain here.~
-steel~
 clothing 0 AC
-0 0 0 0 0
+0 0 0 0 0 0
 0 2 100 G
+#47
+random armor~
+(no short description)~
+(no description)~
+armor 0 0
+0 0 0 0 0 0
+0 0 0 P
+#48
+random light~
+(no short description)~
+(no description)~
+light 0 0
+0 0 0 0 0 0
+0 0 0 P
+#49
+random weapon~
+(no short description)~
+(no description)~
+weapon 0 0
+0 exotic 0 0 none 0
+0 0 0 P
 #0
 
 

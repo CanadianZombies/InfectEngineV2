@@ -181,6 +181,9 @@ void save_mobile ( FILE *fp, NPCData *pMobIndex )
 	fprintf ( fp, "%s~\n",	fix_string ( pMobIndex->long_descr ) );
 	fprintf ( fp, "%s~\n",	fix_string ( pMobIndex->description ) );
 	fprintf ( fp, "%s~\n",	race_table[race].name );
+
+	fprintf ( fp, "%s ",			print_flags ( pMobIndex->material_flags ) );
+	fprintf ( fp, "%s ",			print_flags ( pMobIndex->random ) );
 	fprintf ( fp, "%s ",		fwrite_flag ( pMobIndex->act,		buf ) );
 	fprintf ( fp, "%s ",		fwrite_flag ( pMobIndex->affected_by,	buf ) );
 	fprintf ( fp, "%d %d\n",	pMobIndex->alignment , pMobIndex->group );
@@ -214,7 +217,6 @@ void save_mobile ( FILE *fp, NPCData *pMobIndex )
 	fprintf ( fp, "%s ",		fwrite_flag ( pMobIndex->parts, buf ) );
 
 	fprintf ( fp, "%s ",		size_table[pMobIndex->size].name );
-	fprintf ( fp, "%s\n",	IS_NULLSTR ( pMobIndex->material ) ? pMobIndex->material : "unknown" );
 
 	if ( ( temp = DIF ( race_table[race].act, pMobIndex->act ) ) )
 	{ fprintf ( fp, "F act %s\n", fwrite_flag ( temp, buf ) ); }
@@ -293,10 +295,10 @@ void save_object ( FILE *fp, ItemData *pObjIndex )
 	fprintf ( fp, "%s~\n",    pObjIndex->name );
 	fprintf ( fp, "%s~\n",    pObjIndex->short_descr );
 	fprintf ( fp, "%s~\n",    fix_string ( pObjIndex->description ) );
-	fprintf ( fp, "%s~\n",    pObjIndex->material );
 	fprintf ( fp, "%s ",      item_name ( pObjIndex->item_type ) );
 	fprintf ( fp, "%s ",      fwrite_flag ( pObjIndex->extra_flags, buf ) );
 	fprintf ( fp, "%s\n",     fwrite_flag ( pObjIndex->wear_flags,  buf ) );
+	fprintf ( fp, "%s ", print_flags ( pObjIndex->material_flags ) );
 
 	/*
 	 *  Using fwrite_flag to write most values gives a strange

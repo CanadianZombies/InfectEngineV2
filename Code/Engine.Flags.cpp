@@ -99,9 +99,7 @@ DefineCommand ( cmd_flag )
 
 			flag = &victim->act;
 			flag_table = act_flags;
-		}
-
-		else if ( !str_prefix ( arg3, "plr" ) ) {
+		}  else if ( !str_prefix ( arg3, "plr" ) ) {
 			if ( IS_NPC ( victim ) ) {
 				writeBuffer ( "Use act for NPCs.\n\r", ch );
 				return;

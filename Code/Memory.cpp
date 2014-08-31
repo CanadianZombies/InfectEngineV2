@@ -311,7 +311,6 @@ ItemData *new_obj_index ( void )
 	pObj->count         =   0;
 	pObj->weight        =   0;
 	pObj->cost          =   0;
-	pObj->material      =   assign_string ( "unknown" );     /* ROM */
 	pObj->condition     =   100;                        /* ROM */
 	for ( value = 0; value < 5; value++ )               /* 5 - ROM */
 	{ pObj->value[value]  =   0; }
@@ -382,7 +381,6 @@ NPCData *new_mob_index ( void )
 	pMob->imm_flags     =   0;           /* ROM patch -- Hugin */
 	pMob->res_flags     =   0;           /* ROM patch -- Hugin */
 	pMob->vuln_flags    =   0;           /* ROM patch -- Hugin */
-	pMob->material      =   assign_string ( "unknown" ); /* -- Hugin */
 	pMob->off_flags     =   0;           /* ROM patch -- Hugin */
 	pMob->size          =   SIZE_MEDIUM; /* ROM patch -- Hugin */
 	pMob->ac[AC_PIERCE]	=   0;           /* ROM patch -- Hugin */

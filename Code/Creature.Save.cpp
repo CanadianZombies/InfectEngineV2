@@ -436,6 +436,7 @@ void fwrite_obj ( Creature *ch, Item *obj, FILE *fp, int iNest )
 	{ fprintf ( fp, "Wt   %d\n",	obj->weight		     ); }
 	if ( obj->condition != obj->pIndexData->condition )
 	{ fprintf ( fp, "Cond %d\n",	obj->condition		     ); }
+	fprintf ( fp, "Mat %s\n",	print_flags ( obj->material_flags ) );
 
 	/* variable data */
 
@@ -1471,6 +1472,10 @@ void fread_obj ( Creature *ch, FILE *fp )
 			case 'L':
 				KEY ( "Level",	obj->level,		fread_number ( fp ) );
 				KEY ( "Lev",		obj->level,		fread_number ( fp ) );
+				break;
+
+			case 'M':
+				KEY ( "Mat",	obj->material_flags,	fread_flag ( fp ) );
 				break;
 
 			case 'N':

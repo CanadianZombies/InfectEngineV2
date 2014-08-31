@@ -1464,7 +1464,8 @@ void death_cry ( Creature *ch )
 			msg  = "$n hits the ground ... DEAD.";
 			break;
 		case  1:
-			if ( ch->material == 0 ) {
+			// -- material
+			if ( IS_SET ( ch->material_flags, MAT_FOOD ) ) {
 				msg  = "$n splatters blood on your armor.";
 				break;
 			}

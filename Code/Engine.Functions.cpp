@@ -108,6 +108,42 @@ int material_lookup ( const char *name )
 	return 0;
 }
 
+const char *material_bit_name ( int bit )
+{
+	static char buf[512];
+
+	buf[0] = '\0';
+	if ( bit & MAT_PRACTICE ) { strcat ( buf, " practice" ); }
+	if ( bit & MAT_FOOD ) { strcat ( buf, " food" ); }
+	if ( bit & MAT_LIQUID ) { strcat ( buf, " drink" ); }
+	if ( bit & MAT_GLASS ) { strcat ( buf, " glass" ); }
+
+	if ( bit & MAT_LEATHER ) { strcat ( buf, " leather" ); }
+	if ( bit & MAT_WOOD ) { strcat ( buf, " wood" ); }
+	if ( bit & MAT_BONE ) { strcat ( buf, " bone" ); }
+	if ( bit & MAT_EBONY ) { strcat ( buf, " ebony" ); }
+	if ( bit & MAT_IVORY ) { strcat ( buf, " ivory" ); }
+	if ( bit & MAT_DRAGONSCALE ) { strcat ( buf, " dragonscale" ); }
+	if ( bit & MAT_COPPER ) { strcat ( buf, " copper" ); }
+	if ( bit & MAT_BRASS ) { strcat ( buf, " brass" ); }
+	if ( bit & MAT_BRONZE ) { strcat ( buf, " bronze" ); }
+	if ( bit & MAT_IRON ) { strcat ( buf, " iron" ); }
+	if ( bit & MAT_STEEL ) { strcat ( buf, " steel" ); }
+	if ( bit & MAT_TAINTED_MITHRIL ) { strcat ( buf, " tainted mithril" ); }
+	if ( bit & MAT_MITHRIL ) { strcat ( buf, " mithril" ); }
+	if ( bit & MAT_OBSIDIAN ) { strcat ( buf, " obsidian" ); }
+	if ( bit & MAT_ONYX ) { strcat ( buf, " onyx" ); }
+	if ( bit & MAT_OPAL ) { strcat ( buf, " opal" ); }
+	if ( bit & MAT_DOUBLE_PLATED ) { strcat ( buf, " double plated" ); }
+	if ( bit & MAT_SILVER ) { strcat ( buf, " silver" ); }
+	if ( bit & MAT_GOLD ) { strcat ( buf, " gold" ); }
+	if ( bit & MAT_PLATINUM ) { strcat ( buf, " platinum" ); }
+	if ( bit & MAT_TITANIUM ) { strcat ( buf, " titanium" ); }
+	if ( bit & MAT_ADAMANTANIUM ) { strcat ( buf, " adamantanium" ); }
+
+	return ( buf[0] != '\0' ) ? buf + 1 : "none";
+}
+
 int weapon_lookup ( const char *name )
 {
 	int type;
@@ -2711,6 +2747,7 @@ const char *act_bit_name ( int act_flags )
 		if ( act_flags & ACT_IS_CHANGER  ) { strcat ( buf, " changer" ); }
 		if ( act_flags & ACT_GAIN	) { strcat ( buf, " skill_train" ); }
 		if ( act_flags & ACT_UPDATE_ALWAYS ) { strcat ( buf, " update_always" ); }
+		if ( act_flags & ACT_RANDOM_EQ ) { strcat ( buf, " random_eq" ); }
 	} else {
 		strcat ( buf, " player" );
 		if ( act_flags & PLR_AUTOASSIST	) { strcat ( buf, " autoassist" ); }
@@ -2727,6 +2764,32 @@ const char *act_bit_name ( int act_flags )
 		if ( act_flags & PLR_THIEF	) { strcat ( buf, " thief" ); }
 		if ( act_flags & PLR_KILLER	) { strcat ( buf, " killer" ); }
 	}
+	return ( buf[0] != '\0' ) ? buf + 1 : "none";
+}
+
+const char *random_eq_bit_name ( int random_eq_flags )
+{
+	static char buf[512];
+
+	buf[0] = '\0';
+	if ( random_eq_flags & RANDOM_HELM ) { strcat ( buf, " helm" ); }
+	if ( random_eq_flags & RANDOM_TORSO ) { strcat ( buf, " torso" ); }
+	if ( random_eq_flags & RANDOM_ARMS ) { strcat ( buf, " arms" ); }
+	if ( random_eq_flags & RANDOM_HANDS ) { strcat ( buf, " hands" ); }
+	if ( random_eq_flags & RANDOM_LEGS ) { strcat ( buf, " legs" ); }
+	if ( random_eq_flags & RANDOM_FEET ) { strcat ( buf, " feet" ); }
+	if ( random_eq_flags & RANDOM_WAIST ) { strcat ( buf, " waist" ); }
+	if ( random_eq_flags & RANDOM_ABOUT ) { strcat ( buf, " about" ); }
+	if ( random_eq_flags & RANDOM_WRIST ) { strcat ( buf, " wrist" ); }
+	if ( random_eq_flags & RANDOM_NECK ) { strcat ( buf, " neck" ); }
+	if ( random_eq_flags & RANDOM_LIGHT ) { strcat ( buf, " light" ); }
+	if ( random_eq_flags & RANDOM_RING ) { strcat ( buf, " ring" ); }
+	if ( random_eq_flags & RANDOM_TRINKET ) { strcat ( buf, " trinket" ); }
+	if ( random_eq_flags & RANDOM_WEAPON ) { strcat ( buf, " weapon" ); }
+	if ( random_eq_flags & RANDOM_SHIELD ) { strcat ( buf, " shield" ); }
+	if ( random_eq_flags & RANDOM_WAND ) { strcat ( buf, " wand" ); }
+	if ( random_eq_flags & RANDOM_STAFF ) { strcat ( buf, " staff" ); }
+
 	return ( buf[0] != '\0' ) ? buf + 1 : "none";
 }
 

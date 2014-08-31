@@ -1133,6 +1133,8 @@ DefineCommand ( cmd_ostat )
 			  obj->value[4] );
 	writeBuffer ( buf, ch );
 
+	writeBuffer ( Format ( "Material bits: %s\n\r", material_bit_name ( obj->material_flags ) ), ch );
+
 	/* now give out vital statistics as per identify */
 
 	switch ( obj->item_type ) {
@@ -1462,6 +1464,8 @@ DefineCommand ( cmd_mstat )
 	sprintf ( buf, "Fighting: %s\n\r",
 			  victim->fighting ? victim->fighting->name : "(none)" );
 	writeBuffer ( buf, ch );
+
+	writeBuffer ( Format ( "Material bits: %s\n\r", material_bit_name ( victim->material_flags ) ), ch );
 
 	if ( !IS_NPC ( victim ) ) {
 		sprintf ( buf,

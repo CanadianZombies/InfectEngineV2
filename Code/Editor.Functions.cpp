@@ -102,7 +102,8 @@ const struct olc_help_type help_table[] = {
 	{	"container",	container_flags, "Container status."		 },
 
 	/* ROM specific bits: */
-
+	{	"material",	material_flags,	"Types of materials."	},
+	{ "random", random_eq_flags,  "Random Item Generation flags. " },
 	{	"armor",	ac_type,	 "Ac for different attacks."	 },
 	{   "apply",	apply_flags,	 "Apply flags"			 },
 	{	"form",		form_flags,	 "Mobile body form."	         },
@@ -2535,9 +2536,7 @@ OEDIT ( oedit_show )
 			  flag_string ( extra_flags, pObj->extra_flags ) );
 	writeBuffer ( buf, ch );
 
-	sprintf ( buf, "Material:    [%s]\n\r",               /* ROM */
-			  pObj->material );
-	writeBuffer ( buf, ch );
+	writeBuffer ( Format ( "Material Bits: [%s]\r\n", material_bit_name ( pObj->material_flags ) ), ch );
 
 	sprintf ( buf, "Condition:   [%5d]\n\r",              /* ROM */
 			  pObj->condition );
@@ -3285,19 +3284,21 @@ OEDIT ( oedit_type )     /* Moved out of oedit() due to naming conflicts -- Hugi
 OEDIT ( oedit_material )
 {
 	ItemData *pObj;
+	int value;
 
-	EDIT_OBJ ( ch, pObj );
+	if ( argument[0] != '\0' ) {
+		EDIT_OBJ ( ch, pObj );
 
-	if ( argument[0] == '\0' ) {
-		writeBuffer ( "Syntax:  material [string]\n\r", ch );
-		return FALSE;
+		if ( ( value = flag_value ( material_flags, argument ) ) != NO_FLAG ) {
+			pObj->material_flags = value;
+			writeBuffer ( "Material toggled.\n\r", ch );
+			return TRUE;
+		}
 	}
 
-	PURGE_DATA ( pObj->material );
-	pObj->material = assign_string ( argument );
-
-	writeBuffer ( "Material set.\n\r", ch );
-	return TRUE;
+	writeBuffer ( "Syntax: material [material-name]\n\r"
+				  "Type '? material' for a list of materials.\n\r", ch );
+	return FALSE;
 }
 
 OEDIT ( oedit_level )
@@ -3393,6 +3394,11 @@ MEDIT ( medit_show )
 		writeBuffer ( buf, ch );
 	}
 
+
+	writeBuffer ( Format ( "Material Bits: [%s]\r\n", material_bit_name ( pMob->material_flags ) ), ch );
+
+	writeBuffer ( Format ( "Random Bits: [%s]\r\n", random_eq_bit_name ( pMob->random ) ), ch );
+
 	sprintf ( buf, "Hit dice:    [%2dd%-3d+%4d] ",
 			  pMob->hit[DICE_NUMBER],
 			  pMob->hit[DICE_TYPE],
@@ -3450,10 +3456,6 @@ MEDIT ( medit_show )
 
 	sprintf ( buf, "Size:        [%s]\n\r",
 			  flag_string ( size_flags, pMob->size ) );
-	writeBuffer ( buf, ch );
-
-	sprintf ( buf, "Material:    [%s]\n\r",
-			  pMob->material );
 	writeBuffer ( buf, ch );
 
 	sprintf ( buf, "Start pos.   [%s]\n\r",
@@ -3650,7 +3652,25 @@ MEDIT ( medit_align )
 	return TRUE;
 }
 
+MEDIT ( medit_material )
+{
+	NPCData *pObj;
+	int value;
 
+	if ( argument[0] != '\0' ) {
+		EDIT_MOB ( ch, pObj );
+
+		if ( ( value = flag_value ( material_flags, argument ) ) != NO_FLAG ) {
+			pObj->material_flags = value;
+			writeBuffer ( "Material toggled.\n\r", ch );
+			return TRUE;
+		}
+	}
+
+	writeBuffer ( "Syntax: material [material-name]\n\r"
+				  "Type '? material' for a list of materials.\n\r", ch );
+	return FALSE;
+}
 
 MEDIT ( medit_level )
 {
@@ -4058,6 +4078,26 @@ MEDIT ( medit_form )
 	return FALSE;
 }
 
+MEDIT ( medit_random )
+{
+	NPCData *pMob;
+	int value;
+
+	if ( argument[0] != '\0' ) {
+		EDIT_MOB ( ch, pMob );
+
+		if ( ( value = flag_value ( random_eq_flags, argument ) ) != NO_FLAG ) {
+			pMob->parts ^= value;
+			writeBuffer ( "Random Item Type toggled.\n\r", ch );
+			return TRUE;
+		}
+	}
+
+	writeBuffer ( "Syntax: random [flags]\n\r"
+				  "Type '? random' for a list of flags.\n\r", ch );
+	return FALSE;
+}
+
 MEDIT ( medit_part )
 {
 	NPCData *pMob;
@@ -4138,23 +4178,6 @@ MEDIT ( medit_vuln )
 	return FALSE;
 }
 
-MEDIT ( medit_material )
-{
-	NPCData *pMob;
-
-	EDIT_MOB ( ch, pMob );
-
-	if ( argument[0] == '\0' ) {
-		writeBuffer ( "Syntax:  material [string]\n\r", ch );
-		return FALSE;
-	}
-
-	PURGE_DATA ( pMob->material );
-	pMob->material = assign_string ( argument );
-
-	writeBuffer ( "Material set.\n\r", ch );
-	return TRUE;
-}
 
 MEDIT ( medit_off )
 {
