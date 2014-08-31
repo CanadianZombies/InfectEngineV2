@@ -1661,7 +1661,7 @@ void nanny ( Socket *d, char *argument )
 				ch->train	 = 3;
 				ch->practice = 5;
 
-				set_title ( ch, "is attempting to survive level 1." );
+				set_title ( ch, ( char * ) "is attempting to survive level 1." );
 
 				cmd_function ( ch, &cmd_outfit, "" );
 				obj_to_char ( create_object ( get_obj_index ( OBJ_VNUM_MAP ), 0 ), ch );
