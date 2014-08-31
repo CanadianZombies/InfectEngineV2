@@ -47,15 +47,27 @@ More to follow.
 ^yBy what name do you survive?  > ^n ~
  
 -1 MOTD~ 
-Place holder for Future MOTD code
-
-Shoot Return
+.
++=========================================+
+|    Welcome to the Infected City MUD     |
++=========================================+
+ |   There is much coming, please stay   |
+ |    and enjoy what we have to offer    |
+ |      Beta starting November 2014      |
++=========================================+
+                Shoot Return
 ~ 
 
-52 IMOTD~
-Staff MOTD place holder
-
-Shoot Return
+60 IMOTD~
+.
++=========================================+
+|          Staff Message of the Day       |
++=========================================+
+ | Enjoy being staff, not much to do yet |
+ | try and spread the joy, invite peeps  |
+ |         to come and try us out        |
++=========================================+
+                Shoot Return
 ~
 
 1 JOBS~
@@ -75,56 +87,17 @@ from the city guard.
 
 52 COMMANDMENTS LAWS 'GOD RULES' GODS~
 .
-                         **********************
-                         ** The Rules of ROM **
-                         **********************
- 
-1)  Do not kill mortals, do not kill mortals, do not kill mortals.
-    This includes transferring/summoning them to aggressive mobs.
- 
-2)  Do not cheat for ANY mortal in ANY way, especially your own. 
-    Unless of course you LIKE deletion. Yes this includes tanking,
-    healing/restoring, casting protection spells <armor, sanct>,    
-    and softening up or altering mobs.
- 
-3)  Do not transfer or summon mobs to mortals or mortals to mobs.
-    They have legs, if they want to kill a mob, they can easilly
-    go there themselves.
- 
-4)  DO NOT kill the shopkeepers for any reason at ALL.
- 
-5)  DO NOT use reboot.  <--- Note, simple English.
- 
-6)  Do not give out free equipment.  You don't need to win brownie
-    points with the mortals.  Quest are fine but handing out items
-    isn't.
- 
-7)  A note on quests: Quests are a good thing, more or less, BUT 
-    do not give out overly extravagant prizes.  Exercise some 
-    common sense here folks.  Do not load items more than 4 levels
-    below their normal level (i.e. no level 5 ogre gauntlets).
- 
-8)  Do not undermine the authority of a higher level god.  If you 
-    see that someone has been frozen or nochannelled do not restore
-    their priveleges.  They are being punished for a reason.
- 
-9)  Do not try to overrule each other.  
- 
-10) Trusted mortals:  Do not use your god powers to help your mortal
-    character.  If you do, your trust will be taken away.
-
+Rules for staff will be placed here
 ~
 
 -1 RULES~
 There is but one rule within the Infected City.... Survive..
 ~
 
-0 SUICIDE DELETE~
+0 DELETE~
 Use the delete command to erase unwanted characters, so the name will be
-available for use.  This command must be typed twice to delete a character,
-and you cannot be forced to delete.  Typing delete with an argument will
-return your character to 'safe' status if you change your mind after the
-first delete.
+available for use.  When you type delete you will be prompted for yes or
+no to delete your player.  Confirming with yes will delete your player.
 ~
  
 0 HEALER~
@@ -178,7 +151,7 @@ gold and sacrificing corpses.  The commands are as follows:
 autolist  : list all automatic actions
 autoloot  : take all equipment from dead mobiles
 autogold  : take all gold from dead mobiles
-autosac	  : sacrifice dead monsters (if autoloot is on, only empty corpes)
+autosac   : sacrifice dead monsters (if autoloot is on, only empty corpes)
 autoexit  : display room exits upon entering a room
 autosplit : split up spoils from combat among your group members
 autoassit : makes you help group members in combat
@@ -201,12 +174,6 @@ mutiny your Clan leader.
 diamonds as payment.   To see room prices, type "help prices".  New
 Clans  may be formed by  petitioning the immortals.   Please  remember that 
 their word is final on all matters not covered by this help.
-~
--1 PRICES PRICE~
-New Clan Hall Rooms cost 50 diamonds.
-Boosting the mana or healing gains for a room costs 250 diamonds.
-Both in the same room costs double.
-Making the Healer or Store prices lower costs 1,000 diamonds.
 ~
 
 -1 COUNT~
