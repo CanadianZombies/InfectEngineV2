@@ -2484,8 +2484,6 @@ DefineCommand ( cmd_password )
 		return;
 	}
 
-
-
 	/*
 	 * No tilde allowed because of player file format.
 	 */
@@ -2575,11 +2573,15 @@ DefineCommand ( cmd_levelup )
 							tweetStatement ( Format ( "*** MAX LEVEL ATTAINED! *** %s has become a master survivor in %s.", ch->name, "The Infected City"  ) );
 							break;
 					} // -- end switch
+					
 					wiznet ( Format ( "$N has attained level %d!", ch->level ), ch, NULL, WIZ_LEVELS, 0, 0 );
 					advance_level ( ch, false );
 
 					// -- take away the right portion of experience!
 					ch->exp = ( ch->exp - ( old_level * 200 ) ) ;
+
+					// -- for debugging purposes, we log it all!
+					log_hd(LOG_DEBUG, Format("%s has leveled up to level %d, %d experience remains, %d experience tnl.", ch->name, ch->level, ch->exp, ( ch->level * 200 )));
 
 					switch ( ch->level ) {
 						default:
@@ -2592,11 +2594,10 @@ DefineCommand ( cmd_levelup )
 							// -- sub-race picking will go here.
 							break;
 						case MAX_LEVEL:
+							tweetStatement(Format("%s has survived!",ch->name));
 							// -- My little secret will go here!
 							break;
 					}
-
-
 				} else {
 					writeBuffer ( "Your not ready to level up yet!\r\n", ch );
 				}

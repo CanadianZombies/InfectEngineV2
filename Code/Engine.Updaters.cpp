@@ -112,8 +112,6 @@ void advance_level ( Creature *ch, bool hide )
 	return;
 }
 
-
-
 void gain_exp ( Creature *ch, int gain )
 {
 	if ( IS_NPC ( ch ) )

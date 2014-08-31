@@ -1547,17 +1547,14 @@ DefineCommand ( cmd_group )
 		writeBuffer ( buf, ch );
 
 		for ( gch = char_list; gch != NULL; gch = gch->next ) {
-			if ( is_same_group ( gch, ch ) ) {
-				sprintf ( buf,
-						  "[%2d %s] %-16s %4d/%4d hp %4d/%4d mana %4d/%4d mv %5d xp\n\r",
-						  gch->level,
-						  IS_NPC ( gch ) ? "Mob" : archetype_table[gch->archetype].who_name,
-						  capitalize ( PERS ( gch, ch ) ),
-						  gch->hit,   gch->max_hit,
-						  gch->mana,  gch->max_mana,
-						  gch->move,  gch->max_move,
-						  gch->exp    );
-				writeBuffer ( buf, ch );
+ 			if (is_same_group (gch, ch))
+			{
+				writeBuffer(Format( "\aC[\ac%s\aC]\ar %4d%% \aohp \am%4d\ar%% mana \ab%4d\ar%% mv \aY%5d\antnl\n\r",
+					capitalize (PERS (gch, ch)),
+					gch->hit * 100 / gch->max_hit,
+					gch->mana * 100 / gch->max_mana,
+					gch->move * 100 / gch->max_move,
+					(ch->level)), ch);
 			}
 		}
 		return;

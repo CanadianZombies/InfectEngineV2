@@ -148,8 +148,8 @@ all:
 .PHONY: style
 style:
 	@astyle --style=kr --indent=force-tab --indent-namespaces --indent-preprocessor --indent-col1-comments --indent-classes --indent-switches --indent-cases --pad-paren --pad-oper --add-one-line-brackets Code/*.cpp ${H_DIR}/*.h
-	@mv Code/*.orig Code/orig/
-	@mv ${H_DIR}/*.orig Code/orig/
+	@if [[ -n "$(shopt -s nullglob; cd Code; echo *.orig)" ]]; then mv Code/*.orig Code/orig ; fi
+	@if [[ -n "$(shopt -s nullglob; cd ${H_DIR}; echo *.orig)" ]]; then mv ${H_DIR}/*.orig Code/orig ; fi
 	@echo "Files have been styled and moved like a boss!"
 
 ######################################################################################################
@@ -178,7 +178,7 @@ pull:
 # Generate tell our system to build our executable (initiation step for the next step 
 # in the makefile clears the .o files, increments the version, and builds our engine.
 .PHONY: build
-build: checkdirs version ${ENGINE}
+build: checkdirs style version ${ENGINE}
 
 #####################################################################################
 # Ensure our directories exist so that we can build properly
@@ -218,6 +218,8 @@ $(ENGINE): ${sort ${OBJECT_FILES} }
 	@if test -x $(BIN_DIR)/$(ENGINE) ; then mv -f $(BIN_DIR)/$(ENGINE) $(BIN_DIR)/$(ENGINE).previous ; fi
 	@mv $(ENGINE) $(BIN_DIR)
 	@make backup
+	@make commit
+	@make push
 	@echo "$(COLOUR_LRED)Compiling Completed for build $(BUILD_NUM) at $(COLOUR_LWHITE)`date +"%y-%m-%d @ %X"`$(COLOUR_LRED) and copied to ${BIN_DIR}."
 
 #####################################################################################

@@ -44,20 +44,26 @@
 #define C_STR(x) 	      (x.c_str())
 #define STR(x)                #x
 
+// -- Make two strings best of friends and join them like blood brothers.
 #define CONCAT_STR(A, B) (#A " " #B)
 
 // ------------------------------------------------------------
-// -- forces the mud to CRASH at specified part,
-// -- generates a core file / crash results.
+// -- forces the mud to CRASH at specified part.
+// -- LOG_SUICIDE forces the mud to log where the suicide was called from, then crashes the mud
 #define SUICIDE      (log_hd(LOG_DEBUG|LOG_SUICIDE, "SUICIDE: "  __FILE__ ) )
+
+// -- SUICIDE_REAL skips the logging part and just crashes the mud with a sigsegv in an attempt to generate a CORE file.
 #define SUICIDE_REAL (kill(getpid(), SIGSEGV))
 
+// -- THROW_ERROR allows us to throw out an error easily, with all the appropriate information attached to it
+// -- for file, function, and line it came from.
 #define THROW_ERROR(...) (throw std::runtime_error( Format("InfectEngine encountered a runtime error: %s, %s, %d: %s", __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)) )
 
 // -- lets log our errno string properly.
 #define ReportErrno(ErrorString) _Error( (ErrorString), __FILE__, __FUNCTION__, __LINE__)
 #define CATCH(willAbort) catchException(willAbort, __FILE__, __FUNCTION__, __LINE__)
 
+// -- creates an internal exception trace.  This prints out the stack of the last few system calls.
 #define ExceptionTrace() do \
 	{ \
 		Dl_info dli; \
@@ -91,9 +97,10 @@
 	} \
 	while(0)
 
-
-// -- A random chance to save your character.  This makes it so that
-// -- we have more frequent saves in-case of stability problems arising.
+// -- Give the chance to save, so, while not everything will cause a flatfile save
+// -- this give sthe chance to cause a save to occur.  Typically, saving only occurs
+// -- every few minutes with the updater, and on death.  But since death deletes the pfile
+// -- this needs to be a lot more frequent.
 #define SAVE_CHANCE(ch) \
 	do { \
 		if(!IS_NPC(ch)) { \
@@ -103,12 +110,14 @@
 	} while(0)
 
 
-#define IS_VALID(data)		((data) != NULL && (data)->valid)
-#define VALIDATE(data)		((data)->valid = TRUE)
-#define INVALIDATE(data)	((data)->valid = FALSE)
+#define IS_VALID(data)		((data) != NULL && (data)->valid)			// -- Relic
+#define VALIDATE(data)		((data)->valid = TRUE)								// -- Relic
+#define INVALIDATE(data)	((data)->valid = FALSE)								// -- Relic
+
 #define UMIN(a, b)		((a) < (b) ? (a) : (b))
 #define UMAX(a, b)		((a) > (b) ? (a) : (b))
 #define URANGE(a, b, c)		((b) < (a) ? (a) : ((b) > (c) ? (c) : (b)))
+
 #define LOWER(c)		((c) >= 'A' && (c) <= 'Z' ? (c)+'a'-'A' : (c))
 #define UPPER(c)		((c) >= 'a' && (c) <= 'z' ? (c)+'A'-'a' : (c))
 
@@ -133,22 +142,18 @@
 			log_hd(LOG_ERROR, Format("CHECK_POS : " c " == %d < 0", a) );	\
 	}							\
 	 
-/*
- * Character macros.
- */
 #define IS_NPC(ch)		(IS_SET((ch)->act, ACT_IS_NPC))
 
 // -- staff is now controlled by flags, NOT by level!
 #define IsStaff(ch)		(IS_SET((ch)->sflag, CR_STAFF) )  // -- (get_trust(ch) >= LEVEL_IMMORTAL)
 
-
-#define IS_HERO(ch)		(get_trust(ch) >= LEVEL_HERO)
+#define IS_LEGEND(ch) (get_trust(ch) == MAX_LEVEL)					// -- Legends are just that, legends. Almsot impossible to reach this level!
+#define IS_HERO(ch)		(get_trust(ch) >= LEVEL_HERO)					// -- Once a hero, always a hero!
 #define IS_TRUSTED(ch,level)	(get_trust((ch)) >= (level))
 
 #define IS_AFFECTED(ch, sn)	(IS_SET((ch)->affected_by, (sn)))
 
-#define GET_AGE(ch)		((int) (17 + ((ch)->played \
-									  + current_time - (ch)->logon )/72000))
+#define GET_AGE(ch)		((int) (17 + ((ch)->played + current_time - (ch)->logon )/72000))
 
 #define IS_GOOD(ch)		(ch->alignment >= 350)
 #define IS_EVIL(ch)		(ch->alignment <= -350)
@@ -158,10 +163,10 @@
 #define GET_AC(ch,type)		((ch)->armor[type]			    \
 							 + ( IS_AWAKE(ch)			    \
 								 ? dex_app[get_curr_stat(ch,STAT_DEX)].defensive : 0 ))
-#define GET_HITROLL(ch)	\
-	((ch)->hitroll+str_app[get_curr_stat(ch,STAT_STR)].tohit)
-#define GET_DAMROLL(ch) \
-	((ch)->damroll+str_app[get_curr_stat(ch,STAT_STR)].todam)
+
+#define GET_HITROLL(ch)	((ch)->hitroll+str_app[get_curr_stat(ch,STAT_STR)].tohit)
+
+#define GET_DAMROLL(ch) ((ch)->damroll+str_app[get_curr_stat(ch,STAT_STR)].todam)
 
 #define IS_OUTSIDE(ch)		(!IS_SET(				    \
 							 (ch)->in_room->room_flags,		    \
@@ -169,11 +174,10 @@
 
 #define WAIT_STATE(ch, npulse)	((ch)->wait = UMAX((ch)->wait, (npulse)))
 #define DAZE_STATE(ch, npulse)  ((ch)->daze = UMAX((ch)->daze, (npulse)))
-#define get_carry_weight(ch)	((ch)->carry_weight + (ch)->silver/10 +  \
-								 (ch)->gold * 2 / 5)
 
-#define act(format,ch,arg1,arg2,type)\
-	act_new((format),(ch),(arg1),(arg2),(type),POS_RESTING)
+#define get_carry_weight(ch)	((ch)->carry_weight + (ch)->silver/10 + (ch)->gold * 2 / 5)
+
+#define act(format,ch,arg1,arg2,type) act_new((format),(ch),(arg1),(arg2),(type),POS_RESTING)
 
 #define HAS_TRIGGER(ch,trig)	(IS_SET((ch)->pIndexData->mprog_flags,(trig)))
 #define IS_SWITCHED( ch )       ( ch->desc && ch->desc->original )
@@ -182,14 +186,10 @@
 									|| strstr( Area->builders, ch->name )	  \
 									|| strstr( Area->builders, "All" ) ) )
 
-/*
- * Object macros.
- */
 #define CAN_WEAR(obj, part)	(IS_SET((obj)->wear_flags,  (part)))
 #define IS_OBJ_STAT(obj, stat)	(IS_SET((obj)->extra_flags, (stat)))
 #define IS_WEAPON_STAT(obj,stat)(IS_SET((obj)->value[4],(stat)))
-#define WEIGHT_MULT(obj)	((obj)->item_type == ITEM_CONTAINER ? \
-							 (obj)->value[4] : 100)
+#define WEIGHT_MULT(obj)	((obj)->item_type == ITEM_CONTAINER ? (obj)->value[4] : 100)
 
 
 #define ALLOC_DATA(pointer, datatype, elements)   \
@@ -216,13 +216,14 @@
 	do { \
 		if(data) { \
 			ACTUAL_PURGE(data);  \
+		} else { \
+			if(true == false) { \
+				log_hd(LOG_DEBUG, Format("PURGE_DATA called on NULL data from: %s @ %s : %d", __FILE__, __FUNCTION__, __LINE__)); \
+			} \
 		} \
 	} while(0)
 
 
-/*
- * Description macros.
- */
 #define PERS(ch, looker)	( can_see( looker, (ch) ) ?		\
 							  ( IS_NPC(ch) ? (ch)->short_descr	\
 								: (ch)->name ) : "someone" )

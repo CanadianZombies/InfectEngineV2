@@ -479,9 +479,7 @@ void interpret ( Creature *ch, const char *argument )
 		}
 	}
 
-	/*
-	 * Log and snoop.
-	 */
+	// -- Not a real thing ?
 	if ( cmd_table[cmd].log == LOG_NEVER )
 	{ strcpy ( logline, "" ); }
 
@@ -626,7 +624,6 @@ bool check_social ( Creature *ch, const char *command, const char *argument )
 			{ break; }
 			writeBuffer ( "In your dreams, or what?\n\r", ch );
 			return TRUE;
-
 	}
 
 	one_argument ( argument, arg );
@@ -659,12 +656,9 @@ bool check_social ( Creature *ch, const char *command, const char *argument )
 				case 6:
 				case 7:
 				case 8:
-					act ( social_table[cmd].others_found,
-						  victim, NULL, ch, TO_NOTVICT );
-					act ( social_table[cmd].char_found,
-						  victim, NULL, ch, TO_CHAR    );
-					act ( social_table[cmd].vict_found,
-						  victim, NULL, ch, TO_VICT    );
+					act ( social_table[cmd].others_found, victim, NULL, ch, TO_NOTVICT );
+					act ( social_table[cmd].char_found, victim, NULL, ch, TO_CHAR    );
+					act ( social_table[cmd].vict_found, victim, NULL, ch, TO_VICT    );
 					break;
 
 				case 9:
@@ -681,8 +675,6 @@ bool check_social ( Creature *ch, const char *command, const char *argument )
 
 	return TRUE;
 }
-
-
 
 /*
  * Return true if an argument is completely numeric.
@@ -703,8 +695,6 @@ bool is_number ( const char *arg )
 
 	return TRUE;
 }
-
-
 
 /*
  * Given a string like 14.foo, return 14 and 'foo'
@@ -749,8 +739,6 @@ int mult_argument ( const char *argument, char *arg )
 	strcpy ( arg, argument );
 	return 1;
 }
-
-
 
 /*
  * Pick off one argument from a string and return the rest.
