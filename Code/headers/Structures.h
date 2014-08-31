@@ -472,7 +472,7 @@ struct	pc_data {
 	sh_int		learned		[MAX_SKILL];
 	bool		group_known	[MAX_GROUP];
 	sh_int		points;
-	bool              	confirm_delete;
+
 	char *		alias[MAX_ALIAS];
 	char * 		alias_sub[MAX_ALIAS];
 	int 		security;	/* OLC */ /* Builder security */
