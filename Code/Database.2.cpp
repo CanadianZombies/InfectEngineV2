@@ -324,7 +324,9 @@ void load_mobiles ( FILE *fp )
 				pMprog->trig_phrase = fread_string ( fp );
 				pMprog->next        = pMobIndex->mprogs;
 				pMobIndex->mprogs   = pMprog;
-			} else {
+			} else if ( letter == 'L' ) {
+				pMobIndex->repop_percent = fread_number(fp);	
+			}else {
 				ungetc ( letter, fp );
 				break;
 			}
@@ -545,8 +547,9 @@ void load_objects ( FILE *fp )
         			pObjIndex->requirements[CON_REQ]	= fread_number( fp );
         			pObjIndex->requirements[INT_REQ]	= fread_number( fp );
         			pObjIndex->requirements[WIS_REQ]	= fread_number( fp );
+			} else if ( letter == 'L' ) {
+				pObjIndex->repop_percent = fread_number(fp);
 			}
-
 			else {
 				ungetc ( letter, fp );
 				break;
