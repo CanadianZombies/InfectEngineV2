@@ -243,6 +243,13 @@
 #define STAT_DEX	3
 #define STAT_CON	4
 
+#define SIZ_REQ 0
+#define STR_REQ 1
+#define DEX_REQ 2
+#define CON_REQ 3
+#define INT_REQ 4
+#define WIS_REQ 5
+#define MAX_REQ 6
 
 #define NOTE_NOTE	0
 #define NOTE_IDEA	1
