@@ -2666,7 +2666,7 @@ OEDIT ( oedit_show )
 			  flag_string ( type_flags, pObj->item_type ) );
 	writeBuffer ( buf, ch );
 
-	sprintf ( buf, "Level:       [%5d]\n\r", pObj->level );
+	sprintf ( buf, "Level:       [%5d]\n\rRepop:      [%5d]\r\n", pObj->level, pObj->repop_percent );
 	writeBuffer ( buf, ch );
 
 	sprintf ( buf, "Wear flags:  [%s]\n\r",
@@ -3469,7 +3469,28 @@ OEDIT ( oedit_level )
 	return TRUE;
 }
 
+OEDIT ( oedit_repop )
+{
+	ItemData *pObj;
 
+	EDIT_OBJ ( ch, pObj );
+
+	if ( argument[0] == '\0' || !is_number ( argument ) ) {
+		writeBuffer ( "Syntax:  repop [number]\n\r", ch );
+		return FALSE;
+	}
+
+	int p = atoi(argument);
+	if(p < 0 || p > 100) {
+		writeBuffer( "Repop percentage must be between 1 and 100\r\n",ch);
+		return false;
+	}
+
+	pObj->repop_percent = atoi ( argument );
+
+	writeBuffer ( "Repop Percentage set.\r\n", ch );
+	return TRUE;
+}
 
 OEDIT ( oedit_condition )
 {
@@ -3508,10 +3529,11 @@ MEDIT ( medit_show )
 
 	EDIT_MOB ( ch, pMob );
 
-	sprintf ( buf, "Name:        [%s]\n\rArea:        [%5d] %s\n\r",
+	sprintf ( buf, "Name:        [%s]\n\rArea:        [%5d] %s\n\rRepop:        [%5d]",
 			  pMob->player_name,
 			  !pMob->area ? -1        : pMob->area->vnum,
-			  !pMob->area ? "No Area" : pMob->area->name );
+			  !pMob->area ? "No Area" : pMob->area->name,
+			  pMob->repop_percent);
 	writeBuffer ( buf, ch );
 
 	sprintf ( buf, "Act:         [%s]\n\r",
@@ -3813,6 +3835,29 @@ MEDIT ( medit_material )
 	writeBuffer ( "Syntax: material [material-name]\n\r"
 				  "Type '? material' for a list of materials.\n\r", ch );
 	return FALSE;
+}
+
+MEDIT ( medit_repop )
+{
+	NPCData *pObj;
+
+	EDIT_MOB ( ch, pObj );
+
+	if ( argument[0] == '\0' || !is_number ( argument ) ) {
+		writeBuffer ( "Syntax:  repop [number]\n\r", ch );
+		return FALSE;
+	}
+
+	int p = atoi(argument);
+	if(p < 0 || p > 100) {
+		writeBuffer( "Repop percentage must be between 1 and 100\r\n",ch);
+		return false;
+	}
+
+	pObj->repop_percent = atoi ( argument );
+
+	writeBuffer ( "Repop Percentage set.\r\n", ch );
+	return TRUE;
 }
 
 MEDIT ( medit_level )
