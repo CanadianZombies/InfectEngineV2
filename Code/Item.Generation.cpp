@@ -184,19 +184,24 @@ const char *head_types[] = {
 	"close helm"
 };
 
-#define MAX_WAIST 4
+#define MAX_WAIST 6
 const char *waist_types[] = {
 	"belt",
 	"girth",
 	"girdle",
 	"chastity belt",
-	"sash"
+	"sash",
+	"string",
+	"strap"
 };
 
-#define MAX_SOCKET 1
+#define MAX_SOCKET 4
 const char *socket_types[] = {
 	"gem",
-	"jewel"
+	"jewel",
+	"gemstone",
+	"bead",
+	"stone",
 };
 
 #define MAX_HAND 6
@@ -346,7 +351,7 @@ void paf_apply ( Item *obj )
 	CODE AND DOUBLE THE MATERIALS, I HAVE THEM BROKEN UP INTO GROUPS OF
 	MATERIALS BASED AROUND ARMOR/WEAPONS, RINGS, WANDS/STAVES*/
 
-	/*static char *defensive_spell_types[] =
+	static char *defensive_spell_types[] =
 	  {
 	  "armor", "shield", "stone skin", "bless", "sanctuary"
 	  };
@@ -366,12 +371,12 @@ void paf_apply ( Item *obj )
 	  {
 	  "blindness", "curse", "plague", "poison", "sleep", "weaken"
 	  };
-
+	
 	static char *mental_spell_types[] =
 	  {
 	"charm person", "dispel magic", "calm", "change sex", "floating disc"
 	  };
-
+	/*
 	static char *misc_spell_types[] =
 	  {
 	"slow", "fly", "pass door", "frenzy", "giant strength",
@@ -386,14 +391,14 @@ void paf_apply ( Item *obj )
 	obj->value[3] = skill_lookup(curitive_spell_types[number_range(0, 7)]);
 	  if (IS_SET(obj->material_flags, MAT_BIOTITE))
 	obj->value[3] = skill_lookup(misc_spell_types[number_range(0, 6)]);
-	}
-	else if(obj->item_type == ITEM_WAND)
+	} */
+	if(obj->item_type == ITEM_WAND)
 	{
 	  if (IS_SET(obj->material_flags, MAT_QUARTZ))
 	obj->value[3] = skill_lookup(offensive_spell_types[number_range(0, 3)]);
-	  if (IS_SET(obj->material_flags, MAT_PROXENE))
+	  if (IS_SET(obj->material_flags, MAT_TAINTED_MITHRIL))
 	obj->value[3] = skill_lookup(maledictive_spell_types[number_range(0, 5)]);
-	  if (IS_SET(obj->material_flags, MAT_OLIVINE))
+	  if (IS_SET(obj->material_flags, MAT_OBSIDIAN))
 	obj->value[3] = skill_lookup(mental_spell_types[number_range(0, 4)]);
 	}
 	else if(obj->item_type == ITEM_JEWELRY )
@@ -401,18 +406,18 @@ void paf_apply ( Item *obj )
 	//A ring is based on its stone, lets keep all rings
 	//of the same stone all the same.
 	//I HAD ABOUT 15 DIFF RING STONES
-	if (IS_SET(obj->material_flags, MAT_GOLD))
-	{
-	paf_set(obj, stat_types[2], -2, 0);
-	paf_set(obj, combat_types[0], 3, 0);
+		if (IS_SET(obj->material_flags, MAT_GOLD))
+		{
+			paf_set(obj, stat_types[2], -2, 0);
+			paf_set(obj, combat_types[0], 3, 0);
+		}
+		if (IS_SET(obj->material_flags, MAT_SILVER))
+		{
+			paf_set(obj, stat_types[2], -2, 0);
+			paf_set(obj, combat_types[1], 3, 0);
+		}
 	}
-	if (IS_SET(obj->material_flags, MAT_SILVER))
-	{
-	paf_set(obj, stat_types[2], -2, 0);
-	paf_set(obj, combat_types[1], 3, 0);
-	}
-	}
-	else */if ( obj->item_type == ITEM_ARMOR ) {
+	else if ( obj->item_type == ITEM_ARMOR ) {
 
 		/*Low lvl gets nothing unless its lucky, leather to steel*/
 		if ( obj->level <= 23 && number_percent ( ) >= 10 )
