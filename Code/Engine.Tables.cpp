@@ -75,8 +75,9 @@ const struct size_type size_table[] = {
 	{	"small" 	},
 	{	"medium"	},
 	{	"large"		},
-	{	"huge", 	},
+	{	"huge"	 	},
 	{	"giant" 	},
+	{	"magic"		},
 	{	NULL		}
 };
 
@@ -626,6 +627,7 @@ const struct flag_type size_flags[] = {
 	{   "large",         SIZE_LARGE,           TRUE    },
 	{   "huge",          SIZE_HUGE,            TRUE    },
 	{   "giant",         SIZE_GIANT,           TRUE    },
+	{   "magic",		SIZE_MAGIC,	   TRUE    },
 	{   NULL,              0,                    0       },
 };
 
