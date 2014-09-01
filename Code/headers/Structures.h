@@ -322,6 +322,7 @@ struct	mob_index_data {
 	long		mprog_flags;
 	int material_flags;
 	int random;
+	int repop_percent;
 };
 
 /* memory for mobs */
@@ -538,6 +539,7 @@ struct	obj_index_data {
 	int			value[5];
 	char      requirements[MAX_REQ];
 	int material_flags;
+	int repop_percent;
 };
 
 
