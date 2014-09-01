@@ -315,6 +315,12 @@ ItemData *new_obj_index ( void )
 	for ( value = 0; value < 5; value++ )               /* 5 - ROM */
 	{ pObj->value[value]  =   0; }
 
+	
+	for(value = 0; value < MAX_REQ; value++ ) {
+		pObj->requirements[value] = 0;
+	}
+	pObj->requirements[SIZ_REQ] = SIZE_MAGIC;	// -- default to save face!
+	
 	pObj->new_format    = TRUE; /* ROM */
 
 	return pObj;
