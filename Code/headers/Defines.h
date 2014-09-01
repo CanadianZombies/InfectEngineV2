@@ -679,7 +679,7 @@
 #define SIZE_LARGE			3
 #define SIZE_HUGE			4
 #define SIZE_GIANT			5
-
+#define SIZE_MAGIC      6
 
 /*
  * Item types.
