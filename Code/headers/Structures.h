@@ -322,6 +322,7 @@ struct	mob_index_data {
 	long		mprog_flags;
 	int material_flags;
 	int random;
+	int repop_percent;
 };
 
 /* memory for mobs */
@@ -528,15 +529,17 @@ struct	obj_index_data {
 	sh_int		vnum;
 	sh_int		reset_num;
 	sh_int		item_type;
-	int			extra_flags;
-	int			wear_flags;
+	int		extra_flags;
+	int		wear_flags;
 	sh_int		level;
 	sh_int 		condition;
 	sh_int		count;
 	sh_int		weight;
 	int			cost;
 	int			value[5];
+	char      requirements[MAX_REQ];
 	int material_flags;
+	int repop_percent;
 };
 
 
@@ -572,6 +575,7 @@ struct	obj_data {
 	sh_int		timer;
 	int material_flags;
 	int			value	[5];
+	char      requirements[MAX_REQ];
 };
 
 

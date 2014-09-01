@@ -276,7 +276,7 @@ void load_mobiles ( FILE *fp )
 		CHECK_POS ( pMobIndex->size, size_lookup ( fread_word ( fp ) ), "size" );
 		/*	pMobIndex->size			= size_lookup(fread_word(fp)); */
 
-		for ( ; ; ) {
+		while(true) {
 			letter = fread_letter ( fp );
 
 			if ( letter == 'F' ) {
@@ -324,7 +324,9 @@ void load_mobiles ( FILE *fp )
 				pMprog->trig_phrase = fread_string ( fp );
 				pMprog->next        = pMobIndex->mprogs;
 				pMobIndex->mprogs   = pMprog;
-			} else {
+			} else if ( letter == 'L' ) {
+				pMobIndex->repop_percent = fread_number(fp);	
+			}else {
 				ungetc ( letter, fp );
 				break;
 			}
@@ -354,7 +356,7 @@ void load_objects ( FILE *fp )
 		exit ( 1 );
 	}
 
-	for ( ; ; ) {
+	while(true) {
 		sh_int vnum;
 		char letter;
 		int iHash;
@@ -472,7 +474,7 @@ void load_objects ( FILE *fp )
 				break;
 		}
 
-		for ( ; ; ) {
+		while(true) {
 			char letter;
 
 			letter = fread_letter ( fp );
@@ -538,8 +540,16 @@ void load_objects ( FILE *fp )
 				ed->next                = pObjIndex->extra_descr;
 				pObjIndex->extra_descr  = ed;
 				top_ed++;
+			} else if ( letter == 'R') {
+        			pObjIndex->requirements[SIZ_REQ]	= fread_number( fp );
+        			pObjIndex->requirements[STR_REQ]	= fread_number( fp );
+        			pObjIndex->requirements[DEX_REQ]	= fread_number( fp );
+        			pObjIndex->requirements[CON_REQ]	= fread_number( fp );
+        			pObjIndex->requirements[INT_REQ]	= fread_number( fp );
+        			pObjIndex->requirements[WIS_REQ]	= fread_number( fp );
+			} else if ( letter == 'L' ) {
+				pObjIndex->repop_percent = fread_number(fp);
 			}
-
 			else {
 				ungetc ( letter, fp );
 				break;

@@ -440,6 +440,11 @@ void fwrite_obj ( Creature *ch, Item *obj, FILE *fp, int iNest )
 
 	/* variable data */
 
+	fprintf( fp, "Requirements %d %d %d %d %d %d\n",    
+		obj->requirements[SIZ_REQ],    obj->requirements[STR_REQ],    
+		obj->requirements[DEX_REQ],    obj->requirements[CON_REQ],    
+		obj->requirements[INT_REQ],    obj->requirements[WIS_REQ]);
+
 	fprintf ( fp, "Wear %d\n",   obj->wear_loc                );
 	if ( obj->level != obj->pIndexData->level )
 	{ fprintf ( fp, "Lev  %d\n",	obj->level		     ); }
@@ -1443,6 +1448,17 @@ void fread_obj ( Creature *ch, FILE *fp )
 				}
 				break;
 
+			case 'R':
+			if ( !str_cmp( word, "Requirements" ))
+			{		obj->requirements[SIZ_REQ]	= fread_number( fp );
+				obj->requirements[STR_REQ]	= fread_number( fp );
+				obj->requirements[DEX_REQ]	= fread_number( fp );
+				obj->requirements[CON_REQ]	= fread_number( fp );
+				obj->requirements[INT_REQ]	= fread_number( fp );
+				obj->requirements[WIS_REQ]	= fread_number( fp );
+				fMatch		= TRUE;
+				break;	    
+			}
 
 			case 'S':
 				KEY ( "ShortDescr",	obj->short_descr,	fread_string ( fp ) );

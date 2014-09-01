@@ -212,4 +212,13 @@ extern int mobile_count;
 extern int	social_count;
 extern	const	struct	cmd_type	cmd_table	[];
 
+DECLARE_OLC_FUN(oedit_req0);
+DECLARE_OLC_FUN(oedit_req1);
+DECLARE_OLC_FUN(oedit_req2);
+DECLARE_OLC_FUN(oedit_req3);
+DECLARE_OLC_FUN(oedit_req4);
+DECLARE_OLC_FUN(oedit_req5);
+DECLARE_OLC_FUN(oedit_repop);
+DECLARE_OLC_FUN(medit_repop);
+Command(cmd_use);
 #endif

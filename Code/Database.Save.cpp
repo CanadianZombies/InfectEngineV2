@@ -248,6 +248,9 @@ void save_mobile ( FILE *fp, NPCData *pMobIndex )
 				  pMprog->trig_phrase );
 	}
 
+	// -- repop percentage
+	fprintf ( fp, "L %d\n", pMobIndex->repop_percent)
+
 	return;
 }
 
@@ -424,6 +427,17 @@ void save_object ( FILE *fp, ItemData *pObjIndex )
 		fprintf ( fp, "E\n%s~\n%s~\n", pEd->keyword,
 				  fix_string ( pEd->description ) );
 	}
+
+    	fprintf( fp, "R %d %d %d %d %d %d\n",    
+    		pObjIndex->requirements[SIZ_REQ],    
+    		pObjIndex->requirements[STR_REQ],    
+    		pObjIndex->requirements[DEX_REQ],   
+    		pObjIndex->requirements[CON_REQ],   
+    		pObjIndex->requirements[INT_REQ],    
+    		pObjIndex->requirements[WIS_REQ]);
+
+	// -- store our repop percentage
+	fprintf (fp, "L %d\n", pObjIndex->repop_percent)
 
 	return;
 }

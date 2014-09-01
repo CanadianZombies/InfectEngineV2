@@ -281,6 +281,7 @@ const	struct	cmd_type	cmd_table	[] = {
 	{ "sell",		cmd_sell,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
 	{ "take",		cmd_get,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
 	{ "sacrifice",		cmd_sacrifice,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "use",		cmd_use,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
 	{ "value",		cmd_value,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
 	{ "wear",		cmd_wear,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
 	{ "zap",		cmd_zap,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },

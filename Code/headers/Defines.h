@@ -243,6 +243,13 @@
 #define STAT_DEX	3
 #define STAT_CON	4
 
+#define SIZ_REQ 0
+#define STR_REQ 1
+#define DEX_REQ 2
+#define CON_REQ 3
+#define INT_REQ 4
+#define WIS_REQ 5
+#define MAX_REQ 6
 
 #define NOTE_NOTE	0
 #define NOTE_IDEA	1
@@ -401,6 +408,8 @@
 #define MAT_PLATINUM (X)
 #define MAT_TITANIUM (Y)
 #define MAT_ADAMANTANIUM (Z)
+#define MAT_QUARTZ (aa)
+
 
 /* RANDOM EQUIPMENT */
 #define RANDOM_HELM (A)
@@ -670,7 +679,7 @@
 #define SIZE_LARGE			3
 #define SIZE_HUGE			4
 #define SIZE_GIANT			5
-
+#define SIZE_MAGIC      6
 
 /*
  * Item types.
@@ -705,7 +714,7 @@
 #define ITEM_GEM		     32
 #define ITEM_JEWELRY		     33
 #define ITEM_JUKEBOX		     34
-
+#define ITEM_SOURCE	     35
 
 
 /*

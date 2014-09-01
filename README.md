@@ -73,6 +73,10 @@ Other Systems to add:
 		* -- Twitter integration
 	* Ivans OLC for Rom24
 	* Kavirs Protocol Snippet (Huge time saver/life saver)
+	* Random Item Generator
+	* New Materials System
+	* Item Requirements
+	* Repop Percentages (NPC and Item)
 	Various Snippets to expediate the development cycle.
 
 

@@ -75,8 +75,9 @@ const struct size_type size_table[] = {
 	{	"small" 	},
 	{	"medium"	},
 	{	"large"		},
-	{	"huge", 	},
+	{	"huge"	 	},
 	{	"giant" 	},
+	{	"magic"		},
 	{	NULL		}
 };
 
@@ -450,6 +451,7 @@ const struct flag_type type_flags[] = {
 	{ 	"gem",			ITEM_GEM,		TRUE	},
 	{	"jewelry",		ITEM_JEWELRY,		TRUE	},
 	{	"jukebox",		ITEM_JUKEBOX,		TRUE	},
+	{	"source",		ITEM_SOURCE,		TRUE	},
 	{	NULL,			0,			0	}
 };
 
@@ -626,6 +628,7 @@ const struct flag_type size_flags[] = {
 	{   "large",         SIZE_LARGE,           TRUE    },
 	{   "huge",          SIZE_HUGE,            TRUE    },
 	{   "giant",         SIZE_GIANT,           TRUE    },
+	{   "magic",		SIZE_MAGIC,	   TRUE    },
 	{   NULL,              0,                    0       },
 };
 
@@ -800,6 +803,6 @@ const struct flag_type material_flags[] = {
 	{	"platinum",	MAT_PLATINUM,	TRUE },
 	{	"titanium",	MAT_TITANIUM,	TRUE },
 	{	"adamantanium",	MAT_ADAMANTANIUM,	TRUE },
-
+	{	"quartz",	MAT_QUARTZ,	TRUE },
 	{	NULL,	0,	0 }
 };

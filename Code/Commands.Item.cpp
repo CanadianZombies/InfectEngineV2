@@ -1219,6 +1219,41 @@ void wear_obj ( Creature *ch, Item *obj, bool fReplace )
 {
 	char buf[MAX_STRING_LENGTH];
 
+	if(!obj) { SUICIDE; }
+	
+	if (!IS_NPC(ch)) {    	
+		if ((obj->requirements[SIZ_REQ] != SIZE_MAGIC) && (ch->size != obj->requirements[SIZ_REQ]))    	
+		{			
+			writeBuffer("The item does not even fit you.\r\n",ch);		    
+			return;    	
+		}    	
+		if (get_curr_stat(ch,STAT_STR) < obj->requirements[STR_REQ])    	
+		{
+			writeBuffer("You do not have enough strength to wear this item.\r\n",ch);
+			return;
+		}
+		if (get_curr_stat(ch,STAT_DEX) < obj->requirements[DEX_REQ])
+		{
+			writeBuffer("You do not have enough dexterity to wear this item.\r\n",ch);
+			return;
+		}
+		if (get_curr_stat(ch,STAT_CON) < obj->requirements[CON_REQ])
+		{
+			writeBuffer("You do not have enough constitution to wear this item.\r\n",ch);
+			return;
+		}
+		if (get_curr_stat(ch,STAT_INT) < obj->requirements[INT_REQ])
+		{
+			writeBuffer("You do not have enough Inteligence to wear this item.\r\n",ch);
+			return;
+		}
+		if (get_curr_stat(ch,STAT_WIS) < obj->requirements[WIS_REQ])
+		{
+			writeBuffer("You do not have enough wisdom to wear this item.\r\n",ch);
+			return;
+		}
+	} // -- end of IS_NPC check for stats	
+
 	if ( ch->level < obj->level ) {
 		sprintf ( buf, "You must be level %d to use this object.\n\r",
 				  obj->level );
@@ -2432,9 +2467,6 @@ DefineCommand ( cmd_list )
 		bool found;
 
 		/* hack to make new thalos pets work */
-		if ( ch->in_room->vnum == 9621 )
-		{ pRoomIndexNext = get_room_index ( 9706 ); }
-		else
 		{ pRoomIndexNext = get_room_index ( ch->in_room->vnum + 1 ); }
 
 		if ( pRoomIndexNext == NULL ) {
@@ -2480,24 +2512,29 @@ DefineCommand ( cmd_list )
 						   ||  is_name ( arg, obj->name ) ) ) {
 				if ( !found ) {
 					found = TRUE;
-					writeBuffer ( "[Lv Price Qty] Item\n\r", ch );
+					writeBuffer ( "[Lv Price Qty] [str dex int wis con size  ]   Item\n\r", ch );
 				}
 
 				if ( IS_OBJ_STAT ( obj, ITEM_INVENTORY ) )
-					snprintf ( buf, sizeof ( buf ), "[%2d %5d -- ] %s\n\r",
-							   obj->level, cost, obj->short_descr );
+					snprintf ( buf, sizeof ( buf ), "[%2d %5d -- ] [%3d %3d %3d %3d %3d %5s] %s\n\r",
+							   obj->level, cost, 
+							   obj->requirements[STR_REQ], obj->requirements[DEX_REQ], obj->requirements[INT_REQ],
+							   obj->requirements[WIZ_REQ], obj->requirements[CON_REQ], size_table[obj->requirements[SIZ_REQ]],
+							   obj->short_descr);
 				else {
 					count = 1;
 
 					while ( obj->next_content != NULL
 							&& obj->pIndexData == obj->next_content->pIndexData
-							&& !str_cmp ( obj->short_descr,
-										  obj->next_content->short_descr ) ) {
+							&& !str_cmp ( obj->short_descr, obj->next_content->short_descr ) ) {
 						obj = obj->next_content;
 						count++;
 					}
-					snprintf ( buf, sizeof ( buf ), "[%2d %5d %2d ] %s\n\r",
-							   obj->level, cost, count, obj->short_descr );
+					snprintf ( buf, sizeof ( buf ), "[%2d %5d %2d ]  [%3d %3d %3d %3d %3d %5s] %s\n\r",
+							   obj->level, cost, count, 
+							   obj->requirements[STR_REQ], obj->requirements[DEX_REQ], obj->requirements[INT_REQ],
+							   obj->requirements[WIZ_REQ], obj->requirements[CON_REQ], size_table[obj->requirements[SIZ_REQ]],
+							   obj->short_descr );
 				}
 				writeBuffer ( buf, ch );
 			}
@@ -2587,6 +2624,46 @@ DefineCommand ( cmd_sell )
 	}
 
 	return;
+}
+
+DefineCommand(cmd_use)
+{
+	char arg[MAX_STRING_LENGTH];
+	
+	Item  *obj;	
+	int to_hp;
+	int to_mn;
+	int to_mv;
+	
+	argument = one_argument( argument, arg );
+	
+	if ( ( arg == '\0' ) )	
+	{
+		writeBuffer( "Syntax:  use [item name]\n\r", ch );
+		return;	
+	} 	
+	
+	if ( ( obj = get_obj_carry( ch, arg ) ) == NULL ) 
+	{
+		writeBuffer( "You do not have that item.\n\r", ch );
+		return;
+	}
+	
+	if ( obj->item_type != ITEM_SOURCE )
+	{
+		writeBuffer( "That isn't a source.\n\r", ch );
+		return;	
+	} 	
+	to_hp = obj->value[0];	
+	to_mn = obj->value[1];	
+	to_mv = obj->value[2]; 
+	
+	ch->max_hit  = ( to_hp + ch->max_hit );
+	ch->max_mana = ( to_mn + ch->max_mana );
+	ch->max_move = ( to_mv + ch->max_move ); 	
+	
+	writeBuffer(Format( "%s brightly glows green and disappears.\n\r", obj->short_descr), ch );		
+	extract_obj( obj );
 }
 
 DefineCommand ( cmd_value )
