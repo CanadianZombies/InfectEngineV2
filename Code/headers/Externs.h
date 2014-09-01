@@ -218,6 +218,7 @@ DECLARE_OLC_FUN(oedit_req2);
 DECLARE_OLC_FUN(oedit_req3);
 DECLARE_OLC_FUN(oedit_req4);
 DECLARE_OLC_FUN(oedit_req5);
-
+DECLARE_OLC_FUN(oedit_repop);
+DECLARE_OLC_FUN(medit_repop);
 Command(cmd_use);
 #endif
