@@ -2467,9 +2467,6 @@ DefineCommand ( cmd_list )
 		bool found;
 
 		/* hack to make new thalos pets work */
-		if ( ch->in_room->vnum == 9621 )
-		{ pRoomIndexNext = get_room_index ( 9706 ); }
-		else
 		{ pRoomIndexNext = get_room_index ( ch->in_room->vnum + 1 ); }
 
 		if ( pRoomIndexNext == NULL ) {
@@ -2515,24 +2512,29 @@ DefineCommand ( cmd_list )
 						   ||  is_name ( arg, obj->name ) ) ) {
 				if ( !found ) {
 					found = TRUE;
-					writeBuffer ( "[Lv Price Qty] Item\n\r", ch );
+					writeBuffer ( "[Lv Price Qty] [str dex int wis con size  ]   Item\n\r", ch );
 				}
 
 				if ( IS_OBJ_STAT ( obj, ITEM_INVENTORY ) )
-					snprintf ( buf, sizeof ( buf ), "[%2d %5d -- ] %s\n\r",
-							   obj->level, cost, obj->short_descr );
+					snprintf ( buf, sizeof ( buf ), "[%2d %5d -- ] [%3d %3d %3d %3d %3d %5s] %s\n\r",
+							   obj->level, cost, 
+							   obj->requirements[STR_REQ], obj->requirements[DEX_REQ], obj->requirements[INT_REQ],
+							   obj->requirements[WIZ_REQ], obj->requirements[CON_REQ], size_table[obj->requirements[SIZ_REQ]],
+							   obj->short_descr);
 				else {
 					count = 1;
 
 					while ( obj->next_content != NULL
 							&& obj->pIndexData == obj->next_content->pIndexData
-							&& !str_cmp ( obj->short_descr,
-										  obj->next_content->short_descr ) ) {
+							&& !str_cmp ( obj->short_descr, obj->next_content->short_descr ) ) {
 						obj = obj->next_content;
 						count++;
 					}
-					snprintf ( buf, sizeof ( buf ), "[%2d %5d %2d ] %s\n\r",
-							   obj->level, cost, count, obj->short_descr );
+					snprintf ( buf, sizeof ( buf ), "[%2d %5d %2d ]  [%3d %3d %3d %3d %3d %5s] %s\n\r",
+							   obj->level, cost, count, 
+							   obj->requirements[STR_REQ], obj->requirements[DEX_REQ], obj->requirements[INT_REQ],
+							   obj->requirements[WIZ_REQ], obj->requirements[CON_REQ], size_table[obj->requirements[SIZ_REQ]],
+							   obj->short_descr );
 				}
 				writeBuffer ( buf, ch );
 			}
