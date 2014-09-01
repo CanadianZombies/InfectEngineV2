@@ -309,6 +309,7 @@ ItemData *new_obj_index ( void )
 	pObj->extra_flags   =   0;
 	pObj->wear_flags    =   0;
 	pObj->count         =   0;
+	pObj->repop_percent =  100;
 	pObj->weight        =   0;
 	pObj->cost          =   0;
 	pObj->condition     =   100;                        /* ROM */
@@ -380,6 +381,7 @@ NPCData *new_mob_index ( void )
 	pMob->act           =   ACT_IS_NPC;
 	pMob->affected_by   =   0;
 	pMob->alignment     =   0;
+	pMob->repop_percent =  100;
 	pMob->hitroll	=   0;
 	pMob->race          =   race_lookup ( "human" ); /* - Hugin */
 	pMob->form          =   0;           /* ROM patch -- Hugin */
