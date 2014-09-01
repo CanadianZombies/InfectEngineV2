@@ -219,4 +219,5 @@ DECLARE_OLC_FUN(oedit_req3);
 DECLARE_OLC_FUN(oedit_req4);
 DECLARE_OLC_FUN(oedit_req5);
 
+Command(cmd_use);
 #endif
