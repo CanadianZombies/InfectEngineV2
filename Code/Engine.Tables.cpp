@@ -800,6 +800,6 @@ const struct flag_type material_flags[] = {
 	{	"platinum",	MAT_PLATINUM,	TRUE },
 	{	"titanium",	MAT_TITANIUM,	TRUE },
 	{	"adamantanium",	MAT_ADAMANTANIUM,	TRUE },
-
+	{	"quartz",	MAT_QUARTZ,	TRUE },
 	{	NULL,	0,	0 }
 };
