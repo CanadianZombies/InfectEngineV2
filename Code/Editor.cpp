@@ -304,6 +304,12 @@ const struct olc_cmd_type oedit_table[] = {
 	{   "v2",		oedit_value2	},
 	{   "v3",		oedit_value3	},
 	{   "v4",		oedit_value4	},  /* ROM */
+	{   "r0",		oedit_req0	},
+	{   "r1",		oedit_req1	},
+	{   "r2",		oedit_req2	},
+	{   "r3",		oedit_req3	},
+	{   "r4",		oedit_req4	},
+	{   "r5",		oedit_req5      },
 	{   "weight",	oedit_weight	},
 
 	{   "extra",        oedit_extra     },  /* ROM */
