@@ -609,6 +609,9 @@ void obj_cost ( Item *obj, Creature * mob )
 	else if ( IS_SET ( obj->material_flags, MAT_GOLD ) )
 	{ cost = cost * 450; }
 
+	else if (IS_SET ( obj->material_flags, MAT_QUARTZ))
+	{ cost = cost + number_range(1,20); }	// -- random value
+
 	else
 	{ cost = cost * obj->level; }
 
@@ -676,6 +679,9 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 	if ( IS_SET ( obj->material_flags, MAT_OBSIDIAN ) )
 	{ SET_BIT ( obj->extra_flags, ITEM_INVIS ); }
 
+	if ( IS_SET ( obj->material_flags, MAT_QUARTZ ) )
+	{ SET_BIT ( obj->extra_flags, ITEM_NOLOCATE); }			// MAT_QUARTZ are hidden!
+
 	/*Lets add some gusto.*/
 	if ( number_percent ( ) <= 10 ) {
 		switch ( number_range ( 1, 2 ) ) {
@@ -691,7 +697,7 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 	}
 
 	/*Go for the full gusto.*/
-	if ( number_percent ( ) <= 5 ) {
+	if ( number_percent ( ) <= 3 ) {
 		if ( !IS_SET ( obj->extra_flags, ITEM_NODROP ) )
 		{ SET_BIT ( obj->extra_flags, ITEM_NODROP ); }
 
@@ -702,7 +708,7 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 	}
 
 	/*Low lvl equipment sucks:)*/
-	if ( obj->level <= 15 ) {
+	if ( obj->level <= 7 ) {
 		if ( !IS_SET ( obj->extra_flags, ITEM_MELT_DROP ) )
 		{ SET_BIT ( obj->extra_flags, ITEM_MELT_DROP ); }
 	}
