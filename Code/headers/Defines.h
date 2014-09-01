@@ -714,7 +714,7 @@
 #define ITEM_GEM		     32
 #define ITEM_JEWELRY		     33
 #define ITEM_JUKEBOX		     34
-
+#define ITEM_SOURCE	     35
 
 
 /*
