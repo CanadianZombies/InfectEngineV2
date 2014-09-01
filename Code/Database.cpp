@@ -1533,6 +1533,7 @@ void reset_room ( RoomData *pRoom )
 				/* */
 
 				if(pMobIndex->repop_percent > number_percent()) {
+					log_hd(LOG_DEBUG, Format("MOBILE: %d didn't repop due to low repop percent", pMobIndex->vnum));
 					break;
 				}
 
@@ -1698,6 +1699,7 @@ void reset_room ( RoomData *pRoom )
 						}
 
 					if(pObjIndex->repop_percent > number_percent()) {
+						log_hd(LOG_DEBUG, Format("ITEM: %d didn't repop due to low repop percent", pMobIndex->vnum));
 						break;
 					}
 
