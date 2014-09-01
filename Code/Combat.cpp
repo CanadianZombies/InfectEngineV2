@@ -1557,8 +1557,6 @@ void death_cry ( Creature *ch )
 	return;
 }
 
-
-
 void raw_kill ( Creature *victim )
 {
 	int i;
@@ -1591,8 +1589,6 @@ void raw_kill ( Creature *victim )
 	return;
 }
 
-
-
 void group_gain ( Creature *ch, Creature *victim )
 {
 	Creature *gch, *lch;
@@ -1617,7 +1613,7 @@ void group_gain ( Creature *ch, Creature *victim )
 	}
 
 	if ( members == 0 ) {
-		log_hd ( LOG_ERROR, Format ( "Group_gain: members.", members ) );
+		log_hd ( LOG_ERROR, Format ( "Group_gain: members: %d", members ) );
 		members = 1;
 		group_levels = ch->level ;
 	}
@@ -1689,45 +1685,45 @@ int xp_compute ( Creature *gch, Creature *victim, int total_levels )
 			base_exp =   2;
 			break;
 		case -7 :
-			base_exp =   5;
+			base_exp =   3;
 			break;
 		case -6 :
-			base_exp =   9;
+			base_exp =   4;
 			break;
 		case -5 :
-			base_exp =  11;
+			base_exp =  5;
 			break;
 		case -4 :
-			base_exp =  22;
+			base_exp =  6;
 			break;
 		case -3 :
-			base_exp =  33;
+			base_exp =  7;
 			break;
 		case -2 :
-			base_exp =  50;
+			base_exp =  8;
 			break;
 		case -1 :
-			base_exp =  66;
+			base_exp =  9;
 			break;
 		case  0 :
-			base_exp =  83;
+			base_exp =  10;
 			break;
 		case  1 :
-			base_exp =  99;
+			base_exp =  11;
 			break;
 		case  2 :
-			base_exp = 121;
+			base_exp = 12;
 			break;
 		case  3 :
-			base_exp = 143;
+			base_exp = 14;
 			break;
 		case  4 :
-			base_exp = 165;
+			base_exp = 16;
 			break;
 	}
 
 	if ( level_range > 4 )
-	{ base_exp = 160 + 20 * ( level_range - 4 ); }
+	{ base_exp = 16 + 5 * ( level_range - 4.5 ); }
 
 	/* do alignment computations */
 

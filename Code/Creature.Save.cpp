@@ -521,7 +521,6 @@ void fwrite_obj ( Creature *ch, Item *obj, FILE *fp, int iNest )
 bool load_char_obj ( Socket *d, char *name )
 {
 	char strsave[MAX_INPUT_LENGTH];
-	char buf[100];
 	Creature *ch;
 	FILE *fp;
 	bool found;
@@ -537,16 +536,19 @@ bool load_char_obj ( Socket *d, char *name )
 	ch->race				= race_lookup ( "human" );
 	ch->act				= PLR_NOSUMMON;
 	ch->sflag				= 0;	// by default
-	ch->comm				= COMM_COMBINE
-							  | COMM_PROMPT;
+	ch->comm				= COMM_COMBINE | COMM_PROMPT;
+	ch->material_flags = MAT_FOOD;
+
 	ch->prompt 				= assign_string ( "<%hhp %mm %vmv> " );
 
-	ch->pcdata->pwd			= assign_string ( "" );
-	ch->pcdata->bamfin			= assign_string ( "" );
-	ch->pcdata->bamfout			= assign_string ( "" );
-	ch->pcdata->title			= assign_string ( "" );
+	ch->pcdata->pwd					= NULL;
+	ch->pcdata->bamfin			= NULL;
+	ch->pcdata->bamfout			= NULL;
+	ch->pcdata->title				= NULL;
+
 	for ( stat = 0; stat < MAX_STATS; stat++ )
 	{ ch->perm_stat[stat]		= 13; }
+
 	ch->pcdata->condition[COND_THIRST]	= 48;
 	ch->pcdata->condition[COND_FULL]	= 48;
 	ch->pcdata->condition[COND_HUNGER]	= 48;
@@ -554,16 +556,6 @@ bool load_char_obj ( Socket *d, char *name )
 
 	found = FALSE;
 	fclose ( fpReserve );
-
-#if defined(unix)
-	/* decompress if .gz file exists */
-	sprintf ( strsave, "%s%c/%s%s", PLAYER_DIR, LOWER ( name[0] ), capitalize ( name ), ".gz" );
-	if ( ( fp = fopen ( strsave, "r" ) ) != NULL ) {
-		fclose ( fp );
-		snprintf ( buf, sizeof ( buf ), "gzip -dfq %s", strsave );
-		system ( buf );
-	}
-#endif
 
 	sprintf ( strsave, "%s%c/%s", PLAYER_DIR, LOWER ( name[0] ), capitalize ( name ) );
 	if ( ( fp = fopen ( strsave, "r" ) ) != NULL ) {
@@ -573,7 +565,7 @@ bool load_char_obj ( Socket *d, char *name )
 		{ rgObjNest[iNest] = NULL; }
 
 		found = TRUE;
-		for ( ; ; ) {
+		while ( true ) {
 			char letter;
 			char *word;
 
@@ -595,7 +587,7 @@ bool load_char_obj ( Socket *d, char *name )
 			else if ( !str_cmp ( word, "PET"    ) ) { fread_pet  ( ch, fp ); }
 			else if ( !str_cmp ( word, "END"    ) ) { break; }
 			else {
-				log_hd ( LOG_ERROR, "Load_char_obj: bad section." );
+				log_hd ( LOG_ERROR, Format ( "load_char_obj: bad section: %s", word ) );
 				break;
 			}
 		}
@@ -628,56 +620,6 @@ bool load_char_obj ( Socket *d, char *name )
 		ch->parts	= race_table[ch->race].parts;
 	}
 
-
-	/* RT initialize skills */
-
-	if ( found && ch->version < 2 ) { /* need to add the new skills */
-		group_add ( ch, "rom basics", FALSE );
-		group_add ( ch, archetype_table[ch->archetype].base_group, FALSE );
-		group_add ( ch, archetype_table[ch->archetype].default_group, TRUE );
-		ch->pcdata->learned[gsn_recall] = 50;
-	}
-
-	/* fix levels */
-	if ( found && ch->version < 3 && ( ch->level > 35 || ch->trust > 35 ) ) {
-		switch ( ch->level ) {
-			case ( 40 ) :
-				ch->level = 60;
-				break;  /* imp -> imp */
-			case ( 39 ) :
-				ch->level = 58;
-				break;	/* god -> supreme */
-			case ( 38 ) :
-				ch->level = 56;
-				break;	/* deity -> god */
-			case ( 37 ) :
-				ch->level = 53;
-				break;	/* angel -> demigod */
-		}
-
-		switch ( ch->trust ) {
-			case ( 40 ) :
-				ch->trust = 60;
-				break;	/* imp -> imp */
-			case ( 39 ) :
-				ch->trust = 58;
-				break;	/* god -> supreme */
-			case ( 38 ) :
-				ch->trust = 56;
-				break;	/* deity -> god */
-			case ( 37 ) :
-				ch->trust = 53;
-				break;	/* angel -> demigod */
-			case ( 36 ) :
-				ch->trust = 51;
-				break;	/* hero -> hero */
-		}
-	}
-
-	/* ream gold */
-	if ( found && ch->version < 4 ) {
-		ch->gold   /= 100;
-	}
 	return found;
 }
 
