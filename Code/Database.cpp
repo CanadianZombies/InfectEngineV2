@@ -458,7 +458,7 @@ void new_load_area ( FILE *fp )
 	pArea->area_flags   = 0;
 	/*  pArea->recall       = ROOM_VNUM_TEMPLE;        ROM OLC */
 
-	for ( ; ; ) {
+	while(true) {
 		word   = feof ( fp ) ? ( char * ) "End" : fread_word ( fp );
 		fMatch = FALSE;
 
@@ -1038,9 +1038,7 @@ void load_rooms ( FILE *fp )
 		pRoomIndex->description		= fread_string ( fp );
 		/* Area number */		  fread_number ( fp );
 		pRoomIndex->room_flags		= fread_flag ( fp );
-		/* horrible hack */
-		if ( 3000 <= vnum && vnum < 3400 )
-		{ SET_BIT ( pRoomIndex->room_flags, ROOM_LAW ); }
+
 		pRoomIndex->sector_type		= fread_number ( fp );
 		pRoomIndex->light		= 0;
 		for ( door = 0; door <= 5; door++ )
@@ -1198,7 +1196,7 @@ void load_shops ( FILE *fp )
  */
 void load_specials ( FILE *fp )
 {
-	for ( ; ; ) {
+	while(true) {
 		NPCData *pMobIndex;
 		char letter;
 
@@ -1534,6 +1532,10 @@ void reset_room ( RoomData *pRoom )
 
 				/* */
 
+				if(pMobIndex->repop_percent > number_percent()) {
+					break;
+				}
+
 				pMob = create_mobile ( pMobIndex );
 
 				/*
@@ -1579,6 +1581,10 @@ void reset_room ( RoomData *pRoom )
 				if ( pRoom->area->nplayer > 0
 						|| count_obj_list ( pObjIndex, pRoom->contents ) > 0 ) {
 					last = FALSE;
+					break;
+				}
+
+				if(pObjIndex->repop_percent > number_percent()) {
 					break;
 				}
 
@@ -1689,24 +1695,14 @@ void reset_room ( RoomData *pRoom )
 								olevel = number_range ( 10, 20 );
 								break;
 
-#if 0 /* envy version */
-							case ITEM_WEAPON:
-								if ( pReset->command == 'G' )
-								{ olevel = number_range ( 5, 15 ); }
-								else
-								{ olevel = number_fuzzy ( level ); }
-#endif /* envy version */
-
-								break;
 						}
+
+					if(pObjIndex->repop_percent > number_percent()) {
+						break;
+					}
 
 					pObj = create_object ( pObjIndex, olevel );
 					SET_BIT ( pObj->extra_flags, ITEM_INVENTORY ); /* ROM OLC */
-
-#if 0 /* envy version */
-					if ( pReset->command == 'G' )
-					{ SET_BIT ( pObj->extra_flags, ITEM_INVENTORY ); }
-#endif /* envy version */
 
 				} else { /* ROM OLC else version */
 					int limit;
@@ -1716,6 +1712,10 @@ void reset_room ( RoomData *pRoom )
 					{ limit = 999; }
 					else
 					{ limit = pReset->arg2; }
+
+					if(pObjIndex->repop_percent > number_percent()) {
+						break;
+					}
 
 					if ( pObjIndex->count < limit || number_range ( 0, 4 ) == 0 ) {
 						pObj = create_object ( pObjIndex,
@@ -1732,12 +1732,6 @@ void reset_room ( RoomData *pRoom )
 					} else
 					{ break; }
 				}
-
-#if 0 /* envy else version */
-				else {
-					pObj = create_object ( pObjIndex, number_fuzzy ( level ) );
-				}
-#endif /* envy else version */
 
 				obj_to_char ( pObj, LastMob );
 				if ( pReset->command == 'E' )
