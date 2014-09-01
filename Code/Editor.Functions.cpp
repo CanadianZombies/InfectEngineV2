@@ -2502,7 +2502,117 @@ bool set_obj_values ( Creature *ch, ItemData *pObj, int value_num, const char *a
 	return TRUE;
 }
 
+void show_obj_requirements( Creature *ch, ItemData *obj )
+{
+	writeBuffer("Requirements:\n\r",ch);
+	writeBuffer(Format(	"[r0] Size:          [%d]\n\r"	
+				"[r1] Strength:      [%d]\n\r"		
+				"[r2] Dexterity:     [%d]\n\r"		
+				"[r3] Constitution:  [%d]\n\r"		
+				"[r4] Inteligence:   [%d]\n\r"		
+				"[r5] Wisdom:        [%d]\n\r",		
+				obj->requirements[SIZ_REQ], obj->requirements[STR_REQ],		
+				obj->requirements[DEX_REQ], obj->requirements[CON_REQ],	
+				obj->requirements[INT_REQ], obj->requirements[WIS_REQ],		
+				obj->requirements[CHA_REQ]));		
+				
+	writeBuffer("\n\r",ch);    
+	return;
+}
 
+OEDIT( oedit_req0 ){
+	char buf[MSL];
+	ItemData *pObj;
+	
+	EDIT_OBJ(ch, pObj);
+	
+	if ( IS_NULLSTR(argument) || !is_number( argument ) )    
+	{
+		writeBuffer( "Syntax:  r0 [number]\n\r", ch );	
+		writeBuffer( "For numbers use:\n\r", ch );
+		
+		sprintf(buf,"%d: Tiny\n\r%d: Small\n\r%d: Medium\n\r%d: Large\n\r%d: Huge\n\r%d: Giant\n\r%d: All\n\r",	SIZE_TINY, SIZE_SMALL, SIZE_MEDIUM, SIZE_LARGE, SIZE_HUGE, SIZE_GIANT, SIZE_MAGIC);	
+		writeBuffer(buf,ch);	
+		return FALSE;    
+	}     
+	
+	pObj->requirements[SIZ_REQ] = atoi( argument );     
+	writeBuffer( "Size Requirement set.\n\r", ch);    
+	return TRUE; 
+} 
+
+OEDIT( oedit_req1 ){
+	ItemData *pObj;
+	EDIT_OBJ(ch, pObj);
+	if ( IS_NULLSTR(argument) || !is_number( argument ) )
+	{
+		writeBuffer( "Syntax:  r1 [number]\n\r", ch );	
+		return FALSE;    
+	}     
+	pObj->requirements[STR_REQ] = atoi( argument );     
+	writeBuffer( "Strength Requirement set.\n\r", ch);    
+	return TRUE; 
+}
+
+OEDIT( oedit_req2 )
+{
+	ItemData *pObj;
+	EDIT_OBJ(ch, pObj);
+	if ( IS_NULLSTR(argument) || !is_number( argument ) )    
+	{
+		writeBuffer( "Syntax:  r2 [number]\n\r", ch );	
+		return FALSE;  
+	}     
+	pObj->requirements[DEX_REQ] = atoi( argument );     
+	writeBuffer( "Dexterity Requirement set.\n\r", ch);
+	return TRUE; 
+}
+
+OEDIT( oedit_req3 )
+{
+	ItemData *pObj;
+	EDIT_OBJ(ch, pObj);     
+	
+	if ( IS_NULLSTR(argument) || !is_number( argument ) )
+	{
+		writeBuffer( "Syntax:  r3 [number]\n\r", ch );	
+		return FALSE;    
+	}     
+	
+	pObj->requirements[CON_REQ] = atoi( argument );     
+	writeBuffer( "Constitution Requirement set.\n\r", ch);
+	return TRUE; 
+}
+
+OEDIT( oedit_req4 )
+{
+	ItemData *pObj;
+
+	EDIT_OBJ(ch, pObj);     
+	if ( IS_NULLSTR(argument) || !is_number( argument ) )    
+	{
+		writeBuffer( "Syntax:  r4 [number]\n\r", ch );	
+		return FALSE;    
+	}     
+	pObj->requirements[INT_REQ] = atoi( argument );     
+	writeBuffer( "Intelligence Requirement set.\n\r", ch);    
+	return TRUE; 
+}
+
+OEDIT( oedit_req5 )
+{
+	ItemData *pObj;
+	EDIT_OBJ(ch, pObj);
+	
+	if ( IS_NULLSTR(argument) || !is_number( argument ) )    
+	{
+		writeBuffer( "Syntax:  r5 [number]\n\r", ch );	
+		return FALSE;    
+	}     
+	pObj->requirements[WIS_REQ] = atoi( argument );     
+	writeBuffer( "Wis Requirement set.\n\r", ch);    
+	return TRUE; 
+}
 
 OEDIT ( oedit_show )
 {
@@ -2545,6 +2655,8 @@ OEDIT ( oedit_show )
 	sprintf ( buf, "Weight:      [%5d]\n\rCost:        [%5d]\n\r",
 			  pObj->weight, pObj->cost );
 	writeBuffer ( buf, ch );
+
+	show_obj_requirements(ch, pObj);
 
 	if ( pObj->extra_descr ) {
 		DescriptionData *ed;
