@@ -425,6 +425,14 @@ void save_object ( FILE *fp, ItemData *pObjIndex )
 				  fix_string ( pEd->description ) );
 	}
 
+    	fprintf( fp, "R %d %d %d %d %d %d\n",    
+    		pObjIndex->requirements[SIZ_REQ],    
+    		pObjIndex->requirements[STR_REQ],    
+    		pObjIndex->requirements[DEX_REQ],   
+    		pObjIndex->requirements[CON_REQ],   
+    		pObjIndex->requirements[INT_REQ],    
+    		pObjIndex->requirements[WIS_REQ]);
+
 	return;
 }
 
