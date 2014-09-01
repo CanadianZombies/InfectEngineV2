@@ -2021,6 +2021,16 @@ void show_obj_values ( Creature *ch, ItemData *obj )
 			writeBuffer ( buf, ch );
 			break;
 
+		case ITEM_SOURCE:	    
+			sprintf( buf,	        "[v0] to hp:   [%d]\n\r"
+						"[v1] to mn:   [%d]\n\r"
+						"[v2] to mv:   [%d]\n\r",
+						obj->value[0],
+						obj->value[1],
+						obj->value[2] );
+						writeBuffer( buf,ch );	    
+						break;
+
 		case ITEM_WAND:
 		case ITEM_STAFF:
 			sprintf ( buf,
@@ -2200,6 +2210,27 @@ bool set_obj_values ( Creature *ch, ItemData *pObj, int value_num, const char *a
 					break;
 			}
 			break;
+
+        	case ITEM_SOURCE:
+        		switch ( value_num )
+        		{
+        			default:
+        				cmd_function(ch, &cmd_help,  "ITEM_SOURCE" );
+        				return FALSE;
+        			case 0:		    
+        				writeBuffer( "HP modifier SET.\n\r\n\r", ch );
+        				pObj->value[0] = atoi( argument );
+        				break;
+        			case 1:
+        				writeBuffer( "MN modifier SET.\n\r\n\r", ch );
+        				pObj->value[1] = atoi( argument );
+        				break;
+        			case 2:
+        				writeBuffer( "MV modifier SET.\n\r\n\r", ch );
+        				pObj->value[2] = atoi( argument );
+        				break;
+        		}
+        		break;
 
 		case ITEM_WAND:
 		case ITEM_STAFF:
