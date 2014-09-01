@@ -401,6 +401,8 @@
 #define MAT_PLATINUM (X)
 #define MAT_TITANIUM (Y)
 #define MAT_ADAMANTANIUM (Z)
+#define MAT_QUARTZ (aa)
+
 
 /* RANDOM EQUIPMENT */
 #define RANDOM_HELM (A)
