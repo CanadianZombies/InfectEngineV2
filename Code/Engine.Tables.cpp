@@ -451,6 +451,7 @@ const struct flag_type type_flags[] = {
 	{ 	"gem",			ITEM_GEM,		TRUE	},
 	{	"jewelry",		ITEM_JEWELRY,		TRUE	},
 	{	"jukebox",		ITEM_JUKEBOX,		TRUE	},
+	{	"source",		ITEM_SOURCE,		TRUE	},
 	{	NULL,			0,			0	}
 };
 
