@@ -662,25 +662,44 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 	{ SET_BIT ( obj->extra_flags, ITEM_HUM ); }
 
 	if ( IS_SET ( obj->material_flags, MAT_GOLD ) )
-	{ SET_BIT ( obj->extra_flags, ITEM_GLOW ); }
+	{ 
+		SET_BIT ( obj->extra_flags, ITEM_GLOW ); 
+		obj->requirements[STR_REQ] = number_range(17,15);
+	}
 
 	if ( IS_SET ( obj->material_flags, MAT_TAINTED_MITHRIL ) )
-	{ SET_BIT ( obj->extra_flags, ITEM_ANTI_GOOD ); }
+	{ SET_BIT ( obj->extra_flags, ITEM_ANTI_GOOD ); 
+		obj->requirements[CON_REQ] = number_range(22,25);
+	}
 
 	if ( IS_SET ( obj->material_flags, MAT_MITHRIL ) )
 	{ SET_BIT ( obj->extra_flags, ITEM_ANTI_EVIL ); }
 
 	if ( IS_SET ( obj->material_flags, MAT_OPAL ) )
-	{ SET_BIT ( obj->extra_flags, ITEM_ANTI_GOOD ); }
+	{ 
+		SET_BIT ( obj->extra_flags, ITEM_ANTI_GOOD ); 
+		obj->requirements[DEX_REQ] = 17;
+	}
 
 	if ( IS_SET ( obj->material_flags, MAT_ONYX ) )
-	{ SET_BIT ( obj->extra_flags, ITEM_ANTI_EVIL ); }
+	{ 
+		SET_BIT ( obj->extra_flags, ITEM_ANTI_EVIL ); 
+		obj->requirements[WIS_REQ] = 22;
+	}
 
 	if ( IS_SET ( obj->material_flags, MAT_OBSIDIAN ) )
-	{ SET_BIT ( obj->extra_flags, ITEM_INVIS ); }
+	{ 
+		SET_BIT ( obj->extra_flags, ITEM_INVIS );
+		obj->requirements[STR_REQ] = 19;
+		
+	}
 
 	if ( IS_SET ( obj->material_flags, MAT_QUARTZ ) )
-	{ SET_BIT ( obj->extra_flags, ITEM_NOLOCATE); }			// MAT_QUARTZ are hidden!
+	{ 
+		SET_BIT ( obj->extra_flags, ITEM_NOLOCATE);
+		obj->requirements[STR_REQ] = number_range(13,17);
+		obj->requirements[DEX_REQ] = number_range(13,17);
+	}			// MAT_QUARTZ are hidden!
 
 	/*Lets add some gusto.*/
 	if ( number_percent ( ) <= 10 ) {
@@ -711,6 +730,9 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 	if ( obj->level <= 7 ) {
 		if ( !IS_SET ( obj->extra_flags, ITEM_MELT_DROP ) )
 		{ SET_BIT ( obj->extra_flags, ITEM_MELT_DROP ); }
+		for(int x = 0; x < MAX_REQ; x++) {
+			obj->requirements[x] = number_range(0,15);
+		}
 	}
 }
 
@@ -720,9 +742,15 @@ void obj_level ( Item *obj, Creature * mob )
 
 	/*Base that level on something.*/
 	if ( mob->pIndexData->pShop )
-	{ obj->level = number_range ( 1, 60 ); }
+	{ 
+		obj->level = number_range ( 1, 60 ); 
+		obj->requirements[SIZ_REQ] = number_range(0, SIZE_MAGIC); // -- random sizes
+	}
 	else
-	{ obj->level = mob->level; }
+	{ 
+		obj->level = mob->level; 
+		obj->requirements[SIZ_REQ] = mob->size; // -- make it fit!
+	}
 
 	/*I added this because I noticed decent 'looking' weapons
 	at low levels doing really bad damage, and not worth even
