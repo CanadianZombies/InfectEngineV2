@@ -76,6 +76,7 @@ Other Systems to add:
 	* Random Item Generator
 	* New Materials System
 	* Item Requirements
+	* Repop Percentages (NPC and Item)
 	Various Snippets to expediate the development cycle.
 
 
