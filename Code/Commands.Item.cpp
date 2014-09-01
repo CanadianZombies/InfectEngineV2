@@ -1219,6 +1219,41 @@ void wear_obj ( Creature *ch, Item *obj, bool fReplace )
 {
 	char buf[MAX_STRING_LENGTH];
 
+	if(!obj) { SUICIDE; }
+	
+	if (!IS_NPC(ch)) {    	
+		if ((obj->requirements[SIZ_REQ] != SIZE_MAGIC) && (ch->size != obj->requirements[SIZ_REQ]))    	
+		{			
+			writeBuffer("The item does not even fit you.\r\n",ch);		    
+			return;    	
+		}    	
+		if (get_curr_stat(ch,STAT_STR) < obj->requirements[STR_REQ])    	
+		{
+			writeBuffer("You do not have enough strength to wear this item.\r\n",ch);
+			return;
+		}
+		if (get_curr_stat(ch,STAT_DEX) < obj->requirements[DEX_REQ])
+		{
+			writeBuffer("You do not have enough dexterity to wear this item.\r\n",ch);
+			return;
+		}
+		if (get_curr_stat(ch,STAT_CON) < obj->requirements[CON_REQ])
+		{
+			writeBuffer("You do not have enough constitution to wear this item.\r\n",ch);
+			return;
+		}
+		if (get_curr_stat(ch,STAT_INT) < obj->requirements[INT_REQ])
+		{
+			writeBuffer("You do not have enough Inteligence to wear this item.\r\n",ch);
+			return;
+		}
+		if (get_curr_stat(ch,STAT_WIS) < obj->requirements[WIS_REQ])
+		{
+			writeBuffer("You do not have enough wisdom to wear this item.\r\n",ch);
+			return;
+		}
+	} // -- end of IS_NPC check for stats	
+
 	if ( ch->level < obj->level ) {
 		sprintf ( buf, "You must be level %d to use this object.\n\r",
 				  obj->level );
