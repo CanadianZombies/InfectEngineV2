@@ -157,8 +157,8 @@ Exit *new_exit ( void )
 	/*  pExit->vnum         =   0;                        ROM OLC */
 	pExit->exit_info    =   0;
 	pExit->key          =   0;
-	pExit->keyword      =   &str_empty[0];
-	pExit->description  =   &str_empty[0];
+	pExit->keyword      =   NULL;
+	pExit->description  =   NULL;
 	pExit->rs_flags     =   0;
 
 	return pExit;
@@ -199,9 +199,9 @@ RoomData *new_room_index ( void )
 	for ( door = 0; door < MAX_DIR; door++ )
 	{ pRoom->exit[door]   =   NULL; }
 
-	pRoom->name             =   &str_empty[0];
-	pRoom->description      =   &str_empty[0];
-	pRoom->owner	    =	&str_empty[0];
+	pRoom->name             =   NULL;
+	pRoom->description      =   NULL;
+	pRoom->owner	    =	NULL;
 	pRoom->vnum             =   0;
 	pRoom->room_flags       =   0;
 	pRoom->light            =   0;
@@ -316,12 +316,12 @@ ItemData *new_obj_index ( void )
 	for ( value = 0; value < 5; value++ )               /* 5 - ROM */
 	{ pObj->value[value]  =   0; }
 
-	
-	for(value = 0; value < MAX_REQ; value++ ) {
+
+	for ( value = 0; value < MAX_REQ; value++ ) {
 		pObj->requirements[value] = 0;
 	}
 	pObj->requirements[SIZ_REQ] = SIZE_MAGIC;	// -- default to save face!
-	
+
 	pObj->new_format    = TRUE; /* ROM */
 
 	return pObj;
@@ -372,7 +372,7 @@ NPCData *new_mob_index ( void )
 	pMob->player_name   =   assign_string ( "no name" );
 	pMob->short_descr   =   assign_string ( "(no short description)" );
 	pMob->long_descr    =   assign_string ( "(no long description)\n\r" );
-	pMob->description   =   &str_empty[0];
+	pMob->description   =   NULL;
 	pMob->vnum          =   0;
 	pMob->count         =   0;
 	pMob->killed        =   0;

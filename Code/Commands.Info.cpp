@@ -375,7 +375,7 @@ void show_char_to_char_1 ( Creature *victim, Creature *ch )
 		}
 	}
 
-	if ( victim->description[0] != '\0' ) {
+	if ( !IS_NULLSTR ( victim->description ) ) {
 		writeBuffer ( victim->description, ch );
 	} else {
 		act ( "You see nothing special about $M.", ch, NULL, victim, TO_CHAR );
@@ -765,7 +765,7 @@ DefineCommand ( cmd_prompt )
 {
 	char buf[MAX_STRING_LENGTH];
 
-	if ( argument[0] == '\0' ) {
+	if ( IS_NULLSTR ( argument ) ) {
 		if ( IS_SET ( ch->comm, COMM_PROMPT ) ) {
 			writeBuffer ( "You will no longer see prompts.\n\r", ch );
 			REMOVE_BIT ( ch->comm, COMM_PROMPT );
@@ -1923,29 +1923,23 @@ DefineCommand ( cmd_equipment )
 {
 	Item *obj;
 	int iWear;
-	bool found;
 
 	writeBuffer ( "Your currently equipped gear:\n\r", ch );
-	found = FALSE;
 	for ( iWear = 0; iWear < MAX_WEAR; iWear++ ) {
+		// -- crash protection we hope
+		if ( where_name[iWear] == NULL ) { break; }
+
 		if ( ( obj = get_eq_char ( ch, iWear ) ) == NULL ) {
-			writeBuffer ( "\aW", ch );
-			writeBuffer ( where_name[iWear], ch );
-			writeBuffer ( "     ---\r\n", ch );
+			writeBuffer ( Format ( "\aW%s     \ac---\an\r\n", where_name[iWear] ), ch );
 			continue;
 		}
 
-		writeBuffer ( Format ( "%s\an", where_name[iWear] ), ch );
 		if ( can_see_obj ( ch, obj ) ) {
-			writeBuffer ( Format ( "\ac%s\r\n", format_obj_to_char ( obj, ch, TRUE ) ), ch );
+			writeBuffer ( Format ( "%s\ac%s\r\n", where_name[iWear], format_obj_to_char ( obj, ch, TRUE ) ), ch );
 		} else {
-			writeBuffer ( "\acsomething.\r\n", ch );
+			writeBuffer ( Format ( "%s\acsomething.\r\n", where_name[iWear] ), ch );
 		}
-		found = TRUE;
 	}
-
-	if ( !found )
-	{ writeBuffer ( "Nothing.\n\r", ch ); }
 
 	return;
 }

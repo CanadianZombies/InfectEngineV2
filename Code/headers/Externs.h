@@ -126,8 +126,6 @@ extern		int			top_vnum_mob;
 extern		int			top_vnum_obj;
 extern		int			top_vnum_room;
 
-extern		char			str_empty       [1];
-
 extern		NPCData *	mob_index_hash  [MAX_KEY_HASH];
 extern		ItemData *	obj_index_hash  [MAX_KEY_HASH];
 extern		RoomData *	room_index_hash [MAX_KEY_HASH];
@@ -204,7 +202,6 @@ extern int  		top_affect;
 extern int		top_ed;
 extern Zone 	* area_first;
 
-extern char str_empty[1];
 extern int mobile_count;
 
 
@@ -212,13 +209,13 @@ extern int mobile_count;
 extern int	social_count;
 extern	const	struct	cmd_type	cmd_table	[];
 
-DECLARE_OLC_FUN(oedit_req0);
-DECLARE_OLC_FUN(oedit_req1);
-DECLARE_OLC_FUN(oedit_req2);
-DECLARE_OLC_FUN(oedit_req3);
-DECLARE_OLC_FUN(oedit_req4);
-DECLARE_OLC_FUN(oedit_req5);
-DECLARE_OLC_FUN(oedit_repop);
-DECLARE_OLC_FUN(medit_repop);
-Command(cmd_use);
+DECLARE_OLC_FUN ( oedit_req0 );
+DECLARE_OLC_FUN ( oedit_req1 );
+DECLARE_OLC_FUN ( oedit_req2 );
+DECLARE_OLC_FUN ( oedit_req3 );
+DECLARE_OLC_FUN ( oedit_req4 );
+DECLARE_OLC_FUN ( oedit_req5 );
+DECLARE_OLC_FUN ( oedit_repop );
+DECLARE_OLC_FUN ( medit_repop );
+Command ( cmd_use );
 #endif

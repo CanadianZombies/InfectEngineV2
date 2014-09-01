@@ -88,7 +88,7 @@ Ban *new_ban ( void )
 
 	*ban = ban_zero;
 	VALIDATE ( ban );
-	ban->name = &str_empty[0];
+	ban->name = NULL;
 	return ban;
 }
 
@@ -181,8 +181,8 @@ DescriptionData *new_extra_descr ( void )
 		extra_descr_free = extra_descr_free->next;
 	}
 
-	ed->keyword = &str_empty[0];
-	ed->description = &str_empty[0];
+	ed->keyword = NULL;
+	ed->description = NULL;
 	VALIDATE ( ed );
 	return ed;
 }
@@ -304,12 +304,12 @@ Creature *new_char ( void )
 
 	*ch				= ch_zero;
 	VALIDATE ( ch );
-	ch->name                    = &str_empty[0];
-	ch->short_descr             = &str_empty[0];
-	ch->long_descr              = &str_empty[0];
-	ch->description             = &str_empty[0];
-	ch->prompt                  = &str_empty[0];
-	ch->prefix			= &str_empty[0];
+	ch->name                    = NULL;
+	ch->short_descr             = NULL;
+	ch->long_descr              = NULL;
+	ch->description             = NULL;
+	ch->prompt                  = NULL;
+	ch->prefix			= NULL;
 	ch->logon                   = current_time;
 	ch->lines                   = PAGELEN;
 	for ( i = 0; i < 4; i++ )

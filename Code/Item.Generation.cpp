@@ -347,35 +347,28 @@ void paf_apply ( Item *obj )
 		APPLY_AC
 	};
 
-	/*i LEFT THESE HERE FOR YOU TO LOOK AT, I HAVE EXTENDED BITS IN MY
-	CODE AND DOUBLE THE MATERIALS, I HAVE THEM BROKEN UP INTO GROUPS OF
-	MATERIALS BASED AROUND ARMOR/WEAPONS, RINGS, WANDS/STAVES*/
+	/*
+	static const char *defensive_spell_types[] = {
+		"armor", "shield", "stone skin", "bless", "sanctuary"
+	}; */
 
-	static char *defensive_spell_types[] =
-	  {
-	  "armor", "shield", "stone skin", "bless", "sanctuary"
-	  };
+	static const char *offensive_spell_types[] = {
+		"lightning bolt", "acid blast", "magic missile"
+	};
 
-	static char *offensive_spell_types[] =
-	  {
-	  "lightning bolt", "acid blast", "magic missile"
-	  };
+	/*
+	static const char *curitive_spell_types[] = {
+		"create food", "create spring", "cure blindness", "cure critical", "cure disease",
+		"cure poison", "remove curse", "refresh"
+	}; */
 
-	static char *curitive_spell_types[] =
-	  {
-	  "create food", "create spring", "cure blindness", "cure critical", "cure disease",
-	"cure poison", "remove curse", "refresh"
-	  };
+	static const char *maledictive_spell_types[] = {
+		"blindness", "curse", "plague", "poison", "sleep", "weaken"
+	};
 
-	static char *maledictive_spell_types[] =
-	  {
-	  "blindness", "curse", "plague", "poison", "sleep", "weaken"
-	  };
-	
-	static char *mental_spell_types[] =
-	  {
-	"charm person", "dispel magic", "calm", "change sex", "floating disc"
-	  };
+	static const char *mental_spell_types[] = {
+		"charm person", "dispel magic", "calm", "change sex", "floating disc"
+	};
 	/*
 	static char *misc_spell_types[] =
 	  {
@@ -392,32 +385,26 @@ void paf_apply ( Item *obj )
 	  if (IS_SET(obj->material_flags, MAT_BIOTITE))
 	obj->value[3] = skill_lookup(misc_spell_types[number_range(0, 6)]);
 	} */
-	if(obj->item_type == ITEM_WAND)
-	{
-	  if (IS_SET(obj->material_flags, MAT_QUARTZ))
-	obj->value[3] = skill_lookup(offensive_spell_types[number_range(0, 3)]);
-	  if (IS_SET(obj->material_flags, MAT_TAINTED_MITHRIL))
-	obj->value[3] = skill_lookup(maledictive_spell_types[number_range(0, 5)]);
-	  if (IS_SET(obj->material_flags, MAT_OBSIDIAN))
-	obj->value[3] = skill_lookup(mental_spell_types[number_range(0, 4)]);
-	}
-	else if(obj->item_type == ITEM_JEWELRY )
-	{
-	//A ring is based on its stone, lets keep all rings
-	//of the same stone all the same.
-	//I HAD ABOUT 15 DIFF RING STONES
-		if (IS_SET(obj->material_flags, MAT_GOLD))
-		{
-			paf_set(obj, stat_types[2], -2, 0);
-			paf_set(obj, combat_types[0], 3, 0);
+	if ( obj->item_type == ITEM_WAND ) {
+		if ( IS_SET ( obj->material_flags, MAT_QUARTZ ) )
+		{ obj->value[3] = skill_lookup ( offensive_spell_types[number_range ( 0, 3 )] ); }
+		if ( IS_SET ( obj->material_flags, MAT_TAINTED_MITHRIL ) )
+		{ obj->value[3] = skill_lookup ( maledictive_spell_types[number_range ( 0, 5 )] ); }
+		if ( IS_SET ( obj->material_flags, MAT_OBSIDIAN ) )
+		{ obj->value[3] = skill_lookup ( mental_spell_types[number_range ( 0, 4 )] ); }
+	} else if ( obj->item_type == ITEM_JEWELRY ) {
+		//A ring is based on its stone, lets keep all rings
+		//of the same stone all the same.
+		//I HAD ABOUT 15 DIFF RING STONES
+		if ( IS_SET ( obj->material_flags, MAT_GOLD ) ) {
+			paf_set ( obj, stat_types[2], -2, 0 );
+			paf_set ( obj, combat_types[0], 3, 0 );
 		}
-		if (IS_SET(obj->material_flags, MAT_SILVER))
-		{
-			paf_set(obj, stat_types[2], -2, 0);
-			paf_set(obj, combat_types[1], 3, 0);
+		if ( IS_SET ( obj->material_flags, MAT_SILVER ) ) {
+			paf_set ( obj, stat_types[2], -2, 0 );
+			paf_set ( obj, combat_types[1], 3, 0 );
 		}
-	}
-	else if ( obj->item_type == ITEM_ARMOR ) {
+	} else if ( obj->item_type == ITEM_ARMOR ) {
 
 		/*Low lvl gets nothing unless its lucky, leather to steel*/
 		if ( obj->level <= 23 && number_percent ( ) >= 10 )
@@ -609,8 +596,8 @@ void obj_cost ( Item *obj, Creature * mob )
 	else if ( IS_SET ( obj->material_flags, MAT_GOLD ) )
 	{ cost = cost * 450; }
 
-	else if (IS_SET ( obj->material_flags, MAT_QUARTZ))
-	{ cost = cost + number_range(1,20); }	// -- random value
+	else if ( IS_SET ( obj->material_flags, MAT_QUARTZ ) )
+	{ cost = cost + number_range ( 1, 20 ); }	// -- random value
 
 	else
 	{ cost = cost * obj->level; }
@@ -661,44 +648,39 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 	if ( IS_SET ( obj->material_flags, MAT_SILVER ) )
 	{ SET_BIT ( obj->extra_flags, ITEM_HUM ); }
 
-	if ( IS_SET ( obj->material_flags, MAT_GOLD ) )
-	{ 
-		SET_BIT ( obj->extra_flags, ITEM_GLOW ); 
-		obj->requirements[STR_REQ] = number_range(17,15);
+	if ( IS_SET ( obj->material_flags, MAT_GOLD ) ) {
+		SET_BIT ( obj->extra_flags, ITEM_GLOW );
+		obj->requirements[STR_REQ] = number_range ( 17, 15 );
 	}
 
-	if ( IS_SET ( obj->material_flags, MAT_TAINTED_MITHRIL ) )
-	{ SET_BIT ( obj->extra_flags, ITEM_ANTI_GOOD ); 
-		obj->requirements[CON_REQ] = number_range(22,25);
+	if ( IS_SET ( obj->material_flags, MAT_TAINTED_MITHRIL ) ) {
+		SET_BIT ( obj->extra_flags, ITEM_ANTI_GOOD );
+		obj->requirements[CON_REQ] = number_range ( 22, 25 );
 	}
 
 	if ( IS_SET ( obj->material_flags, MAT_MITHRIL ) )
 	{ SET_BIT ( obj->extra_flags, ITEM_ANTI_EVIL ); }
 
-	if ( IS_SET ( obj->material_flags, MAT_OPAL ) )
-	{ 
-		SET_BIT ( obj->extra_flags, ITEM_ANTI_GOOD ); 
+	if ( IS_SET ( obj->material_flags, MAT_OPAL ) ) {
+		SET_BIT ( obj->extra_flags, ITEM_ANTI_GOOD );
 		obj->requirements[DEX_REQ] = 17;
 	}
 
-	if ( IS_SET ( obj->material_flags, MAT_ONYX ) )
-	{ 
-		SET_BIT ( obj->extra_flags, ITEM_ANTI_EVIL ); 
+	if ( IS_SET ( obj->material_flags, MAT_ONYX ) ) {
+		SET_BIT ( obj->extra_flags, ITEM_ANTI_EVIL );
 		obj->requirements[WIS_REQ] = 22;
 	}
 
-	if ( IS_SET ( obj->material_flags, MAT_OBSIDIAN ) )
-	{ 
+	if ( IS_SET ( obj->material_flags, MAT_OBSIDIAN ) ) {
 		SET_BIT ( obj->extra_flags, ITEM_INVIS );
 		obj->requirements[STR_REQ] = 19;
-		
+
 	}
 
-	if ( IS_SET ( obj->material_flags, MAT_QUARTZ ) )
-	{ 
-		SET_BIT ( obj->extra_flags, ITEM_NOLOCATE);
-		obj->requirements[STR_REQ] = number_range(13,17);
-		obj->requirements[DEX_REQ] = number_range(13,17);
+	if ( IS_SET ( obj->material_flags, MAT_QUARTZ ) ) {
+		SET_BIT ( obj->extra_flags, ITEM_NOLOCATE );
+		obj->requirements[STR_REQ] = number_range ( 13, 17 );
+		obj->requirements[DEX_REQ] = number_range ( 13, 17 );
 	}			// MAT_QUARTZ are hidden!
 
 	/*Lets add some gusto.*/
@@ -730,8 +712,8 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 	if ( obj->level <= 7 ) {
 		if ( !IS_SET ( obj->extra_flags, ITEM_MELT_DROP ) )
 		{ SET_BIT ( obj->extra_flags, ITEM_MELT_DROP ); }
-		for(int x = 0; x < MAX_REQ; x++) {
-			obj->requirements[x] = number_range(0,15);
+		for ( int x = 0; x < MAX_REQ; x++ ) {
+			obj->requirements[x] = number_range ( 0, 15 );
 		}
 	}
 }
@@ -741,14 +723,11 @@ void obj_level ( Item *obj, Creature * mob )
 	int level;
 
 	/*Base that level on something.*/
-	if ( mob->pIndexData->pShop )
-	{ 
-		obj->level = number_range ( 1, 60 ); 
-		obj->requirements[SIZ_REQ] = number_range(0, SIZE_MAGIC); // -- random sizes
-	}
-	else
-	{ 
-		obj->level = mob->level; 
+	if ( mob->pIndexData->pShop ) {
+		obj->level = number_range ( 1, 60 );
+		obj->requirements[SIZ_REQ] = number_range ( 0, SIZE_MAGIC ); // -- random sizes
+	} else {
+		obj->level = mob->level;
 		obj->requirements[SIZ_REQ] = mob->size; // -- make it fit!
 	}
 

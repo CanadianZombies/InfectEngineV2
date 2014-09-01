@@ -96,10 +96,6 @@ Zone *		area_first;
 Zone *		area_last;
 Zone *		current_area;
 
-char *			string_space;
-char *			top_string;
-char			str_empty	[1];
-
 int			top_affect;
 int			top_area;
 int			top_ed;
@@ -119,17 +115,6 @@ int			newmobs = 0;
 int			newobjs = 0;
 
 unsigned long 		connect_count = 0;
-
-
-/*
- * Memory management.
- * Increase MAX_STRING if you have too.
- * Tune the others only if you understand what you're doing.
- */
-#define			MAX_STRING	1413120
-
-int			nAllocString;
-int			sAllocString;
 
 /*
  * Semi-locals.
@@ -178,11 +163,6 @@ void boot_db ( void )
 	 * Init some data space stuff.
 	 */
 	{
-		if ( ( string_space = ( char * ) calloc ( 1, MAX_STRING ) ) == NULL ) {
-			log_hd ( LOG_ERROR | LOG_DEBUG, Format ( "Boot_db: can't alloc %d string space.", MAX_STRING ) );
-			exit ( 1 );
-		}
-		top_string	= string_space;
 		fBootDb		= TRUE;
 	}
 
@@ -458,7 +438,7 @@ void new_load_area ( FILE *fp )
 	pArea->area_flags   = 0;
 	/*  pArea->recall       = ROOM_VNUM_TEMPLE;        ROM OLC */
 
-	while(true) {
+	while ( true ) {
 		word   = feof ( fp ) ? ( char * ) "End" : fread_word ( fp );
 		fMatch = FALSE;
 
@@ -1196,7 +1176,7 @@ void load_shops ( FILE *fp )
  */
 void load_specials ( FILE *fp )
 {
-	while(true) {
+	while ( true ) {
 		NPCData *pMobIndex;
 		char letter;
 
@@ -1491,7 +1471,7 @@ void reset_room ( RoomData *pRoom )
 	}
 
 	for ( pReset = pRoom->reset_first; pReset != NULL; pReset = pReset->next ) {
-		NPCData  *pMobIndex;
+		NPCData  *pMobIndex = NULL;
 		ItemData  *pObjIndex;
 		ItemData  *pObjToIndex;
 		RoomData *pRoomIndex;
@@ -1532,8 +1512,8 @@ void reset_room ( RoomData *pRoom )
 
 				/* */
 
-				if(pMobIndex->repop_percent > number_percent()) {
-					log_hd(LOG_DEBUG, Format("MOBILE: %d didn't repop due to low repop percent", pMobIndex->vnum));
+				if ( pMobIndex->repop_percent > number_percent() ) {
+					log_hd ( LOG_DEBUG, Format ( "MOBILE: %d didn't repop due to low repop percent", pMobIndex->vnum ) );
 					break;
 				}
 
@@ -1585,7 +1565,7 @@ void reset_room ( RoomData *pRoom )
 					break;
 				}
 
-				if(pObjIndex->repop_percent > number_percent()) {
+				if ( pObjIndex->repop_percent > number_percent() ) {
 					break;
 				}
 
@@ -1698,8 +1678,8 @@ void reset_room ( RoomData *pRoom )
 
 						}
 
-					if(pObjIndex->repop_percent > number_percent()) {
-						log_hd(LOG_DEBUG, Format("ITEM: %d didn't repop due to low repop percent", pMobIndex->vnum));
+					if ( pObjIndex->repop_percent > number_percent() ) {
+						log_hd ( LOG_DEBUG, Format ( "ITEM: %d didn't repop due to low repop percent", pMobIndex->vnum ) );
 						break;
 					}
 
@@ -1715,7 +1695,7 @@ void reset_room ( RoomData *pRoom )
 					else
 					{ limit = pReset->arg2; }
 
-					if(pObjIndex->repop_percent > number_percent()) {
+					if ( pObjIndex->repop_percent > number_percent() ) {
 						break;
 					}
 
@@ -2130,11 +2110,11 @@ Item *create_object ( ItemData *pObjIndex, int level )
 	obj->weight		= pObjIndex->weight;
 	obj->condition  = pObjIndex->condition; // -- bug-fix
 
-	obj->requirements[SIZ_REQ]	= pObjIndex->requirements[SIZ_REQ];	
-	obj->requirements[STR_REQ]	= pObjIndex->requirements[STR_REQ];	
-	obj->requirements[DEX_REQ]	= pObjIndex->requirements[DEX_REQ];	
+	obj->requirements[SIZ_REQ]	= pObjIndex->requirements[SIZ_REQ];
+	obj->requirements[STR_REQ]	= pObjIndex->requirements[STR_REQ];
+	obj->requirements[DEX_REQ]	= pObjIndex->requirements[DEX_REQ];
 	obj->requirements[CON_REQ]	= pObjIndex->requirements[CON_REQ];
-	obj->requirements[INT_REQ]	= pObjIndex->requirements[INT_REQ];	
+	obj->requirements[INT_REQ]	= pObjIndex->requirements[INT_REQ];
 	obj->requirements[WIS_REQ]	= pObjIndex->requirements[WIS_REQ];
 
 	if ( level == -1 || pObjIndex->new_format )
@@ -2262,11 +2242,11 @@ void clone_object ( Item *parent, Item *clone )
 	clone->condition	= parent->condition;
 	clone->timer	= parent->timer;
 
-	clone->requirements[SIZ_REQ]	= parent->requirements[SIZ_REQ];	
-	clone->requirements[STR_REQ]	= parent->requirements[STR_REQ];	
-	clone->requirements[DEX_REQ]	= parent->requirements[DEX_REQ];	
+	clone->requirements[SIZ_REQ]	= parent->requirements[SIZ_REQ];
+	clone->requirements[STR_REQ]	= parent->requirements[STR_REQ];
+	clone->requirements[DEX_REQ]	= parent->requirements[DEX_REQ];
 	clone->requirements[CON_REQ]	= parent->requirements[CON_REQ];
-	clone->requirements[INT_REQ]	= parent->requirements[INT_REQ];	
+	clone->requirements[INT_REQ]	= parent->requirements[INT_REQ];
 	clone->requirements[WIS_REQ]	= parent->requirements[WIS_REQ];
 
 	for ( i = 0;  i < 5; i ++ )
@@ -2300,11 +2280,11 @@ void clear_char ( Creature *ch )
 	int i;
 
 	*ch				= ch_zero;
-	ch->name			= &str_empty[0];
-	ch->short_descr		= &str_empty[0];
-	ch->long_descr		= &str_empty[0];
-	ch->description		= &str_empty[0];
-	ch->prompt                  = &str_empty[0];
+	ch->name			= NULL;
+	ch->short_descr		= NULL;
+	ch->long_descr		= NULL;
+	ch->description		= NULL;
+	ch->prompt                  = NULL;
 	ch->logon			= current_time;
 	ch->lines			= PAGELEN;
 	for ( i = 0; i < 4; i++ )
@@ -2725,26 +2705,6 @@ char *assign_string ( const char *str )
 	return str_new;
 }
 
-
-
-/*
- * Free a string.
- * Null is legal here to simplify callers.
- * Read-only shared strings are not touched.
- */
-void freeSharedString ( const char *pstr )
-{
-	if ( pstr == NULL
-			||   pstr == &str_empty[0]
-			|| ( pstr >= string_space && pstr < top_string ) )
-	{ return; }
-
-	ACTUAL_PURGE ( pstr );
-	return;
-}
-
-
-
 DefineCommand ( cmd_areas )
 {
 	Zone *pArea1;
@@ -2802,9 +2762,6 @@ DefineCommand ( cmd_memory )
 	sprintf ( buf, "Shops   %5d\n\r", top_shop      );
 	writeBuffer ( buf, ch );
 
-	sprintf ( buf, "Strings %5d strings of %7d bytes (max %d).\n\r",
-			  nAllocString, sAllocString, MAX_STRING );
-	writeBuffer ( buf, ch );
 	return;
 }
 

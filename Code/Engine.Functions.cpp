@@ -140,7 +140,7 @@ const char *material_bit_name ( int bit )
 	if ( bit & MAT_PLATINUM ) { strcat ( buf, " platinum" ); }
 	if ( bit & MAT_TITANIUM ) { strcat ( buf, " titanium" ); }
 	if ( bit & MAT_ADAMANTANIUM ) { strcat ( buf, " adamantanium" ); }
-	if (bit & MAT_QUARTZ) { strcat (buf, " quartz"); }
+	if ( bit & MAT_QUARTZ ) { strcat ( buf, " quartz" ); }
 	return ( buf[0] != '\0' ) ? buf + 1 : "none";
 }
 

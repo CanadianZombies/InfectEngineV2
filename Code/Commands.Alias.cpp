@@ -48,7 +48,7 @@ void substitute_alias ( Socket *d, char *argument )
 	ch = d->original ? d->original : d->character;
 
 	/* check for prefix */
-	if ( ch->prefix[0] != '\0' && str_prefix ( "prefix", argument ) ) {
+	if ( !IS_NULLSTR ( ch->prefix ) && str_prefix ( "prefix", argument ) ) {
 		if ( strlen ( ch->prefix ) + strlen ( argument ) > MAX_INPUT_LENGTH )
 		{ writeBuffer ( "Line to long, prefix not processed.\r\n", ch ); }
 		else {
@@ -237,17 +237,5 @@ DefineCommand ( cmd_unalias )
 	{ writeBuffer ( "No alias of that name to remove.\n\r", ch ); }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+// -- EOF
 
