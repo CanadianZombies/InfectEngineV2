@@ -2626,6 +2626,46 @@ DefineCommand ( cmd_sell )
 	return;
 }
 
+DefineCommand(cmd_use)
+{
+	char arg[MAX_STRING_LENGTH];
+	
+	Item  *obj;	
+	int to_hp;
+	int to_mn;
+	int to_mv;
+	
+	argument = one_argument( argument, arg );
+	
+	if ( ( arg == '\0' ) )	
+	{
+		writeBuffer( "Syntax:  use [item name]\n\r", ch );
+		return;	
+	} 	
+	
+	if ( ( obj = get_obj_carry( ch, arg ) ) == NULL ) 
+	{
+		writeBuffer( "You do not have that item.\n\r", ch );
+		return;
+	}
+	
+	if ( obj->item_type != ITEM_SOURCE )
+	{
+		writeBuffer( "That isn't a source.\n\r", ch );
+		return;	
+	} 	
+	to_hp = obj->value[0];	
+	to_mn = obj->value[1];	
+	to_mv = obj->value[2]; 
+	
+	ch->max_hit  = ( to_hp + ch->max_hit );
+	ch->max_mana = ( to_mn + ch->max_mana );
+	ch->max_move = ( to_mv + ch->max_move ); 	
+	
+	writeBuffer(Format( "%s brightly glows green and disappears.\n\r", obj->short_descr), ch );		
+	extract_obj( obj );
+}
+
 DefineCommand ( cmd_value )
 {
 	char buf[MAX_STRING_LENGTH];
