@@ -318,7 +318,7 @@ const struct olc_cmd_type oedit_table[] = {
 	{   "material",     oedit_material  },  /* ROM */
 	{   "level",        oedit_level     },  /* ROM */
 	{   "condition",    oedit_condition },  /* ROM */
-
+	{   "repop",		oedit_repop },
 	{   "?",		show_help	},
 	{   "version",	show_version	},
 
@@ -365,7 +365,7 @@ const struct olc_cmd_type medit_table[] = {
 	{   "group",	medit_group	},  /* ROM */
 	{   "addmprog",	medit_addmprog  },  /* ROM */
 	{	"delmprog",	medit_delmprog	},  /* ROM */
-
+	{   "repop",		medit_repop },
 	{   "?",		show_help	},
 	{   "version",	show_version	},
 
