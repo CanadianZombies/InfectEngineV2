@@ -2134,6 +2134,13 @@ Item *create_object ( ItemData *pObjIndex, int level )
 	obj->weight		= pObjIndex->weight;
 	obj->condition  = pObjIndex->condition; // -- bug-fix
 
+	obj->requirements[SIZ_REQ]	= pObjIndex->requirements[SIZ_REQ];	
+	obj->requirements[STR_REQ]	= pObjIndex->requirements[STR_REQ];	
+	obj->requirements[DEX_REQ]	= pObjIndex->requirements[DEX_REQ];	
+	obj->requirements[CON_REQ]	= pObjIndex->requirements[CON_REQ];
+	obj->requirements[INT_REQ]	= pObjIndex->requirements[INT_REQ];	
+	obj->requirements[WIS_REQ]	= pObjIndex->requirements[WIS_REQ];
+
 	if ( level == -1 || pObjIndex->new_format )
 	{ obj->cost	= pObjIndex->cost; }
 	else
@@ -2258,6 +2265,13 @@ void clone_object ( Item *parent, Item *clone )
 	clone->level	= parent->level;
 	clone->condition	= parent->condition;
 	clone->timer	= parent->timer;
+
+	clone->requirements[SIZ_REQ]	= parent->requirements[SIZ_REQ];	
+	clone->requirements[STR_REQ]	= parent->requirements[STR_REQ];	
+	clone->requirements[DEX_REQ]	= parent->requirements[DEX_REQ];	
+	clone->requirements[CON_REQ]	= parent->requirements[CON_REQ];
+	clone->requirements[INT_REQ]	= parent->requirements[INT_REQ];	
+	clone->requirements[WIS_REQ]	= parent->requirements[WIS_REQ];
 
 	for ( i = 0;  i < 5; i ++ )
 	{ clone->value[i]	= parent->value[i]; }
