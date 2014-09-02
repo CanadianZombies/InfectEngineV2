@@ -1217,9 +1217,7 @@ void nanny ( Socket *d, char *argument )
 			break;
 
 		case CON_GET_OLD_PASSWORD:
-#if defined(unix)
 			write_to_buffer ( d, "\n\r", 2 );
-#endif
 
 			if ( strcmp ( crypt ( argument, ch->pcdata->pwd ), ch->pcdata->pwd ) ) {
 				write_to_buffer ( d, "Wrong password.\n\r", 0 );
@@ -1649,48 +1647,6 @@ void nanny ( Socket *d, char *argument )
 			d->connected	= CON_PLAYING;
 			reset_char ( ch );
 
-			if ( ch->level == 0 ) {
-
-				ch->perm_stat[archetype_table[ch->archetype].attr_prime] += 3;
-
-				ch->level	= 1;
-				ch->exp	= exp_per_level ( ch, ch->pcdata->points );
-				ch->hit	= ch->max_hit;
-				ch->mana	= ch->max_mana;
-				ch->move	= ch->max_move;
-				ch->train	 = 3;
-				ch->practice = 5;
-
-				set_title ( ch, ( char * ) "is attempting to survive level 1." );
-
-				cmd_function ( ch, &cmd_outfit, "" );
-				obj_to_char ( create_object ( get_obj_index ( OBJ_VNUM_MAP ), 0 ), ch );
-
-				char_to_room ( ch, get_room_index ( ROOM_VNUM_SCHOOL ) );
-				writeBuffer ( "\n\r", ch );
-				cmd_function ( ch, &cmd_help, "newbie info" );
-				writeBuffer ( "\n\r", ch );
-			} else if ( ch->in_room != NULL ) {
-				char_to_room ( ch, ch->in_room );
-			} else if ( IsStaff ( ch ) ) {
-				char_to_room ( ch, get_room_index ( ROOM_VNUM_CHAT ) );
-			} else {
-				char_to_room ( ch, get_room_index ( ROOM_VNUM_TEMPLE ) );
-			}
-
-			act ( "$n has entered the game.", ch, NULL, NULL, TO_ROOM );
-			cmd_function ( ch, &cmd_look, "auto" );
-
-			MXPSendTag ( d, "<VERSION>" );
-
-			wiznet ( "$N has left real life behind.", ch, NULL,
-					 WIZ_LOGINS, WIZ_SITES, get_trust ( ch ) );
-
-			if ( ch->pet != NULL ) {
-				char_to_room ( ch->pet, ch->in_room );
-				act ( "$n has entered the game.", ch->pet, NULL, NULL, TO_ROOM );
-			}
-
 			// -- increment our total connections.
 			connect_count++;
 
@@ -1707,6 +1663,56 @@ void nanny ( Socket *d, char *argument )
 				log_hd ( LOG_BASIC, Format ( "%s WAS THE %ld person to connect to %s!", ch->name, connect_count, "The Infected City" ) );
 				announce ( Format ( "**** %s IS THE %ld PERSON TO CONNECT TO THE INFECTED CITY!", ch->name, connect_count ) );
 				tweetStatement ( Format ( "%s was the %ld connection to %s", ch->name, connect_count, "The Infected City" ) );
+			}
+
+			MXPSendTag ( d, "<VERSION>" );
+
+			if ( ch->level == 0 ) {
+
+				ch->perm_stat[archetype_table[ch->archetype].attr_prime] += 3;
+
+				ch->level	= 1;
+				ch->exp	= exp_per_level ( ch, ch->pcdata->points );
+				ch->hit	= ch->max_hit;
+				ch->mana	= ch->max_mana;
+				ch->move	= ch->max_move;
+				ch->train	 = 3;
+				ch->practice = 5;
+
+				set_title ( ch, ( char * ) "is attempting to survive level 1." );
+
+				cmd_function ( ch, &cmd_outfit, "" );
+
+				tweetStatement(Format("New Player: %s is attempting to survive The Infected City", ch->name));
+
+				// -- teleport us to the school
+				char_to_room ( ch, get_room_index ( ROOM_VNUM_SCHOOL ) );
+
+				writeBuffer ( "\n\r", ch );
+				cmd_function ( ch, &cmd_help, "newbie info" );
+				writeBuffer ( "\n\r", ch );
+
+				wiznet ( "$N has left real life behind.", ch, NULL, WIZ_LOGINS, WIZ_SITES, get_trust ( ch ) );
+
+				// -- lets set up our character.
+				cmd_function ( ch, &cmd_config, "");
+				return;
+			} else if ( ch->in_room != NULL ) {
+				char_to_room ( ch, ch->in_room );
+			} else if ( IsStaff ( ch ) ) {
+				char_to_room ( ch, get_room_index ( ROOM_VNUM_CHAT ) );
+			} else {
+				char_to_room ( ch, get_room_index ( ROOM_VNUM_TEMPLE ) );
+			}
+
+			act ( "$n has entered The Infected City.", ch, NULL, NULL, TO_ROOM );
+			cmd_function ( ch, &cmd_look, "auto" );
+
+			wiznet ( "$N has left real life behind.", ch, NULL, WIZ_LOGINS, WIZ_SITES, get_trust ( ch ) );
+
+			if ( ch->pet != NULL ) {
+				char_to_room ( ch->pet, ch->in_room );
+				act ( "$n has entered the game.", ch->pet, NULL, NULL, TO_ROOM );
 			}
 
 			cmd_function ( ch, &cmd_unread, "" );
