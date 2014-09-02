@@ -42,7 +42,7 @@ const char *	where_name	[] = {
 	"\aw{\aYo\aw}\aY--=\ag[\aoRing Finger L\aB:    ",
 	"\aw{\aYo\aw}\aY--=\ag[\aoRing Finger R\aB:    ",
 	"\aw{\aYo\aw}\aY--=\ag[\aoNeck\aB:             ",
-	"\aw{\aYo\aw}\aY--=\ag[\aoNeck\aB:             "
+	"\aw{\aYo\aw}\aY--=\ag[\aoNeck\aB:             ",
 	"\aw{\aYo\aw}\aY--=\ag[\aoUpper Body\aB:       ",
 	"\aw{\aYo\aw}\aY--=\ag[\aoHeadwear\aB:         ",
 	"\aw{\aYo\aw}\aY--=\ag[\aoLegs\aB:             ",
@@ -83,25 +83,24 @@ char *format_obj_to_char ( Item *obj, Creature *ch, bool fShort )
 
 	buf[0] = '\0';
 
-	if ( ( fShort && ( obj->short_descr == NULL || obj->short_descr[0] == '\0' ) )
-			||  ( obj->description == NULL || obj->description[0] == '\0' ) )
+	if ( ( fShort && ( IS_NULLSTR ( obj->short_descr ) ) ) ||  ( IS_NULLSTR ( obj->description ) ) )
 	{ return buf; }
 
-	if ( IS_OBJ_STAT ( obj, ITEM_INVIS )     )   { strcat ( buf, "(Invis) "     ); }
+	if ( IS_OBJ_STAT ( obj, ITEM_INVIS )     )   { strcat ( buf, "\ac(\aWInvis\ac) "     ); }
 	if ( IS_AFFECTED ( ch, AFF_DETECT_EVIL )
-			&& IS_OBJ_STAT ( obj, ITEM_EVIL )   )   { strcat ( buf, "(Red Aura) "  ); }
+			&& IS_OBJ_STAT ( obj, ITEM_EVIL )   )   { strcat ( buf, "\ac(\aRRed Aura\ac) "  ); }
 	if ( IS_AFFECTED ( ch, AFF_DETECT_GOOD )
-			&&  IS_OBJ_STAT ( obj, ITEM_BLESS ) )	      { strcat ( buf, "(Blue Aura) "	); }
+			&&  IS_OBJ_STAT ( obj, ITEM_BLESS ) )	      { strcat ( buf, "\ac(\aBBlue Aura\ac) "	); }
 	if ( IS_AFFECTED ( ch, AFF_DETECT_MAGIC )
-			&& IS_OBJ_STAT ( obj, ITEM_MAGIC )  )   { strcat ( buf, "(Magical) "   ); }
-	if ( IS_OBJ_STAT ( obj, ITEM_GLOW )      )   { strcat ( buf, "(Glowing) "   ); }
-	if ( IS_OBJ_STAT ( obj, ITEM_HUM )       )   { strcat ( buf, "(Humming) "   ); }
+			&& IS_OBJ_STAT ( obj, ITEM_MAGIC )  )   { strcat ( buf, "\ac(\aMMagical\ac) "   ); }
+	if ( IS_OBJ_STAT ( obj, ITEM_GLOW )      )   { strcat ( buf, "\ac(\aYGlowing\ac) "   ); }
+	if ( IS_OBJ_STAT ( obj, ITEM_HUM )       )   { strcat ( buf, "\ac(\aOHumming\ac) "   ); }
 
 	if ( fShort ) {
-		if ( obj->short_descr != NULL )
-		{ strcat ( buf, obj->short_descr ); }
+		if ( !IS_NULLSTR ( obj->short_descr ) )
+		{ strcat ( buf, Format ( "\aW%s\an", obj->short_descr ) ); }
 	} else {
-		if ( obj->description != NULL )
+		if ( !IS_NULLSTR ( obj->description ) )
 		{ strcat ( buf, obj->description ); }
 	}
 
@@ -224,32 +223,35 @@ void show_char_to_char_0 ( Creature *victim, Creature *ch )
 
 	buf[0] = '\0';
 
-	if ( IS_SET ( victim->comm, COMM_AFK	  )   ) { strcat ( buf, "[AFK] "	     ); }
-	if ( IS_AFFECTED ( victim, AFF_INVISIBLE )   ) { strcat ( buf, "(Invis) "      ); }
-	if ( victim->invis_level >= LEVEL_HERO    ) { strcat ( buf, "(Wizi) "	     ); }
-	if ( IS_AFFECTED ( victim, AFF_HIDE )        ) { strcat ( buf, "(Hide) "       ); }
-	if ( IS_AFFECTED ( victim, AFF_CHARM )       ) { strcat ( buf, "(Charmed) "    ); }
-	if ( IS_AFFECTED ( victim, AFF_PASS_DOOR )   ) { strcat ( buf, "(Translucent) " ); }
-	if ( IS_AFFECTED ( victim, AFF_FAERIE_FIRE ) ) { strcat ( buf, "(Pink Aura) "  ); }
+	if ( IsStaff ( ch ) && !IS_NPC ( victim ) && victim->desc == NULL ) { strcat ( buf, "\ac{\aWLINKDEAD\ac} " ); }
+	if ( IS_SET ( victim->comm, COMM_AFK	  )   ) { strcat ( buf, "\ac[\aBAFK\ac] "	     ); }
+	if ( IS_AFFECTED ( victim, AFF_INVISIBLE )   ) { strcat ( buf, "\ac(\aCInvis\ac) "      ); }
+	if ( victim->invis_level >= LEVEL_HERO    ) { strcat ( buf, "\ac(\aCWizi\ac) "	     ); }
+	if ( IS_AFFECTED ( victim, AFF_HIDE )        ) { strcat ( buf, "\ac(\aoHide\ac) "       ); }
+	if ( IS_AFFECTED ( victim, AFF_CHARM )       ) { strcat ( buf, "\ac(\aOCharmed\ac) "    ); }
+	if ( IS_AFFECTED ( victim, AFF_PASS_DOOR )   ) { strcat ( buf, "\ac(\aWTranslucent\ac) " ); }
+	if ( IS_AFFECTED ( victim, AFF_FAERIE_FIRE ) ) { strcat ( buf, "\ac(\aPPink Aura\ac) "  ); }
 	if ( IS_EVIL ( victim )
-			&&   IS_AFFECTED ( ch, AFF_DETECT_EVIL )     ) { strcat ( buf, "(Red Aura) "   ); }
+			&&   IS_AFFECTED ( ch, AFF_DETECT_EVIL )     ) { strcat ( buf, "\ac(\aRRed Aura\ac) "   ); }
 	if ( IS_GOOD ( victim )
-			&&   IS_AFFECTED ( ch, AFF_DETECT_GOOD )     ) { strcat ( buf, "(Golden Aura) " ); }
-	if ( IS_AFFECTED ( victim, AFF_SANCTUARY )   ) { strcat ( buf, "(White Aura) " ); }
+			&&   IS_AFFECTED ( ch, AFF_DETECT_GOOD )     ) { strcat ( buf, "\ac(\aYGolden Aura\ac) " ); }
+	if ( IS_AFFECTED ( victim, AFF_SANCTUARY )   ) { strcat ( buf, "\ac(\aWWhite Aura\ac) " ); }
 	if ( !IS_NPC ( victim ) && IS_SET ( victim->act, PLR_KILLER ) )
-	{ strcat ( buf, "(KILLER) "     ); }
+	{ strcat ( buf, "\ac(\a[F111]KILLER\ac) "     ); }
 	if ( !IS_NPC ( victim ) && IS_SET ( victim->act, PLR_THIEF  ) )
-	{ strcat ( buf, "(THIEF) "      ); }
-	if ( victim->position == victim->start_pos && victim->long_descr[0] != '\0' ) {
-		strcat ( buf, victim->long_descr );
+	{ strcat ( buf, "\ac(\a[F211]THIEF\ac) "      ); }
+
+	if ( victim->position == victim->start_pos && !IS_NULLSTR ( victim->long_descr ) ) {
+		strcat ( buf, Format ( "\an%s\an", victim->long_descr ) );
 		writeBuffer ( buf, ch );
 		return;
 	}
 
-	strcat ( buf, PERS ( victim, ch ) );
+	strcat ( buf, Format ( "\an%s\an", PERS ( victim, ch ) ) );
+
 	if ( !IS_NPC ( victim ) && !IS_SET ( ch->comm, COMM_BRIEF )
 			&&   victim->position == POS_STANDING && ch->on == NULL )
-	{ strcat ( buf, victim->pcdata->title ); }
+	{ strcat ( buf, Format ( "%s\an", victim->pcdata->title ) ); }
 
 	switch ( victim->position ) {
 		case POS_DEAD:
@@ -526,7 +528,7 @@ DefineCommand ( cmd_socials )
 
 	col = 0;
 
-	for ( iSocial = 0; social_table[iSocial].name[0] != '\0'; iSocial++ ) {
+	for ( iSocial = 0; !IS_NULLSTR ( social_table[iSocial].name ); iSocial++ ) {
 		snprintf ( buf, sizeof ( buf ), "%-12s", social_table[iSocial].name );
 		writeBuffer ( buf, ch );
 		if ( ++col % 6 == 0 )
@@ -562,171 +564,135 @@ DefineCommand ( cmd_story )
 	cmd_function ( ch, &cmd_help, "story" );
 }
 
-/* RT this following section holds all the auto commands from ROM, as well as
-   replacements for config */
-
-DefineCommand ( cmd_autolist )
+DefineCommand ( cmd_config )
 {
-	/* lists most player flags */
+	if ( IS_NPC ( ch ) ) { return; }
+
+	if ( ch->queries.queryfunc != cmd_config ) {
+		ch->queries.queryfunc = cmd_config;
+		cmd = 0;
+	}
+
+	switch ( cmd ) {
+		default:
+		case 0:
+			ch->queries.queryfunc = cmd_config;
+			ch->queries.querycommand = 1;
+			strcpy ( ch->queries.queryprompt, "Do you want to automatically assist others? {Y/n}: " );
+			break;
+		case 1:
+			if ( argument[0] == 'y' || argument[0] == 'Y' ) {
+				SET_BIT ( ch->act, PLR_AUTOASSIST );
+			} else {
+				REMOVE_BIT ( ch->act, PLR_AUTOASSIST );
+			}
+			ch->queries.querycommand = 2;
+			strcpy ( ch->queries.queryprompt, "When you look do you want to see the exits from your room? {Y/n}: " );
+			break;
+		case 2:
+			if ( argument[0] == 'y' || argument[0] == 'Y' ) {
+				SET_BIT ( ch->act, PLR_AUTOEXIT );
+			} else {
+				REMOVE_BIT ( ch->act, PLR_AUTOEXIT );
+			}
+			ch->queries.querycommand = 3;
+			strcpy ( ch->queries.queryprompt, "Do you want to loot gold automatically from corpses? {Y/n}: " );
+			break;
+		case 3:
+			if ( argument[0] == 'y' || argument[0] == 'Y' ) {
+				SET_BIT ( ch->act, PLR_AUTOGOLD );
+			} else {
+				REMOVE_BIT ( ch->act, PLR_AUTOGOLD );
+			}
+			ch->queries.querycommand = 4;
+			strcpy ( ch->queries.queryprompt, "Do you want to automatically loot items from corpses? {Y/n}: " );
+			break;
+		case 4:
+			if ( argument[0] == 'y' || argument[0] == 'Y' ) {
+				SET_BIT ( ch->act, PLR_AUTOLOOT );
+			} else {
+				REMOVE_BIT ( ch->act, PLR_AUTOLOOT );
+			}
+			ch->queries.querycommand = 5;
+			strcpy ( ch->queries.queryprompt, "Do you want to sacrifice corpses automatically? {Y/n}: " );
+			break;
+		case 5:
+			if ( argument[0] == 'y' || argument[0] == 'Y' ) {
+				SET_BIT ( ch->act, PLR_AUTOSAC );
+			} else {
+				REMOVE_BIT ( ch->act, PLR_AUTOSAC );
+			}
+			ch->queries.querycommand = 6;
+			strcpy ( ch->queries.queryprompt, "Do you want to split your earnings automatically? {Y/n}: " );
+			break;
+		case 6:
+			if ( argument[0] == 'y' || argument[0] == 'Y' ) {
+				SET_BIT ( ch->act, PLR_AUTOSPLIT );
+			} else {
+				REMOVE_BIT ( ch->act, PLR_AUTOSPLIT );
+			}
+			ch->queries.querycommand = 7;
+			strcpy ( ch->queries.queryprompt, "Do you want to use compact display? {Y/n}: " );
+			break;
+		case 7:
+			if ( argument[0] == 'y' || argument[0] == 'Y' ) {
+				SET_BIT ( ch->comm, COMM_COMPACT );
+			} else {
+				REMOVE_BIT ( ch->comm, COMM_COMPACT );
+			}
+			ch->queries.querycommand = 8;
+			strcpy ( ch->queries.queryprompt, "Do you want to see your prompt? {Y/n}: " );
+			break;
+		case 8:
+			if ( argument[0] == 'y' || argument[0] == 'Y' ) {
+				SET_BIT ( ch->comm, COMM_PROMPT );
+			} else {
+				REMOVE_BIT ( ch->comm, COMM_PROMPT );
+			}
+			ch->queries.querycommand = 9;
+			strcpy ( ch->queries.queryprompt, "Do you want to automatically combine items into one display? {Y/n}: " );
+			break;
+		case 9:
+			if ( argument[0] == 'y' || argument[0] == 'Y' ) {
+				SET_BIT ( ch->comm, COMM_COMBINE );
+			} else {
+				REMOVE_BIT ( ch->comm, COMM_COMBINE );
+			}
+			ch->queries.queryfunc = NULL;
+			ch->queries.querycommand = 0;
+
+			// -- display our config status automatically.
+			cmd_function ( ch, &cmd_configstatus, "" );
+			break;
+	}
+
+}
+
+DefineCommand ( cmd_configstatus )
+{
 	if ( IS_NPC ( ch ) )
 	{ return; }
 
-	writeBuffer ( "   action     status\n\r", ch );
-	writeBuffer ( "---------------------\n\r", ch );
-
-	writeBuffer ( "autoassist     ", ch );
-	if ( IS_SET ( ch->act, PLR_AUTOASSIST ) )
-	{ writeBuffer ( "ON\n\r", ch ); }
-	else
-	{ writeBuffer ( "OFF\n\r", ch ); }
-
-	writeBuffer ( "autoexit       ", ch );
-	if ( IS_SET ( ch->act, PLR_AUTOEXIT ) )
-	{ writeBuffer ( "ON\n\r", ch ); }
-	else
-	{ writeBuffer ( "OFF\n\r", ch ); }
-
-	writeBuffer ( "autogold       ", ch );
-	if ( IS_SET ( ch->act, PLR_AUTOGOLD ) )
-	{ writeBuffer ( "ON\n\r", ch ); }
-	else
-	{ writeBuffer ( "OFF\n\r", ch ); }
-
-	writeBuffer ( "autoloot       ", ch );
-	if ( IS_SET ( ch->act, PLR_AUTOLOOT ) )
-	{ writeBuffer ( "ON\n\r", ch ); }
-	else
-	{ writeBuffer ( "OFF\n\r", ch ); }
-
-	writeBuffer ( "autosac        ", ch );
-	if ( IS_SET ( ch->act, PLR_AUTOSAC ) )
-	{ writeBuffer ( "ON\n\r", ch ); }
-	else
-	{ writeBuffer ( "OFF\n\r", ch ); }
-
-	writeBuffer ( "autosplit      ", ch );
-	if ( IS_SET ( ch->act, PLR_AUTOSPLIT ) )
-	{ writeBuffer ( "ON\n\r", ch ); }
-	else
-	{ writeBuffer ( "OFF\n\r", ch ); }
-
-	writeBuffer ( "compact mode   ", ch );
-	if ( IS_SET ( ch->comm, COMM_COMPACT ) )
-	{ writeBuffer ( "ON\n\r", ch ); }
-	else
-	{ writeBuffer ( "OFF\n\r", ch ); }
-
-	writeBuffer ( "prompt         ", ch );
-	if ( IS_SET ( ch->comm, COMM_PROMPT ) )
-	{ writeBuffer ( "ON\n\r", ch ); }
-	else
-	{ writeBuffer ( "OFF\n\r", ch ); }
-
-	writeBuffer ( "combine items  ", ch );
-	if ( IS_SET ( ch->comm, COMM_COMBINE ) )
-	{ writeBuffer ( "ON\n\r", ch ); }
-	else
-	{ writeBuffer ( "OFF\n\r", ch ); }
-
-	if ( !IS_SET ( ch->act, PLR_CANLOOT ) )
-	{ writeBuffer ( "Your corpse is safe from thieves.\n\r", ch ); }
-	else
-	{ writeBuffer ( "Your corpse may be looted.\n\r", ch ); }
-
-	if ( IS_SET ( ch->act, PLR_NOSUMMON ) )
-	{ writeBuffer ( "You cannot be summoned.\n\r", ch ); }
-	else
-	{ writeBuffer ( "You can be summoned.\n\r", ch ); }
+	writeBuffer ( "\r\n\r\n\acYou are configured as follows: \r\n", ch );
+	writeBuffer ( Format ( "\awYou %s\aw assist players.\r\n", IS_SET ( ch->act, PLR_AUTOASSIST ) ? "\aYWILL" : "\aRWILL NOT" ), ch );
+	writeBuffer ( Format ( "\awYou %s\aw see exits.\r\n", IS_SET ( ch->act, PLR_AUTOEXIT ) ? "\aYWILL" : "\aRWILL NOT" ), ch );
+	writeBuffer ( Format ( "\awYou %s\aw loot gold from corpses.\r\n", IS_SET ( ch->act, PLR_AUTOGOLD ) ? "\aYWILL" : "\aRWILL NOT" ), ch );
+	writeBuffer ( Format ( "\awYou %s\aw loot items from corpses.\r\n", IS_SET ( ch->act, PLR_AUTOLOOT ) ? "\aYWILL" : "\aRWILL NOT" ), ch );
+	writeBuffer ( Format ( "\awYou %s\aw sacrifice corpses.\r\n", IS_SET ( ch->act, PLR_AUTOSAC ) ? "\aYWILL" : "\aRWILL NOT" ), ch );
+	writeBuffer ( Format ( "\awYou %s\aw automatically share your split of the looted gold.\r\n", IS_SET ( ch->act, PLR_AUTOSPLIT ) ? "\aYWILL" : "\aRWILL NOT" ), ch );
+	writeBuffer ( Format ( "\awYou %s\aw see things in compact mode.\r\n", IS_SET ( ch->comm, COMM_COMPACT ) ? "\aYWILL" : "\aRWILL NOT" ), ch );
+	writeBuffer ( Format ( "\awYou %s\aw see your prompt.\r\n", IS_SET ( ch->comm, COMM_PROMPT ) ? "\aYWILL" : "\aRWILL NOT" ), ch );
+	writeBuffer ( Format ( "\awYou %s\aw see your iventory items in combined mode.\r\n", IS_SET ( ch->comm, COMM_COMBINE ) ? "\aYWILL" : "\aRWILL NOT" ), ch );
 
 	if ( IS_SET ( ch->act, PLR_NOFOLLOW ) )
-	{ writeBuffer ( "You do not welcome followers.\n\r", ch ); }
+	{ writeBuffer ( "\aRYou do not welcome followers.\n\r", ch ); }
 	else
-	{ writeBuffer ( "You accept followers.\n\r", ch ); }
+	{ writeBuffer ( "\aYYou accept followers.\n\r", ch ); }
+
+	writeBuffer ( "\an", ch );
+	return;
 }
 
-DefineCommand ( cmd_autoassist )
-{
-	if ( IS_NPC ( ch ) )
-	{ return; }
-
-	if ( IS_SET ( ch->act, PLR_AUTOASSIST ) ) {
-		writeBuffer ( "Autoassist removed.\n\r", ch );
-		REMOVE_BIT ( ch->act, PLR_AUTOASSIST );
-	} else {
-		writeBuffer ( "You will now assist when needed.\n\r", ch );
-		SET_BIT ( ch->act, PLR_AUTOASSIST );
-	}
-}
-
-DefineCommand ( cmd_autoexit )
-{
-	if ( IS_NPC ( ch ) )
-	{ return; }
-
-	if ( IS_SET ( ch->act, PLR_AUTOEXIT ) ) {
-		writeBuffer ( "Exits will no longer be displayed.\n\r", ch );
-		REMOVE_BIT ( ch->act, PLR_AUTOEXIT );
-	} else {
-		writeBuffer ( "Exits will now be displayed.\n\r", ch );
-		SET_BIT ( ch->act, PLR_AUTOEXIT );
-	}
-}
-
-DefineCommand ( cmd_autogold )
-{
-	if ( IS_NPC ( ch ) )
-	{ return; }
-
-	if ( IS_SET ( ch->act, PLR_AUTOGOLD ) ) {
-		writeBuffer ( "Autogold removed.\n\r", ch );
-		REMOVE_BIT ( ch->act, PLR_AUTOGOLD );
-	} else {
-		writeBuffer ( "Automatic gold looting set.\n\r", ch );
-		SET_BIT ( ch->act, PLR_AUTOGOLD );
-	}
-}
-
-DefineCommand ( cmd_autoloot )
-{
-	if ( IS_NPC ( ch ) )
-	{ return; }
-
-	if ( IS_SET ( ch->act, PLR_AUTOLOOT ) ) {
-		writeBuffer ( "Autolooting removed.\n\r", ch );
-		REMOVE_BIT ( ch->act, PLR_AUTOLOOT );
-	} else {
-		writeBuffer ( "Automatic corpse looting set.\n\r", ch );
-		SET_BIT ( ch->act, PLR_AUTOLOOT );
-	}
-}
-
-DefineCommand ( cmd_autosac )
-{
-	if ( IS_NPC ( ch ) )
-	{ return; }
-
-	if ( IS_SET ( ch->act, PLR_AUTOSAC ) ) {
-		writeBuffer ( "Autosacrificing removed.\n\r", ch );
-		REMOVE_BIT ( ch->act, PLR_AUTOSAC );
-	} else {
-		writeBuffer ( "Automatic corpse sacrificing set.\n\r", ch );
-		SET_BIT ( ch->act, PLR_AUTOSAC );
-	}
-}
-
-DefineCommand ( cmd_autosplit )
-{
-	if ( IS_NPC ( ch ) )
-	{ return; }
-
-	if ( IS_SET ( ch->act, PLR_AUTOSPLIT ) ) {
-		writeBuffer ( "Autosplitting removed.\n\r", ch );
-		REMOVE_BIT ( ch->act, PLR_AUTOSPLIT );
-	} else {
-		writeBuffer ( "Automatic gold splitting set.\n\r", ch );
-		SET_BIT ( ch->act, PLR_AUTOSPLIT );
-	}
-}
 
 DefineCommand ( cmd_brief )
 {
@@ -736,17 +702,6 @@ DefineCommand ( cmd_brief )
 	} else {
 		writeBuffer ( "Short descriptions activated.\n\r", ch );
 		SET_BIT ( ch->comm, COMM_BRIEF );
-	}
-}
-
-DefineCommand ( cmd_compact )
-{
-	if ( IS_SET ( ch->comm, COMM_COMPACT ) ) {
-		writeBuffer ( "Compact mode removed.\n\r", ch );
-		REMOVE_BIT ( ch->comm, COMM_COMPACT );
-	} else {
-		writeBuffer ( "Compact mode set.\n\r", ch );
-		SET_BIT ( ch->comm, COMM_COMPACT );
 	}
 }
 
@@ -796,31 +751,6 @@ DefineCommand ( cmd_prompt )
 	return;
 }
 
-DefineCommand ( cmd_combine )
-{
-	if ( IS_SET ( ch->comm, COMM_COMBINE ) ) {
-		writeBuffer ( "Long inventory selected.\n\r", ch );
-		REMOVE_BIT ( ch->comm, COMM_COMBINE );
-	} else {
-		writeBuffer ( "Combined inventory selected.\n\r", ch );
-		SET_BIT ( ch->comm, COMM_COMBINE );
-	}
-}
-
-DefineCommand ( cmd_noloot )
-{
-	if ( IS_NPC ( ch ) )
-	{ return; }
-
-	if ( IS_SET ( ch->act, PLR_CANLOOT ) ) {
-		writeBuffer ( "Your corpse is now safe from thieves.\n\r", ch );
-		REMOVE_BIT ( ch->act, PLR_CANLOOT );
-	} else {
-		writeBuffer ( "Your corpse may now be looted.\n\r", ch );
-		SET_BIT ( ch->act, PLR_CANLOOT );
-	}
-}
-
 DefineCommand ( cmd_nofollow )
 {
 	if ( IS_NPC ( ch ) )
@@ -833,27 +763,6 @@ DefineCommand ( cmd_nofollow )
 		writeBuffer ( "You no longer accept followers.\n\r", ch );
 		SET_BIT ( ch->act, PLR_NOFOLLOW );
 		die_follower ( ch );
-	}
-}
-
-DefineCommand ( cmd_nosummon )
-{
-	if ( IS_NPC ( ch ) ) {
-		if ( IS_SET ( ch->imm_flags, IMM_SUMMON ) ) {
-			writeBuffer ( "You are no longer immune to summon.\n\r", ch );
-			REMOVE_BIT ( ch->imm_flags, IMM_SUMMON );
-		} else {
-			writeBuffer ( "You are now immune to summoning.\n\r", ch );
-			SET_BIT ( ch->imm_flags, IMM_SUMMON );
-		}
-	} else {
-		if ( IS_SET ( ch->act, PLR_NOSUMMON ) ) {
-			writeBuffer ( "You are no longer immune to summon.\n\r", ch );
-			REMOVE_BIT ( ch->act, PLR_NOSUMMON );
-		} else {
-			writeBuffer ( "You are now immune to summoning.\n\r", ch );
-			SET_BIT ( ch->act, PLR_NOSUMMON );
-		}
 	}
 }
 
@@ -1474,12 +1383,12 @@ DefineCommand ( cmd_affects )
 	if ( ch->affected != NULL ) {
 		writeBuffer ( "You are affected by the following spells:\n\r", ch );
 		for ( paf = ch->affected; paf != NULL; paf = paf->next ) {
-			if ( paf_last != NULL && paf->type == paf_last->type )
+			if ( paf_last != NULL && paf->type == paf_last->type ) {
 				if ( ch->level >= 20 )
 				{ sprintf ( buf, "                      " ); }
 				else
 				{ continue; }
-			else
+			} else
 			{ sprintf ( buf, "Spell: %-15s", skill_table[paf->type].name ); }
 
 			writeBuffer ( buf, ch );
@@ -1651,7 +1560,7 @@ DefineCommand ( cmd_colours )
 	//	writeBuffer ( "To turn colour on/off type 'colours [on|off]'\n\r\n\r" );
 
 	writeBuffer ( "Ansi Colours: \n\r", ch );
-	writeBuffer ( "^rr ^RR ^bb ^BB ^cc ^CC ^gg ^GG ^yy ^YY ^oo ^OO ^mm ^MM ^ww ^WW ^n\an\n\r", ch );
+	writeBuffer ( "^rr ^RR ^bb ^BB ^cc ^CC ^gg ^GG ^yy ^YY ^oo ^OO ^mm ^MM ^ww ^WW ^pp ^PP ^n\an\n\r", ch );
 
 	writeBuffer ( "\n\r256 Colour Support: \n\r", ch );
 	for ( r = 0; r <= 5; r++ ) {

@@ -135,6 +135,9 @@ const struct staff_cmd_type staff_cmd_table[] = {
 	{ "smote",	cmd_smote,	CR_RELATIONS,	LOG_NORMAL, 1, "Exactly like pmote just requires you to enter your name" },
 	{ "prefi",	cmd_prefi,	CR_STAFF,	LOG_NORMAL, 0, "" },
 	{ "prefix",	cmd_prefix,	CR_STAFF,	LOG_NORMAL, 1, "Assign a prefix to staffaid" },
+	{ "noloot",		cmd_noloot,	CR_STAFF,  LOG_NORMAL, 1, "Prevent your corpse from being looted" },
+	{ "nosummon",	cmd_nosummon,	CR_STAFF, LOG_NORMAL, 1, "Prevent players from summoning you to them" },
+
 	{ "mpdump",	cmd_mpdump,	CR_CODER,	LOG_NEVER,  1, "Dump mudprog data to flatfile" },
 	{ "mpstat",	cmd_mpstat,	CR_CODER,	LOG_NEVER,  1, "Get the status of current mudprogs" },
 	{ "wizhelp",	cmd_wizhelp,	CR_STAFF,	LOG_NORMAL, 1, "See a list of staff commands" },
@@ -214,23 +217,14 @@ const	struct	cmd_type	cmd_table	[] = {
 
 	{ "alia",		cmd_alia,	POS_DEAD,	 0,  LOG_NORMAL, 0, CAT_CONFIG },
 	{ "alias",		cmd_alias,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_CONFIG },
-	{ "autolist",	cmd_autolist,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_CONFIG },
-	{ "autoassist",	cmd_autoassist,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
-	{ "autoexit",	cmd_autoexit,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
-	{ "autogold",	cmd_autogold,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
-	{ "autoloot",	cmd_autoloot,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
-	{ "autosac",	cmd_autosac,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
-	{ "autosplit",	cmd_autosplit,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
 	{ "brief",		cmd_brief,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
-	{ "combine",	cmd_combine,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
-	{ "compact",	cmd_compact,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "config",   cmd_config,   POS_DEAD,  0,  LOG_NORMAL, 1, CAT_CONFIG },
+	{ "configstatus",	cmd_configstatus,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_CONFIG },
 	{ "colours",	cmd_colours,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
 	{ "description",	cmd_description,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_CONFIG },
 	{ "delet",		cmd_delet,	POS_DEAD,	 0,  LOG_ALWAYS, 0, CAT_CONFIG },
 	{ "delete",		cmd_delete,	POS_STANDING,	 0,  LOG_ALWAYS, 1, CAT_CONFIG },
 	{ "nofollow",	cmd_nofollow,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
-	{ "noloot",		cmd_noloot,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
-	{ "nosummon",	cmd_nosummon,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
 	{ "outfit",		cmd_outfit,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_CONFIG },
 	{ "password",	cmd_password,	POS_DEAD,	 0,  LOG_NEVER,  1, CAT_CONFIG },
 	{ "prompt",		cmd_prompt,	POS_DEAD,        0,  LOG_NORMAL, 1, CAT_CONFIG },
@@ -550,7 +544,7 @@ void interpret ( Creature *ch, const char *argument )
 
 	// -- in case one of our commands throws an exception, we want to be careful and log what we can!
 	try {
-		( *cmd_table[cmd].cmd_fun ) ( ch, command, argument, cmd );
+		( *cmd_table[cmd].cmd_fun ) ( ch, command, argument, 0 ); // -- we use 0 instead of cmd as cmd is the actual command number.
 	} catch ( ... ) {
 		CATCH ( false );
 	}

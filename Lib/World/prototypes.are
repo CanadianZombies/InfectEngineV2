@@ -22,7 +22,8 @@ B 0 ABU Z 400 0
 8 8 8 10
 FH 0 C 0
 stand stand either 0
-AGV ACDEFHJKQUV tiny #2
+AGV ACDEFHJKQUV tiny L 0
+#2
 cityguard guard~
 the cityguard~
 A cityguard stands here.
@@ -35,7 +36,8 @@ human~
 0 0 0 8
 CDEKLTU 0 C 0
 stand stand either 150
-AHMV ABCDEFGHIJK medium #3
+AHMV ABCDEFGHIJK medium L 0
+#3
 oldstyle undead guardian vampire~
 The guardian vampire~
 A vampire is here hiding his face from your light source.
@@ -49,7 +51,8 @@ human~
 -8 -8 -8 6
 EFNU 0 0 0
 stand stand male 750
-AHMV ABCDEFGHIJK medium #4
+AHMV ABCDEFGHIJK medium L 0
+#4
 patrolman patrol man~
 a patrolman~
 A patrolman is trying to keep the peace.
@@ -62,7 +65,8 @@ human~
 3 3 3 9
 CKLU 0 0 0
 stand stand male 350
-AHMV ABCDEFGHIJK medium #0
+AHMV ABCDEFGHIJK medium L 0
+#0
 
 
 
@@ -74,6 +78,8 @@ One miserable silver coin.~
 money 0 A
 0 A 0 0 0 0
 0 10 0 P
+R 0 0 0 0 0 0
+L 0
 #2
 coin gold gcash~
 a gold coin~
@@ -81,6 +87,8 @@ One valuable gold coin.~
 money 0 A
 0 0 A 0 0 0
 0 10 0 P
+R 0 0 0 0 0 0
+L 0
 #3
 coins gold gcash~
 %d gold coins~
@@ -88,6 +96,8 @@ A pile of gold coins.~
 money 0 A
 0 0 0 0 0 0
 0 10 0 P
+R 0 0 0 0 0 0
+L 0
 #4
 coins silver gcash~
 %d silver coins~
@@ -95,6 +105,8 @@ A pile of silver coins.~
 money 0 A
 0 0 0 0 0 0
 0 10 0 P
+R 0 0 0 0 0 0
+L 0
 #5
 coins silver gold gcash~
 %d silver coins and %d gold coins~
@@ -102,6 +114,8 @@ A pile of coins.~
 money 0 A
 0 0 0 0 0 0
 0 10 0 P
+R 0 0 0 0 0 0
+L 0
 #10
 corpse~
 the corpse of %s~
@@ -109,6 +123,8 @@ The corpse of %s is lying here.~
 npc_corpse 0 A
 0 0 0 0 A 0
 0 1000 0 D
+R 0 0 0 0 0 0
+L 0
 #11
 corpse~
 the corpse of %s~
@@ -116,6 +132,8 @@ The corpse of %s is lying here.~
 pc_corpse O A
 0 0 0 0 A 0
 0 1000 0 D
+R 0 0 0 0 0 0
+L 0
 #12
 head~
 the head of %s~
@@ -123,6 +141,8 @@ The severed head of %s is lying here.~
 trash 0 A
 0 0 0 0 0 0
 0 50 0 D
+R 0 0 0 0 0 0
+L 0
 #13
 heart~
 the heart of %s~
@@ -130,6 +150,8 @@ The torn-out heart of %s is lying here.~
 food 0 A
 0 E E 0 0 0
 0 20 0 D
+R 0 0 0 0 0 0
+L 0
 #14
 arm~
 the arm of %s~
@@ -137,6 +159,8 @@ The sliced-off arm of %s is lying here.~
 food 0 A
 0 CE CE 0 0 0
 0 50 0 D
+R 0 0 0 0 0 0
+L 0
 #15
 leg~
 the leg of %s~
@@ -144,6 +168,8 @@ The sliced-off leg of %s is lying here.~
 food 0 A
 0 CE CE 0 0 0
 0 50 0 D
+R 0 0 0 0 0 0
+L 0
 #16
 guts entrails~
 the guts of %s~
@@ -151,6 +177,8 @@ A steaming pile of %s's entrails is lying here.~
 food 0 A
 0 AC AC 0 A 0
 0 20 0 D
+R 0 0 0 0 0 0
+L 0
 #17
 brains brain~
 the brains of %s~
@@ -158,6 +186,8 @@ The splattered brains of %s are lying here.~
 food 0 A
 0 BD BD 0 0 0
 0 20 0 D
+R 0 0 0 0 0 0
+L 0
 #20
 mushroom~
 a Magic Mushroom~
@@ -165,6 +195,8 @@ A delicious magic mushroom is here.~
 food 0 A
 0 D D 0 0 0
 0 10 0 P
+R 0 0 0 0 0 0
+L 0
 #21
 ball light~
 a bright ball of light~
@@ -172,6 +204,8 @@ A bright ball of light shimmers in the air.~
 light A A
 0 0 0 ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef 0 0
 0 0 0 P
+R 0 0 0 0 0 0
+L 0
 #22
 spring~
 a magical spring~
@@ -179,6 +213,8 @@ A magical spring flows from the ground here.~
 fountain G 0
 0 100000 100000 'water' 0 0
 0 0 0 P
+R 0 0 0 0 0 0
+L 0
 #23
 disc disk floating black~
 a floating disc~
@@ -186,6 +222,8 @@ A floating black disc hangs in the air.~
 container GMPUYZ AQ
 0 0 E 0 0 0
 0 0 0 P
+R 0 0 0 0 0 0
+L 0
 #25
 gate portal~
 a shimmering gate~
@@ -193,6 +231,8 @@ A shimmering black gate rises from the ground, leading to parts unknown.~
 portal GOT 0
 0 0 0 0 0 0
 0 0 0 P
+R 0 0 0 0 0 0
+L 0
 #30
 dummy object~
 a dummy object~
@@ -200,6 +240,8 @@ Dummy object is used for loading non-existent objects~
 trash 0 0
 0 0 0 0 0 0
 0 0 0 P
+R 0 0 0 0 0 0
+L 0
 #31
 rose~
 a red rose~
@@ -211,6 +253,8 @@ E
 rose~
 It's a beautiful red rose, with a soft and romantic fragrance.
 ~
+R 0 0 0 0 0 0
+L 0
 #32
 pit~
 the donation pit~
@@ -223,185 +267,149 @@ pit~
 This is where you put money and items to help Doz expand this shrine and
 convert more people to the belief of Mota, lord of the gods.
 ~
+R 0 0 0 0 0 0
+L 0
 #33
-mace sub merc~
-a sub issue mace~
-You see a sub issue mace here.~
+plastic mace~
+a plastic mace~
+A plastic mace lays here.~
 weapon U AN
 A mace 1 6 pound 0
 1 60 250 P
 A
 18 1
-E
-mace~
-You see a mace of great but cheap craftsmanship.  Imprinted on the side is:
-Merc Industries
-~
+R 0 0 0 0 0 0
+L 0
 #34
-dagger sub merc~
-a sub issue dagger~
-You see a sub issue dagger here.~
+plastic dagger~
+a plastic dagger~
+You see a plastic dagger here.~
 weapon U AN
 A dagger 1 4 pierce 0
 0 10 210 P
 A
 18 1
-E
-dagger~
-You see a dagger of great but cheap craftsmanship.  Imprinted on the side is:
-Merc Industries
-~
+R 0 0 0 0 0 0
+L 0
 #35
-sword sub merc~
-a sub issue sword~
-You see a sub issue sword here.~
+plastic sword~
+a plastic sword~
+A plastic sword lays here.~
 weapon U AN
 A sword 1 6 slash 0
 1 30 360 P
 A
 18 1
-E
-sword~
-You see a sword of great but cheap craftsmanship.  Imprinted on the side is:
-Merc Industries
-~
+R 0 0 0 0 0 0
+L 0
 #36
-vest sub merc~
-a sub issue vest~
-You see a sub issue vest here.~
+training vest~
+a training vest~
+You see a old training vest here.~
 armor U AD
 A A A A 0 0
 0 50 144 P
-E
-vest~
-You see a vest of great but cheap craftsmanship.  Stamped on the side is:
-Merc Industries
-~
+R 0 0 0 0 0 0
+L 0
 #37
-shield sub merc~
-a sub issue shield~
-You see a sub issue shield here.~
+training shield plastic~
+a plastic training shield~
+You see a plastic training shield here.~
 armor U AJ
 A A A A 0 0
 0 30 108 P
-E
-shield~
-You see a shield of great but cheap craftsmanship.  Imprinted on the side is:
-Merc Industries
-~
+R 6 0 0 0 0 0
+L 0
 #38
-banner war merc~
-a war banner~
-A war banner is on the floor here.~
+used torch~
+a old torch~
+A old torch rests on the floor.~
 light AG A
 A 0 0 DGH 0 0
 0 20 380 P
 A
-17 -1
-A
 20 -1
-E
-banner~
-This is the official Merc war banner to see you through the darkest realm!
-~
+A
+17 -1
+R 6 0 0 0 0 0
+L 0
 #39
-spear sub merc~
-a sub issue spear~
-You see a sub issue spear here.~
+plastic spear~
+a plastic spear~
+You see a plastic spear here.~
 weapon U AN
 A staff 1 6 thrust 0
 1 50 111 P
 A
 18 1
-E
-spear~
-You see a spear of great but cheap craftsmanship.  Imprinted on the side is:
-Merc Industries
-~
+R 0 0 0 0 0 0
+L 0
 #40
-staff sub merc~
-a sub issue staff~
-You see a sub issue staff here.~
+plastic staff~
+a plastic staff~
+You see a plastic staff here.~
 weapon U AN
 A staff 1 5 pound F
 1 40 290 P
 A
-18 2
-A
 19 1
-E
-staff~
-You see a staff of great but cheap craftsmanship.  Imprinted on the side is:
-Merc Industries
-~
+A
+18 2
+R 6 0 0 0 0 0
+L 0
 #41
-axe sub merc~
-a sub issue axe~
-You see a sub issue axe here.~
+plastic axe~
+a plastic axe~
+You see a plastic axe laying here.~
 weapon U AN
 A axe 1 6 chop 0
 1 50 350 P
 A
 18 1
-E
-axe~
-You see an axe of great but cheap craftsmanship.  Imprinted on the side is:
-Merc Industries
-~
+R 6 0 0 0 0 0
+L 0
 #42
-flail sub merc~
-a sub issue flail~
-You see a sub issue flail here.~
+plastic flail~
+a plastic flail~
+You see a plastic flail here.~
 weapon U AN
 A flail 1 5 crush 0
 1 50 310 P
 A
 19 1
-E
-flail~
-You see a flail of great but cheap craftsmanship.  Imprinted on the side is:
-Merc Industries
-~
+R 6 0 0 0 0 0
+L 0
 #43
-whip sub merc~
-a sub issue whip~
-You see a sub issue whip here.~
+training whip~
+a training whip~
+You see a training whip here.~
 weapon U AN
 A whip 2 2 whip 0
 1 20 330 P
 A
 18 2
-E
-whip~
-You see a whip of great but cheap craftsmanship.  Imprinted on the side is:
-Merc Industries
-~
+R 6 0 0 0 0 0
+L 0
 #44
-glaive sub merc~
-a sub issue glaive~
-You see a sub issue glaive here.~
+plastic glaive~
+a plastic glaive~
+A plastic glaive lays here.~
 weapon U AN
 A polearm 1 7 slash F
 1 80 183 P
 A
 19 1
-E
-glaive~
-You see a glaive of great but cheap craftsmanship.  Imprinted on the side is:
-Merc Industries
-~
+R 6 0 0 0 0 0
+L 0
 #45
-helmet sub merc~
-a sub issue helmet~
-You see a sub issue helmet here.~
+plastic skullcap~
+a plastic skullcap~
+A plastic skullcap lays here.~
 armor U AE
 A A A A 0 0
 0 30 72 P
-E
-helmet~
-You see a helmet of great but cheap craftsmanship.  Imprinted on the side is:
-Merc Industries
-~
+R 6 0 0 0 0 0
+L 0
 #46
 whistle steel police~
 a police whistle~
@@ -409,6 +417,8 @@ You spot a steel whistle on a fine silver chain here.~
 clothing 0 AC
 0 0 0 0 0 0
 0 2 100 G
+R 0 0 0 0 0 0
+L 0
 #47
 random armor~
 (no short description)~
@@ -416,6 +426,8 @@ random armor~
 armor 0 0
 0 0 0 0 0 0
 0 0 0 P
+R 0 0 0 0 0 0
+L 0
 #48
 random light~
 (no short description)~
@@ -423,6 +435,8 @@ random light~
 light 0 0
 0 0 0 0 0 0
 0 0 0 P
+R 0 0 0 0 0 0
+L 0
 #49
 random weapon~
 (no short description)~
@@ -430,6 +444,8 @@ random weapon~
 weapon 0 0
 0 exotic 0 0 none 0
 0 0 0 P
+R 0 0 0 0 0 0
+L 0
 #0
 
 

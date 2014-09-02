@@ -538,11 +538,15 @@ bool load_char_obj ( Socket *d, char *name )
 	ch->desc				= d;
 	ch->name				= assign_string ( name );
 	ch->id				= get_pc_id();
+
 	ch->race				= race_lookup ( "human" );
-	ch->act				= PLR_NOSUMMON;
+
+	ch->act				= PLR_AUTOEXIT | PLR_AUTOLOOT | PLR_AUTOGOLD | PLR_CANLOOT;
 	ch->sflag				= 0;	// by default
+
 	ch->comm				= COMM_COMBINE | COMM_PROMPT;
-	ch->material_flags = MAT_FOOD;
+
+	ch->material_flags = MAT_FOOD; // -- we are food?
 
 	ch->prompt 				= assign_string ( "<%hhp %mm %vmv> " );
 

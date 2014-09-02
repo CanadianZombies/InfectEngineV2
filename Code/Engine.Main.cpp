@@ -376,7 +376,7 @@ void RunMudLoop ( int control )
 												   d->incomm ? d->incomm : "" ) );
 					( *d->character->queries.queryfunc )
 					( d->character, Format ( "queried_command:%p", d->character->queries.queryfunc ),
-					  d->incomm, d->character->queries.querycommand );
+					  d->incomm ? d->incomm : "", d->character->queries.querycommand );
 				} else if ( d->pString )
 				{ string_add ( d->character, d->incomm ); }
 				else {

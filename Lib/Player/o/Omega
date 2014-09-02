@@ -1,7 +1,7 @@
 #PLAYER
 Name Omega~
 Id   1407161012
-LogO 1409602636
+LogO 1409673026
 Vers 5
 Prom <%hhp %mm %vmv> ~
 Race human~
@@ -9,7 +9,7 @@ Sex  1
 Cla  3
 Levl 60
 Sec  9
-Plyd 2411282
+Plyd 2481116
 Not  0 0 0 0 0
 Scro 28
 Room 2
@@ -18,15 +18,17 @@ Gold 0
 Silv 0
 Exp  1000
 ExpPool 0
-Act  CDEFGHQ
+Act  CDGQ
 SFlag ABCDEF
-Comm LNO
+Comm LNOQ
 Sitrep ABC
 Pos  8
 Prac 5
 Trai 3
+Save  -1
 Alig  0
-ACs 100 100 100 100
+Hit   1
+ACs 95 95 95 99
 Attr 25 25 25 25 25
 AMod 0 0 0 0 0
 Pass OmLtTe29L9oWQ~
@@ -60,6 +62,54 @@ Gr 'rom basics'
 Gr 'warrior basics'
 Gr 'warrior default'
 Gr 'weaponsmaster'
+End
+
+#O
+Vnum 38
+Nest 0
+Name used torch~
+ShD  a old torch~
+Desc A old torch rests on the floor.~
+Mat 0
+Requirements 6 0 0 0 0 0
+Wear 0
+Cost 0
+End
+
+#O
+Vnum 36
+Nest 0
+Name training vest~
+ShD  a training vest~
+Desc You see a old training vest here.~
+Mat 0
+Requirements 0 0 0 0 0 0
+Wear 5
+Cost 0
+End
+
+#O
+Vnum 35
+Nest 0
+Name plastic sword~
+ShD  a plastic sword~
+Desc A plastic sword lays here.~
+Mat 0
+Requirements 0 0 0 0 0 0
+Wear 16
+Cost 360
+End
+
+#O
+Vnum 37
+Nest 0
+Name training shield plastic~
+ShD  a plastic training shield~
+Desc You see a plastic training shield here.~
+Mat 0
+Requirements 6 0 0 0 0 0
+Wear 11
+Cost 0
 End
 
 #END

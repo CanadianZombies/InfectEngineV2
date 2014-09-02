@@ -213,9 +213,11 @@ DefineCommand ( cmd_outfit )
 	Item *obj;
 	int i, sn, vnum;
 
-	if ( ch->level > 5 || IS_NPC ( ch ) ) {
-		writeBuffer ( "Find it yourself!\n\r", ch );
-		return;
+	if ( !IS_SET ( ch->sflag, CR_STAFF ) ) {
+		if ( ch->level > 5 || IS_NPC ( ch ) ) {
+			writeBuffer ( "Find it yourself!\n\r", ch );
+			return;
+		}
 	}
 
 	if ( ( obj = get_eq_char ( ch, WEAR_LIGHT ) ) == NULL ) {
@@ -4341,5 +4343,39 @@ DefineCommand ( cmd_twitlist )
 	return;
 }
 
+DefineCommand ( cmd_noloot )
+{
+	if ( IS_NPC ( ch ) )
+	{ return; }
+
+	if ( IS_SET ( ch->act, PLR_CANLOOT ) ) {
+		writeBuffer ( "Your corpse is now safe from thieves.\n\r", ch );
+		REMOVE_BIT ( ch->act, PLR_CANLOOT );
+	} else {
+		writeBuffer ( "Your corpse may now be looted.\n\r", ch );
+		SET_BIT ( ch->act, PLR_CANLOOT );
+	}
+}
+
+DefineCommand ( cmd_nosummon )
+{
+	if ( IS_NPC ( ch ) ) {
+		if ( IS_SET ( ch->imm_flags, IMM_SUMMON ) ) {
+			writeBuffer ( "You are no longer immune to summon.\n\r", ch );
+			REMOVE_BIT ( ch->imm_flags, IMM_SUMMON );
+		} else {
+			writeBuffer ( "You are now immune to summoning.\n\r", ch );
+			SET_BIT ( ch->imm_flags, IMM_SUMMON );
+		}
+	} else {
+		if ( IS_SET ( ch->act, PLR_NOSUMMON ) ) {
+			writeBuffer ( "You are no longer immune to summon.\n\r", ch );
+			REMOVE_BIT ( ch->act, PLR_NOSUMMON );
+		} else {
+			writeBuffer ( "You are now immune to summoning.\n\r", ch );
+			SET_BIT ( ch->act, PLR_NOSUMMON );
+		}
+	}
+}
 
 
