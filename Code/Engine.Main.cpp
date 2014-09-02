@@ -1683,7 +1683,7 @@ void nanny ( Socket *d, char *argument )
 
 				cmd_function ( ch, &cmd_outfit, "" );
 
-				tweetStatement(Format("New Player: %s is attempting to survive The Infected City", ch->name));
+				tweetStatement ( Format ( "New Player: %s is attempting to survive The Infected City", ch->name ) );
 
 				// -- teleport us to the school
 				char_to_room ( ch, get_room_index ( ROOM_VNUM_SCHOOL ) );
@@ -1695,7 +1695,7 @@ void nanny ( Socket *d, char *argument )
 				wiznet ( "$N has left real life behind.", ch, NULL, WIZ_LOGINS, WIZ_SITES, get_trust ( ch ) );
 
 				// -- lets set up our character.
-				cmd_function ( ch, &cmd_config, "");
+				cmd_function ( ch, &cmd_config, "" );
 				return;
 			} else if ( ch->in_room != NULL ) {
 				char_to_room ( ch, ch->in_room );

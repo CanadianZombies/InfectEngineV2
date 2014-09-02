@@ -1872,59 +1872,102 @@ int xp_compute ( Creature *gch, Creature *victim, int total_levels )
 void dam_message ( Creature *ch, Creature *victim, int dam, int dt, bool immune )
 {
 	char buf1[256], buf2[256], buf3[256];
-	const char *vs;
-	const char *vp;
 	const char *attack;
 	char punct;
 
 	if ( ch == NULL || victim == NULL )
 	{ return; }
 
-	if ( dam ==   0 ) { vs = "miss";	vp = "misses";		}
-	else if ( dam <=   4 ) { vs = "scratch";	vp = "scratches";	}
-	else if ( dam <=   8 ) { vs = "graze";	vp = "grazes";		}
-	else if ( dam <=  12 ) { vs = "hit";	vp = "hits";		}
-	else if ( dam <=  16 ) { vs = "injure";	vp = "injures";		}
-	else if ( dam <=  20 ) { vs = "wound";	vp = "wounds";		}
-	else if ( dam <=  24 ) { vs = "maul";       vp = "mauls";		}
-	else if ( dam <=  28 ) { vs = "decimate";	vp = "decimates";	}
-	else if ( dam <=  32 ) { vs = "devastate";	vp = "devastates";	}
-	else if ( dam <=  36 ) { vs = "maim";	vp = "maims";		}
-	else if ( dam <=  40 ) { vs = "MUTILATE";	vp = "MUTILATES";	}
-	else if ( dam <=  44 ) { vs = "DISEMBOWEL";	vp = "DISEMBOWELS";	}
-	else if ( dam <=  48 ) { vs = "DISMEMBER";	vp = "DISMEMBERS";	}
-	else if ( dam <=  52 ) { vs = "MASSACRE";	vp = "MASSACRES";	}
-	else if ( dam <=  56 ) { vs = "MANGLE";	vp = "MANGLES";		}
-	else if ( dam <=  60 ) {
-		vs = "*** DEMOLISH ***";
-		vp = "*** DEMOLISHES ***";
-	} else if ( dam <=  75 ) {
-		vs = "*** DEVASTATE ***";
-		vp = "*** DEVASTATES ***";
-	} else if ( dam <= 100 )  {
-		vs = "=== OBLITERATE ===";
-		vp = "=== OBLITERATES ===";
-	} else if ( dam <= 125 )  {
-		vs = ">>> ANNIHILATE <<<";
-		vp = ">>> ANNIHILATES <<<";
-	} else if ( dam <= 150 )  {
-		vs = "<<< ERADICATE >>>";
-		vp = "<<< ERADICATES >>>";
-	} else                   {
-		vs = "do UNSPEAKABLE things to";
-		vp = "does UNSPEAKABLE things to";
+
+	struct dam_struct {
+		const char *vs;
+		const char *vp;
+	};
+
+	const dam_struct dam_mess[] = {
+		{ "miss",	"misses",	},  // 0 damage
+		{ "hurt", "hurts" }, 		// 5%
+		{ "scratch", "scratches" }, // 10%
+		{ "bruise", "bruises" },	// 15%
+		{ "graze", "grazes" }, 		// 20%
+		{ "hit", "hits" },			// 30%
+		{ "wound", "wounds" },		// 40%
+		{ "do a number on", "does a number on" }, // 45%
+		{ "ravage", "ravages" },	// 50%
+		{ "tear open", "tears open" },
+		{ "kill", "kills" },		// 100% or greater!
+		{ "murder", "murders" },	// should be impossible to reach
+		{ "slaughter", "slaughters" },
+		{ NULL, NULL }
+	};
+
+	int cnt = 0;
+
+	for ( cnt = 0; dam_mess[cnt].vs != NULL; cnt++ )
+		;
+
+	// damage messages based on % of damage done!
+	int pct = ( dam * 100 ) / victim->hit; // not based on max health, but remaining health! (so strikes seem more vital!)
+	int pct_max = ( dam * 100 ) / victim->max_hit; // total damage was more than the max health
+	int x = 0;
+
+	// -- disabled until we put in our leaderboard system
+	// --	update_board ( ch, dam, BOARD_DAMAGE );
+
+	if ( dam == 0 ) { x = 0;}
+	else {
+
+		if ( pct <= 5 ) { x = 1; }
+		if ( pct <= 10 && pct > 5 ) { x = 2; }
+		if ( pct <= 15 && pct > 10 ) { x = 3; }
+		if ( pct <= 20 && pct > 15 ) { x = 4; }
+		if ( pct <= 30 && pct > 20 ) { x = 5; }
+		if ( pct <= 40 && pct > 30 ) { x = 6; }
+		if ( pct <= 45 && pct > 40 ) { x = 7; }
+		if ( pct <  50 && pct > 40 ) { x = 8; }
+		if ( pct >= 50 && pct < 100 ) { x = 9; }
+
+		if ( pct >= 100 ) { x = 10; }		// over 100% damage (kill him!
+		if ( pct >= 150 ) { x = 11; }		// murders
+
+
+		// in-case I done fucked up.
+		if ( x == 0 )
+		{ x = 1; }
+
+		// Make them a little more random!
+		if ( x != 1 && x < 10 )
+		{	x = number_range ( 1, x ); }
+	}
+
+	// -- become a slaughterer because you did more damage then they had health ;)
+	if ( pct_max >= 200 )
+	{ x = 12;}
+
+	// -- should never happen, but if for some odd reason it does, we correct it!
+	if ( x > cnt )
+	{ x = cnt; }
+
+	// -- this should NEVER happen, but we want to make sure we don't bung up the mud.
+	if ( IS_NULLSTR ( dam_mess[x].vp ) || IS_NULLSTR ( dam_mess[x].vs ) ) {
+		x = number_range ( 1, 5 );
+	}
+
+	// -- we should never encounter this problem again, however, we will maintain this here just incase.
+	if ( IS_NULLSTR ( dam_mess[x].vp ) || IS_NULLSTR ( dam_mess[x].vs ) ) {
+		log_hd ( LOG_DEBUG | LOG_ERROR, Format ( "Message for Damage is NULL *AFTER* corrections.  Unknown error! (cnt:%d) (x:%d)", cnt, x ) );
 	}
 
 	punct   = ( dam <= 24 ) ? '.' : '!';
 
 	if ( dt == TYPE_HIT ) {
 		if ( ch  == victim ) {
-			sprintf ( buf1, "$n %s $melf%c", vp, punct );
-			sprintf ( buf2, "You %s yourself%c", vs, punct );
+			sprintf ( buf1, "$n %s $melf%c", dam_mess[x].vp, punct );
+			sprintf ( buf2, "You %s yourself%c", dam_mess[x].vs, punct );
 		} else {
-			sprintf ( buf1, "$n %s $N%c",  vp, punct );
-			sprintf ( buf2, "You %s $N%c", vs, punct );
-			sprintf ( buf3, "$n %s you%c", vp, punct );
+			sprintf ( buf1, "$n %s $N%c",  dam_mess[x].vp, punct );
+			sprintf ( buf2, "You %s $N%c", dam_mess[x].vs, punct );
+			sprintf ( buf3, "$n %s you%c", dam_mess[x].vp, punct );
 		}
 	} else {
 		if ( dt >= 0 && dt < MAX_SKILL )
@@ -1949,12 +1992,12 @@ void dam_message ( Creature *ch, Creature *victim, int dam, int dt, bool immune 
 			}
 		} else {
 			if ( ch == victim ) {
-				sprintf ( buf1, "$n's %s %s $m%c", attack, vp, punct );
-				sprintf ( buf2, "Your %s %s you%c {%d}", attack, vp, punct, dam );
+				sprintf ( buf1, "$n's %s %s $m%c", attack, dam_mess[x].vp, punct );
+				sprintf ( buf2, "Your %s %s you%c \ab{\aR%d\ab}", attack, dam_mess[x].vp, punct, dam );
 			} else {
-				sprintf ( buf1, "$n's %s %s $N%c",  attack, vp, punct );
-				sprintf ( buf2, "Your %s %s $N%c {%d}",  attack, vp, punct, dam );
-				sprintf ( buf3, "$n's %s %s you%c {%d}", attack, vp, punct, dam );
+				sprintf ( buf1, "$n's %s %s $N%c",  attack, dam_mess[x].vp, punct );
+				sprintf ( buf2, "Your %s %s $N%c \ab{\aR%d\ab}",  attack, dam_mess[x].vp, punct, dam );
+				sprintf ( buf3, "$n's %s %s you%c \ab{\aR%d\ab}", attack, dam_mess[x].vp, punct, dam );
 			}
 		}
 	}
