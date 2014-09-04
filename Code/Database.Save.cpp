@@ -170,7 +170,7 @@ void save_mobprogs ( FILE *fp, Zone *pArea )
  ****************************************************************************/
 void save_mobile ( FILE *fp, NPCData *pMobIndex )
 {
-	sh_int race = pMobIndex->race;
+	int race = pMobIndex->race;
 	MPROG_LIST *pMprog;
 	char buf[MAX_STRING_LENGTH];
 	long temp;

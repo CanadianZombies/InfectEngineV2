@@ -643,14 +643,14 @@ void check_improve ( Creature *ch, int sn, bool success, int multiplier )
 					*	4 );
 	chance += ch->level;
 
-	if ( number_range ( 1, 1000 ) > chance )
+	if ( Math::instance().range ( 1, 1000 ) > chance )
 	{ return; }
 
 	/* now that the character has a CHANCE to learn, see if they really have */
 
 	if ( success ) {
 		chance = URANGE ( 5, 100 - ch->pcdata->learned[sn], 95 );
-		if ( number_percent() < chance ) {
+		if ( Math::instance().percent() < chance ) {
 			snprintf ( buf, sizeof ( buf ), "You have become better at %s!\n\r",
 					   skill_table[sn].name );
 			writeBuffer ( buf, ch );
@@ -659,12 +659,12 @@ void check_improve ( Creature *ch, int sn, bool success, int multiplier )
 		}
 	} else {
 		chance = URANGE ( 5, ch->pcdata->learned[sn] / 2, 30 );
-		if ( number_percent() < chance ) {
+		if ( Math::instance().percent() < chance ) {
 			snprintf ( buf, sizeof ( buf ),
 					   "You learn from your mistakes, and your %s skill improves.\n\r",
 					   skill_table[sn].name );
 			writeBuffer ( buf, ch );
-			ch->pcdata->learned[sn] += number_range ( 1, 3 );
+			ch->pcdata->learned[sn] += Math::instance().range ( 1, 3 );
 			ch->pcdata->learned[sn] = UMIN ( ch->pcdata->learned[sn], 100 );
 			gain_exp ( ch, 2 * skill_table[sn].rating[ch->archetype] );
 		}

@@ -166,7 +166,7 @@ DefineCommand ( cmd_heal )
 	act ( "$n utters the words '$T'.", mob, NULL, words, TO_ROOM );
 
 	if ( spell == NULL ) { /* restore mana trap...kinda hackish */
-		ch->mana += dice ( 2, 8 ) + mob->level / 3;
+		ch->mana += Math::instance().dice ( 2, 8 ) + mob->level / 3;
 		ch->mana = UMIN ( ch->mana, ch->max_mana );
 		writeBuffer ( "A warm glow passes through you.\n\r", ch );
 		return;

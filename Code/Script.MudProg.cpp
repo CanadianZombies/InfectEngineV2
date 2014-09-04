@@ -250,7 +250,7 @@ Creature *get_random_char ( Creature *mob )
 		if ( mob != vch
 				&&   !IS_NPC ( vch )
 				&&   can_see ( mob, vch )
-				&&   ( now = number_percent() ) > highest ) {
+				&&   ( now = Math::instance().percent() ) > highest ) {
 			victim = vch;
 			highest = now;
 		}
@@ -307,7 +307,7 @@ int get_order ( Creature *ch )
  * item_type: item type or -1
  * fWear: TRUE: item must be worn, FALSE: don't care
  */
-bool has_item ( Creature *ch, sh_int vnum, sh_int item_type, bool fWear )
+bool has_item ( Creature *ch, int vnum, int item_type, bool fWear )
 {
 	Item *obj;
 	for ( obj = ch->carrying; obj; obj = obj->next_content )
@@ -321,7 +321,7 @@ bool has_item ( Creature *ch, sh_int vnum, sh_int item_type, bool fWear )
 /*
  * Check if there's a mob with given vnum in the room
  */
-bool get_mob_vnum_room ( Creature *ch, sh_int vnum )
+bool get_mob_vnum_room ( Creature *ch, int vnum )
 {
 	Creature *mob;
 	for ( mob = ch->in_room->people; mob; mob = mob->next_in_room )
@@ -333,7 +333,7 @@ bool get_mob_vnum_room ( Creature *ch, sh_int vnum )
 /*
  * Check if there's an object with given vnum in the room
  */
-bool get_obj_vnum_room ( Creature *ch, sh_int vnum )
+bool get_obj_vnum_room ( Creature *ch, int vnum )
 {
 	Item *obj;
 	for ( obj = ch->in_room->contents; obj; obj = obj->next_content )
@@ -354,7 +354,7 @@ bool get_obj_vnum_room ( Creature *ch, sh_int vnum )
  *
  *----------------------------------------------------------------------
  */
-int cmd_eval ( sh_int vnum, char *line, int check,
+int cmd_eval ( int vnum, char *line, int check,
 			   Creature *mob, Creature *ch,
 			   const void *arg1, const void *arg2, Creature *rch )
 {
@@ -383,7 +383,7 @@ int cmd_eval ( sh_int vnum, char *line, int check,
 		 * Case 1: keyword and value
 		 */
 		case CHK_RAND:
-			return ( atoi ( buf ) < number_percent() );
+			return ( atoi ( buf ) < Math::instance().percent() );
 		case CHK_MOBHERE:
 			if ( is_number ( buf ) )
 			{ return ( get_mob_vnum_room ( mob, atoi ( buf ) ) ); }
@@ -891,7 +891,7 @@ void expand_arg ( char *buf,
 #define MAX_CALL_LEVEL    5 /* Maximum nested calls */
 
 void program_flow (
-	sh_int pvnum,  /* For diagnostic purposes */
+	int pvnum,  /* For diagnostic purposes */
 	char *source,  /* the actual MOBprog code */
 	Creature *mob, Creature *ch, const void *arg1, const void *arg2 )
 {
@@ -906,7 +906,7 @@ void program_flow (
 	int state[MAX_NESTED_LEVEL], /* Block state (BEGIN,IN,END) */
 		cond[MAX_NESTED_LEVEL];  /* Boolean value based on the last if-check */
 
-	sh_int mvnum = mob->pIndexData->vnum;
+	int mvnum = mob->pIndexData->vnum;
 
 	if ( ++call_level > MAX_CALL_LEVEL ) {
 		log_hd ( LOG_ERROR | LOG_DEBUG, Format ( "MOBprogs: MAX_CALL_LEVEL exceeded, vnum %d", mob->pIndexData->vnum ) );
@@ -1099,7 +1099,7 @@ bool mp_percent_trigger (
 
 	for ( prg = mob->pIndexData->mprogs; prg != NULL; prg = prg->next ) {
 		if ( prg->trig_type == type
-				&&   number_percent() < atoi ( prg->trig_phrase ) ) {
+				&&   Math::instance().percent() < atoi ( prg->trig_phrase ) ) {
 			program_flow ( prg->vnum, prg->code, mob, ch, arg1, arg2 );
 			return ( TRUE );
 		}

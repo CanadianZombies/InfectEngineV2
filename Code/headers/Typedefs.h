@@ -60,15 +60,12 @@
 #if	!defined(const)
 #define const
 #endif
-typedef int				sh_int;
 
 #ifndef __cpluplus
 typedef int				bool;
 #endif
 #define unix
 #else
-typedef short   int			sh_int;
-
 #ifndef __cplusplus
 typedef unsigned char			bool;
 #endif

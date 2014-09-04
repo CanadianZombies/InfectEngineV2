@@ -46,7 +46,7 @@ void	check_killer	args ( ( Creature *ch, Creature *victim ) );
 bool	check_parry	args ( ( Creature *ch, Creature *victim ) );
 bool    check_shield_block     args ( ( Creature *ch, Creature *victim ) );
 void    dam_message 	args ( ( Creature *ch, Creature *victim, int dam,
-								 int dt, bool immune ) );
+								 int dt, bool immune, int where ) );
 void	death_cry	args ( ( Creature *ch ) );
 void	group_gain	args ( ( Creature *ch, Creature *victim ) );
 int	xp_compute	args ( ( Creature *gch, Creature *victim,
@@ -58,7 +58,75 @@ void    mob_hit		args ( ( Creature *ch, Creature *victim, int dt ) );
 void	raw_kill	args ( ( Creature *victim ) );
 void	set_fighting	args ( ( Creature *ch, Creature *victim ) );
 void	disarm		args ( ( Creature *ch, Creature *victim ) );
+bool new_damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type, bool show, int where );
 
+
+const struct wear_data wear_info[] = {
+	//      partname	ispart	%hit	wear flag	item flag 		required part	AC?	superceded by
+	//   { "none",		FALSE,	0,	WEAR_NONE,	0,			0,		FALSE,	0		},
+	{ "light",		FALSE,	0,	WEAR_LIGHT,	ITEM_HOLD,		PART_HANDS,	FALSE,	0 		},
+	{ "left finger", 	TRUE,	3,	WEAR_FINGER_L, 	ITEM_WEAR_FINGER,	PART_FINGERS,	FALSE,	WEAR_HANDS  	},
+	{ "right finger",	TRUE,	4,	WEAR_FINGER_R, 	ITEM_WEAR_FINGER,	PART_FINGERS,	FALSE,	WEAR_HANDS  	},
+	{ "neck",		TRUE,	3,	WEAR_NECK_1, 	ITEM_WEAR_NECK,		PART_HEAD,	TRUE,	WEAR_NECK_2 	},
+	{ "neck",		TRUE,	0,	WEAR_NECK_2,	ITEM_WEAR_NECK,		PART_HEAD,	TRUE,	0	 	},
+	{ "body",		TRUE,	20,	WEAR_BODY,	ITEM_WEAR_BODY,		0,		TRUE,	WEAR_ABOUT 	},
+	{ "head",	        TRUE,	10,	WEAR_HEAD,	ITEM_WEAR_HEAD,		PART_HEAD,	TRUE,	0 		},
+	{ "legs",		TRUE,	5,	WEAR_LEGS, 	ITEM_WEAR_LEGS,		PART_LEGS,	TRUE,	WEAR_ABOUT 	},
+	{ "feet",		TRUE,	2,	WEAR_FEET,	ITEM_WEAR_FEET,		PART_FEET,	TRUE,	0 		},
+	{ "hands",		TRUE,	5,	WEAR_HANDS,	ITEM_WEAR_HANDS, 	PART_HANDS,	TRUE,	0 		},
+	{ "arms",		TRUE,	25,	WEAR_ARMS,	ITEM_WEAR_ARMS, 	PART_ARMS,	TRUE,	WEAR_ABOUT 	},
+	{ "shield",	FALSE,	0,	WEAR_SHIELD,	ITEM_WEAR_SHIELD,	PART_ARMS,	FALSE,	0 		},
+	{ "about body",	FALSE,	0,	WEAR_ABOUT,	ITEM_WEAR_ABOUT,	0,		TRUE,	0 		},
+	{ "waist",		TRUE,	5,	WEAR_WAIST,	ITEM_WEAR_WAIST,	0,	TRUE,	WEAR_ABOUT 	},
+	{ "left wrist",    TRUE,	5,	WEAR_WRIST_L,	ITEM_WEAR_WRIST,	PART_HANDS,	TRUE,	WEAR_HANDS 	},
+	{ "right wrist",	TRUE,	5,	WEAR_WRIST_R,	ITEM_WEAR_WRIST,	PART_HANDS,	TRUE,	WEAR_HANDS 	},
+	{ "wielded",	FALSE,	0,	WEAR_WIELD,	ITEM_WIELD,		PART_HANDS,	FALSE,  0 		},
+	{ "held",		FALSE,	0,	WEAR_HOLD,	ITEM_HOLD,		PART_HANDS,	FALSE,	0 		},
+	/*     { "dual wield",	FALSE,	0,	WEAR_WIELD2,	ITEM_WIELD,		PART_HANDS,	FALSE,	0 		},
+	     { "pride",		FALSE,	0,	WEAR_PRIDE,	ITEM_WEAR_PRIDE,	0,		FALSE,	0 		},
+	     { "face",		TRUE,	5,	WEAR_FACE,	ITEM_WEAR_FACE,		PART_FACE,	TRUE,	0 		},
+	     { "ears",		TRUE,	3,	WEAR_EARS,	ITEM_WEAR_EARS,		PART_EAR,	FALSE,	0 		}, */
+	{ "float",		FALSE,	0,	WEAR_FLOAT,	ITEM_WEAR_FLOAT,	0,		FALSE,	0 		},
+	// Insert New Entries Here and update WEAR_ flags in merc.h
+	{ "max wear",	FALSE,	0,	MAX_WEAR,	0,			0,		FALSE,	0		}
+};
+
+/*
+ * Return a body part to hit - Lotherius
+ * For this to work correctly, all the hitpct values in wear_info must add up to 100.
+ */
+int hpart ( Creature *ch, Creature *vict )
+{
+	int  i, b, c, count;
+
+	c = 0;
+	count = 0;
+
+	while ( 1 ) {
+		// -- institute a 5 times chance for a part to be hit.
+		// -- ie, we try 5 times to see if something got hit.
+		// -- if not, we default to -1, and just say they got hit.
+		if ( count > ( MAX_WEAR * 5 ) ) {
+			return -1;
+		}
+		b = Math::instance().percent ( );				// Get a roll
+		for ( i = 0; i < MAX_WEAR; i++ ) {
+			if ( wear_info[i].ispart == FALSE )			// If it isn't a part, skip
+			{ continue; }
+			if ( ( wear_info[i].part_req > 0 )			// If the victim doesn't have that part, skip
+					&& ( !IS_SET ( vict->parts, wear_info[i].part_req ) ) )
+			{ continue; }
+			if ( wear_info[i].hitpct == 0 )				// If can't hit this part, skip
+			{ continue; }
+			c += wear_info[i].hitpct;					// add the percent for this item.
+			if ( c >= b )
+			{ return i; }
+			count++;
+		}
+	}
+
+	return i;
+}
 
 
 /*
@@ -150,7 +218,7 @@ void check_assist ( Creature *ch, Creature *victim )
 					Creature *target;
 					int number;
 
-					if ( number_bits ( 1 ) == 0 )
+					if ( Math::instance().bits ( 1 ) == 0 )
 					{ continue; }
 
 					target = NULL;
@@ -158,7 +226,7 @@ void check_assist ( Creature *ch, Creature *victim )
 					for ( vch = ch->in_room->people; vch; vch = vch->next ) {
 						if ( can_see ( rch, vch )
 								&&  is_same_group ( vch, victim )
-								&&  number_range ( 0, number ) == 0 ) {
+								&&  Math::instance().range ( 0, number ) == 0 ) {
 							target = vch;
 							number++;
 						}
@@ -208,7 +276,7 @@ void multi_hit ( Creature *ch, Creature *victim, int dt )
 	// -- dazing has some lasting effects.
 	if ( ch->daze ) {
 		// -- we are dazed, can we make another attack or not?
-		if ( number_range ( 0, 1 ) == number_range ( 0, 2 ) ) {
+		if ( Math::instance().range ( 0, 1 ) == Math::instance().range ( 0, 2 ) ) {
 			return;
 		}
 	}
@@ -224,7 +292,7 @@ void multi_hit ( Creature *ch, Creature *victim, int dt )
 	if ( IS_AFFECTED ( ch, AFF_SLOW ) )
 	{ chance /= 2; }
 
-	if ( number_percent( ) < chance ) {
+	if ( Math::instance().percent( ) < chance ) {
 		one_hit ( ch, victim, dt );
 		check_improve ( ch, gsn_second_attack, TRUE, 5 );
 		if ( ch->fighting != victim )
@@ -236,7 +304,7 @@ void multi_hit ( Creature *ch, Creature *victim, int dt )
 	if ( IS_AFFECTED ( ch, AFF_SLOW ) )
 	{ chance = 0; };
 
-	if ( number_percent( ) < chance ) {
+	if ( Math::instance().percent( ) < chance ) {
 		one_hit ( ch, victim, dt );
 		check_improve ( ch, gsn_third_attack, TRUE, 6 );
 		if ( ch->fighting != victim )
@@ -279,7 +347,7 @@ void mob_hit ( Creature *ch, Creature *victim, int dt )
 	if ( IS_AFFECTED ( ch, AFF_SLOW ) && !IS_SET ( ch->off_flags, OFF_FAST ) )
 	{ chance /= 2; }
 
-	if ( number_percent() < chance ) {
+	if ( Math::instance().percent() < chance ) {
 		one_hit ( ch, victim, dt );
 		if ( ch->fighting != victim )
 		{ return; }
@@ -290,7 +358,7 @@ void mob_hit ( Creature *ch, Creature *victim, int dt )
 	if ( IS_AFFECTED ( ch, AFF_SLOW ) && !IS_SET ( ch->off_flags, OFF_FAST ) )
 	{ chance = 0; }
 
-	if ( number_percent() < chance ) {
+	if ( Math::instance().percent() < chance ) {
 		one_hit ( ch, victim, dt );
 		if ( ch->fighting != victim )
 		{ return; }
@@ -301,7 +369,7 @@ void mob_hit ( Creature *ch, Creature *victim, int dt )
 	if ( ch->wait > 0 )
 	{ return; }
 
-	number = number_range ( 0, 2 );
+	number = Math::instance().range ( 0, 2 );
 
 	if ( number == 1 && IS_SET ( ch->act, ACT_MAGE ) ) {
 		/*  { mob_cast_mage(ch,victim); return; } */ ;
@@ -313,7 +381,7 @@ void mob_hit ( Creature *ch, Creature *victim, int dt )
 
 	/* now for the skills */
 
-	number = number_range ( 0, 8 );
+	number = Math::instance().range ( 0, 8 );
 
 	switch ( number ) {
 		case ( 0 ) :
@@ -445,7 +513,7 @@ void one_hit ( Creature *ch, Creature *victim, int dt )
 		thac0_00 = archetype_table[ch->archetype].thac0_00;
 		thac0_32 = archetype_table[ch->archetype].thac0_32;
 	}
-	thac0  = interpolate ( ch->level, thac0_00, thac0_32 );
+	thac0  = Math::instance().interpolate ( ch->level, thac0_00, thac0_32 );
 
 	if ( thac0 < 0 )
 	{ thac0 = thac0 / 2; }
@@ -489,7 +557,7 @@ void one_hit ( Creature *ch, Creature *victim, int dt )
 	/*
 	 * The moment of excitement!
 	 */
-	while ( ( diceroll = number_bits ( 5 ) ) >= 20 )
+	while ( ( diceroll = Math::instance().bits ( 5 ) ) >= 20 )
 		;
 
 	if ( diceroll == 0
@@ -506,20 +574,20 @@ void one_hit ( Creature *ch, Creature *victim, int dt )
 	 */
 	if ( IS_NPC ( ch ) && ( !ch->pIndexData->new_format || wield == NULL ) ) {
 		if ( !ch->pIndexData->new_format ) {
-			dam = number_range ( ch->level / 2, ch->level * 3 / 2 );
+			dam = Math::instance().range ( ch->level / 2, ch->level * 3 / 2 );
 			if ( wield != NULL )
 			{ dam += dam / 2; }
 		} else
-		{ dam = dice ( ch->damage[DICE_NUMBER], ch->damage[DICE_TYPE] ); }
+		{ dam = Math::instance().dice ( ch->damage[DICE_NUMBER], ch->damage[DICE_TYPE] ); }
 	} else {
 		if ( sn != -1 )
 		{ check_improve ( ch, sn, TRUE, 5 ); }
 		if ( wield != NULL ) {
 			if ( wield->pIndexData->new_format )
-			{ dam = dice ( wield->value[1], wield->value[2] ) * skill / 100; }
+			{ dam = Math::instance().dice ( wield->value[1], wield->value[2] ) * skill / 100; }
 			else
-				dam = number_range ( wield->value[1] * skill / 100,
-									 wield->value[2] * skill / 100 );
+				dam = Math::instance().range ( wield->value[1] * skill / 100,
+											   wield->value[2] * skill / 100 );
 
 			if ( get_eq_char ( ch, WEAR_SHIELD ) == NULL ) /* no shield = more */
 			{ dam = dam * 11 / 10; }
@@ -528,18 +596,18 @@ void one_hit ( Creature *ch, Creature *victim, int dt )
 			if ( IS_WEAPON_STAT ( wield, WEAPON_SHARP ) ) {
 				int percent;
 
-				if ( ( percent = number_percent() ) <= ( skill / 8 ) )
+				if ( ( percent = Math::instance().percent() ) <= ( skill / 8 ) )
 				{ dam = 2 * dam + ( dam * 2 * percent / 100 ); }
 			}
 		} else
-		{ dam = number_range ( 1 + 4 * skill / 100, 2 * ch->level / 3 * skill / 100 ); }
+		{ dam = Math::instance().range ( 1 + 4 * skill / 100, 2 * ch->level / 3 * skill / 100 ); }
 	}
 
 	/*
 	 * Bonuses.
 	 */
 	if ( get_skill ( ch, gsn_enhanced_damage ) > 0 ) {
-		diceroll = number_percent();
+		diceroll = Math::instance().percent();
 		if ( diceroll <= get_skill ( ch, gsn_enhanced_damage ) ) {
 			check_improve ( ch, gsn_enhanced_damage, TRUE, 6 );
 			dam += 2 * ( dam * diceroll / 300 );
@@ -562,7 +630,12 @@ void one_hit ( Creature *ch, Creature *victim, int dt )
 	if ( dam <= 0 )
 	{ dam = 1; }
 
-	result = damage ( ch, victim, dam, dt, dam_type, TRUE );
+
+	// -- what part did we hit?
+	result = new_damage ( ch, victim, dam, dt, dam_type, TRUE, hpart ( ch, victim ) );
+	if ( Math::instance().range ( 0, 10 ) == Math::instance().range ( 3, 12 ) && !IS_NPC ( ch ) ) {
+		gain_exp ( ch, Math::instance().range ( 1, Math::instance().range ( 2, 4 ) ) );
+	}
 
 	/* but do we have a funky weapon? */
 	if ( result && wield != NULL ) {
@@ -605,7 +678,7 @@ void one_hit ( Creature *ch, Creature *victim, int dt )
 
 
 		if ( ch->fighting == victim && IS_WEAPON_STAT ( wield, WEAPON_VAMPIRIC ) ) {
-			dam = number_range ( 1, wield->level / 5 + 1 );
+			dam = Math::instance().range ( 1, wield->level / 5 + 1 );
 			act ( "$p draws life from $n.", victim, wield, NULL, TO_ROOM );
 			act ( "You feel $p drawing your life away.",
 				  victim, wield, NULL, TO_CHAR );
@@ -615,7 +688,7 @@ void one_hit ( Creature *ch, Creature *victim, int dt )
 		}
 
 		if ( ch->fighting == victim && IS_WEAPON_STAT ( wield, WEAPON_FLAMING ) ) {
-			dam = number_range ( 1, wield->level / 4 + 1 );
+			dam = Math::instance().range ( 1, wield->level / 4 + 1 );
 			act ( "$n is burned by $p.", victim, wield, NULL, TO_ROOM );
 			act ( "$p sears your flesh.", victim, wield, NULL, TO_CHAR );
 			fire_effect ( ( void * ) victim, wield->level / 2, dam, TARGET_CHAR );
@@ -623,7 +696,7 @@ void one_hit ( Creature *ch, Creature *victim, int dt )
 		}
 
 		if ( ch->fighting == victim && IS_WEAPON_STAT ( wield, WEAPON_FROST ) ) {
-			dam = number_range ( 1, wield->level / 6 + 2 );
+			dam = Math::instance().range ( 1, wield->level / 6 + 2 );
 			act ( "$p freezes $n.", victim, wield, NULL, TO_ROOM );
 			act ( "The cold touch of $p surrounds you with ice.",
 				  victim, wield, NULL, TO_CHAR );
@@ -632,7 +705,7 @@ void one_hit ( Creature *ch, Creature *victim, int dt )
 		}
 
 		if ( ch->fighting == victim && IS_WEAPON_STAT ( wield, WEAPON_SHOCKING ) ) {
-			dam = number_range ( 1, wield->level / 5 + 2 );
+			dam = Math::instance().range ( 1, wield->level / 5 + 2 );
 			act ( "$n is struck by lightning from $p.", victim, wield, NULL, TO_ROOM );
 			act ( "You are shocked by $p.", victim, wield, NULL, TO_CHAR );
 			shock_effect ( victim, wield->level / 2, dam, TARGET_CHAR );
@@ -647,8 +720,12 @@ void one_hit ( Creature *ch, Creature *victim, int dt )
 /*
  * Inflict damage from a hit.
  */
-bool damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type,
-			  bool show )
+bool damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type, bool show )
+{
+	return new_damage ( ch, victim, dam, dt, dam_type, show, -1 );
+}
+
+bool new_damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type, bool show, int where )
 {
 	Item *corpse;
 	bool immune;
@@ -767,7 +844,7 @@ bool damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type,
 	}
 
 	if ( show )
-	{ dam_message ( ch, victim, dam, dt, immune ); }
+	{ dam_message ( ch, victim, dam, dt, immune, where ); }
 
 	if ( dam == 0 )
 	{ return FALSE; }
@@ -922,7 +999,7 @@ bool damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type,
 	 * Take care of link dead people.
 	 */
 	if ( !IS_NPC ( victim ) && victim->desc == NULL ) {
-		if ( number_range ( 0, victim->wait ) == 0 ) {
+		if ( Math::instance().range ( 0, victim->wait ) == 0 ) {
 			cmd_function ( victim, &cmd_recall, "" );
 			return TRUE;
 		}
@@ -932,7 +1009,7 @@ bool damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type,
 	 * Wimp out?
 	 */
 	if ( IS_NPC ( victim ) && dam > 0 && victim->wait < PULSE_VIOLENCE / 2 ) {
-		if ( ( IS_SET ( victim->act, ACT_WIMPY ) && number_bits ( 2 ) == 0
+		if ( ( IS_SET ( victim->act, ACT_WIMPY ) && Math::instance().bits ( 2 ) == 0
 				&&   victim->hit < victim->max_hit / 5 )
 				||   ( IS_AFFECTED ( victim, AFF_CHARM ) && victim->master != NULL
 					   &&     victim->master->in_room != victim->in_room ) ) {
@@ -1216,7 +1293,7 @@ bool check_parry ( Creature *ch, Creature *victim )
 	if ( !can_see ( ch, victim ) )
 	{ chance /= 2; }
 
-	if ( number_percent( ) >= chance + victim->level - ch->level )
+	if ( Math::instance().percent( ) >= chance + victim->level - ch->level )
 	{ return FALSE; }
 
 	act ( "You parry $n's attack.",  ch, NULL, victim, TO_VICT    );
@@ -1242,7 +1319,7 @@ bool check_shield_block ( Creature *ch, Creature *victim )
 	if ( get_eq_char ( victim, WEAR_SHIELD ) == NULL )
 	{ return FALSE; }
 
-	if ( number_percent( ) >= chance + victim->level - ch->level )
+	if ( Math::instance().percent( ) >= chance + victim->level - ch->level )
 	{ return FALSE; }
 
 	act ( "You block $n's attack with your shield.",  ch, NULL, victim, TO_VICT    );
@@ -1267,7 +1344,7 @@ bool check_dodge ( Creature *ch, Creature *victim )
 	if ( !can_see ( victim, ch ) )
 	{ chance /= 2; }
 
-	if ( number_percent( ) >= chance + victim->level - ch->level )
+	if ( Math::instance().percent( ) >= chance + victim->level - ch->level )
 	{ return FALSE; }
 
 	act ( "You dodge $n's attack.", ch, NULL, victim, TO_VICT    );
@@ -1361,7 +1438,7 @@ void make_corpse ( Creature *ch )
 	if ( IS_NPC ( ch ) ) {
 		name		= ch->short_descr;
 		corpse		= create_object ( get_obj_index ( OBJ_VNUM_CORPSE_NPC ), 0 );
-		corpse->timer	= number_range ( 3, 6 );
+		corpse->timer	= Math::instance().range ( 3, 6 );
 		if ( ch->gold > 0 ) {
 			obj_to_obj ( create_money ( ch->gold, ch->silver ), corpse );
 			ch->gold = 0;
@@ -1371,7 +1448,7 @@ void make_corpse ( Creature *ch )
 	} else {
 		name		= ch->name;
 		corpse		= create_object ( get_obj_index ( OBJ_VNUM_CORPSE_PC ), 0 );
-		corpse->timer	= number_range ( 25, 40 );
+		corpse->timer	= Math::instance().range ( 25, 40 );
 		REMOVE_BIT ( ch->act, PLR_CANLOOT );
 		if ( !is_clan ( ch ) )
 		{ corpse->owner = assign_string ( ch->name ); }
@@ -1405,11 +1482,11 @@ void make_corpse ( Creature *ch )
 		{ floating = TRUE; }
 		obj_from_char ( obj );
 		if ( obj->item_type == ITEM_POTION )
-		{ obj->timer = number_range ( 500, 1000 ); }
+		{ obj->timer = Math::instance().range ( 500, 1000 ); }
 		if ( obj->item_type == ITEM_SCROLL )
-		{ obj->timer = number_range ( 1000, 2500 ); }
+		{ obj->timer = Math::instance().range ( 1000, 2500 ); }
 		if ( IS_SET ( obj->extra_flags, ITEM_ROT_DEATH ) && !floating ) {
-			obj->timer = number_range ( 5, 10 );
+			obj->timer = Math::instance().range ( 5, 10 );
 			REMOVE_BIT ( obj->extra_flags, ITEM_ROT_DEATH );
 		}
 		REMOVE_BIT ( obj->extra_flags, ITEM_VIS_DEATH );
@@ -1459,7 +1536,7 @@ void death_cry ( Creature *ch )
 	vnum = 0;
 	msg = "You hear $n's death cry.";
 
-	switch ( number_bits ( 4 ) ) {
+	switch ( Math::instance().bits ( 4 ) ) {
 		case  0:
 			msg  = "$n hits the ground ... DEAD.";
 			break;
@@ -1516,7 +1593,7 @@ void death_cry ( Creature *ch )
 
 		name		= IS_NPC ( ch ) ? ch->short_descr : ch->name;
 		obj		= create_object ( get_obj_index ( vnum ), 0 );
-		obj->timer	= number_range ( 4, 7 );
+		obj->timer	= Math::instance().range ( 4, 7 );
 
 		sprintf ( buf, obj->short_descr, name );
 		PURGE_DATA ( obj->short_descr );
@@ -1638,8 +1715,10 @@ void group_gain ( Creature *ch, Creature *victim )
 			continue;
 		}
 
-		gain_exp ( gch, xp_compute ( gch, victim, group_levels ) );
-
+		// -- gain some experience possibly.
+		if ( Math::instance().range ( 0, 1 ) == Math::instance().range ( 0, 2 ) ) {
+			gain_exp ( gch, Math::instance().range ( 0, ( xp_compute ( gch, victim, group_levels ) + 1 ) ) );
+		}
 		for ( obj = ch->carrying; obj != NULL; obj = obj_next ) {
 			obj_next = obj->next_content;
 			if ( obj->wear_loc == WEAR_NONE )
@@ -1725,8 +1804,44 @@ int xp_compute ( Creature *gch, Creature *victim, int total_levels )
 	if ( level_range > 4 )
 	{ base_exp = 16 + 5 * ( level_range - 4.5 ); }
 
-	/* do alignment computations */
+	if ( IS_NPC ( victim ) ) {
+		if ( is_affected ( victim, skill_lookup ( "sanctuary" ) ) )
+		{ base_exp = ( base_exp * 20 ) / 3; }
+		if ( is_affected ( victim, skill_lookup ( "haste" ) ) )
+		{ base_exp = ( base_exp * 20 ) / 3; }
+		if ( IS_SET ( victim->off_flags, OFF_AREA_ATTACK ) )
+		{ base_exp = ( base_exp * 2 ) / 3; }
+		if ( IS_SET ( victim->off_flags, OFF_BACKSTAB ) )
+		{ base_exp = ( base_exp * 2 ) / 3; }
+		if ( IS_SET ( victim->off_flags, OFF_FAST ) )
+		{ base_exp = ( base_exp * 2 ) / 3; }
+		if ( IS_SET ( victim->off_flags, OFF_DODGE ) )
+		{ base_exp = ( base_exp * 2 ) / 3; }
+		if ( IS_SET ( victim->off_flags, OFF_PARRY ) )
+		{ base_exp = ( base_exp * 2 ) / 3; }
 
+		if ( victim->spec_fun != 0 ) {
+			if (   SameString ( spec_name ( victim->spec_fun ), "spec_breath_any" )
+					|| SameString ( spec_name ( victim->spec_fun ), "spec_breath_acid" )
+					|| SameString ( spec_name ( victim->spec_fun ), "spec_breath_fire" )
+					|| SameString ( spec_name ( victim->spec_fun ), "spec_breath_frost" )
+					|| SameString ( spec_name ( victim->spec_fun ), "spec_breath_gas" )
+					|| SameString ( spec_name ( victim->spec_fun ), "spec_breath_lightning" )
+			   )
+			{ base_exp = ( base_exp * 20 ) / 10; }
+
+			else if (   SameString ( spec_name ( victim->spec_fun ), "spec_cast_cleric" )
+						|| SameString ( spec_name ( victim->spec_fun ), "spec_cast_mage" )
+						|| SameString ( spec_name ( victim->spec_fun ), "spec_cast_undead" )
+					)
+			{ base_exp = ( base_exp * 20 ) / 10; }
+
+			else if ( SameString ( spec_name ( victim->spec_fun ), "spec_poison" ) )
+			{ base_exp = ( base_exp * 20 ) / 10; }
+		}
+	}
+
+	/* do alignment computations */
 	align = victim->alignment - gch->alignment;
 
 	if ( IS_SET ( victim->act, ACT_NOALIGN ) ) {
@@ -1835,30 +1950,24 @@ int xp_compute ( Creature *gch, Creature *victim, int total_levels )
 		{ xp = base_exp; }
 	}
 
-	/* more exp at the low levels */
-	if ( gch->level < 6 )
+	if ( gch->level < 6 )                       	/* more exp at the low levels */
 	{ xp = 10 * xp / ( gch->level + 4 ); }
 
-	/* less at high */
-	if ( gch->level > 35 )
+	if ( gch->level > 35 )                        /* less at high */
 	{ xp =  15 * xp / ( gch->level - 25 ); }
 
 	/* reduce for playing time */
-
 	{
 		/* compute quarter-hours per level */
-		time_per_level = 4 *
-						 ( gch->played + ( int ) ( current_time - gch->logon ) ) / 3600
-						 / gch->level;
-
+		time_per_level = 4 * ( gch->played + ( int ) ( current_time - gch->logon ) ) / 3600 / gch->level;
 		time_per_level = URANGE ( 2, time_per_level, 12 );
-		if ( gch->level < 15 ) /* make it a curve */
-		{ time_per_level = UMAX ( time_per_level, ( 15 - gch->level ) ); }
+		if ( gch->level < 10 ) 											/* make it a curve */
+		{ time_per_level = UMAX ( time_per_level, ( 10 - gch->level ) ); }
 		xp = xp * time_per_level / 12;
 	}
 
 	/* randomize the rewards */
-	xp = number_range ( xp * 3 / 4, xp * 5 / 4 );
+	xp = Math::instance().range ( xp * 3 / 4, xp * 5 / 4 );
 
 	/* adjust for grouping */
 	xp = xp * gch->level / ( UMAX ( 1, total_levels - 1 ) );
@@ -1869,7 +1978,7 @@ int xp_compute ( Creature *gch, Creature *victim, int total_levels )
 	return xp;
 }
 
-void dam_message ( Creature *ch, Creature *victim, int dam, int dt, bool immune )
+void dam_message ( Creature *ch, Creature *victim, int dam, int dt, bool immune, int where )
 {
 	char buf1[256], buf2[256], buf3[256];
 	const char *attack;
@@ -1914,7 +2023,7 @@ void dam_message ( Creature *ch, Creature *victim, int dam, int dt, bool immune 
 	// -- disabled until we put in our leaderboard system
 	// --	update_board ( ch, dam, BOARD_DAMAGE );
 
-	if ( dam == 0 ) { x = 0;}
+	if ( dam == 0 ) { x = 0; where = -1;}
 	else {
 
 		if ( pct <= 5 ) { x = 1; }
@@ -1927,8 +2036,8 @@ void dam_message ( Creature *ch, Creature *victim, int dam, int dt, bool immune 
 		if ( pct <  50 && pct > 40 ) { x = 8; }
 		if ( pct >= 50 && pct < 100 ) { x = 9; }
 
-		if ( pct >= 100 ) { x = 10; }		// over 100% damage (kill him!
-		if ( pct >= 150 ) { x = 11; }		// murders
+		if ( pct >= 100 ) { x = 10; where = -1;}		// over 100% damage (kill him!
+		if ( pct >= 150 ) { x = 11; where = -1; }		// murders
 
 
 		// in-case I done fucked up.
@@ -1937,12 +2046,17 @@ void dam_message ( Creature *ch, Creature *victim, int dam, int dt, bool immune 
 
 		// Make them a little more random!
 		if ( x != 1 && x < 10 )
-		{	x = number_range ( 1, x ); }
+		{	x = Math::instance().range ( 1, x ); }
+	}
+
+	// -- change it up so we are not always hitting a body part.
+	if ( Math::instance().percent() > 97 ) {
+		where = -1;
 	}
 
 	// -- become a slaughterer because you did more damage then they had health ;)
 	if ( pct_max >= 200 )
-	{ x = 12;}
+	{ x = 12; where = -1;}
 
 	// -- should never happen, but if for some odd reason it does, we correct it!
 	if ( x > cnt )
@@ -1950,7 +2064,7 @@ void dam_message ( Creature *ch, Creature *victim, int dam, int dt, bool immune 
 
 	// -- this should NEVER happen, but we want to make sure we don't bung up the mud.
 	if ( IS_NULLSTR ( dam_mess[x].vp ) || IS_NULLSTR ( dam_mess[x].vs ) ) {
-		x = number_range ( 1, 5 );
+		x = Math::instance().range ( 1, 5 );
 	}
 
 	// -- we should never encounter this problem again, however, we will maintain this here just incase.
@@ -1992,13 +2106,25 @@ void dam_message ( Creature *ch, Creature *victim, int dam, int dt, bool immune 
 			}
 		} else {
 			if ( ch == victim ) {
-				sprintf ( buf1, "$n's %s %s $m%c", attack, dam_mess[x].vp, punct );
-				sprintf ( buf2, "Your %s %s you%c \ab{\aR%d\ab}", attack, dam_mess[x].vp, punct, dam );
+				if ( where > 0 ) {
+					sprintf ( buf1, "$n's %s %s $s own %s%c", attack, dam_mess[x].vp, wear_info[where].name, punct );
+					sprintf ( buf2, "Your %s %s your %s%c \ab{\aR%d\ab}", attack, dam_mess[x].vp, wear_info[where].name, punct, dam );
+				} else {
+					sprintf ( buf1, "$n's %s %s $m%c", attack, dam_mess[x].vp, punct );
+					sprintf ( buf2, "Your %s %s you%c \ab{\aR%d\ab}", attack, dam_mess[x].vp, punct, dam );
+				}
 			} else {
-				sprintf ( buf1, "$n's %s %s $N%c",  attack, dam_mess[x].vp, punct );
-				sprintf ( buf2, "Your %s %s $N%c \ab{\aR%d\ab}",  attack, dam_mess[x].vp, punct, dam );
-				sprintf ( buf3, "$n's %s %s you%c \ab{\aR%d\ab}", attack, dam_mess[x].vp, punct, dam );
+				if ( where > 0 ) {
+					sprintf ( buf1, "$n's %s %s $N's %s%c", attack, dam_mess[x].vp, wear_info[where].name, punct );
+					sprintf ( buf2, "Your %s %s $N's %s%c \ab{\aR%d\ab}", attack, dam_mess[x].vp, wear_info[where].name, punct, dam );
+					sprintf ( buf3, "$n's %s %s your %s%c \ab{\aR%d\ab}", attack, dam_mess[x].vp, wear_info[where].name, punct, dam );
+				} else {
+					sprintf ( buf1, "$n's %s %s $N%c",  attack, dam_mess[x].vp, punct );
+					sprintf ( buf2, "Your %s %s $N%c \ab{\aR%d\ab}",  attack, dam_mess[x].vp, punct, dam );
+					sprintf ( buf3, "$n's %s %s you%c \ab{\aR%d\ab}", attack, dam_mess[x].vp, punct, dam );
+				}
 			}
+
 		}
 	}
 
@@ -2090,7 +2216,7 @@ DefineCommand ( cmd_berserk )
 	hp_percent = 100 * ch->hit / ch->max_hit;
 	chance += 25 - hp_percent / 2;
 
-	if ( number_percent() < chance ) {
+	if ( Math::instance().percent() < chance ) {
 		Affect af;
 
 		WAIT_STATE ( ch, PULSE_VIOLENCE );
@@ -2108,7 +2234,7 @@ DefineCommand ( cmd_berserk )
 		af.where	= TO_AFFECTS;
 		af.type		= gsn_berserk;
 		af.level	= ch->level;
-		af.duration	= number_fuzzy ( ch->level / 8 );
+		af.duration	= Math::instance().fuzzy ( ch->level / 8 );
 		af.modifier	= UMAX ( 1, ch->level / 5 );
 		af.bitvector 	= AFF_BERSERK;
 
@@ -2223,7 +2349,7 @@ DefineCommand ( cmd_bash )
 	}
 
 	/* now the attack */
-	if ( number_percent() < chance ) {
+	if ( Math::instance().percent() < chance ) {
 
 		act ( "$n sends you sprawling with a powerful bash!",
 			  ch, NULL, victim, TO_VICT );
@@ -2235,7 +2361,7 @@ DefineCommand ( cmd_bash )
 		DAZE_STATE ( victim, 3 * PULSE_VIOLENCE );
 		WAIT_STATE ( ch, skill_table[gsn_bash].beats );
 		victim->position = POS_RESTING;
-		damage ( ch, victim, number_range ( 2, 2 + 2 * ch->size + chance / 20 ), gsn_bash,
+		damage ( ch, victim, Math::instance().range ( 2, 2 + 2 * ch->size + chance / 20 ), gsn_bash,
 				 DAM_BASH, FALSE );
 
 	} else {
@@ -2365,11 +2491,11 @@ DefineCommand ( cmd_dirt )
 	}
 
 	/* now the attack */
-	if ( number_percent() < chance ) {
+	if ( Math::instance().percent() < chance ) {
 		Affect af;
 		act ( "$n is blinded by the dirt in $s eyes!", victim, NULL, NULL, TO_ROOM );
 		act ( "$n kicks dirt in your eyes!", ch, NULL, victim, TO_VICT );
-		damage ( ch, victim, number_range ( 2, 5 ), gsn_dirt, DAM_NONE, FALSE );
+		damage ( ch, victim, Math::instance().range ( 2, 5 ), gsn_dirt, DAM_NONE, FALSE );
 		writeBuffer ( "You can't see a thing!\n\r", victim );
 		check_improve ( ch, gsn_dirt, TRUE, 2 );
 		WAIT_STATE ( ch, skill_table[gsn_dirt].beats );
@@ -2474,7 +2600,7 @@ DefineCommand ( cmd_trip )
 
 
 	/* now the attack */
-	if ( number_percent() < chance ) {
+	if ( Math::instance().percent() < chance ) {
 		act ( "$n trips you and you go down!", ch, NULL, victim, TO_VICT );
 		act ( "You trip $N and $N goes down!", ch, NULL, victim, TO_CHAR );
 		act ( "$n trips $N, sending $M to the ground.", ch, NULL, victim, TO_NOTVICT );
@@ -2483,7 +2609,7 @@ DefineCommand ( cmd_trip )
 		DAZE_STATE ( victim, 2 * PULSE_VIOLENCE );
 		WAIT_STATE ( ch, skill_table[gsn_trip].beats );
 		victim->position = POS_RESTING;
-		damage ( ch, victim, number_range ( 2, 2 +  2 * victim->size ), gsn_trip,
+		damage ( ch, victim, Math::instance().range ( 2, 2 +  2 * victim->size ), gsn_trip,
 				 DAM_BASH, TRUE );
 	} else {
 		damage ( ch, victim, 0, gsn_trip, DAM_BASH, TRUE );
@@ -2669,7 +2795,7 @@ DefineCommand ( cmd_backstab )
 
 	check_killer ( ch, victim );
 	WAIT_STATE ( ch, skill_table[gsn_backstab].beats );
-	if ( number_percent( ) < get_skill ( ch, gsn_backstab )
+	if ( Math::instance().percent( ) < get_skill ( ch, gsn_backstab )
 			|| ( get_skill ( ch, gsn_backstab ) >= 2 && !IS_AWAKE ( victim ) ) ) {
 		check_improve ( ch, gsn_backstab, TRUE, 1 );
 		multi_hit ( ch, victim, gsn_backstab );
@@ -2702,11 +2828,11 @@ DefineCommand ( cmd_flee )
 		Exit *pexit;
 		int door;
 
-		door = number_door( );
+		door = Math::instance().door( );
 		if ( ( pexit = was_in->exit[door] ) == 0
 				||   pexit->u1.to_room == NULL
 				||   IS_SET ( pexit->exit_info, EX_CLOSED )
-				||   number_range ( 0, ch->daze ) != 0
+				||   Math::instance().range ( 0, ch->daze ) != 0
 				|| ( IS_NPC ( ch )
 					 &&   IS_SET ( pexit->u1.to_room->room_flags, ROOM_NO_MOB ) ) )
 		{ continue; }
@@ -2722,7 +2848,7 @@ DefineCommand ( cmd_flee )
 		if ( !IS_NPC ( ch ) ) {
 			writeBuffer ( "You flee from combat!\n\r", ch );
 			if ( ( ch->archetype == 2 )
-					&& ( number_percent() < 3 * ( ch->level / 2 ) ) )
+					&& ( Math::instance().percent() < 3 * ( ch->level / 2 ) ) )
 			{ writeBuffer ( "You snuck away safely.\n\r", ch ); }
 			else {
 				writeBuffer ( "You lost 10 exp.\n\r", ch );
@@ -2783,7 +2909,7 @@ DefineCommand ( cmd_rescue )
 	}
 
 	WAIT_STATE ( ch, skill_table[gsn_rescue].beats );
-	if ( number_percent( ) > get_skill ( ch, gsn_rescue ) ) {
+	if ( Math::instance().percent( ) > get_skill ( ch, gsn_rescue ) ) {
 		writeBuffer ( "You fail the rescue.\n\r", ch );
 		check_improve ( ch, gsn_rescue, FALSE, 1 );
 		return;
@@ -2825,8 +2951,8 @@ DefineCommand ( cmd_kick )
 	}
 
 	WAIT_STATE ( ch, skill_table[gsn_kick].beats );
-	if ( get_skill ( ch, gsn_kick ) > number_percent() ) {
-		damage ( ch, victim, number_range ( 1, ch->level ), gsn_kick, DAM_BASH, TRUE );
+	if ( get_skill ( ch, gsn_kick ) > Math::instance().percent() ) {
+		damage ( ch, victim, Math::instance().range ( 1, ch->level ), gsn_kick, DAM_BASH, TRUE );
 		check_improve ( ch, gsn_kick, TRUE, 1 );
 	} else {
 		damage ( ch, victim, 0, gsn_kick, DAM_BASH, TRUE );
@@ -2889,7 +3015,7 @@ DefineCommand ( cmd_disarm )
 	chance += ( ch->level - victim->level ) * 2;
 
 	/* and now the attack */
-	if ( number_percent() < chance ) {
+	if ( Math::instance().percent() < chance ) {
 		WAIT_STATE ( ch, skill_table[gsn_disarm].beats );
 		disarm ( ch, victim );
 		check_improve ( ch, gsn_disarm, TRUE, 1 );

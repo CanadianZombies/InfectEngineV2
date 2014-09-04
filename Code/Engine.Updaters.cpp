@@ -73,15 +73,15 @@ void advance_level ( Creature *ch, bool hide )
 			  title_table [ch->archetype] [ch->level] [ch->sex == SEX_FEMALE ? 1 : 0] );
 	set_title ( ch, buf );
 
-	add_hp	= con_app[get_curr_stat ( ch, STAT_CON )].hitp + number_range (
+	add_hp	= con_app[get_curr_stat ( ch, STAT_CON )].hitp + Math::instance().range (
 				  archetype_table[ch->archetype].hp_min,
 				  archetype_table[ch->archetype].hp_max );
-	add_mana 	= number_range ( 2, ( 2 * get_curr_stat ( ch, STAT_INT )
-									  + get_curr_stat ( ch, STAT_WIS ) ) / 5 );
+	add_mana 	= Math::instance().range ( 2, ( 2 * get_curr_stat ( ch, STAT_INT )
+										   + get_curr_stat ( ch, STAT_WIS ) ) / 5 );
 	if ( !archetype_table[ch->archetype].fMana )
 	{ add_mana /= 2; }
-	add_move	= number_range ( 1, ( get_curr_stat ( ch, STAT_CON )
-									  + get_curr_stat ( ch, STAT_DEX ) ) / 6 );
+	add_move	= Math::instance().range ( 1, ( get_curr_stat ( ch, STAT_CON )
+										   + get_curr_stat ( ch, STAT_DEX ) ) / 6 );
 	add_prac	= wis_app[get_curr_stat ( ch, STAT_WIS )].practice;
 
 	add_hp = add_hp * 9 / 10;
@@ -163,7 +163,7 @@ int hit_gain ( Creature *ch )
 	} else {
 		gain = UMAX ( 3, get_curr_stat ( ch, STAT_CON ) - 3 + ch->level / 2 );
 		gain += archetype_table[ch->archetype].hp_max - 10;
-		number = number_percent();
+		number = Math::instance().percent();
 		if ( number < get_skill ( ch, gsn_fast_healing ) ) {
 			gain += number * gain / 100;
 			if ( ch->hit < ch->max_hit )
@@ -237,7 +237,7 @@ int mana_gain ( Creature *ch )
 	} else {
 		gain = ( get_curr_stat ( ch, STAT_WIS )
 				 + get_curr_stat ( ch, STAT_INT ) + ch->level ) / 2;
-		number = number_percent();
+		number = Math::instance().percent();
 		if ( number < get_skill ( ch, gsn_meditation ) ) {
 			gain += number * gain / 100;
 			if ( ch->mana < ch->max_mana )
@@ -395,8 +395,8 @@ void mobile_update ( void )
 		if ( ch->pIndexData->pShop != NULL ) { /* give him some gold */
 			if ( ( ch->gold * 100 + ch->silver ) < ch->pIndexData->wealth ) {
 				log_hd ( LOG_DEBUG, Format ( "Restoring SHOP wealth's for shop owner: %s.", ch->name ) );
-				ch->gold += ch->pIndexData->wealth * number_range ( 1, 20 ) / 5000000;
-				ch->silver += ch->pIndexData->wealth * number_range ( 1, 20 ) / 50000;
+				ch->gold += ch->pIndexData->wealth * Math::instance().range ( 1, 20 ) / 5000000;
+				ch->silver += ch->pIndexData->wealth * Math::instance().range ( 1, 20 ) / 50000;
 			}
 		}
 
@@ -425,7 +425,7 @@ void mobile_update ( void )
 		/* Scavenge */
 		if ( IS_SET ( ch->act, ACT_SCAVENGER )
 				&&   ch->in_room->contents != NULL
-				&&   number_bits ( 6 ) == 0 ) {
+				&&   Math::instance().bits ( 6 ) == 0 ) {
 			Item *obj;
 			Item *obj_best;
 			int max;
@@ -449,8 +449,8 @@ void mobile_update ( void )
 
 		/* Wander */
 		if ( !IS_SET ( ch->act, ACT_SENTINEL )
-				&& number_bits ( 3 ) == 0
-				&& ( door = number_bits ( 5 ) ) <= 5
+				&& Math::instance().bits ( 3 ) == 0
+				&& ( door = Math::instance().bits ( 5 ) ) <= 5
 				&& ( pexit = ch->in_room->exit[door] ) != NULL
 				&&   pexit->u1.to_room != NULL
 				&&   !IS_SET ( pexit->exit_info, EX_CLOSED )
@@ -524,7 +524,7 @@ void weather_update ( void )
 	else
 	{ diff = weather_info.mmhg > 1015 ? -2 : 2; }
 
-	weather_info.change   += diff * dice ( 1, 4 ) + dice ( 2, 6 ) - dice ( 2, 6 );
+	weather_info.change   += diff * Math::instance().dice ( 1, 4 ) + Math::instance().dice ( 2, 6 ) - Math::instance().dice ( 2, 6 );
 	weather_info.change    = UMAX ( weather_info.change, -12 );
 	weather_info.change    = UMIN ( weather_info.change,  12 );
 
@@ -540,7 +540,7 @@ void weather_update ( void )
 
 		case SKY_CLOUDLESS:
 			if ( weather_info.mmhg <  990
-					|| ( weather_info.mmhg < 1010 && number_bits ( 2 ) == 0 ) ) {
+					|| ( weather_info.mmhg < 1010 && Math::instance().bits ( 2 ) == 0 ) ) {
 				strcat ( buf, "The sky is getting cloudy.\n\r" );
 				weather_info.sky = SKY_CLOUDY;
 			}
@@ -548,25 +548,25 @@ void weather_update ( void )
 
 		case SKY_CLOUDY:
 			if ( weather_info.mmhg <  970
-					|| ( weather_info.mmhg <  990 && number_bits ( 2 ) == 0 ) ) {
+					|| ( weather_info.mmhg <  990 && Math::instance().bits ( 2 ) == 0 ) ) {
 				strcat ( buf, "It starts to rain.\n\r" );
 				weather_info.sky = SKY_RAINING;
 			}
 
-			if ( weather_info.mmhg > 1030 && number_bits ( 2 ) == 0 ) {
+			if ( weather_info.mmhg > 1030 && Math::instance().bits ( 2 ) == 0 ) {
 				strcat ( buf, "The clouds disappear.\n\r" );
 				weather_info.sky = SKY_CLOUDLESS;
 			}
 			break;
 
 		case SKY_RAINING:
-			if ( weather_info.mmhg <  970 && number_bits ( 2 ) == 0 ) {
+			if ( weather_info.mmhg <  970 && Math::instance().bits ( 2 ) == 0 ) {
 				strcat ( buf, "Lightning flashes in the sky.\n\r" );
 				weather_info.sky = SKY_LIGHTNING;
 			}
 
 			if ( weather_info.mmhg > 1030
-					|| ( weather_info.mmhg > 1010 && number_bits ( 2 ) == 0 ) ) {
+					|| ( weather_info.mmhg > 1010 && Math::instance().bits ( 2 ) == 0 ) ) {
 				strcat ( buf, "The rain stopped.\n\r" );
 				weather_info.sky = SKY_CLOUDY;
 			}
@@ -574,7 +574,7 @@ void weather_update ( void )
 
 		case SKY_LIGHTNING:
 			if ( weather_info.mmhg > 1010
-					|| ( weather_info.mmhg >  990 && number_bits ( 2 ) == 0 ) ) {
+					|| ( weather_info.mmhg >  990 && Math::instance().bits ( 2 ) == 0 ) ) {
 				strcat ( buf, "The lightning has stopped.\n\r" );
 				weather_info.sky = SKY_RAINING;
 				break;
@@ -626,7 +626,7 @@ void char_update ( void )
 			/* check to see if we need to go home */
 			if ( IS_NPC ( ch ) && ch->zone != NULL && ch->zone != ch->in_room->area
 					&& ch->desc == NULL &&  ch->fighting == NULL
-					&& !IS_AFFECTED ( ch, AFF_CHARM ) && number_percent() < 5 ) {
+					&& !IS_AFFECTED ( ch, AFF_CHARM ) && Math::instance().percent() < 5 ) {
 				act ( "$n wanders on home.", ch, NULL, NULL, TO_ROOM );
 				log_hd ( LOG_DEBUG, Format ( "NPC: %s added to extraction queue, (away from home too long)", ch->name ) );
 				extract_char ( ch, TRUE );
@@ -697,7 +697,7 @@ void char_update ( void )
 			paf_next	= paf->next;
 			if ( paf->duration > 0 ) {
 				paf->duration--;
-				if ( number_range ( 0, 4 ) == 0 && paf->level > 0 )
+				if ( Math::instance().range ( 0, 4 ) == 0 && paf->level > 0 )
 				{ paf->level--; }  /* spell strength fades with time */
 			} else if ( paf->duration < 0 )
 				;
@@ -747,7 +747,7 @@ void char_update ( void )
 			plague.where		= TO_AFFECTS;
 			plague.type 		= gsn_plague;
 			plague.level 		= af->level - 1;
-			plague.duration 	= number_range ( 1, 2 * plague.level );
+			plague.duration 	= Math::instance().range ( 1, 2 * plague.level );
 			plague.location		= APPLY_STR;
 			plague.modifier 	= -5;
 			plague.bitvector 	= AFF_PLAGUE;
@@ -755,7 +755,7 @@ void char_update ( void )
 			for ( vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room ) {
 				if ( !saves_spell ( plague.level - 2, vch, DAM_DISEASE )
 						&&  !IsStaff ( vch )
-						&&  !IS_AFFECTED ( vch, AFF_PLAGUE ) && number_bits ( 4 ) == 0 ) {
+						&&  !IS_AFFECTED ( vch, AFF_PLAGUE ) && Math::instance().bits ( 4 ) == 0 ) {
 					writeBuffer ( "You feel hot and feverish.\n\r", vch );
 					act ( "$n shivers and looks very ill.", vch, NULL, NULL, TO_ROOM );
 					log_hd ( LOG_DEBUG, Format ( "AFFECT: Plague has been spread from %s to %s.", ch->name, vch->name ) );
@@ -783,7 +783,7 @@ void char_update ( void )
 			}
 		}
 
-		else if ( ch->position == POS_INCAP && number_range ( 0, 1 ) == 0 ) {
+		else if ( ch->position == POS_INCAP && Math::instance().range ( 0, 1 ) == 0 ) {
 			log_hd ( LOG_DEBUG, Format ( "POSITION: %s has taken damage from being incapacitated.", ch->name ) );
 			damage ( ch, ch, 1, TYPE_UNDEFINED, DAM_NONE, FALSE );
 		} else if ( ch->position == POS_MORTAL ) {
@@ -837,7 +837,7 @@ void obj_update ( void )
 			paf_next    = paf->next;
 			if ( paf->duration > 0 ) {
 				paf->duration--;
-				if ( number_range ( 0, 4 ) == 0 && paf->level > 0 )
+				if ( Math::instance().range ( 0, 4 ) == 0 && paf->level > 0 )
 				{ paf->level--; }  /* spell strength fades with time */
 			} else if ( paf->duration < 0 )
 				;
@@ -1005,7 +1005,7 @@ void aggr_update ( void )
 					||   !IS_AWAKE ( ch )
 					||   ( IS_SET ( ch->act, ACT_WIMPY ) && IS_AWAKE ( wch ) )
 					||   !can_see ( ch, wch )
-					||   number_bits ( 1 ) == 0 )
+					||   Math::instance().bits ( 1 ) == 0 )
 			{ continue; }
 
 			/*
@@ -1023,7 +1023,7 @@ void aggr_update ( void )
 						&&   ch->level >= vch->level - 5
 						&&   ( !IS_SET ( ch->act, ACT_WIMPY ) || !IS_AWAKE ( vch ) )
 						&&   can_see ( ch, vch ) ) {
-					if ( number_range ( 0, count ) == 0 )
+					if ( Math::instance().range ( 0, count ) == 0 )
 					{ victim = vch; }
 					count++;
 				}
@@ -1181,7 +1181,7 @@ void update_handler ( void )
 	if ( --pulse_area     <= 0 ) {
 		log_hd ( LOG_DEBUG, Format ( "pulse_area = %d; area_update will be initiated.", PULSE_AREA ) );
 		pulse_area	= PULSE_AREA;
-		/* number_range( PULSE_AREA / 2, 3 * PULSE_AREA / 2 ); */
+		/* Math::instance().range( PULSE_AREA / 2, 3 * PULSE_AREA / 2 ); */
 		area_update	( );
 	}
 
@@ -1207,7 +1207,7 @@ void update_handler ( void )
 		log_hd ( LOG_DEBUG, Format ( "pulse_tick = %d; weather_update, char_update, obj_update will be initiated", PULSE_TICK ) );
 		wiznet ( "TICK!", NULL, NULL, WIZ_TICKS, 0, 0 );
 		pulse_point     = PULSE_TICK;
-		/* number_range( PULSE_TICK / 2, 3 * PULSE_TICK / 2 ); */
+		/* Math::instance().range( PULSE_TICK / 2, 3 * PULSE_TICK / 2 ); */
 		weather_update	( );
 		char_update	( );
 		obj_update	( );

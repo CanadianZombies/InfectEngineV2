@@ -101,7 +101,7 @@ extern		unsigned long 		connect_count;
  * Global Constants
  */
 extern	const char *	dir_name        [];
-extern	const	sh_int	rev_dir         [];          /* sh_int - ROM OLC */
+extern	const	int	rev_dir         [];          /* int - ROM OLC */
 extern	const	struct	spec_type	spec_table	[];
 
 /*

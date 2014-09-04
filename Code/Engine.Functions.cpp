@@ -1546,7 +1546,7 @@ void char_to_room ( Creature *ch, RoomData *pRoomIndex )
 		plague.where		= TO_AFFECTS;
 		plague.type 		= gsn_plague;
 		plague.level 		= af->level - 1;
-		plague.duration 	= number_range ( 1, 2 * plague.level );
+		plague.duration 	= Math::instance().range ( 1, 2 * plague.level );
 		plague.location		= APPLY_STR;
 		plague.modifier 	= -5;
 		plague.bitvector 	= AFF_PLAGUE;
@@ -1554,7 +1554,7 @@ void char_to_room ( Creature *ch, RoomData *pRoomIndex )
 		for ( vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room ) {
 			if ( !saves_spell ( plague.level - 2, vch, DAM_DISEASE )
 					&&  !IsStaff ( vch ) &&
-					!IS_AFFECTED ( vch, AFF_PLAGUE ) && number_bits ( 6 ) == 0 ) {
+					!IS_AFFECTED ( vch, AFF_PLAGUE ) && Math::instance().bits ( 6 ) == 0 ) {
 				writeBuffer ( "You feel hot and feverish.\n\r", vch );
 				act ( "$n shivers and looks very ill.", vch, NULL, NULL, TO_ROOM );
 				affect_join ( vch, &plague );
@@ -2525,7 +2525,7 @@ bool can_see ( Creature *ch, Creature *victim )
 		chance -= get_curr_stat ( ch, STAT_INT ) * 2;
 		chance -= ch->level - victim->level * 3 / 2;
 
-		if ( number_percent() < chance )
+		if ( Math::instance().percent() < chance )
 		{ return FALSE; }
 	}
 

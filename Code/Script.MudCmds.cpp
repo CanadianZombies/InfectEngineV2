@@ -1059,13 +1059,13 @@ DefineCommand ( cmd_mpdamage )
 			if ( victim != ch )
 				damage ( victim, victim,
 						 fKill ?
-						 number_range ( low, high ) : UMIN ( victim->hit, number_range ( low, high ) ),
+						 Math::instance().range ( low, high ) : UMIN ( victim->hit, Math::instance().range ( low, high ) ),
 						 TYPE_UNDEFINED, DAM_NONE, FALSE );
 		}
 	} else
 		damage ( victim, victim,
 				 fKill ?
-				 number_range ( low, high ) : UMIN ( victim->hit, number_range ( low, high ) ),
+				 Math::instance().range ( low, high ) : UMIN ( victim->hit, Math::instance().range ( low, high ) ),
 				 TYPE_UNDEFINED, DAM_NONE, FALSE );
 	return;
 }
@@ -1142,7 +1142,7 @@ DefineCommand ( cmd_mpcall )
 	Creature *vch;
 	Item *obj1, *obj2;
 	MPROG_CODE *prg;
-	extern void program_flow ( sh_int, char *, Creature *, Creature *, const void *, const void * );
+	extern void program_flow ( int, char *, Creature *, Creature *, const void *, const void * );
 
 	argument = one_argument ( argument, arg );
 	if ( arg[0] == '\0' ) {
@@ -1188,7 +1188,7 @@ DefineCommand ( cmd_mpflee )
 	{ return; }
 
 	for ( attempt = 0; attempt < 6; attempt++ ) {
-		door = number_door( );
+		door = Math::instance().door( );
 		if ( ( pexit = was_in->exit[door] ) == 0
 				||   pexit->u1.to_room == NULL
 				||   IS_SET ( pexit->exit_info, EX_CLOSED )
@@ -1249,7 +1249,7 @@ DefineCommand ( cmd_mpremove )
 {
 	Creature *victim;
 	Item *obj, *obj_next;
-	sh_int vnum = 0;
+	int vnum = 0;
 	bool fAll = FALSE;
 	char arg[ MAX_INPUT_LENGTH ];
 

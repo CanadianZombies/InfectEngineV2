@@ -70,7 +70,7 @@ void acid_effect ( void *vo, int level, int dam, int target )
 
 		if ( IS_OBJ_STAT ( obj, ITEM_BURN_PROOF )
 				||  IS_OBJ_STAT ( obj, ITEM_NOPURGE )
-				||  number_range ( 0, 4 ) == 0 )
+				||  Math::instance().range ( 0, 4 ) == 0 )
 		{ return; }
 
 		chance = level / 4 + dam / 10;
@@ -112,7 +112,7 @@ void acid_effect ( void *vo, int level, int dam, int target )
 
 		chance = URANGE ( 5, chance, 95 );
 
-		if ( number_percent() > chance )
+		if ( Math::instance().percent() > chance )
 		{ return; }
 
 		if ( obj->carried_by != NULL )
@@ -234,7 +234,7 @@ void cold_effect ( void *vo, int level, int dam, int target )
 
 		if ( IS_OBJ_STAT ( obj, ITEM_BURN_PROOF )
 				||  IS_OBJ_STAT ( obj, ITEM_NOPURGE )
-				||  number_range ( 0, 4 ) == 0 )
+				||  Math::instance().range ( 0, 4 ) == 0 )
 		{ return; }
 
 		chance = level / 4 + dam / 10;
@@ -264,7 +264,7 @@ void cold_effect ( void *vo, int level, int dam, int target )
 
 		chance = URANGE ( 5, chance, 95 );
 
-		if ( number_percent() > chance )
+		if ( Math::instance().percent() > chance )
 		{ return; }
 
 		if ( obj->carried_by != NULL )
@@ -307,7 +307,7 @@ void fire_effect ( void *vo, int level, int dam, int target )
 			af.where        = TO_AFFECTS;
 			af.type         = skill_lookup ( "fire breath" );
 			af.level        = level;
-			af.duration     = number_range ( 0, level / 10 );
+			af.duration     = Math::instance().range ( 0, level / 10 );
 			af.location     = APPLY_HITROLL;
 			af.modifier     = -4;
 			af.bitvector    = AFF_BLIND;
@@ -336,7 +336,7 @@ void fire_effect ( void *vo, int level, int dam, int target )
 
 		if ( IS_OBJ_STAT ( obj, ITEM_BURN_PROOF )
 				||  IS_OBJ_STAT ( obj, ITEM_NOPURGE )
-				||  number_range ( 0, 4 ) == 0 )
+				||  Math::instance().range ( 0, 4 ) == 0 )
 		{ return; }
 
 		chance = level / 4 + dam / 10;
@@ -381,7 +381,7 @@ void fire_effect ( void *vo, int level, int dam, int target )
 
 		chance = URANGE ( 5, chance, 95 );
 
-		if ( number_percent() > chance )
+		if ( Math::instance().percent() > chance )
 		{ return; }
 
 		if ( obj->carried_by != NULL )
@@ -462,7 +462,7 @@ void poison_effect ( void *vo, int level, int dam, int target )
 
 		if ( IS_OBJ_STAT ( obj, ITEM_BURN_PROOF )
 				||  IS_OBJ_STAT ( obj, ITEM_BLESS )
-				||  number_range ( 0, 4 ) == 0 )
+				||  Math::instance().range ( 0, 4 ) == 0 )
 		{ return; }
 
 		chance = level / 4 + dam / 10;
@@ -486,7 +486,7 @@ void poison_effect ( void *vo, int level, int dam, int target )
 
 		chance = URANGE ( 5, chance, 95 );
 
-		if ( number_percent() > chance )
+		if ( Math::instance().percent() > chance )
 		{ return; }
 
 		obj->value[3] = 1;
@@ -533,7 +533,7 @@ void shock_effect ( void *vo, int level, int dam, int target )
 
 		if ( IS_OBJ_STAT ( obj, ITEM_BURN_PROOF )
 				||  IS_OBJ_STAT ( obj, ITEM_NOPURGE )
-				||  number_range ( 0, 4 ) == 0 )
+				||  Math::instance().range ( 0, 4 ) == 0 )
 		{ return; }
 
 		chance = level / 4 + dam / 10;
@@ -563,7 +563,7 @@ void shock_effect ( void *vo, int level, int dam, int target )
 
 		chance = URANGE ( 5, chance, 95 );
 
-		if ( number_percent() > chance )
+		if ( Math::instance().percent() > chance )
 		{ return; }
 
 		if ( obj->carried_by != NULL )

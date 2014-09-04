@@ -1131,7 +1131,7 @@ bool change_exit ( Creature *ch, const char *argument, int door )
 	 */
 	if ( ( value = flag_value ( exit_flags, argument ) ) != NO_FLAG ) {
 		RoomData *pToRoom;
-		sh_int rev;                                    /* ROM OLC */
+		int rev;                                    /* ROM OLC */
 
 		if ( !pRoom->exit[door] ) {
 			writeBuffer ( "There is no exit in that direction.\n\r", ch );
@@ -1178,7 +1178,7 @@ bool change_exit ( Creature *ch, const char *argument, int door )
 
 	if ( !str_cmp ( command, "delete" ) ) {
 		RoomData *pToRoom;
-		sh_int rev;                                     /* ROM OLC */
+		int rev;                                     /* ROM OLC */
 
 		if ( !pRoom->exit[door] ) {
 			writeBuffer ( "REdit:  Cannot delete a null exit.\n\r", ch );
@@ -1863,7 +1863,7 @@ REDIT ( redit_oreset )
 		pReset->arg4	= 0;
 		add_reset ( pRoom, pReset, 0/* Last slot*/ );
 
-		newobj = create_object ( pObjIndex, number_fuzzy ( olevel ) );
+		newobj = create_object ( pObjIndex, Math::instance().fuzzy ( olevel ) );
 		obj_to_room ( newobj, pRoom );
 
 		sprintf ( output, "%s (%d) has been loaded and added to resets.\n\r",
@@ -1884,7 +1884,7 @@ REDIT ( redit_oreset )
 			pReset->arg4	= 1;
 			add_reset ( pRoom, pReset, 0/* Last slot*/ );
 
-			newobj = create_object ( pObjIndex, number_fuzzy ( olevel ) );
+			newobj = create_object ( pObjIndex, Math::instance().fuzzy ( olevel ) );
 			newobj->cost = 0;
 			obj_to_obj ( newobj, to_obj );
 
@@ -1943,7 +1943,7 @@ REDIT ( redit_oreset )
 				add_reset ( pRoom, pReset, 0/* Last slot*/ );
 
 				olevel  = URANGE ( 0, to_mob->level - 2, LEVEL_HERO );
-				newobj = create_object ( pObjIndex, number_fuzzy ( olevel ) );
+				newobj = create_object ( pObjIndex, Math::instance().fuzzy ( olevel ) );
 
 				if ( to_mob->pIndexData->pShop ) {	/* Shop-keeper? */
 					switch ( pObjIndex->item_type ) {
@@ -1951,28 +1951,28 @@ REDIT ( redit_oreset )
 							olevel = 0;
 							break;
 						case ITEM_PILL:
-							olevel = number_range (  0, 10 );
+							olevel = Math::instance().range (  0, 10 );
 							break;
 						case ITEM_POTION:
-							olevel = number_range (  0, 10 );
+							olevel = Math::instance().range (  0, 10 );
 							break;
 						case ITEM_SCROLL:
-							olevel = number_range (  5, 15 );
+							olevel = Math::instance().range (  5, 15 );
 							break;
 						case ITEM_WAND:
-							olevel = number_range ( 10, 20 );
+							olevel = Math::instance().range ( 10, 20 );
 							break;
 						case ITEM_STAFF:
-							olevel = number_range ( 15, 25 );
+							olevel = Math::instance().range ( 15, 25 );
 							break;
 						case ITEM_ARMOR:
-							olevel = number_range (  5, 15 );
+							olevel = Math::instance().range (  5, 15 );
 							break;
 						case ITEM_WEAPON:
 							if ( pReset->command == 'G' )
-							{ olevel = number_range ( 5, 15 ); }
+							{ olevel = Math::instance().range ( 5, 15 ); }
 							else
-							{ olevel = number_fuzzy ( olevel ); }
+							{ olevel = Math::instance().fuzzy ( olevel ); }
 							break;
 					}
 
@@ -1980,7 +1980,7 @@ REDIT ( redit_oreset )
 					if ( pReset->arg2 == WEAR_NONE )
 					{ SET_BIT ( newobj->extra_flags, ITEM_INVENTORY ); }
 				} else
-				{ newobj = create_object ( pObjIndex, number_fuzzy ( olevel ) ); }
+				{ newobj = create_object ( pObjIndex, Math::instance().fuzzy ( olevel ) ); }
 
 				obj_to_char ( newobj, to_mob );
 				if ( pReset->command == 'E' )
@@ -3285,7 +3285,7 @@ OEDIT ( autoweapon )
 	avg = ( pObj->level * .76 );
 	dice = ( pObj->level / 10 + 1 );
 	size = dice / 2;
-	/* loop through dice sizes until we find that the Next dice size's avg
+	/* loop through dice sizes until we find that the Next Math::instance().dice size's avg
 	will be too high... ie, find the "best fit" */
 	for ( size = dice / 2 ; dice * ( size + 2 ) / 2 < avg ; size++ )
 	{ }
@@ -3558,7 +3558,7 @@ MEDIT ( medit_show )
 
 	writeBuffer ( Format ( "Random Bits: [%s]\r\n", random_eq_bit_name ( pMob->random ) ), ch );
 
-	sprintf ( buf, "Hit dice:    [%2dd%-3d+%4d] ",
+	sprintf ( buf, "Hitdice:    [%2dd%-3d+%4d] ",
 			  pMob->hit[DICE_NUMBER],
 			  pMob->hit[DICE_TYPE],
 			  pMob->hit[DICE_BONUS] );
@@ -3875,7 +3875,7 @@ MEDIT ( medit_level )
 	pMob->hit[DICE_BONUS] = 1;
 	pMob->damage[DICE_NUMBER] = ( argfun );
 	pMob->damage[DICE_TYPE] = ( argfun / 20 );
-	pMob->damage[DICE_BONUS] = number_range ( 1, 4 );
+	pMob->damage[DICE_BONUS] = Math::instance().range ( 1, 4 );
 	pMob->hitroll = ( argfun * 2 / 6 );
 	pMob->wealth = ( argfun * 10 );
 

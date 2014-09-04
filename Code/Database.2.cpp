@@ -174,7 +174,7 @@ void load_mobiles ( FILE *fp )
 	}
 
 	for ( ; ; ) {
-		sh_int vnum;
+		int vnum;
 		char letter;
 		int iHash;
 
@@ -223,21 +223,21 @@ void load_mobiles ( FILE *fp )
 		pMobIndex->level                = fread_number ( fp );
 		pMobIndex->hitroll              = fread_number ( fp );
 
-		/* read hit dice */
+		/* read hit Math::instance().dice */
 		pMobIndex->hit[DICE_NUMBER]     = fread_number ( fp );
 		/* 'd'          */                fread_letter ( fp );
 		pMobIndex->hit[DICE_TYPE]   	= fread_number ( fp );
 		/* '+'          */                fread_letter ( fp );
 		pMobIndex->hit[DICE_BONUS]      = fread_number ( fp );
 
-		/* read mana dice */
+		/* read mana Math::instance().dice */
 		pMobIndex->mana[DICE_NUMBER]	= fread_number ( fp );
 		fread_letter ( fp );
 		pMobIndex->mana[DICE_TYPE]	= fread_number ( fp );
 		fread_letter ( fp );
 		pMobIndex->mana[DICE_BONUS]	= fread_number ( fp );
 
-		/* read damage dice */
+		/* read damage Math::instance().dice */
 		pMobIndex->damage[DICE_NUMBER]	= fread_number ( fp );
 		fread_letter ( fp );
 		pMobIndex->damage[DICE_TYPE]	= fread_number ( fp );
@@ -357,7 +357,7 @@ void load_objects ( FILE *fp )
 	}
 
 	while ( true ) {
-		sh_int vnum;
+		int vnum;
 		char letter;
 		int iHash;
 
@@ -708,7 +708,7 @@ void convert_objects ( void )
 void convert_object ( ItemData *pObjIndex )
 {
 	int level;
-	int number, type;  /* for dice-conversion */
+	int number, type;  /* for Math::instance().dice-conversion */
 
 	if ( !pObjIndex || pObjIndex->new_format ) { return; }
 
@@ -754,12 +754,12 @@ void convert_object ( ItemData *pObjIndex )
 			 * the max value higher.
 			 * (I don't want 15d2 because this will hardly ever roll
 			 * 15 or 30, it will only roll damage close to 23.
-			 * I can't do 4d8+11, because one_hit there is no dice-
+			 * I can't do 4d8+11, because one_hit there is no Math::instance().dice-
 			 * bounus value to set...)
 			 *
 			 * The conversion below gives:
 
-			 level:   dice      min      max      mean
+			 level:   Math::instance().dice      min      max      mean
 			   1:     1d8      1( 2)    8( 7)     5( 5)
 			   2:     2d5      2( 3)   10( 8)     6( 6)
 			   3:     2d5      2( 3)   10( 8)     6( 6)
@@ -822,15 +822,15 @@ void convert_mobile ( NPCData *pMobIndex )
 	pMobIndex->act              |= ACT_WARRIOR;
 
 	/*
-	 * Calculate hit dice.  Gives close to the hitpoints
+	 * Calculate hit Math::instance().dice.  Gives close to the hitpoints
 	 * of old format mobs created with create_mobile()  (db.c)
-	 * A high number of dice makes for less variance in mobiles
+	 * A high number of Math::instance().dice makes for less variance in mobiles
 	 * hitpoints.
-	 * (might be a good idea to reduce the max number of dice)
+	 * (might be a good idea to reduce the max number of Math::instance().dice)
 	 *
 	 * The conversion below gives:
 
-	   level:     dice         min         max        diff       mean
+	   level:     Math::instance().dice         min         max        diff       mean
 	     1:       1d2+6       7(  7)     8(   8)     1(   1)     8(   8)
 	 2:       1d3+15     16( 15)    18(  18)     2(   3)    17(  17)
 	 3:       1d6+24     25( 24)    30(  30)     5(   6)    27(  27)
@@ -860,7 +860,7 @@ void convert_mobile ( NPCData *pMobIndex )
 	pMobIndex->mana[DICE_BONUS]    = 100;
 
 	/*
-	 * Calculate dam dice.  Gives close to the damage
+	 * Calculate dam Math::instance().dice.  Gives close to the damage
 	 * of old format mobs in damage()  (fight.c)
 	 */
 	type   = level * 7 / 4;
@@ -872,7 +872,7 @@ void convert_mobile ( NPCData *pMobIndex )
 	pMobIndex->damage[DICE_TYPE]   = type;
 	pMobIndex->damage[DICE_BONUS]  = bonus;
 
-	switch ( number_range ( 1, 3 ) ) {
+	switch ( Math::instance().range ( 1, 3 ) ) {
 		case ( 1 ) :
 			pMobIndex->dam_type =  3;
 			break;  /* slash  */
@@ -885,8 +885,8 @@ void convert_mobile ( NPCData *pMobIndex )
 	}
 
 	for ( i = 0; i < 3; i++ )
-	{ pMobIndex->ac[i]         = interpolate ( level, 100, -100 ); }
-	pMobIndex->ac[3]             = interpolate ( level, 100, 0 );  /* exotic */
+	{ pMobIndex->ac[i]         = Math::instance().interpolate ( level, 100, -100 ); }
+	pMobIndex->ac[3]             = Math::instance().interpolate ( level, 100, 0 );  /* exotic */
 
 	pMobIndex->wealth           /= 100;
 	pMobIndex->size              = SIZE_MEDIUM;

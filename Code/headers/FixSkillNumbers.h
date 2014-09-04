@@ -38,9 +38,9 @@
 #ifndef _FixSkillNumber_H
 #define _FixSkillNumber_H
 #if defined(Database_Cpp)
-#define SkillNumber(gsn) sh_int gsn;
+#define SkillNumber(gsn) int gsn;
 #else
-#define SkillNumber(gsn) extern sh_int gsn;
+#define SkillNumber(gsn) extern int gsn;
 #endif
 
 SkillNumber ( gsn_reserved );

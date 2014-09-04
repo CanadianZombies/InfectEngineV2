@@ -449,20 +449,20 @@ void ExpEvent::Execute ( void )
 		if ( ch->fighting ) { continue; }			// -- do not gain while in combat.
 
 		int totalGain = 0;
-		if ( number_range ( 0, 3 ) == number_range ( 0, 7 ) ) {
+		if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 7 ) ) {
 			if ( ch->exp_pool != 0 && ch->exp < ( ch->level * 200 ) ) {
 				ch->exp_pool--;
 				totalGain++;
 
 				// -- chance for the bonus experience
-				if ( ch->exp_pool > 30 && number_range ( 0, 3 ) == number_range ( 0, 4 ) ) {
-					int jump = number_range ( 1, 30 );
+				if ( ch->exp_pool > 30 && Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 4 ) ) {
+					int jump = Math::instance().range ( 1, 30 );
 					ch->exp_pool = ( ch->exp_pool - jump );
 
 					totalGain += jump;
 
 					// -- bonus experience to help levelling along
-					if ( number_range ( 0, 3 ) == number_range ( 0, 15 ) ) {
+					if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 15 ) ) {
 						ch->exp += ch->level;
 						totalGain += ch->level;
 					}
@@ -471,7 +471,7 @@ void ExpEvent::Execute ( void )
 				// -- lets try and give out some extra exp, leveling is crazy hard
 				// -- when all you get is 1xp every now and then.
 				if ( ch->exp_pool > 10 ) {
-					int jm = number_range ( 1, 10 );
+					int jm = Math::instance().range ( 1, 10 );
 					ch->exp_pool = ( ch->exp_pool - jm );
 					totalGain += jm;
 				}
@@ -489,8 +489,8 @@ void ExpEvent::Execute ( void )
 		} // -- end random chance
 
 		// -- random standing experience gain (It just happens)
-		if ( number_range ( 0, 115 ) == number_percent() ) {
-			ch->exp_pool += number_range ( number_range ( 0, 3 ), number_range ( 3, 9 ) );
+		if ( Math::instance().range ( 0, 115 ) == Math::instance().percent() ) {
+			ch->exp_pool += Math::instance().range ( Math::instance().range ( 0, 3 ), Math::instance().range ( 3, 9 ) );
 		}
 
 		// -- save our character

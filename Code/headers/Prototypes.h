@@ -301,7 +301,7 @@ void	obj_cast_spell	args ( ( int sn, int level, Creature *ch,
 								 Creature *victim, Item *obj ) );
 
 /* mob_prog.c */
-void	program_flow	args ( ( sh_int vnum, char *source, Creature *mob, Creature *ch,
+void	program_flow	args ( ( int vnum, char *source, Creature *mob, Creature *ch,
 								 const void *arg1, const void *arg2 ) );
 void	mp_act_trigger	args ( ( const char *argument, Creature *mob, Creature *ch,
 								 const void *arg1, const void *arg2, int type ) );

@@ -46,16 +46,6 @@
 extern	int	_filbuf		args ( ( FILE * ) );
 #endif
 
-#if !defined(OLD_RAND)
-#if !defined(linux)
-long random();
-#endif
-void srandom ( unsigned int );
-int getpid();
-time_t time ( time_t *tloc );
-#endif
-
-
 /* externals for counting purposes */
 extern	Item	*obj_free;
 extern	Creature	*char_free;
@@ -128,7 +118,6 @@ char			strArea[MAX_INPUT_LENGTH];
 /*
  * Local booting procedures.
 */
-void    init_mm         args ( ( void ) );
 void	load_area	args ( ( FILE *fp ) );
 void    new_load_area   args ( ( FILE *fp ) );  /* OLC */
 void	load_helps	args ( ( FILE *fp, char *fname ) );
@@ -163,15 +152,8 @@ void boot_db ( void )
 	 * Init some data space stuff.
 	 */
 	{
+		log_hd ( LOG_ALL, "Setting Boot Status..." );
 		fBootDb		= TRUE;
-	}
-
-	/*
-	 * Init random number generator.
-	 */
-	{
-		log_hd ( LOG_ALL, "Initiating Random Number Generator..." );
-		init_mm( );
 	}
 
 	/*
@@ -199,9 +181,9 @@ void boot_db ( void )
 		weather_info.change	= 0;
 		weather_info.mmhg	= 960;
 		if ( time_info.month >= 7 && time_info.month <= 12 )
-		{ weather_info.mmhg += number_range ( 1, 50 ); }
+		{ weather_info.mmhg += Math::instance().range ( 1, 50 ); }
 		else
-		{ weather_info.mmhg += number_range ( 1, 80 ); }
+		{ weather_info.mmhg += Math::instance().range ( 1, 80 ); }
 
 		if ( weather_info.mmhg <=  980 ) { weather_info.sky = SKY_LIGHTNING; }
 		else if ( weather_info.mmhg <= 1000 ) { weather_info.sky = SKY_RAINING; }
@@ -589,7 +571,7 @@ void load_old_mob ( FILE *fp )
 	}
 
 	for ( ; ; ) {
-		sh_int vnum;
+		int vnum;
 		char letter;
 		int iHash;
 
@@ -717,7 +699,7 @@ void load_old_obj ( FILE *fp )
 	}
 
 	for ( ; ; ) {
-		sh_int vnum;
+		int vnum;
 		char letter;
 		int iHash;
 
@@ -984,7 +966,7 @@ void load_rooms ( FILE *fp )
 	}
 
 	for ( ; ; ) {
-		sh_int vnum;
+		int vnum;
 		char letter;
 		int door;
 		int iHash;
@@ -1213,7 +1195,7 @@ void load_specials ( FILE *fp )
  */
 void fix_exits ( void )
 {
-	extern const sh_int rev_dir [];
+	extern const int rev_dir [];
 	RoomData *pRoomIndex;
 	RoomData *to_room;
 	Exit *pexit;
@@ -1335,7 +1317,7 @@ void load_mobprogs ( FILE *fp )
 	}
 
 	for ( ; ; ) {
-		sh_int vnum;
+		int vnum;
 		char letter;
 
 		letter		  = fread_letter ( fp );
@@ -1419,7 +1401,7 @@ void area_update ( void )
 			reset_area ( pArea );
 			wiznet ( Format ( "%s has just been reset.", pArea->name ), NULL, NULL, WIZ_RESETS, 0, 0 );
 
-			pArea->age = number_range ( 0, 3 );
+			pArea->age = Math::instance().range ( 0, 3 );
 
 
 			pRoomIndex = get_room_index ( ROOM_VNUM_SCHOOL );
@@ -1512,7 +1494,7 @@ void reset_room ( RoomData *pRoom )
 
 				/* */
 
-				if ( pMobIndex->repop_percent > number_percent() ) {
+				if ( pMobIndex->repop_percent > Math::instance().percent() ) {
 					log_hd ( LOG_DEBUG, Format ( "MOBILE: %d didn't repop due to low repop percent", pMobIndex->vnum ) );
 					break;
 				}
@@ -1565,12 +1547,12 @@ void reset_room ( RoomData *pRoom )
 					break;
 				}
 
-				if ( pObjIndex->repop_percent > number_percent() ) {
+				if ( pObjIndex->repop_percent > Math::instance().percent() ) {
 					break;
 				}
 
 				pObj = create_object ( pObjIndex,             /* UMIN - ROM OLC */
-									   UMIN ( number_fuzzy ( level ), LEVEL_HERO - 1 ) );
+									   UMIN ( Math::instance().fuzzy ( level ), LEVEL_HERO - 1 ) );
 				pObj->cost = 0;
 				obj_to_room ( pObj, pRoom );
 				last = TRUE;
@@ -1597,7 +1579,7 @@ void reset_room ( RoomData *pRoom )
 				if ( pRoom->area->nplayer > 0
 						|| ( LastObj = get_obj_type ( pObjToIndex ) ) == NULL
 						|| ( LastObj->in_room == NULL && !last )
-						|| ( pObjIndex->count >= limit /* && number_range(0,4) != 0 */ )
+						|| ( pObjIndex->count >= limit /* && Math::instance().range(0,4) != 0 */ )
 						|| ( count = count_obj_list ( pObjIndex, LastObj->contains ) ) > pReset->arg4  ) {
 					last = FALSE;
 					break;
@@ -1605,7 +1587,7 @@ void reset_room ( RoomData *pRoom )
 				/* lastObj->level  -  ROM */
 
 				while ( count < pReset->arg4 ) {
-					pObj = create_object ( pObjIndex, number_fuzzy ( LastObj->level ) );
+					pObj = create_object ( pObjIndex, Math::instance().fuzzy ( LastObj->level ) );
 					obj_to_obj ( pObj, LastObj );
 					count++;
 					if ( pObjIndex->count >= limit )
@@ -1660,25 +1642,25 @@ void reset_room ( RoomData *pRoom )
 								break;
 
 							case ITEM_WAND:
-								olevel = number_range ( 10, 20 );
+								olevel = Math::instance().range ( 10, 20 );
 								break;
 							case ITEM_STAFF:
-								olevel = number_range ( 15, 25 );
+								olevel = Math::instance().range ( 15, 25 );
 								break;
 							case ITEM_ARMOR:
-								olevel = number_range (  5, 15 );
+								olevel = Math::instance().range (  5, 15 );
 								break;
 							/* ROM patch weapon, treasure */
 							case ITEM_WEAPON:
-								olevel = number_range (  5, 15 );
+								olevel = Math::instance().range (  5, 15 );
 								break;
 							case ITEM_TREASURE:
-								olevel = number_range ( 10, 20 );
+								olevel = Math::instance().range ( 10, 20 );
 								break;
 
 						}
 
-					if ( pObjIndex->repop_percent > number_percent() ) {
+					if ( pObjIndex->repop_percent > Math::instance().percent() ) {
 						log_hd ( LOG_DEBUG, Format ( "ITEM: %d didn't repop due to low repop percent", pMobIndex->vnum ) );
 						break;
 					}
@@ -1695,13 +1677,13 @@ void reset_room ( RoomData *pRoom )
 					else
 					{ limit = pReset->arg2; }
 
-					if ( pObjIndex->repop_percent > number_percent() ) {
+					if ( pObjIndex->repop_percent > Math::instance().percent() ) {
 						break;
 					}
 
-					if ( pObjIndex->count < limit || number_range ( 0, 4 ) == 0 ) {
+					if ( pObjIndex->count < limit || Math::instance().range ( 0, 4 ) == 0 ) {
 						pObj = create_object ( pObjIndex,
-											   UMIN ( number_fuzzy ( level ), LEVEL_HERO - 1 ) );
+											   UMIN ( Math::instance().fuzzy ( level ), LEVEL_HERO - 1 ) );
 						/* error message if it is too high */
 						if ( pObj->level > LastMob->level + 3
 								||  ( pObj->item_type == ITEM_WEAPON
@@ -1736,7 +1718,7 @@ void reset_room ( RoomData *pRoom )
 					int d1;
 
 					for ( d0 = 0; d0 < pReset->arg2 - 1; d0++ ) {
-						d1                   = number_range ( d0, pReset->arg2 - 1 );
+						d1                   = Math::instance().range ( d0, pReset->arg2 - 1 );
 						pExit                = pRoomIndex->exit[d0];
 						pRoomIndex->exit[d0] = pRoomIndex->exit[d1];
 						pRoomIndex->exit[d1] = pExit;
@@ -1800,8 +1782,8 @@ Creature *create_mobile ( NPCData *pMobIndex )
 	} else {
 		long wealth;
 
-		wealth = number_range ( pMobIndex->wealth / 2, 3 * pMobIndex->wealth / 2 );
-		mob->gold = number_range ( wealth / 200, wealth / 100 );
+		wealth = Math::instance().range ( pMobIndex->wealth / 2, 3 * pMobIndex->wealth / 2 );
+		mob->gold = Math::instance().range ( wealth / 200, wealth / 100 );
 		mob->silver = wealth - ( mob->gold * 100 );
 	}
 
@@ -1817,12 +1799,12 @@ Creature *create_mobile ( NPCData *pMobIndex )
 		mob->level		= pMobIndex->level;
 		mob->hitroll		= pMobIndex->hitroll;
 		mob->damroll		= pMobIndex->damage[DICE_BONUS];
-		mob->max_hit		= dice ( pMobIndex->hit[DICE_NUMBER],
-									 pMobIndex->hit[DICE_TYPE] )
+		mob->max_hit		= Math::instance().dice ( pMobIndex->hit[DICE_NUMBER],
+							  pMobIndex->hit[DICE_TYPE] )
 							  + pMobIndex->hit[DICE_BONUS];
 		mob->hit		= mob->max_hit;
-		mob->max_mana		= dice ( pMobIndex->mana[DICE_NUMBER],
-									 pMobIndex->mana[DICE_TYPE] )
+		mob->max_mana		= Math::instance().dice ( pMobIndex->mana[DICE_NUMBER],
+							  pMobIndex->mana[DICE_TYPE] )
 							  + pMobIndex->mana[DICE_BONUS];
 		mob->mana		= mob->max_mana;
 		mob->damage[DICE_NUMBER] = pMobIndex->damage[DICE_NUMBER];
@@ -1831,7 +1813,7 @@ Creature *create_mobile ( NPCData *pMobIndex )
 		mob->random = pMobIndex->random;
 
 		if ( mob->dam_type == 0 )
-			switch ( number_range ( 1, 3 ) ) {
+			switch ( Math::instance().range ( 1, 3 ) ) {
 				case ( 1 ) :
 					mob->dam_type = 3;
 					break;  /* slash */
@@ -1852,7 +1834,7 @@ Creature *create_mobile ( NPCData *pMobIndex )
 		mob->default_pos	= pMobIndex->default_pos;
 		mob->sex		= pMobIndex->sex;
 		if ( mob->sex == 3 ) /* random sex */
-		{ mob->sex = number_range ( 1, 2 ); }
+		{ mob->sex = Math::instance().range ( 1, 2 ); }
 		mob->race		= pMobIndex->race;
 		mob->form		= pMobIndex->form;
 		mob->parts		= pMobIndex->parts;
@@ -1945,14 +1927,14 @@ Creature *create_mobile ( NPCData *pMobIndex )
 		mob->level		= pMobIndex->level;
 		mob->hitroll		= pMobIndex->hitroll;
 		mob->damroll		= 0;
-		mob->max_hit		= mob->level * 8 + number_range (
+		mob->max_hit		= mob->level * 8 + Math::instance().range (
 								  mob->level * mob->level / 4,
 								  mob->level * mob->level );
 		mob->max_hit *= .9;
 		mob->hit		= mob->max_hit;
-		mob->max_mana		= 100 + dice ( mob->level, 10 );
+		mob->max_mana		= 100 + Math::instance().dice ( mob->level, 10 );
 		mob->mana		= mob->max_mana;
-		switch ( number_range ( 1, 3 ) ) {
+		switch ( Math::instance().range ( 1, 3 ) ) {
 			case ( 1 ) :
 				mob->dam_type = 3;
 				break;  /* slash */
@@ -1964,8 +1946,8 @@ Creature *create_mobile ( NPCData *pMobIndex )
 				break;  /* pierce */
 		}
 		for ( i = 0; i < 3; i++ )
-		{ mob->armor[i]	= interpolate ( mob->level, 100, -100 ); }
-		mob->armor[3]		= interpolate ( mob->level, 100, 0 );
+		{ mob->armor[i]	= Math::instance().interpolate ( mob->level, 100, -100 ); }
+		mob->armor[3]		= Math::instance().interpolate ( mob->level, 100, 0 );
 		mob->race		= pMobIndex->race;
 		mob->off_flags		= pMobIndex->off_flags;
 		mob->imm_flags		= pMobIndex->imm_flags;
@@ -2120,8 +2102,8 @@ Item *create_object ( ItemData *pObjIndex, int level )
 	if ( level == -1 || pObjIndex->new_format )
 	{ obj->cost	= pObjIndex->cost; }
 	else
-		obj->cost	= number_fuzzy ( 10 )
-					  * number_fuzzy ( level ) * number_fuzzy ( level );
+		obj->cost	= Math::instance().fuzzy ( 10 )
+					  * Math::instance().fuzzy ( level ) * Math::instance().fuzzy ( level );
 
 	/*
 	 * Mess with object properties.
@@ -2167,14 +2149,14 @@ Item *create_object ( ItemData *pObjIndex, int level )
 
 		case ITEM_SCROLL:
 			if ( level != -1 && !pObjIndex->new_format )
-			{ obj->value[0]	= number_fuzzy ( obj->value[0] ); }
+			{ obj->value[0]	= Math::instance().fuzzy ( obj->value[0] ); }
 			break;
 
 		case ITEM_WAND:
 		case ITEM_STAFF:
 			if ( level != -1 && !pObjIndex->new_format ) {
-				obj->value[0]	= number_fuzzy ( obj->value[0] );
-				obj->value[1]	= number_fuzzy ( obj->value[1] );
+				obj->value[0]	= Math::instance().fuzzy ( obj->value[0] );
+				obj->value[1]	= Math::instance().fuzzy ( obj->value[1] );
 				obj->value[2]	= obj->value[1];
 			}
 			if ( !pObjIndex->new_format )
@@ -2183,23 +2165,23 @@ Item *create_object ( ItemData *pObjIndex, int level )
 
 		case ITEM_WEAPON:
 			if ( level != -1 && !pObjIndex->new_format ) {
-				obj->value[1] = number_fuzzy ( number_fuzzy ( 1 * level / 4 + 2 ) );
-				obj->value[2] = number_fuzzy ( number_fuzzy ( 3 * level / 4 + 6 ) );
+				obj->value[1] = Math::instance().fuzzy ( Math::instance().fuzzy ( 1 * level / 4 + 2 ) );
+				obj->value[2] = Math::instance().fuzzy ( Math::instance().fuzzy ( 3 * level / 4 + 6 ) );
 			}
 			break;
 
 		case ITEM_ARMOR:
 			if ( level != -1 && !pObjIndex->new_format ) {
-				obj->value[0]	= number_fuzzy ( level / 5 + 3 );
-				obj->value[1]	= number_fuzzy ( level / 5 + 3 );
-				obj->value[2]	= number_fuzzy ( level / 5 + 3 );
+				obj->value[0]	= Math::instance().fuzzy ( level / 5 + 3 );
+				obj->value[1]	= Math::instance().fuzzy ( level / 5 + 3 );
+				obj->value[2]	= Math::instance().fuzzy ( level / 5 + 3 );
 			}
 			break;
 
 		case ITEM_POTION:
 		case ITEM_PILL:
 			if ( level != -1 && !pObjIndex->new_format )
-			{ obj->value[0] = number_fuzzy ( number_fuzzy ( obj->value[0] ) ); }
+			{ obj->value[0] = Math::instance().fuzzy ( Math::instance().fuzzy ( obj->value[0] ) ); }
 			break;
 
 		case ITEM_MONEY:
@@ -2906,128 +2888,6 @@ DefineCommand ( cmd_dump )
 	fclose ( fp );
 	fpReserve = fopen ( NULL_FILE, "r" );
 }
-
-
-
-/*
- * Stick a little fuzz on a number.
- */
-int number_fuzzy ( int number )
-{
-	switch ( number_bits ( 2 ) ) {
-		case 0:
-			number -= 1;
-			break;
-		case 3:
-			number += 1;
-			break;
-	}
-
-	return UMAX ( 1, number );
-}
-
-
-
-/*
- * Generate a random number.
- */
-int number_range ( int from, int to )
-{
-	int power;
-	int number;
-
-	if ( from == 0 && to == 0 )
-	{ return 0; }
-
-	if ( ( to = to - from + 1 ) <= 1 )
-	{ return from; }
-
-	for ( power = 2; power < to; power <<= 1 )
-		;
-
-	while ( ( number = number_mm() & ( power - 1 ) ) >= to )
-		;
-
-	return from + number;
-}
-
-/*
- * Generate a percentile roll.
- */
-int number_percent ( void )
-{
-	int percent;
-
-	while ( ( percent = number_mm() & ( 128 - 1 ) ) > 99 )
-		;
-
-	return 1 + percent;
-}
-
-/*
- * Generate a random door.
- */
-int number_door ( void )
-{
-	int door;
-
-	while ( ( door = number_mm() & ( 8 - 1 ) ) > 5 )
-		;
-
-	return door;
-}
-
-int number_bits ( int width )
-{
-	return number_mm( ) & ( ( 1 << width ) - 1 );
-}
-
-void init_mm( )
-{
-	srandom ( time ( NULL ) ^getpid() );
-	return;
-}
-
-
-
-long number_mm ( void )
-{
-	return random() >> 6;
-}
-
-
-/*
- * Roll some dice.
- */
-int dice ( int number, int size )
-{
-	int idice;
-	int sum;
-
-	switch ( size ) {
-		case 0:
-			return 0;
-		case 1:
-			return number;
-	}
-
-	for ( idice = 0, sum = 0; idice < number; idice++ )
-	{ sum += number_range ( 1, size ); }
-
-	return sum;
-}
-
-
-
-/*
- * Simple linear interpolation.
- */
-int interpolate ( int level, int value_00, int value_32 )
-{
-	return value_00 + level * ( value_32 - value_00 ) / 32;
-}
-
-
 
 /*
  * Removes the tildes from a string.

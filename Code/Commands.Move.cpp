@@ -41,11 +41,11 @@ const char *dir_name	[]		= {
 	"north", "east", "south", "west", "up", "down"
 };
 
-const	sh_int	rev_dir		[]		= {
+const	int	rev_dir		[]		= {
 	2, 3, 0, 1, 5, 4
 };
 
-const	sh_int	movement_loss	[SECT_MAX]	= {
+const	int	movement_loss	[SECT_MAX]	= {
 	1, 2, 2, 3, 4, 6, 4, 1, 6, 10, 6
 };
 
@@ -693,7 +693,7 @@ DefineCommand ( cmd_pick )
 		}
 	}
 
-	if ( !IS_NPC ( ch ) && number_percent( ) > get_skill ( ch, gsn_pick_lock ) ) {
+	if ( !IS_NPC ( ch ) && Math::instance().percent( ) > get_skill ( ch, gsn_pick_lock ) ) {
 		writeBuffer ( "You failed.\n\r", ch );
 		check_improve ( ch, gsn_pick_lock, FALSE, 2 );
 		return;
@@ -1164,7 +1164,7 @@ DefineCommand ( cmd_sneak )
 	if ( IS_AFFECTED ( ch, AFF_SNEAK ) )
 	{ return; }
 
-	if ( number_percent( ) < get_skill ( ch, gsn_sneak ) ) {
+	if ( Math::instance().percent( ) < get_skill ( ch, gsn_sneak ) ) {
 		check_improve ( ch, gsn_sneak, TRUE, 3 );
 		af.where     = TO_AFFECTS;
 		af.type      = gsn_sneak;
@@ -1187,7 +1187,7 @@ DefineCommand ( cmd_hide )
 	if ( IS_AFFECTED ( ch, AFF_HIDE ) )
 	{ REMOVE_BIT ( ch->affected_by, AFF_HIDE ); }
 
-	if ( number_percent( ) < get_skill ( ch, gsn_hide ) ) {
+	if ( Math::instance().percent( ) < get_skill ( ch, gsn_hide ) ) {
 		SET_BIT ( ch->affected_by, AFF_HIDE );
 		check_improve ( ch, gsn_hide, TRUE, 3 );
 	} else
@@ -1243,7 +1243,7 @@ DefineCommand ( cmd_recall )
 
 		skill = get_skill ( ch, gsn_recall );
 
-		if ( number_percent() < 80 * skill / 100 ) {
+		if ( Math::instance().percent() < 80 * skill / 100 ) {
 			check_improve ( ch, gsn_recall, FALSE, 6 );
 			WAIT_STATE ( ch, 4 );
 			sprintf ( buf, "You failed!.\n\r" );
@@ -1277,7 +1277,7 @@ DefineCommand ( cmd_train )
 {
 	char buf[MAX_STRING_LENGTH];
 	Creature *mob;
-	sh_int stat = - 1;
+	int stat = - 1;
 	const char *pOutput = NULL;
 	int cost;
 

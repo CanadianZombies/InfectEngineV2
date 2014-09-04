@@ -35,69 +35,29 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
-#ifndef _Engine_H
-#define _Engine_H
+#ifndef _Math_Hpp
+#define _Math_Hpp
 
-// -- C Headers (actual .h files)
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#include <sys/time.h>
-#endif
+class Math : public Instance<Math>
+{
+	public:
+		Math();
+		~Math();
+	private:
+		time_t mTimeSeed;
+		unsigned long mLastGen;
+	public:
+		int bits ( int number );
 
-#include <cxxabi.h>
-#include <sys/wait.h>
-#include <sys/resource.h>
-#include <sys/stat.h>
-#include <sys/utsname.h>
-// -- #include <sys/prctl.h>
+		int range ( int lower, int higher );
 
-#include <unistd.h>
-#include <pwd.h>
-#include <dlfcn.h>
-#include <execinfo.h>
-#include <limits.h>
+		int percent ( void );
+		int fuzzy ( int number );
+		int door ( void );
+		int dice ( int number, int size );
+		int interpolate ( int level, int value_00, int value_32 );
+		long my_rand ( void );
 
-#include <cstdio>
-#include <cstdarg>
-#include <cstdlib>
-#include <cstring>
-#include <climits>
-#include <cfloat>
-
-#include <cassert>
-#include <cerrno>
-#include <unistd.h>
-#include <new>
-#include <list>
-#include <string>
-#include <map>
-#include <exception>
-#include <stdexcept>
-#include <iostream>
-#include <fstream>
-#include <typeinfo>
-
-#include "FixPrototypes.h"
-#include "Version.h"
-#include "Protocol.h"
-
-#include "Typedefs.h"
-#include "Defines.h"
-#include "Instance.h"
-
-#include "Events.h"
-#include "Vnums.h"
-#include "Math.h"
-
-#include "Structures.h"
-
-#include "FixSkillNumbers.h"
-#include "Macros.h"
-
-
-#include "Externs.h"
-#include "Prototypes.h"
+};
 
 #endif

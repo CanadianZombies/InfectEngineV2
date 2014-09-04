@@ -104,7 +104,7 @@
 #define SAVE_CHANCE(ch) \
 	do { \
 		if(!IS_NPC(ch)) { \
-			if(number_percent() == number_range(0,125)) \
+			if(Math::instance().percent() == Math::instance().range(0,125)) \
 			{ save_char_obj(ch); } \
 		} \
 	} while(0)

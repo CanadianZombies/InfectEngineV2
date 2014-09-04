@@ -427,7 +427,7 @@ void show_char_to_char_1 ( Creature *victim, Creature *ch )
 
 	if ( victim != ch
 			&&   !IS_NPC ( ch )
-			&&   number_percent( ) < get_skill ( ch, gsn_peek ) ) {
+			&&   Math::instance().percent( ) < get_skill ( ch, gsn_peek ) ) {
 		writeBuffer ( "\n\rYou peek at the inventory:\n\r", ch );
 		check_improve ( ch, gsn_peek, TRUE, 4 );
 		show_list_to_char ( victim->carrying, ch, TRUE, TRUE );
@@ -2299,7 +2299,7 @@ DefineCommand ( cmd_wimpy )
 	}
 
 	if ( wimpy > ch->max_hit / 2 ) {
-		writeBuffer ( "Such cowardice ill becomes you.\n\r", ch );
+		writeBuffer ( "Such cowarMath::instance().dice ill becomes you.\n\r", ch );
 		return;
 	}
 
@@ -2432,7 +2432,7 @@ DefineCommand ( cmd_levelup )
 
 					switch ( ch->level ) {
 						default:
-							if ( number_range ( 0, 3 ) == number_range ( 0, 7 ) ) {
+							if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 7 ) ) {
 								tweetStatement ( Format ( "%s has attained a new level, %d.", ch->name, ch->level ) );
 							}
 							break;

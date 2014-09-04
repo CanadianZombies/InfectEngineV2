@@ -130,7 +130,7 @@ void	read_from_buffer	args ( ( Socket *d ) );
 void	stop_idling		args ( ( Creature *ch ) );
 void    bust_a_prompt           args ( ( Creature *ch ) );
 
-
+void make_grid ( char *argument );
 int main ( int argc, char **argv )
 {
 	struct timeval now_time;
@@ -183,10 +183,16 @@ int main ( int argc, char **argv )
 	}
 
 	// -- attempt to generate our new event manager
-	new EventManager();
-
+	try {
+		new EventManager();
+		new Math();
+	} catch ( ... ) {
+		CATCH ( true ); // cause engine to abort.
+	}
 	log_hd ( LOG_ALL, Format ( "Attempting to gain control of socket port #%d...", port ) );
 	control = init_socket ( port );
+
+	// -- make_grid ( "1000 250 250" ); // -- only needed once
 
 	// -- boot_db does all its own processing
 	boot_db( );
@@ -197,8 +203,16 @@ int main ( int argc, char **argv )
 
 	RunMudLoop ( control );
 
-	if ( EventManager::instancePtr() ) {
-		delete EventManager::instancePtr();
+	// -- attempt to cleanup memory allocations here.
+	try {
+		if ( EventManager::instancePtr() ) {
+			delete EventManager::instancePtr();
+		}
+		if ( Math::instancePtr() ) {
+			delete Math::instancePtr();
+		}
+	} catch ( ... ) {
+		CATCH ( true ); // -- cause the engine to abort.
 	}
 
 	log_hd ( LOG_ALL, Format ( "Control Value: %d is scheduled to be closed...", control ) );
@@ -2136,6 +2150,8 @@ void act_new ( const char *format, Creature *ch, const void *arg1,
 
 		*point++ = '\n';
 		*point++ = '\r';
+		*point++ = '\a';
+		*point++ = 'n';
 		*point   = '\0';
 		buf[0]   = UPPER ( buf[0] );
 		if ( to->desc != NULL )

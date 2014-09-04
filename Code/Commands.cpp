@@ -640,7 +640,7 @@ bool check_social ( Creature *ch, const char *command, const char *argument )
 				&&   !IS_AFFECTED ( victim, AFF_CHARM )
 				&&   IS_AWAKE ( victim )
 				&&   victim->desc == NULL ) {
-			switch ( number_bits ( 4 ) ) {
+			switch ( Math::instance().bits ( 4 ) ) {
 				case 0:
 
 				case 1:

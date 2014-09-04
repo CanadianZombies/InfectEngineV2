@@ -1040,8 +1040,8 @@ const	struct	pose_table_type	pose_table	[]	= {
 			"You are turned into a little pink elephant by $n.",
 			"An angel consults you.",
 			"An angel consults $n.",
-			"The dice roll ... and you win again.",
-			"The dice roll ... and $n wins again.",
+			"The Math::instance().dice roll ... and you win again.",
+			"The Math::instance().dice roll ... and $n wins again.",
 			"... 98, 99, 100 ... you do pushups.",
 			"... 98, 99, 100 ... $n does pushups."
 		}
@@ -1202,7 +1202,7 @@ DefineCommand ( cmd_pose )
 	{ return; }
 
 	level = UMIN ( ch->level, ( signed int ) sizeof ( pose_table ) / ( signed int ) sizeof ( pose_table[0] ) - 1 );
-	pose  = number_range ( 0, level );
+	pose  = Math::instance().range ( 0, level );
 
 	act ( pose_table[pose].message[2 * ch->archetype + 0], ch, NULL, NULL, TO_CHAR );
 	act ( pose_table[pose].message[2 * ch->archetype + 1], ch, NULL, NULL, TO_ROOM );

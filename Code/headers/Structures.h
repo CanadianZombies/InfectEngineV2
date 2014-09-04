@@ -43,16 +43,16 @@
 struct	ban_data {
 	Ban *	next;
 	bool	valid;
-	sh_int	ban_flags;
-	sh_int	level;
+	int	ban_flags;
+	int	level;
 	char *	name;
 };
 
 struct buf_type {
 	BUFFER *    next;
 	bool        valid;
-	sh_int      state;  /* error state of the buffer */
-	sh_int      size;   /* size in k */
+	int      state;  /* error state of the buffer */
+	int      size;   /* size in k */
 	char *      string; /* buffer's string */
 };
 
@@ -83,8 +83,8 @@ struct	descriptor_data {
 	Creature *		original;
 	bool		valid;
 	char *		host;
-	sh_int		descriptor;
-	sh_int		connected;
+	int		descriptor;
+	int		connected;
 	bool		fcommand;
 	char		inbuf		[4 * MAX_INPUT_LENGTH];
 	char		incomm		[MAX_INPUT_LENGTH];
@@ -107,27 +107,27 @@ struct	descriptor_data {
  * Attribute bonus structures.
  */
 struct	str_app_type {
-	sh_int	tohit;
-	sh_int	todam;
-	sh_int	carry;
-	sh_int	wield;
+	int	tohit;
+	int	todam;
+	int	carry;
+	int	wield;
 };
 
 struct	int_app_type {
-	sh_int	learn;
+	int	learn;
 };
 
 struct	wis_app_type {
-	sh_int	practice;
+	int	practice;
 };
 
 struct	dex_app_type {
-	sh_int	defensive;
+	int	defensive;
 };
 
 struct	con_app_type {
-	sh_int	hitp;
-	sh_int	shock;
+	int	hitp;
+	int	shock;
 };
 
 
@@ -137,7 +137,7 @@ struct	con_app_type {
 struct	help_data {
 	HELP_DATA *	next;
 	HELP_DATA * next_area;
-	sh_int	level;
+	int	level;
 	char *	keyword;
 	char *	text;
 };
@@ -151,31 +151,42 @@ struct help_area_data {
 	bool		changed;
 };
 
+struct wear_data {
+	const char *name;        // Name of the body part or location
+	bool ispart;       // Is this a body part?
+	int  hitpct;       // Percent chance to hit (all must add up to 100%)
+	long wear_flag;    // Which piece of armor relates to this body part.
+	long item_flag;    // Flag on associated items.
+	long part_req;     // Flag required on target to be protected on this part.
+	bool has_ac;       // Is this body part protectable by armor (Has its own AC)
+	long supercede;    // Wear slot that supercedes this one (is outside of)
+	//                 // Determines what AC to use and and which eq to damage
+};
 
 /*
  * Shop types.
  */
 struct	shop_data {
 	SHOP_DATA *	next;			/* Next shop in list		*/
-	sh_int	keeper;			/* Vnum of shop keeper mob	*/
-	sh_int	buy_type [MAX_TRADE];	/* Item types shop will buy	*/
-	sh_int	profit_buy;		/* Cost multiplier for buying	*/
-	sh_int	profit_sell;		/* Cost multiplier for selling	*/
-	sh_int	open_hour;		/* First opening hour		*/
-	sh_int	close_hour;		/* First closing hour		*/
+	int	keeper;			/* Vnum of shop keeper mob	*/
+	int	buy_type [MAX_TRADE];	/* Item types shop will buy	*/
+	int	profit_buy;		/* Cost multiplier for buying	*/
+	int	profit_sell;		/* Cost multiplier for selling	*/
+	int	open_hour;		/* First opening hour		*/
+	int	close_hour;		/* First closing hour		*/
 };
 
 struct	archetype_type {
 	const char *	name;			/* the full name of the archetype */
 	char 	who_name	[4];	/* Three-letter name for 'who'	*/
-	sh_int	attr_prime;		/* Prime attribute		*/
-	sh_int	weapon;			/* First weapon			*/
-	sh_int	guild[MAX_GUILD];	/* Vnum of guild rooms		*/
-	sh_int	skill_adept;		/* Maximum skill level		*/
-	sh_int	thac0_00;		/* Thac0 for level  0		*/
-	sh_int	thac0_32;		/* Thac0 for level 32		*/
-	sh_int	hp_min;			/* Min hp gained on leveling	*/
-	sh_int	hp_max;			/* Max hp gained on leveling	*/
+	int	attr_prime;		/* Prime attribute		*/
+	int	weapon;			/* First weapon			*/
+	int	guild[MAX_GUILD];	/* Vnum of guild rooms		*/
+	int	skill_adept;		/* Maximum skill level		*/
+	int	thac0_00;		/* Thac0 for level  0		*/
+	int	thac0_32;		/* Thac0 for level 32		*/
+	int	hp_min;			/* Min hp gained on leveling	*/
+	int	hp_max;			/* Max hp gained on leveling	*/
 	bool	fMana;			/* Class gains mana on level	*/
 	const char *	base_group;		/* base skills gained		*/
 	const char *	default_group;		/* default skills gained	*/
@@ -188,9 +199,9 @@ struct item_type {
 
 struct weapon_type {
 	const char *	name;
-	sh_int	vnum;
-	sh_int	type;
-	sh_int	*gsn;
+	int	vnum;
+	int	type;
+	int	*gsn;
 };
 
 struct wiznet_type {
@@ -222,12 +233,12 @@ struct race_type {
 struct pc_race_type { /* additional data for pc races */
 	const char *	name;			/* MUST be in race_type */
 	char 	who_name[6];
-	sh_int	points;			/* cost in points of the race */
-	sh_int	archetype_mult[MAX_CLASS];	/* exp multiplier for archetype, * 100 */
+	int	points;			/* cost in points of the race */
+	int	archetype_mult[MAX_CLASS];	/* exp multiplier for archetype, * 100 */
 	const char *	skills[5];		/* bonus skills for the race */
-	sh_int 	stats[MAX_STATS];	/* starting stats */
-	sh_int	max_stats[MAX_STATS];	/* maximum stats */
-	sh_int	size;			/* aff bits for the race */
+	int 	stats[MAX_STATS];	/* starting stats */
+	int	max_stats[MAX_STATS];	/* maximum stats */
+	int	size;			/* aff bits for the race */
 };
 
 
@@ -244,7 +255,7 @@ struct spec_type {
 struct	note_data {
 	NOTE_DATA *	next;
 	bool 	valid;
-	sh_int	type;
+	int	type;
 	char *	sender;
 	char *	date;
 	char *	to_list;
@@ -261,12 +272,12 @@ struct	note_data {
 struct	affect_data {
 	Affect *	next;
 	bool		valid;
-	sh_int		where;
-	sh_int		type;
-	sh_int		level;
-	sh_int		duration;
-	sh_int		location;
-	sh_int		modifier;
+	int		where;
+	int		type;
+	int		level;
+	int		duration;
+	int		location;
+	int		modifier;
 	int			bitvector;
 };
 
@@ -274,8 +285,8 @@ struct	affect_data {
  * A kill structure (indexed by level).
  */
 struct	kill_data {
-	sh_int		number;
-	sh_int		killed;
+	int		number;
+	int		killed;
 };
 
 /*
@@ -288,37 +299,37 @@ struct	mob_index_data {
 	SHOP_DATA *		pShop;
 	MPROG_LIST *        mprogs;
 	Zone *		area;		/* OLC */
-	sh_int		vnum;
-	sh_int		group;
+	int		vnum;
+	int		group;
 	bool		new_format;
-	sh_int		count;
-	sh_int		killed;
+	int		count;
+	int		killed;
 	char *		player_name;
 	char *		short_descr;
 	char *		long_descr;
 	char *		description;
 	long		act;
 	long		affected_by;
-	sh_int		alignment;
-	sh_int		level;
-	sh_int		hitroll;
-	sh_int		hit[3];
-	sh_int		mana[3];
-	sh_int		damage[3];
-	sh_int		ac[4];
-	sh_int 		dam_type;
+	int		alignment;
+	int		level;
+	int		hitroll;
+	int		hit[3];
+	int		mana[3];
+	int		damage[3];
+	int		ac[4];
+	int 		dam_type;
 	long		off_flags;
 	long		imm_flags;
 	long		res_flags;
 	long		vuln_flags;
-	sh_int		start_pos;
-	sh_int		default_pos;
-	sh_int		sex;
-	sh_int		race;
+	int		start_pos;
+	int		default_pos;
+	int		sex;
+	int		race;
 	long		wealth;
 	long		form;
 	long		parts;
-	sh_int		size;
+	int		size;
 	long		mprog_flags;
 	int material_flags;
 	int random;
@@ -378,31 +389,31 @@ struct	char_data {
 	bool		valid;
 	char *		name;
 	long		id;
-	sh_int		version;
+	int		version;
 	char *		short_descr;
 	char *		long_descr;
 	char *		description;
 	char *		prompt;
 	char *		prefix;
-	sh_int		group;
-	sh_int		clan;
-	sh_int		sex;
-	sh_int		archetype;
-	sh_int		race;
-	sh_int		level;
-	sh_int		trust;
+	int		group;
+	int		clan;
+	int		sex;
+	int		archetype;
+	int		race;
+	int		level;
+	int		trust;
 	int			played;
 	int			lines;  /* for the pager */
 	time_t		logon;
-	sh_int		timer;
-	sh_int		wait;
-	sh_int		daze;
-	sh_int		hit;
-	sh_int		max_hit;
-	sh_int		mana;
-	sh_int		max_mana;
-	sh_int		move;
-	sh_int		max_move;
+	int		timer;
+	int		wait;
+	int		daze;
+	int		hit;
+	int		max_hit;
+	int		mana;
+	int		max_mana;
+	int		move;
+	int		max_move;
 	long		gold;
 	long		silver;
 	int		exp;
@@ -415,34 +426,34 @@ struct	char_data {
 	long		res_flags;
 	long		vuln_flags;
 	long		sflag;
-	sh_int		invis_level;
-	sh_int		incog_level;
+	int		invis_level;
+	int		incog_level;
 	long			affected_by;
-	sh_int		position;
-	sh_int		practice;
-	sh_int		train;
-	sh_int		carry_weight;
-	sh_int		carry_number;
-	sh_int		saving_throw;
-	sh_int		alignment;
-	sh_int		hitroll;
-	sh_int		damroll;
-	sh_int		armor[4];
-	sh_int		wimpy;
+	int		position;
+	int		practice;
+	int		train;
+	int		carry_weight;
+	int		carry_number;
+	int		saving_throw;
+	int		alignment;
+	int		hitroll;
+	int		damroll;
+	int		armor[4];
+	int		wimpy;
 	/* stats */
-	sh_int		perm_stat[MAX_STATS];
-	sh_int		mod_stat[MAX_STATS];
+	int		perm_stat[MAX_STATS];
+	int		mod_stat[MAX_STATS];
 	/* parts stuff */
 	long		form;
 	long		parts;
-	sh_int		size;
+	int		size;
 	/* mobile stuff */
 	long		off_flags;
-	sh_int		damage[3];
-	sh_int		dam_type;
-	sh_int		start_pos;
-	sh_int		default_pos;
-	sh_int		mprog_delay;
+	int		damage[3];
+	int		dam_type;
+	int		start_pos;
+	int		default_pos;
+	int		mprog_delay;
 	int material_flags;
 	int random;
 };
@@ -465,15 +476,15 @@ struct	pc_data {
 	time_t              last_penalty;
 	time_t              last_news;
 	time_t              last_changes;
-	sh_int		perm_hit;
-	sh_int		perm_mana;
-	sh_int		perm_move;
-	sh_int		true_sex;
+	int		perm_hit;
+	int		perm_mana;
+	int		perm_move;
+	int		true_sex;
 	int			last_level;
-	sh_int		condition	[4];
-	sh_int		learned		[MAX_SKILL];
+	int		condition	[4];
+	int		learned		[MAX_SKILL];
 	bool		group_known	[MAX_GROUP];
-	sh_int		points;
+	int		points;
 
 	char *		alias[MAX_ALIAS];
 	char * 		alias_sub[MAX_ALIAS];
@@ -497,7 +508,7 @@ struct gen_data {
 struct	liq_type {
 	const char *	liq_name;
 	const char *	liq_color;
-	sh_int	liq_affect[5];
+	int	liq_affect[5];
 };
 
 
@@ -526,15 +537,15 @@ struct	obj_index_data {
 	char *		name;
 	char *		short_descr;
 	char *		description;
-	sh_int		vnum;
-	sh_int		reset_num;
-	sh_int		item_type;
+	int		vnum;
+	int		reset_num;
+	int		item_type;
 	int		extra_flags;
 	int		wear_flags;
-	sh_int		level;
-	sh_int 		condition;
-	sh_int		count;
-	sh_int		weight;
+	int		level;
+	int 		condition;
+	int		count;
+	int		weight;
 	int			cost;
 	int			value[5];
 	char      requirements[MAX_REQ];
@@ -564,15 +575,15 @@ struct	obj_data {
 	char *		name;
 	char *		short_descr;
 	char *		description;
-	sh_int		item_type;
+	int		item_type;
 	int			extra_flags;
 	int			wear_flags;
-	sh_int		wear_loc;
-	sh_int		weight;
+	int		wear_loc;
+	int		weight;
 	int			cost;
-	sh_int		level;
-	sh_int 		condition;
-	sh_int		timer;
+	int		level;
+	int 		condition;
+	int		timer;
 	int material_flags;
 	int			value	[5];
 	char      requirements[MAX_REQ];
@@ -586,10 +597,10 @@ struct	obj_data {
 struct	exit_data {
 	union {
 		RoomData *	to_room;
-		sh_int			vnum;
+		int			vnum;
 	} u1;
-	sh_int		exit_info;
-	sh_int		key;
+	int		exit_info;
+	int		key;
 	char *		keyword;
 	char *		description;
 	Exit *		next;		/* OLC */
@@ -618,10 +629,10 @@ struct	exit_data {
 struct	reset_data {
 	Reset *	next;
 	char		command;
-	sh_int		arg1;
-	sh_int		arg2;
-	sh_int		arg3;
-	sh_int		arg4;
+	int		arg1;
+	int		arg2;
+	int		arg3;
+	int		arg4;
 };
 
 
@@ -635,12 +646,12 @@ struct	area_data {
 	char *		file_name;
 	char *		name;
 	char *		credits;
-	sh_int		age;
-	sh_int		nplayer;
-	sh_int		low_range;
-	sh_int		high_range;
-	sh_int 		min_vnum;
-	sh_int		max_vnum;
+	int		age;
+	int		nplayer;
+	int		low_range;
+	int		high_range;
+	int 		min_vnum;
+	int		max_vnum;
 	bool		empty;
 	char *		builders;	/* OLC */ /* Listing of */
 	int			vnum;		/* OLC */ /* Area vnum  */
@@ -665,13 +676,13 @@ struct	room_index_data {
 	char *		name;
 	char *		description;
 	char *		owner;
-	sh_int		vnum;
+	int		vnum;
 	int			room_flags;
-	sh_int		light;
-	sh_int		sector_type;
-	sh_int		heal_rate;
-	sh_int 		mana_rate;
-	sh_int		clan;
+	int		light;
+	int		sector_type;
+	int		heal_rate;
+	int 		mana_rate;
+	int		clan;
 };
 
 
@@ -681,15 +692,15 @@ struct	room_index_data {
  */
 struct	skill_type {
 	const char *	name;			/* Name of skill		*/
-	sh_int	skill_level[MAX_CLASS];	/* Level needed by archetype	*/
-	sh_int	rating[MAX_CLASS];	/* How hard it is to learn	*/
+	int	skill_level[MAX_CLASS];	/* Level needed by archetype	*/
+	int	rating[MAX_CLASS];	/* How hard it is to learn	*/
 	SPELL_FUN *	spell_fun;		/* Spell pointer (for spells)	*/
-	sh_int	target;			/* Legal targets		*/
-	sh_int	minimum_position;	/* Position for caster / user	*/
-	sh_int *	pgsn;			/* Pointer to associated gsn	*/
-	sh_int	slot;			/* Slot for #OBJECT loading	*/
-	sh_int	min_mana;		/* Minimum mana used		*/
-	sh_int	beats;			/* Waiting time after use	*/
+	int	target;			/* Legal targets		*/
+	int	minimum_position;	/* Position for caster / user	*/
+	int *	pgsn;			/* Pointer to associated gsn	*/
+	int	slot;			/* Slot for #OBJECT loading	*/
+	int	min_mana;		/* Minimum mana used		*/
+	int	beats;			/* Waiting time after use	*/
 	const char *	noun_damage;		/* Damage message		*/
 	const char *	msg_off;		/* Wear off message		*/
 	const char *	msg_obj;		/* Wear off message for obects	*/
@@ -697,21 +708,21 @@ struct	skill_type {
 
 struct  group_type {
 	const char *	name;
-	sh_int	rating[MAX_CLASS];
+	int	rating[MAX_CLASS];
 	const char *	spells[MAX_IN_GROUP];
 };
 
 struct mprog_list {
 	int			trig_type;
 	char *		trig_phrase;
-	sh_int		vnum;
+	int		vnum;
 	char *  		code;
 	MPROG_LIST * 	next;
 	bool		valid;
 };
 
 struct mprog_code {
-	sh_int		vnum;
+	int		vnum;
 	char *		code;
 	MPROG_CODE *	next;
 };
@@ -740,7 +751,7 @@ struct flag_type {
 struct clan_type {
 	const char 	*name;
 	const char 	*who_name;
-	sh_int 	hall;
+	int 	hall;
 	bool	independent; /* true for loners */
 };
 
@@ -765,18 +776,18 @@ struct	bit_type {
 struct	cmd_type {
 	const char * 	name;
 	CmdData *	cmd_fun;
-	sh_int		position;
-	sh_int		level;
-	sh_int		log;
-	sh_int          show;
-	sh_int		category;
+	int		position;
+	int		level;
+	int		log;
+	int          show;
+	int		category;
 };
 
 struct staff_cmd_type {
 	const char *name;
 	CmdData * cmd_fun;
 	long flag;
-	sh_int log;
+	int log;
 	bool show;
 	const char *helpmsg;
 };

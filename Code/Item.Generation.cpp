@@ -379,19 +379,19 @@ void paf_apply ( Item *obj )
 	if(obj->item_type == ITEM_STAFF)
 	{
 	if (IS_SET(obj->material_flags, MAT_ORTHOCLASE))
-	obj->value[3] = skill_lookup(defensive_spell_types[number_range(0, 4)]);
+	obj->value[3] = skill_lookup(defensive_spell_types[Math::instance().range(0, 4)]);
 	  if (IS_SET(obj->material_flags, MAT_PLAGIOCLASE))
-	obj->value[3] = skill_lookup(curitive_spell_types[number_range(0, 7)]);
+	obj->value[3] = skill_lookup(curitive_spell_types[Math::instance().range(0, 7)]);
 	  if (IS_SET(obj->material_flags, MAT_BIOTITE))
-	obj->value[3] = skill_lookup(misc_spell_types[number_range(0, 6)]);
+	obj->value[3] = skill_lookup(misc_spell_types[Math::instance().range(0, 6)]);
 	} */
 	if ( obj->item_type == ITEM_WAND ) {
 		if ( IS_SET ( obj->material_flags, MAT_QUARTZ ) )
-		{ obj->value[3] = skill_lookup ( offensive_spell_types[number_range ( 0, 3 )] ); }
+		{ obj->value[3] = skill_lookup ( offensive_spell_types[Math::instance().range ( 0, 3 )] ); }
 		if ( IS_SET ( obj->material_flags, MAT_TAINTED_MITHRIL ) )
-		{ obj->value[3] = skill_lookup ( maledictive_spell_types[number_range ( 0, 5 )] ); }
+		{ obj->value[3] = skill_lookup ( maledictive_spell_types[Math::instance().range ( 0, 5 )] ); }
 		if ( IS_SET ( obj->material_flags, MAT_OBSIDIAN ) )
-		{ obj->value[3] = skill_lookup ( mental_spell_types[number_range ( 0, 4 )] ); }
+		{ obj->value[3] = skill_lookup ( mental_spell_types[Math::instance().range ( 0, 4 )] ); }
 	} else if ( obj->item_type == ITEM_JEWELRY ) {
 		//A ring is based on its stone, lets keep all rings
 		//of the same stone all the same.
@@ -407,7 +407,7 @@ void paf_apply ( Item *obj )
 	} else if ( obj->item_type == ITEM_ARMOR ) {
 
 		/*Low lvl gets nothing unless its lucky, leather to steel*/
-		if ( obj->level <= 23 && number_percent ( ) >= 10 )
+		if ( obj->level <= 23 && Math::instance().percent ( ) >= 10 )
 		{ return; }
 
 		/*Certon wear slots give different affects'ish, things like
@@ -415,7 +415,7 @@ void paf_apply ( Item *obj )
 		if ( IS_SET ( obj->wear_flags, ITEM_HOLD )
 				|| IS_SET ( obj->wear_flags, ITEM_WEAR_FLOAT )
 				|| IS_SET ( obj->wear_flags, ITEM_WEAR_FINGER ) ) {
-			paf_set ( obj, save_types[number_range ( 0, 4 )], number_range ( -10, -1 ), 0 );
+			paf_set ( obj, save_types[Math::instance().range ( 0, 4 )], Math::instance().range ( -10, -1 ), 0 );
 		}
 		/*Some equipment is better than others in their own respects, I have
 		if something sucks 1 way it should be better in another.*/
@@ -440,11 +440,11 @@ void paf_apply ( Item *obj )
 				paf_set ( obj, save_types[1], -2, 0 ); //silver is good against mental
 				paf_set ( obj, combat_types[1], 2, 0 );
 			} else if ( IS_SET ( obj->material_flags, MAT_PLATINUM ) ) {
-				paf_set ( obj, save_types[number_range ( 0, 4 )], -2, 0 ); //platinum is a mixed bag for a price
+				paf_set ( obj, save_types[Math::instance().range ( 0, 4 )], -2, 0 ); //platinum is a mixed bag for a price
 			} else if ( IS_SET ( obj->material_flags, MAT_TAINTED_MITHRIL ) ) { //tainted is good against breath
-				paf_set ( obj, save_types[0], number_range ( -5, -1 ), 0 );
+				paf_set ( obj, save_types[0], Math::instance().range ( -5, -1 ), 0 );
 			} else if ( IS_SET ( obj->material_flags, MAT_MITHRIL ) ) { // mithril is good against malidictions
-				paf_set ( obj, save_types[2], number_range ( -5, -1 ), 0 );
+				paf_set ( obj, save_types[2], Math::instance().range ( -5, -1 ), 0 );
 			} else if ( IS_SET ( obj->material_flags, MAT_TITANIUM ) ) {
 				paf_set ( obj, stat_types[0], 1, 0 ); //luck bonus
 				paf_set ( obj, combat_types[1], 1, 0 );
@@ -453,7 +453,7 @@ void paf_apply ( Item *obj )
 				paf_set ( obj, combat_types[0], 1, 0 );
 			} else
 				//stats for low level luckys
-			{ paf_set ( obj, stat_types[number_range ( 0, 5 )], number_range ( 1, 3 ), 0 ); }
+			{ paf_set ( obj, stat_types[Math::instance().range ( 0, 5 )], Math::instance().range ( 1, 3 ), 0 ); }
 
 		} else if ( IS_SET ( obj->wear_flags, ITEM_WEAR_HEAD )
 					|| IS_SET ( obj->wear_flags, ITEM_WEAR_WAIST )
@@ -473,7 +473,7 @@ void paf_apply ( Item *obj )
 			} else if ( IS_SET ( obj->material_flags, MAT_OBSIDIAN ) ) {
 				paf_set ( obj, combat_types[1], 1, 0 );
 				paf_set ( obj, combat_types[0], 1, 0 );
-				paf_set ( obj, save_types[number_range ( 0, 4 )], -3, 0 );
+				paf_set ( obj, save_types[Math::instance().range ( 0, 4 )], -3, 0 );
 			} else if ( IS_SET ( obj->material_flags, MAT_GOLD ) ) {
 				paf_set ( obj, save_types[0], -3, 0 ); //gold is good against afflictive
 				paf_set ( obj, combat_types[0], 3, 0 );
@@ -481,11 +481,11 @@ void paf_apply ( Item *obj )
 				paf_set ( obj, save_types[1], -3, 0 ); //silver is good against mental
 				paf_set ( obj, combat_types[1], 3, 0 );
 			} else if ( IS_SET ( obj->material_flags, MAT_PLATINUM ) ) {
-				paf_set ( obj, save_types[number_range ( 0, 4 )], -5, 0 ); //platinum is a mixed bag for a price
+				paf_set ( obj, save_types[Math::instance().range ( 0, 4 )], -5, 0 ); //platinum is a mixed bag for a price
 			} else if ( IS_SET ( obj->material_flags, MAT_TAINTED_MITHRIL ) ) { //tainted is good against breath
-				paf_set ( obj, save_types[0], number_range ( -7, -3 ), 0 );
+				paf_set ( obj, save_types[0], Math::instance().range ( -7, -3 ), 0 );
 			} else if ( IS_SET ( obj->material_flags, MAT_MITHRIL ) ) { // mithril is good against malidictions
-				paf_set ( obj, save_types[2], number_range ( -7, -3 ), 0 );
+				paf_set ( obj, save_types[2], Math::instance().range ( -7, -3 ), 0 );
 			} else if ( IS_SET ( obj->material_flags, MAT_TITANIUM ) ) {
 				paf_set ( obj, stat_types[0], 1, 0 ); //luck bonus
 				paf_set ( obj, combat_types[0], 1, 0 );
@@ -494,7 +494,7 @@ void paf_apply ( Item *obj )
 				paf_set ( obj, combat_types[1], 1, 0 );
 			} else
 				//gains for low level luckys
-			{ paf_set ( obj, gain_types[number_range ( 0, 2 )], number_range ( 1, obj->level / 2 ), 0 ); }
+			{ paf_set ( obj, gain_types[Math::instance().range ( 0, 2 )], Math::instance().range ( 1, obj->level / 2 ), 0 ); }
 		} else if ( IS_SET ( obj->wear_flags, ITEM_WEAR_BODY )
 					|| IS_SET ( obj->wear_flags, ITEM_WEAR_ABOUT )
 					|| IS_SET ( obj->wear_flags, ITEM_WEAR_SHIELD ) ) {
@@ -505,63 +505,63 @@ void paf_apply ( Item *obj )
 			{ paf_set ( obj, combat_types[1], 2, 0 ); }
 
 			else if ( IS_SET ( obj->material_flags, MAT_DOUBLE_PLATED ) ) {
-				paf_set ( obj, save_types[4], number_range ( 5, 10 ), 0 );
+				paf_set ( obj, save_types[4], Math::instance().range ( 5, 10 ), 0 );
 				paf_set ( obj, combat_types[1], 2, 0 );
 				paf_set ( obj, combat_types[0], 3, 0 );
 			} else if ( IS_SET ( obj->material_flags, MAT_OBSIDIAN ) ) {
 				paf_set ( obj, combat_types[1], 3, 0 );
 				paf_set ( obj, combat_types[0], 3, 0 );
-				paf_set ( obj, save_types[number_range ( 0, 4 )], -10, 0 );
+				paf_set ( obj, save_types[Math::instance().range ( 0, 4 )], -10, 0 );
 			} else if ( IS_SET ( obj->material_flags, MAT_GOLD ) ) {
-				paf_set ( obj, save_types[0], number_range ( -12, -5 ), 0 ); //gold is good against afflictive
+				paf_set ( obj, save_types[0], Math::instance().range ( -12, -5 ), 0 ); //gold is good against afflictive
 				paf_set ( obj, combat_types[0], 3, 0 );
 			} else if ( IS_SET ( obj->material_flags, MAT_SILVER ) ) {
-				paf_set ( obj, save_types[1], number_range ( -12, -5 ), 0 ); //silver is good against mental
+				paf_set ( obj, save_types[1], Math::instance().range ( -12, -5 ), 0 ); //silver is good against mental
 				paf_set ( obj, combat_types[1], 3, 0 );
 			} else if ( IS_SET ( obj->material_flags, MAT_PLATINUM ) ) {
-				paf_set ( obj, save_types[number_range ( 0, 4 )], number_range ( -12, -5 ), 0 ); //platinum is a mixed bag for a price
+				paf_set ( obj, save_types[Math::instance().range ( 0, 4 )], Math::instance().range ( -12, -5 ), 0 ); //platinum is a mixed bag for a price
 			} else if ( IS_SET ( obj->material_flags, MAT_TAINTED_MITHRIL ) ) { //tainted is good against breath
-				paf_set ( obj, save_types[0], number_range ( -12, -7 ), 0 );
+				paf_set ( obj, save_types[0], Math::instance().range ( -12, -7 ), 0 );
 			} else if ( IS_SET ( obj->material_flags, MAT_MITHRIL ) ) { // mithril is good against malidictions
-				paf_set ( obj, save_types[2], number_range ( -12, -7 ), 0 );
+				paf_set ( obj, save_types[2], Math::instance().range ( -12, -7 ), 0 );
 			} else if ( IS_SET ( obj->material_flags, MAT_TITANIUM ) ) {
 				paf_set ( obj, stat_types[1], 1, 0 ); //str bonus
-				paf_set ( obj, combat_types[0], number_range ( 1, 3 ), 0 );
-				paf_set ( obj, combat_types[1], number_range ( 1, 3 ), 0 );
+				paf_set ( obj, combat_types[0], Math::instance().range ( 1, 3 ), 0 );
+				paf_set ( obj, combat_types[1], Math::instance().range ( 1, 3 ), 0 );
 			} else if ( IS_SET ( obj->material_flags, MAT_ADAMANTANIUM ) ) {
 				paf_set ( obj, stat_types[5], 1, 0 ); //con bonus
 				paf_set ( obj, stat_types[1], 1, 0 ); //str bonus
-				paf_set ( obj, combat_types[0], number_range ( 1, 3 ), 0 );
-				paf_set ( obj, combat_types[1], number_range ( 1, 3 ), 0 );
+				paf_set ( obj, combat_types[0], Math::instance().range ( 1, 3 ), 0 );
+				paf_set ( obj, combat_types[1], Math::instance().range ( 1, 3 ), 0 );
 			} else
 				//ac for low level luckys
-			{ paf_set ( obj, ac_types[0], number_range ( -10, -5 ), 0 ); }
+			{ paf_set ( obj, ac_types[0], Math::instance().range ( -10, -5 ), 0 ); }
 		}
 	} else if ( obj->item_type == ITEM_LIGHT ) {
-		switch ( number_range ( 0, 2 ) ) {
+		switch ( Math::instance().range ( 0, 2 ) ) {
 			case 0:
-				paf_set ( obj, combat_types[number_range ( 0, 1 )], number_range ( 1, obj->level / 11 ), 0 );
+				paf_set ( obj, combat_types[Math::instance().range ( 0, 1 )], Math::instance().range ( 1, obj->level / 11 ), 0 );
 				break;
 			case 1:
-				paf_set ( obj, save_types[number_range ( 0, 4 )], number_range ( -5, -1 ), 0 );
+				paf_set ( obj, save_types[Math::instance().range ( 0, 4 )], Math::instance().range ( -5, -1 ), 0 );
 				break;
 			case 2:
-				paf_set ( obj, stat_types[number_range ( 0, 5 )], number_range ( 1, 3 ), 0 );
+				paf_set ( obj, stat_types[Math::instance().range ( 0, 5 )], Math::instance().range ( 1, 3 ), 0 );
 				break;
 		}
 	} else if ( obj->item_type == ITEM_WEAPON ) {
-		switch ( number_range ( 0, 1 ) ) {
+		switch ( Math::instance().range ( 0, 1 ) ) {
 			case 0:
-				paf_set ( obj, combat_types[number_range ( 0, 1 )], number_range ( 1, obj->level / 10 ), 0 );
+				paf_set ( obj, combat_types[Math::instance().range ( 0, 1 )], Math::instance().range ( 1, obj->level / 10 ), 0 );
 				break;
 			case 1:
-				paf_set ( obj, combat_types[0], number_range ( 1, obj->level / 10 ), 0 );
-				paf_set ( obj, combat_types[1], number_range ( 1, obj->level / 10 ), 0 );
+				paf_set ( obj, combat_types[0], Math::instance().range ( 1, obj->level / 10 ), 0 );
+				paf_set ( obj, combat_types[1], Math::instance().range ( 1, obj->level / 10 ), 0 );
 				break;
 		}
 	} else {
 		/*Default, lets give it some saves.*/
-		paf_set ( obj, save_types[number_range ( 0, 4 )], number_range ( -10, -1 ), 0 );
+		paf_set ( obj, save_types[Math::instance().range ( 0, 4 )], Math::instance().range ( -10, -1 ), 0 );
 	}
 
 	/*Its modded, then its magic.*/
@@ -597,7 +597,7 @@ void obj_cost ( Item *obj, Creature * mob )
 	{ cost = cost * 450; }
 
 	else if ( IS_SET ( obj->material_flags, MAT_QUARTZ ) )
-	{ cost = cost + number_range ( 1, 20 ); }	// -- random value
+	{ cost = cost + Math::instance().range ( 1, 20 ); }	// -- random value
 
 	else
 	{ cost = cost * obj->level; }
@@ -611,25 +611,25 @@ void obj_condition ( Item *obj )
 
 	/*Condition is based on level, low level eq sucks anyways:)*/
 	if ( obj->level <= 5 )
-	{ condition = number_range ( 1, 100 ); }
+	{ condition = Math::instance().range ( 1, 100 ); }
 	else if ( obj->level <= 10 )
-	{ condition = number_range ( 10, 100 ); }
+	{ condition = Math::instance().range ( 10, 100 ); }
 	else if ( obj->level <= 15 )
-	{ condition = number_range ( 20, 100 ); }
+	{ condition = Math::instance().range ( 20, 100 ); }
 	else if ( obj->level <= 25 )
-	{ condition = number_range ( 30, 100 ); }
+	{ condition = Math::instance().range ( 30, 100 ); }
 	else if ( obj->level <= 30 )
-	{ condition = number_range ( 40, 100 ); }
+	{ condition = Math::instance().range ( 40, 100 ); }
 	else if ( obj->level <= 35 )
-	{ condition = number_range ( 50, 100 ); }
+	{ condition = Math::instance().range ( 50, 100 ); }
 	else if ( obj->level <= 40 )
-	{ condition = number_range ( 60, 100 ); }
+	{ condition = Math::instance().range ( 60, 100 ); }
 	else if ( obj->level <= 45 )
-	{ condition = number_range ( 70, 100 ); }
+	{ condition = Math::instance().range ( 70, 100 ); }
 	else if ( obj->level <= 50 )
-	{ condition = number_range ( 80, 100 ); }
+	{ condition = Math::instance().range ( 80, 100 ); }
 	else
-	{ condition = number_range ( 90, 100 ); }
+	{ condition = Math::instance().range ( 90, 100 ); }
 
 	if ( IS_SET ( obj->material_flags, MAT_TAINTED_MITHRIL )
 			|| IS_SET ( obj->material_flags, MAT_MITHRIL ) )
@@ -650,12 +650,12 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 
 	if ( IS_SET ( obj->material_flags, MAT_GOLD ) ) {
 		SET_BIT ( obj->extra_flags, ITEM_GLOW );
-		obj->requirements[STR_REQ] = number_range ( 17, 15 );
+		obj->requirements[STR_REQ] = Math::instance().range ( 17, 15 );
 	}
 
 	if ( IS_SET ( obj->material_flags, MAT_TAINTED_MITHRIL ) ) {
 		SET_BIT ( obj->extra_flags, ITEM_ANTI_GOOD );
-		obj->requirements[CON_REQ] = number_range ( 22, 25 );
+		obj->requirements[CON_REQ] = Math::instance().range ( 22, 25 );
 	}
 
 	if ( IS_SET ( obj->material_flags, MAT_MITHRIL ) )
@@ -679,13 +679,13 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 
 	if ( IS_SET ( obj->material_flags, MAT_QUARTZ ) ) {
 		SET_BIT ( obj->extra_flags, ITEM_NOLOCATE );
-		obj->requirements[STR_REQ] = number_range ( 13, 17 );
-		obj->requirements[DEX_REQ] = number_range ( 13, 17 );
+		obj->requirements[STR_REQ] = Math::instance().range ( 13, 17 );
+		obj->requirements[DEX_REQ] = Math::instance().range ( 13, 17 );
 	}			// MAT_QUARTZ are hidden!
 
 	/*Lets add some gusto.*/
-	if ( number_percent ( ) <= 10 ) {
-		switch ( number_range ( 1, 2 ) ) {
+	if ( Math::instance().percent ( ) <= 10 ) {
+		switch ( Math::instance().range ( 1, 2 ) ) {
 			case 1:
 				if ( !IS_SET ( obj->extra_flags, ITEM_GLOW ) )
 				{ SET_BIT ( obj->extra_flags, ITEM_GLOW ); }
@@ -698,11 +698,11 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 	}
 
 	/*Go for the full gusto.*/
-	if ( number_percent ( ) <= 3 ) {
+	if ( Math::instance().percent ( ) <= 3 ) {
 		if ( !IS_SET ( obj->extra_flags, ITEM_NODROP ) )
 		{ SET_BIT ( obj->extra_flags, ITEM_NODROP ); }
 
-		if ( number_percent ( ) <= 15 ) {
+		if ( Math::instance().percent ( ) <= 15 ) {
 			if ( !IS_SET ( obj->extra_flags, ITEM_NOREMOVE ) )
 			{ SET_BIT ( obj->extra_flags, ITEM_NOREMOVE ); }
 		}
@@ -713,7 +713,7 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 		if ( !IS_SET ( obj->extra_flags, ITEM_MELT_DROP ) )
 		{ SET_BIT ( obj->extra_flags, ITEM_MELT_DROP ); }
 		for ( int x = 0; x < MAX_REQ; x++ ) {
-			obj->requirements[x] = number_range ( 0, 15 );
+			obj->requirements[x] = Math::instance().range ( 0, 15 );
 		}
 	}
 }
@@ -724,8 +724,8 @@ void obj_level ( Item *obj, Creature * mob )
 
 	/*Base that level on something.*/
 	if ( mob->pIndexData->pShop ) {
-		obj->level = number_range ( 1, 60 );
-		obj->requirements[SIZ_REQ] = number_range ( 0, SIZE_MAGIC ); // -- random sizes
+		obj->level = Math::instance().range ( 1, 60 );
+		obj->requirements[SIZ_REQ] = Math::instance().range ( 0, SIZE_MAGIC ); // -- random sizes
 	} else {
 		obj->level = mob->level;
 		obj->requirements[SIZ_REQ] = mob->size; // -- make it fit!
@@ -749,11 +749,11 @@ void obj_weight ( Item *obj )
 		if ( IS_SET ( obj->wear_flags, ITEM_HOLD )
 				|| IS_SET ( obj->wear_flags, ITEM_WEAR_FLOAT )
 				|| IS_SET ( obj->wear_flags, ITEM_WEAR_FINGER ) )
-		{ weight = number_range ( 10, 50 ); }
+		{ weight = Math::instance().range ( 10, 50 ); }
 
 		if ( IS_SET ( obj->wear_flags, ITEM_WEAR_NECK )
 				|| IS_SET ( obj->wear_flags, ITEM_WEAR_WRIST ) )
-		{ weight = number_range ( 50, 100 ); }
+		{ weight = Math::instance().range ( 50, 100 ); }
 
 		if ( IS_SET ( obj->wear_flags, ITEM_WEAR_HEAD )
 				|| IS_SET ( obj->wear_flags, ITEM_WEAR_WAIST )
@@ -762,11 +762,11 @@ void obj_weight ( Item *obj )
 				|| IS_SET ( obj->wear_flags, ITEM_WEAR_LEGS )
 				|| IS_SET ( obj->wear_flags, ITEM_WEAR_ARMS )
 				|| IS_SET ( obj->wear_flags, ITEM_WEAR_SHIELD ) )
-		{ weight = number_range ( 100, 150 ); }
+		{ weight = Math::instance().range ( 100, 150 ); }
 
 		if ( IS_SET ( obj->wear_flags, ITEM_WEAR_BODY )
 				|| IS_SET ( obj->wear_flags, ITEM_WEAR_ABOUT ) )
-		{ weight = number_range ( 150, 250 ); }
+		{ weight = Math::instance().range ( 150, 250 ); }
 
 		if ( IS_SET ( obj->material_flags, MAT_LEATHER ) )
 		{ weight = weight / 2; }
@@ -816,23 +816,23 @@ void obj_weight ( Item *obj )
 
 	if ( obj->item_type == ITEM_WEAPON ) {
 		if ( obj->value[0] == WEAPON_EXOTIC )
-		{ weight = number_range ( 10, 500 ); }
+		{ weight = Math::instance().range ( 10, 500 ); }
 		else if ( obj->value[0] == WEAPON_SWORD )
-		{ weight = number_range ( 100, 250 ); }
+		{ weight = Math::instance().range ( 100, 250 ); }
 		else if ( obj->value[0] == WEAPON_DAGGER )
-		{ weight = number_range ( 10, 100 ); }
+		{ weight = Math::instance().range ( 10, 100 ); }
 		else if ( obj->value[0] == WEAPON_SPEAR )
-		{ weight = number_range ( 100, 200 ); }
+		{ weight = Math::instance().range ( 100, 200 ); }
 		else if ( obj->value[0] == WEAPON_MACE )
-		{ weight = number_range ( 150, 350 ); }
+		{ weight = Math::instance().range ( 150, 350 ); }
 		else if ( obj->value[0] == WEAPON_AXE )
-		{ weight = number_range ( 100, 350 ); }
+		{ weight = Math::instance().range ( 100, 350 ); }
 		else if ( obj->value[0] == WEAPON_FLAIL )
-		{ weight = number_range ( 150, 350 ); }
+		{ weight = Math::instance().range ( 150, 350 ); }
 		else if ( obj->value[0] == WEAPON_WHIP )
-		{ weight = number_range ( 10, 100 ); }
+		{ weight = Math::instance().range ( 10, 100 ); }
 		else if ( obj->value[0] == WEAPON_POLEARM )
-		{ weight = number_range ( 250, 500 ); }
+		{ weight = Math::instance().range ( 250, 500 ); }
 
 		/*Maximum weight for a weapon is 500, + 100
 		for two handed, you will need max str for that but
@@ -841,18 +841,18 @@ void obj_weight ( Item *obj )
 		{ weight += 100; }
 	}
 	if ( obj->item_type == ITEM_TREASURE ) {
-		weight = number_range ( 200, 600 );
+		weight = Math::instance().range ( 200, 600 );
 	}
 
 	if ( obj->item_type == ITEM_JEWELRY ) {
-		weight = number_range ( 10, 100 );
+		weight = Math::instance().range ( 10, 100 );
 	}
 
 	if ( obj->item_type == ITEM_STAFF || obj->item_type == ITEM_WAND )
-	{ weight = number_range ( 10, 200 ); }
+	{ weight = Math::instance().range ( 10, 200 ); }
 
 	if ( weight <= 0 )
-	{ weight = number_range ( 100, 200 ); }
+	{ weight = Math::instance().range ( 100, 200 ); }
 
 	obj->weight = weight;
 }
@@ -878,7 +878,7 @@ void set_obj_stats ( Item *obj, Creature * mob, bool special )
 			break;
 
 		case ITEM_LIGHT:
-			switch ( number_range ( 1, 3 ) ) {
+			switch ( Math::instance().range ( 1, 3 ) ) {
 				case 1:
 					obj->value[2] = 50;
 					break;
@@ -926,7 +926,7 @@ void set_obj_stats ( Item *obj, Creature * mob, bool special )
 			/*special weapons get strange damage noun and adds yet another boost*/
 			if ( special ) {
 				type += 1;
-				obj->value[3] = number_range ( 4, 15 );
+				obj->value[3] = Math::instance().range ( 4, 15 );
 			}
 
 			obj->value[1] = number;
@@ -1038,7 +1038,7 @@ void set_short ( Item *obj )
 			|| obj->wear_flags == ITEM_WEAR_ARMS
 			|| obj->wear_flags == ITEM_WEAR_HANDS
 			|| obj->wear_flags == ITEM_WEAR_FEET )
-	{ sprintf ( buf, "%s %s", some[number_range ( 0, 2 )], obj->name ); }
+	{ sprintf ( buf, "%s %s", some[Math::instance().range ( 0, 2 )], obj->name ); }
 	else
 	{ sprintf ( buf, "%s %s",  "a", obj->name ); }
 
@@ -1056,7 +1056,7 @@ void set_long ( Item *obj )
 			|| obj->wear_flags == ITEM_WEAR_ARMS
 			|| obj->wear_flags == ITEM_WEAR_HANDS
 			|| obj->wear_flags == ITEM_WEAR_FEET )
-		switch ( number_range ( 0, 2 ) ) {
+		switch ( Math::instance().range ( 0, 2 ) ) {
 			case 0:
 				sprintf ( buf, "%s have been dropped here.", obj->short_descr );
 				break;
@@ -1068,7 +1068,7 @@ void set_long ( Item *obj )
 				break;
 		}
 	else
-		switch ( number_range ( 0, 2 ) ) {
+		switch ( Math::instance().range ( 0, 2 ) ) {
 			case 0:
 				sprintf ( buf, "%s has been dropped here.", obj->short_descr );
 				break;
@@ -1185,11 +1185,11 @@ void make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb )
 
 	obj_level ( obj, mob );
 
-	switch ( number_range ( 0, 8 ) ) {
+	switch ( Math::instance().range ( 0, 8 ) ) {
 		case ( 0 ) :
 			obj->value[0] = WEAPON_EXOTIC;
 			obj->value[3] = 19;
-			if ( number_percent ( ) <= 15 )
+			if ( Math::instance().percent ( ) <= 15 )
 			{ obj->value[4] = WEAPON_TWO_HANDS; }
 
 			sprintf ( weapon, "blade" );
@@ -1199,7 +1199,7 @@ void make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb )
 			obj->value[0] = WEAPON_SWORD;
 			obj->value[3] = 3;
 
-			switch ( number_range ( 0, 7 ) ) {
+			switch ( Math::instance().range ( 0, 7 ) ) {
 				case ( 0 ) :
 					sprintf ( weapon, "shortsword" );
 					break;
@@ -1236,7 +1236,7 @@ void make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb )
 			obj->value[0] = WEAPON_SPEAR;
 			obj->value[3] = 34;
 
-			switch ( number_range ( 0, 2 ) ) {
+			switch ( Math::instance().range ( 0, 2 ) ) {
 				case ( 0 ) :
 					sprintf ( weapon, "spear" );
 					break;
@@ -1253,7 +1253,7 @@ void make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb )
 			obj->value[3] = 21;
 			obj->value[4] = WEAPON_TWO_HANDS;
 
-			switch ( number_range ( 0, 4 ) ) {
+			switch ( Math::instance().range ( 0, 4 ) ) {
 				case ( 0 ) :
 					sprintf ( weapon, "guisarme" );
 					break;
@@ -1276,7 +1276,7 @@ void make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb )
 			obj->value[0] = WEAPON_MACE;
 			obj->value[3] = 8;
 
-			switch ( number_range ( 0, 5 ) ) {
+			switch ( Math::instance().range ( 0, 5 ) ) {
 				case ( 0 ) :
 					sprintf ( weapon, "mace" );
 					break;
@@ -1302,7 +1302,7 @@ void make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb )
 			obj->value[0] = WEAPON_AXE;
 			obj->value[3] = 25;
 
-			switch ( number_range ( 0, 5 ) ) {
+			switch ( Math::instance().range ( 0, 5 ) ) {
 				case ( 0 ) :
 					sprintf ( weapon, "throwing axe" );
 					break;
@@ -1329,7 +1329,7 @@ void make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb )
 			obj->value[0] = WEAPON_FLAIL;
 			obj->value[3] = 37;
 
-			switch ( number_range ( 0, 2 ) ) {
+			switch ( Math::instance().range ( 0, 2 ) ) {
 				case ( 0 ) :
 					sprintf ( weapon, "flail" );
 					break;
@@ -1409,31 +1409,31 @@ void create_random ( Creature * mob, const char *argument )
 	target_name = one_argument ( argument, arg );
 
 	if ( !str_cmp ( arg, "light" ) ) {
-		make_armor ( obj, mob, light_vnum, ITEM_LIGHT, ITEM_TAKE, light_types[number_range ( 0, MAX_LIGHT )] );
+		make_armor ( obj, mob, light_vnum, ITEM_LIGHT, ITEM_TAKE, light_types[Math::instance().range ( 0, MAX_LIGHT )] );
 	} else if ( !str_cmp ( arg, "neck" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_NECK | ITEM_TAKE, neck_types[number_range ( 0, MAX_NECK )] );
+		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_NECK | ITEM_TAKE, neck_types[Math::instance().range ( 0, MAX_NECK )] );
 	} else if ( !str_cmp ( arg, "about" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_ABOUT | ITEM_TAKE, about_types[number_range ( 0, MAX_ABOUT )] );
+		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_ABOUT | ITEM_TAKE, about_types[Math::instance().range ( 0, MAX_ABOUT )] );
 	} else if ( !str_cmp ( arg, "helm" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_HEAD | ITEM_TAKE, head_types[number_range ( 0, MAX_HEAD )] );
+		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_HEAD | ITEM_TAKE, head_types[Math::instance().range ( 0, MAX_HEAD )] );
 	} else if ( !str_cmp ( arg, "arms" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_ARMS | ITEM_TAKE, arms_types[number_range ( 0, MAX_ARMS )] );
+		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_ARMS | ITEM_TAKE, arms_types[Math::instance().range ( 0, MAX_ARMS )] );
 	} else if ( !str_cmp ( arg, "legs" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_LEGS | ITEM_TAKE, legs_types[number_range ( 0, MAX_LEGS )] );
+		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_LEGS | ITEM_TAKE, legs_types[Math::instance().range ( 0, MAX_LEGS )] );
 	} else if ( !str_cmp ( arg, "hands" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_HANDS | ITEM_TAKE, hand_types[number_range ( 0, MAX_HAND )] );
+		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_HANDS | ITEM_TAKE, hand_types[Math::instance().range ( 0, MAX_HAND )] );
 	} else if ( !str_cmp ( arg, "feet" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_FEET | ITEM_TAKE, feet_types[number_range ( 0, MAX_FEET )] );
+		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_FEET | ITEM_TAKE, feet_types[Math::instance().range ( 0, MAX_FEET )] );
 	} else if ( !str_cmp ( arg, "wrist" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_WRIST | ITEM_TAKE, wrist_types[number_range ( 0, MAX_WRIST )] );
+		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_WRIST | ITEM_TAKE, wrist_types[Math::instance().range ( 0, MAX_WRIST )] );
 	} else if ( !str_cmp ( arg, "shield" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_SHIELD | ITEM_TAKE, shield_types[number_range ( 0, MAX_SHIELD )] );
+		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_SHIELD | ITEM_TAKE, shield_types[Math::instance().range ( 0, MAX_SHIELD )] );
 	} else if ( !str_cmp ( arg, "waist" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_WAIST | ITEM_TAKE, waist_types[number_range ( 0, MAX_WAIST )] );
+		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_WAIST | ITEM_TAKE, waist_types[Math::instance().range ( 0, MAX_WAIST )] );
 	} else if ( !str_cmp ( arg, "torso" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_BODY | ITEM_TAKE, body_types[number_range ( 0, MAX_BODY )] );
+		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_BODY | ITEM_TAKE, body_types[Math::instance().range ( 0, MAX_BODY )] );
 	} else if ( !str_cmp ( arg, "weapon" ) ) {
-		make_weapon ( obj, mob, weapon_vnum, verb_types[number_range ( 0, MAX_VERBS )] );
+		make_weapon ( obj, mob, weapon_vnum, verb_types[Math::instance().range ( 0, MAX_VERBS )] );
 	}
 	tail_chain( );
 }
@@ -1447,7 +1447,7 @@ void create_random_equipment ( Creature * mob )
 		"wrist", "neck"
 	};
 
-	int n_type = number_range ( 0, nelems ( type ) - 1 );
+	int n_type = Math::instance().range ( 0, nelems ( type ) - 1 );
 
 	if ( !IS_NPC ( mob ) )
 	{ return; }
@@ -1511,13 +1511,13 @@ void create_random_equipment ( Creature * mob )
 	{ create_random ( mob, "about" ); }
 	if ( IS_SET ( mob->random, RANDOM_WRIST ) ) {
 		create_random ( mob, "wrist" );
-		if ( number_percent ( ) <= 25 )
+		if ( Math::instance().percent ( ) <= 25 )
 		{ create_random ( mob, "wrist" ); }
 	}
 
 	if ( IS_SET ( mob->random, RANDOM_NECK ) ) {
 		create_random ( mob, "neck" );
-		if ( number_percent ( ) <= 25 )
+		if ( Math::instance().percent ( ) <= 25 )
 		{ create_random ( mob, "neck" ); }
 	}
 

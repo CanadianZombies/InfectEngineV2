@@ -42,16 +42,16 @@ const char *distance[4] = {
 };
 
 void scan_list           args ( ( RoomData *scan_room, Creature *ch,
-								  sh_int depth, sh_int door ) );
+								  int depth, int door ) );
 void scan_char           args ( ( Creature *victim, Creature *ch,
-								  sh_int depth, sh_int door ) );
+								  int depth, int door ) );
 
 DefineCommand ( cmd_scan )
 {
 	char arg1[MAX_INPUT_LENGTH], buf[MAX_INPUT_LENGTH];
 	RoomData *scan_room;
 	Exit *pExit;
-	sh_int door, depth;
+	int door, depth;
 
 	argument = one_argument ( argument, arg1 );
 
@@ -88,8 +88,8 @@ DefineCommand ( cmd_scan )
 	return;
 }
 
-void scan_list ( RoomData *scan_room, Creature *ch, sh_int depth,
-				 sh_int door )
+void scan_list ( RoomData *scan_room, Creature *ch, int depth,
+				 int door )
 {
 	Creature *rch;
 
@@ -102,7 +102,7 @@ void scan_list ( RoomData *scan_room, Creature *ch, sh_int depth,
 	return;
 }
 
-void scan_char ( Creature *victim, Creature *ch, sh_int depth, sh_int door )
+void scan_char ( Creature *victim, Creature *ch, int depth, int door )
 {
 	char buf[MAX_INPUT_LENGTH], buf2[MAX_INPUT_LENGTH];
 

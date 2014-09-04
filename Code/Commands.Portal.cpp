@@ -43,7 +43,7 @@ RoomData  *get_random_room ( Creature *ch )
 	RoomData *room;
 
 	for ( ; ; ) {
-		room = get_room_index ( number_range ( 0, 65535 ) );
+		room = get_room_index ( Math::instance().range ( 0, 65535 ) );
 		if ( room != NULL )
 			if ( can_see_room ( ch, room )
 					&&   !room_is_private ( room )
@@ -97,7 +97,7 @@ DefineCommand ( cmd_enter )
 		if ( IS_SET ( portal->value[2], GATE_RANDOM ) || portal->value[3] == -1 ) {
 			location = get_random_room ( ch );
 			portal->value[3] = location->vnum; /* for record keeping :) */
-		} else if ( IS_SET ( portal->value[2], GATE_BUGGY ) && ( number_percent() < 5 ) )
+		} else if ( IS_SET ( portal->value[2], GATE_BUGGY ) && ( Math::instance().percent() < 5 ) )
 		{ location = get_random_room ( ch ); }
 		else
 		{ location = get_room_index ( portal->value[3] ); }

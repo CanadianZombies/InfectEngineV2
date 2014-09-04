@@ -851,7 +851,7 @@ DefineCommand ( cmd_goto )
 
 	for ( rch = ch->in_room->people; rch != NULL; rch = rch->next_in_room ) {
 		if ( get_trust ( rch ) >= ch->invis_level ) {
-			if ( ch->pcdata != NULL && ch->pcdata->bamfout[0] != '\0' )
+			if ( ch->pcdata != NULL && !IS_NULLSTR ( ch->pcdata->bamfout ) )
 			{ act ( "$t", ch, ch->pcdata->bamfout, rch, TO_VICT ); }
 			else
 			{ act ( "$n leaves in a swirling mist.", ch, NULL, rch, TO_VICT ); }
@@ -864,7 +864,7 @@ DefineCommand ( cmd_goto )
 
 	for ( rch = ch->in_room->people; rch != NULL; rch = rch->next_in_room ) {
 		if ( get_trust ( rch ) >= ch->invis_level ) {
-			if ( ch->pcdata != NULL && ch->pcdata->bamfin[0] != '\0' )
+			if ( ch->pcdata != NULL && !IS_NULLSTR ( ch->pcdata->bamfin ) )
 			{ act ( "$t", ch, ch->pcdata->bamfin, rch, TO_VICT ); }
 			else
 			{ act ( "$n appears in a swirling mist.", ch, NULL, rch, TO_VICT ); }
@@ -900,7 +900,7 @@ DefineCommand ( cmd_violate )
 
 	for ( rch = ch->in_room->people; rch != NULL; rch = rch->next_in_room ) {
 		if ( get_trust ( rch ) >= ch->invis_level ) {
-			if ( ch->pcdata != NULL && ch->pcdata->bamfout[0] != '\0' )
+			if ( ch->pcdata != NULL && !IS_NULLSTR ( ch->pcdata->bamfout ) )
 			{ act ( "$t", ch, ch->pcdata->bamfout, rch, TO_VICT ); }
 			else
 			{ act ( "$n leaves in a swirling mist.", ch, NULL, rch, TO_VICT ); }
@@ -913,7 +913,7 @@ DefineCommand ( cmd_violate )
 
 	for ( rch = ch->in_room->people; rch != NULL; rch = rch->next_in_room ) {
 		if ( get_trust ( rch ) >= ch->invis_level ) {
-			if ( ch->pcdata != NULL && ch->pcdata->bamfin[0] != '\0' )
+			if ( ch->pcdata != NULL && !IS_NULLSTR ( ch->pcdata->bamfin ) )
 			{ act ( "$t", ch, ch->pcdata->bamfin, rch, TO_VICT ); }
 			else
 			{ act ( "$n appears in a swirling mist.", ch, NULL, rch, TO_VICT ); }
@@ -1855,7 +1855,7 @@ DefineCommand ( cmd_reboot )
 					for ( int y = 0; twit_table[y] != NULL; y++ )
 					{ cnt++; }
 
-					std::string tweetStr = twit_table[number_range ( 0, ( cnt - 1 ) )];
+					std::string tweetStr = twit_table[Math::instance().range ( 0, ( cnt - 1 ) )];
 					tweetStr = addTweetHashtags ( tweetStr );
 					issueSystemCommandNoReturn ( Format ( "curl -u %s:%s -d \"status=%s\" http://localhost:8080/1.1/statuses/update.json",
 														  "CombatMUD", "temppassword", C_STR ( tweetStr ) ) );
@@ -1919,7 +1919,7 @@ DefineCommand ( cmd_shutdown )
 					for ( int y = 0; twit_table[y] != NULL; y++ )
 					{ cnt++; }
 
-					std::string tweetStr = twit_table[number_range ( 0, ( cnt - 1 ) )];
+					std::string tweetStr = twit_table[Math::instance().range ( 0, ( cnt - 1 ) )];
 					tweetStr = addTweetHashtags ( tweetStr );
 					issueSystemCommandNoReturn ( Format ( "curl -u %s:%s -d \"status=%s\" http://localhost:8080/1.1/statuses/update.json",
 														  "CombatMUD", "temppassword", C_STR ( tweetStr ) ) );

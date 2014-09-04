@@ -222,7 +222,7 @@ bool saves_spell ( int level, Creature *victim, int dam_type )
 	if ( !IS_NPC ( victim ) && archetype_table[victim->archetype].fMana )
 	{ save = 9 * save / 10; }
 	save = URANGE ( 5, save, 95 );
-	return number_percent( ) < save;
+	return Math::instance().percent( ) < save;
 }
 
 /* RT save for dispels */
@@ -237,7 +237,7 @@ bool saves_dispel ( int dis_level, int spell_level, int duration )
 
 	save = 50 + ( spell_level - dis_level ) * 5;
 	save = URANGE ( 5, save, 95 );
-	return number_percent( ) < save;
+	return Math::instance().percent( ) < save;
 }
 
 /* co-routine for dispel magic and cancellation */
@@ -483,7 +483,7 @@ DefineCommand ( cmd_cast )
 
 	WAIT_STATE ( ch, skill_table[sn].beats );
 
-	if ( number_percent( ) > get_skill ( ch, sn ) ) {
+	if ( Math::instance().percent( ) > get_skill ( ch, sn ) ) {
 		writeBuffer ( "You lost your concentration.\n\r", ch );
 		check_improve ( ch, sn, FALSE, 1 );
 		ch->mana -= mana / 2;
@@ -651,7 +651,7 @@ void spell_acid_blast ( int sn, int level, Creature *ch, void *vo, int target )
 	Creature *victim = ( Creature * ) vo;
 	int dam;
 
-	dam = dice ( level, 12 );
+	dam = Math::instance().dice ( level, 12 );
 	if ( saves_spell ( level, victim, DAM_ACID ) )
 	{ dam /= 2; }
 	damage ( ch, victim, dam, sn, DAM_ACID, TRUE );
@@ -794,7 +794,7 @@ void spell_blindness ( int sn, int level, Creature *ch, void *vo, int target )
 void spell_burning_hands ( int sn, int level, Creature *ch, void *vo, int target )
 {
 	Creature *victim = ( Creature * ) vo;
-	static const sh_int dam_each[] = {
+	static const int dam_each[] = {
 		0,
 		0,  0,  0,  0,	14,	17, 20, 23, 26, 29,
 		29, 29, 30, 30,	31,	31, 32, 32, 33, 33,
@@ -806,7 +806,7 @@ void spell_burning_hands ( int sn, int level, Creature *ch, void *vo, int target
 
 	level	= UMIN ( level, ( signed int ) sizeof ( dam_each ) / ( signed int ) sizeof ( dam_each[0] ) - 1 );
 	level	= UMAX ( 0, level );
-	dam		= number_range ( dam_each[level] / 2, dam_each[level] * 2 );
+	dam		= Math::instance().range ( dam_each[level] / 2, dam_each[level] * 2 );
 	if ( saves_spell ( level, victim, DAM_FIRE ) )
 	{ dam /= 2; }
 	damage ( ch, victim, dam, sn, DAM_FIRE, TRUE );
@@ -831,7 +831,7 @@ void spell_call_lightning ( int sn, int level, Creature *ch, void *vo, int targe
 		return;
 	}
 
-	dam = dice ( level / 2, 8 );
+	dam = Math::instance().dice ( level / 2, 8 );
 
 	writeBuffer ( "Mota's lightning strikes your foes!\n\r", ch );
 	act ( "$n calls Mota's lightning to strike $s foes!",
@@ -886,7 +886,7 @@ void spell_calm ( int sn, int level, Creature *ch, void *vo, int target )
 	if ( IsStaff ( ch ) ) /* always works */
 	{ mlevel = 0; }
 
-	if ( number_range ( 0, chance ) >= mlevel ) { /* hard to stop large fights */
+	if ( Math::instance().range ( 0, chance ) >= mlevel ) { /* hard to stop large fights */
 		for ( vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room ) {
 			if ( IS_NPC ( vch ) && ( IS_SET ( vch->imm_flags, IMM_MAGIC ) ||
 									 IS_SET ( vch->act, ACT_UNDEAD ) ) )
@@ -1071,7 +1071,7 @@ void spell_cancellation ( int sn, int level, Creature *ch, void *vo, int target 
 
 void spell_cause_light ( int sn, int level, Creature *ch, void *vo, int target )
 {
-	damage ( ch, ( Creature * ) vo, dice ( 1, 8 ) + level / 3, sn, DAM_HARM, TRUE );
+	damage ( ch, ( Creature * ) vo, Math::instance().dice ( 1, 8 ) + level / 3, sn, DAM_HARM, TRUE );
 	return;
 }
 
@@ -1079,7 +1079,7 @@ void spell_cause_light ( int sn, int level, Creature *ch, void *vo, int target )
 
 void spell_cause_critical ( int sn, int level, Creature *ch, void *vo, int target )
 {
-	damage ( ch, ( Creature * ) vo, dice ( 3, 8 ) + level - 6, sn, DAM_HARM, TRUE );
+	damage ( ch, ( Creature * ) vo, Math::instance().dice ( 3, 8 ) + level - 6, sn, DAM_HARM, TRUE );
 	return;
 }
 
@@ -1087,7 +1087,7 @@ void spell_cause_critical ( int sn, int level, Creature *ch, void *vo, int targe
 
 void spell_cause_serious ( int sn, int level, Creature *ch, void *vo, int target )
 {
-	damage ( ch, ( Creature * ) vo, dice ( 2, 8 ) + level / 2, sn, DAM_HARM, TRUE );
+	damage ( ch, ( Creature * ) vo, Math::instance().dice ( 2, 8 ) + level / 2, sn, DAM_HARM, TRUE );
 	return;
 }
 
@@ -1107,7 +1107,7 @@ void spell_chain_lightning ( int sn, int level, Creature *ch, void *vo, int targ
 	act ( "A lightning bolt leaps from $n's hand and hits you!",
 		  ch, NULL, victim, TO_VICT );
 
-	dam = dice ( level, 6 );
+	dam = Math::instance().dice ( level, 6 );
 	if ( saves_spell ( level, victim, DAM_LIGHTNING ) )
 	{ dam /= 3; }
 	damage ( ch, victim, dam, sn, DAM_LIGHTNING, TRUE );
@@ -1126,7 +1126,7 @@ void spell_chain_lightning ( int sn, int level, Creature *ch, void *vo, int targ
 				last_vict = tmp_vict;
 				act ( "The bolt arcs to $n!", tmp_vict, NULL, NULL, TO_ROOM );
 				act ( "The bolt hits you!", tmp_vict, NULL, NULL, TO_CHAR );
-				dam = dice ( level, 6 );
+				dam = Math::instance().dice ( level, 6 );
 				if ( saves_spell ( level, tmp_vict, DAM_LIGHTNING ) )
 				{ dam /= 3; }
 				damage ( ch, tmp_vict, dam, sn, DAM_LIGHTNING, TRUE );
@@ -1148,7 +1148,7 @@ void spell_chain_lightning ( int sn, int level, Creature *ch, void *vo, int targ
 			last_vict = ch;
 			act ( "The bolt arcs to $n...whoops!", ch, NULL, NULL, TO_ROOM );
 			writeBuffer ( "You are struck by your own lightning!\n\r", ch );
-			dam = dice ( level, 6 );
+			dam = Math::instance().dice ( level, 6 );
 			if ( saves_spell ( level, ch, DAM_LIGHTNING ) )
 			{ dam /= 3; }
 			damage ( ch, ch, dam, sn, DAM_LIGHTNING, TRUE );
@@ -1181,7 +1181,7 @@ void spell_change_sex ( int sn, int level, Creature *ch, void *vo, int target )
 	af.duration  = 2 * level;
 	af.location  = APPLY_SEX;
 	do {
-		af.modifier  = number_range ( 0, 2 ) - victim->sex;
+		af.modifier  = Math::instance().range ( 0, 2 ) - victim->sex;
 	} while ( af.modifier == 0 );
 	af.bitvector = 0;
 	affect_to_char ( victim, &af );
@@ -1225,7 +1225,7 @@ void spell_charm_person ( int sn, int level, Creature *ch, void *vo, int target 
 	af.where     = TO_AFFECTS;
 	af.type      = sn;
 	af.level	 = level;
-	af.duration  = number_fuzzy ( level / 4 );
+	af.duration  = Math::instance().fuzzy ( level / 4 );
 	af.location  = 0;
 	af.modifier  = 0;
 	af.bitvector = AFF_CHARM;
@@ -1241,7 +1241,7 @@ void spell_charm_person ( int sn, int level, Creature *ch, void *vo, int target 
 void spell_chill_touch ( int sn, int level, Creature *ch, void *vo, int target )
 {
 	Creature *victim = ( Creature * ) vo;
-	static const sh_int dam_each[] = {
+	static const int dam_each[] = {
 		0,
 		0,  0,  6,  7,  8,	 9, 12, 13, 13, 13,
 		14, 14, 14, 15, 15,	15, 16, 16, 16, 17,
@@ -1254,7 +1254,7 @@ void spell_chill_touch ( int sn, int level, Creature *ch, void *vo, int target )
 
 	level	= UMIN ( level, ( signed int ) sizeof ( dam_each ) / ( signed int ) sizeof ( dam_each[0] ) - 1 );
 	level	= UMAX ( 0, level );
-	dam		= number_range ( dam_each[level] / 2, dam_each[level] * 2 );
+	dam		= Math::instance().range ( dam_each[level] / 2, dam_each[level] * 2 );
 	if ( !saves_spell ( level, victim, DAM_COLD ) ) {
 		act ( "$n turns blue and shivers.", victim, NULL, NULL, TO_ROOM );
 		af.where     = TO_AFFECTS;
@@ -1278,7 +1278,7 @@ void spell_chill_touch ( int sn, int level, Creature *ch, void *vo, int target )
 void spell_colour_spray ( int sn, int level, Creature *ch, void *vo, int target )
 {
 	Creature *victim = ( Creature * ) vo;
-	static const sh_int dam_each[] = {
+	static const int dam_each[] = {
 		0,
 		0,  0,  0,  0,  0,	 0,  0,  0,  0,  0,
 		30, 35, 40, 45, 50,	55, 55, 55, 56, 57,
@@ -1290,7 +1290,7 @@ void spell_colour_spray ( int sn, int level, Creature *ch, void *vo, int target 
 
 	level	= UMIN ( level, ( signed int ) sizeof ( dam_each ) / ( signed int ) sizeof ( dam_each[0] ) - 1 );
 	level	= UMAX ( 0, level );
-	dam		= number_range ( dam_each[level] / 2,  dam_each[level] * 2 );
+	dam		= Math::instance().range ( dam_each[level] / 2,  dam_each[level] * 2 );
 	if ( saves_spell ( level, victim, DAM_LIGHT ) )
 	{ dam /= 2; }
 	else
@@ -1337,9 +1337,9 @@ void spell_continual_light ( int sn, int level, Creature *ch, void *vo, int targ
 void spell_control_weather ( int sn, int level, Creature *ch, void *vo, int target )
 {
 	if ( !str_cmp ( target_name, "better" ) )
-	{ weather_info.change += dice ( level / 3, 4 ); }
+	{ weather_info.change += Math::instance().dice ( level / 3, 4 ); }
 	else if ( !str_cmp ( target_name, "worse" ) )
-	{ weather_info.change -= dice ( level / 3, 4 ); }
+	{ weather_info.change -= Math::instance().dice ( level / 3, 4 ); }
 	else
 	{ writeBuffer ( "Do you want it to get better or worse?\n\r", ch ); }
 
@@ -1450,7 +1450,7 @@ void spell_cure_critical ( int sn, int level, Creature *ch, void *vo, int target
 	Creature *victim = ( Creature * ) vo;
 	int heal;
 
-	heal = dice ( 3, 8 ) + level - 6;
+	heal = Math::instance().dice ( 3, 8 ) + level - 6;
 	victim->hit = UMIN ( victim->hit + heal, victim->max_hit );
 	update_pos ( victim );
 	writeBuffer ( "You feel better!\n\r", victim );
@@ -1486,7 +1486,7 @@ void spell_cure_light ( int sn, int level, Creature *ch, void *vo, int target )
 	Creature *victim = ( Creature * ) vo;
 	int heal;
 
-	heal = dice ( 1, 8 ) + level / 3;
+	heal = Math::instance().dice ( 1, 8 ) + level / 3;
 	victim->hit = UMIN ( victim->hit + heal, victim->max_hit );
 	update_pos ( victim );
 	writeBuffer ( "You feel better!\n\r", victim );
@@ -1521,7 +1521,7 @@ void spell_cure_serious ( int sn, int level, Creature *ch, void *vo, int target 
 	Creature *victim = ( Creature * ) vo;
 	int heal;
 
-	heal = dice ( 2, 8 ) + level / 2 ;
+	heal = Math::instance().dice ( 2, 8 ) + level / 2 ;
 	victim->hit = UMIN ( victim->hit + heal, victim->max_hit );
 	update_pos ( victim );
 	writeBuffer ( "You feel better!\n\r", victim );
@@ -1624,7 +1624,7 @@ void spell_demonfire ( int sn, int level, Creature *ch, void *vo, int target )
 			  ch, NULL, victim, TO_VICT );
 		writeBuffer ( "You conjure forth the demons of hell!\n\r", ch );
 	}
-	dam = dice ( level, 10 );
+	dam = Math::instance().dice ( level, 10 );
 	if ( saves_spell ( level, victim, DAM_NEGATIVE ) )
 	{ dam /= 2; }
 	damage ( ch, victim, dam, sn, DAM_NEGATIVE , TRUE );
@@ -1809,9 +1809,9 @@ void spell_dispel_evil ( int sn, int level, Creature *ch, void *vo, int target )
 	}
 
 	if ( victim->hit > ( ch->level * 4 ) )
-	{ dam = dice ( level, 4 ); }
+	{ dam = Math::instance().dice ( level, 4 ); }
 	else
-	{ dam = UMAX ( victim->hit, dice ( level, 4 ) ); }
+	{ dam = UMAX ( victim->hit, Math::instance().dice ( level, 4 ) ); }
 	if ( saves_spell ( level, victim, DAM_HOLY ) )
 	{ dam /= 2; }
 	damage ( ch, victim, dam, sn, DAM_HOLY , TRUE );
@@ -1838,9 +1838,9 @@ void spell_dispel_good ( int sn, int level, Creature *ch, void *vo, int target )
 	}
 
 	if ( victim->hit > ( ch->level * 4 ) )
-	{ dam = dice ( level, 4 ); }
+	{ dam = Math::instance().dice ( level, 4 ); }
 	else
-	{ dam = UMAX ( victim->hit, dice ( level, 4 ) ); }
+	{ dam = UMAX ( victim->hit, Math::instance().dice ( level, 4 ) ); }
 	if ( saves_spell ( level, victim, DAM_NEGATIVE ) )
 	{ dam /= 2; }
 	damage ( ch, victim, dam, sn, DAM_NEGATIVE , TRUE );
@@ -2022,7 +2022,7 @@ void spell_earthquake ( int sn, int level, Creature *ch, void *vo, int target )
 				if ( IS_AFFECTED ( vch, AFF_FLYING ) )
 				{ damage ( ch, vch, 0, sn, DAM_BASH, TRUE ); }
 				else
-				{ damage ( ch, vch, level + dice ( 2, 8 ), sn, DAM_BASH, TRUE ); }
+				{ damage ( ch, vch, level + Math::instance().dice ( 2, 8 ), sn, DAM_BASH, TRUE ); }
 			}
 			continue;
 		}
@@ -2091,7 +2091,7 @@ void spell_enchant_armor ( int sn, int level, Creature *ch, void *vo, int target
 
 	fail = URANGE ( 5, fail, 85 );
 
-	result = number_percent();
+	result = Math::instance().percent();
 
 	/* the moment of truth */
 	if ( result < ( fail / 5 ) ) { /* item destroyed */
@@ -2263,7 +2263,7 @@ void spell_enchant_weapon ( int sn, int level, Creature *ch, void *vo, int targe
 
 	fail = URANGE ( 5, fail, 95 );
 
-	result = number_percent();
+	result = Math::instance().percent();
 
 	/* the moment of truth */
 	if ( result < ( fail / 5 ) ) { /* item destroyed */
@@ -2410,10 +2410,10 @@ void spell_energy_drain ( int sn, int level, Creature *ch, void *vo, int target 
 	if ( victim->level <= 2 ) {
 		dam		 = ch->hit + 1;
 	} else {
-		gain_exp ( victim, 0 - number_range ( level / 2, 3 * level / 2 ) );
+		gain_exp ( victim, 0 - Math::instance().range ( level / 2, 3 * level / 2 ) );
 		victim->mana	/= 2;
 		victim->move	/= 2;
-		dam		 = dice ( 1, level );
+		dam		 = Math::instance().dice ( 1, level );
 		ch->hit		+= dam;
 	}
 
@@ -2429,7 +2429,7 @@ void spell_energy_drain ( int sn, int level, Creature *ch, void *vo, int target 
 void spell_fireball ( int sn, int level, Creature *ch, void *vo, int target )
 {
 	Creature *victim = ( Creature * ) vo;
-	static const sh_int dam_each[] = {
+	static const int dam_each[] = {
 		0,
 		0,   0,   0,   0,   0,	  0,   0,   0,   0,   0,
 		0,   0,   0,   0,  30,	 35,  40,  45,  50,  55,
@@ -2441,7 +2441,7 @@ void spell_fireball ( int sn, int level, Creature *ch, void *vo, int target )
 
 	level	= UMIN ( level, ( signed int ) sizeof ( dam_each ) / ( signed int ) sizeof ( dam_each[0] ) - 1 );
 	level	= UMAX ( 0, level );
-	dam		= number_range ( dam_each[level] / 2, dam_each[level] * 2 );
+	dam		= Math::instance().range ( dam_each[level] / 2, dam_each[level] * 2 );
 	if ( saves_spell ( level, victim, DAM_FIRE ) )
 	{ dam /= 2; }
 	damage ( ch, victim, dam, sn, DAM_FIRE , TRUE );
@@ -2462,7 +2462,7 @@ void spell_fireproof ( int sn, int level, Creature *ch, void *vo, int target )
 	af.where     = TO_OBJECT;
 	af.type      = sn;
 	af.level     = level;
-	af.duration  = number_fuzzy ( level / 4 );
+	af.duration  = Math::instance().fuzzy ( level / 4 );
 	af.location  = APPLY_NONE;
 	af.modifier  = 0;
 	af.bitvector = ITEM_BURN_PROOF;
@@ -2480,7 +2480,7 @@ void spell_flamestrike ( int sn, int level, Creature *ch, void *vo, int target )
 	Creature *victim = ( Creature * ) vo;
 	int dam;
 
-	dam = dice ( 6 + level / 2, 8 );
+	dam = Math::instance().dice ( 6 + level / 2, 8 );
 	if ( saves_spell ( level, victim, DAM_FIRE ) )
 	{ dam /= 2; }
 	damage ( ch, victim, dam, sn, DAM_FIRE , TRUE );
@@ -2551,7 +2551,7 @@ void spell_floating_disc ( int sn, int level, Creature *ch, void *vo, int target
 	disc = create_object ( get_obj_index ( OBJ_VNUM_DISC ), 0 );
 	disc->value[0]	= ch->level * 10; /* 10 pounds per level capacity */
 	disc->value[3]	= ch->level * 5; /* 5 pounds per level max per item */
-	disc->timer		= ch->level * 2 - number_range ( 0, level / 2 );
+	disc->timer		= ch->level * 2 - Math::instance().range ( 0, level / 2 );
 
 	act ( "$n has created a floating black disc.", ch, NULL, NULL, TO_ROOM );
 	writeBuffer ( "You create a floating disc.\n\r", ch );
@@ -2721,7 +2721,7 @@ void spell_harm ( int sn, int level, Creature *ch, void *vo, int target )
 	Creature *victim = ( Creature * ) vo;
 	int dam;
 
-	dam = UMAX (  20, victim->hit - dice ( 1, 4 ) );
+	dam = UMAX (  20, victim->hit - Math::instance().dice ( 1, 4 ) );
 	if ( saves_spell ( level, victim, DAM_HARM ) )
 	{ dam = UMIN ( 50, dam / 2 ); }
 	dam = UMIN ( 100, dam );
@@ -2801,7 +2801,7 @@ void spell_heat_metal ( int sn, int level, Creature *ch, void *vo, int target )
 				obj_lose != NULL;
 				obj_lose = obj_next ) {
 			obj_next = obj_lose->next_content;
-			if ( number_range ( 1, 2 * level ) > obj_lose->level
+			if ( Math::instance().range ( 1, 2 * level ) > obj_lose->level
 					&&   !saves_spell ( level, victim, DAM_FIRE )
 					&&   !IS_OBJ_STAT ( obj_lose, ITEM_NONMETAL )
 					&&   !IS_OBJ_STAT ( obj_lose, ITEM_BURN_PROOF ) ) {
@@ -2810,20 +2810,20 @@ void spell_heat_metal ( int sn, int level, Creature *ch, void *vo, int target )
 						if ( obj_lose->wear_loc != -1 ) { /* remove the item */
 							if ( can_drop_obj ( victim, obj_lose )
 									&&  ( obj_lose->weight / 10 ) <
-									number_range ( 1, 2 * get_curr_stat ( victim, STAT_DEX ) )
+									Math::instance().range ( 1, 2 * get_curr_stat ( victim, STAT_DEX ) )
 									&&  remove_obj ( victim, obj_lose->wear_loc, TRUE ) ) {
 								act ( "$n yelps and throws $p to the ground!",
 									  victim, obj_lose, NULL, TO_ROOM );
 								act ( "You remove and drop $p before it burns you.",
 									  victim, obj_lose, NULL, TO_CHAR );
-								dam += ( number_range ( 1, obj_lose->level ) / 3 );
+								dam += ( Math::instance().range ( 1, obj_lose->level ) / 3 );
 								obj_from_char ( obj_lose );
 								obj_to_room ( obj_lose, victim->in_room );
 								fail = FALSE;
 							} else { /* stuck on the body! ouch! */
 								act ( "Your skin is seared by $p!",
 									  victim, obj_lose, NULL, TO_CHAR );
-								dam += ( number_range ( 1, obj_lose->level ) );
+								dam += ( Math::instance().range ( 1, obj_lose->level ) );
 								fail = FALSE;
 							}
 
@@ -2833,14 +2833,14 @@ void spell_heat_metal ( int sn, int level, Creature *ch, void *vo, int target )
 									  victim, obj_lose, NULL, TO_ROOM );
 								act ( "You and drop $p before it burns you.",
 									  victim, obj_lose, NULL, TO_CHAR );
-								dam += ( number_range ( 1, obj_lose->level ) / 6 );
+								dam += ( Math::instance().range ( 1, obj_lose->level ) / 6 );
 								obj_from_char ( obj_lose );
 								obj_to_room ( obj_lose, victim->in_room );
 								fail = FALSE;
 							} else { /* cannot drop */
 								act ( "Your skin is seared by $p!",
 									  victim, obj_lose, NULL, TO_CHAR );
-								dam += ( number_range ( 1, obj_lose->level ) / 2 );
+								dam += ( Math::instance().range ( 1, obj_lose->level ) / 2 );
 								fail = FALSE;
 							}
 						}
@@ -2864,7 +2864,7 @@ void spell_heat_metal ( int sn, int level, Creature *ch, void *vo, int target )
 							} else { /* YOWCH! */
 								writeBuffer ( "Your weapon sears your flesh!\n\r",
 											  victim );
-								dam += number_range ( 1, obj_lose->level );
+								dam += Math::instance().range ( 1, obj_lose->level );
 								fail = FALSE;
 							}
 						} else { /* drop it if we can */
@@ -2873,14 +2873,14 @@ void spell_heat_metal ( int sn, int level, Creature *ch, void *vo, int target )
 									  victim, obj_lose, NULL, TO_ROOM );
 								act ( "You and drop $p before it burns you.",
 									  victim, obj_lose, NULL, TO_CHAR );
-								dam += ( number_range ( 1, obj_lose->level ) / 6 );
+								dam += ( Math::instance().range ( 1, obj_lose->level ) / 6 );
 								obj_from_char ( obj_lose );
 								obj_to_room ( obj_lose, victim->in_room );
 								fail = FALSE;
 							} else { /* cannot drop */
 								act ( "Your skin is seared by $p!",
 									  victim, obj_lose, NULL, TO_CHAR );
-								dam += ( number_range ( 1, obj_lose->level ) / 2 );
+								dam += ( Math::instance().range ( 1, obj_lose->level ) / 2 );
 								fail = FALSE;
 							}
 						}
@@ -2930,7 +2930,7 @@ void spell_holy_word ( int sn, int level, Creature *ch, void *vo, int target )
 			if ( !is_safe_spell ( ch, vch, TRUE ) ) {
 				spell_curse ( curse_num, level, ch, ( void * ) vch, TARGET_CHAR );
 				writeBuffer ( "You are struck down!\n\r", vch );
-				dam = dice ( level, 6 );
+				dam = Math::instance().dice ( level, 6 );
 				damage ( ch, vch, dam, sn, DAM_ENERGY, TRUE );
 			}
 		}
@@ -2939,7 +2939,7 @@ void spell_holy_word ( int sn, int level, Creature *ch, void *vo, int target )
 			if ( !is_safe_spell ( ch, vch, TRUE ) ) {
 				spell_curse ( curse_num, level / 2, ch, ( void * ) vch, TARGET_CHAR );
 				writeBuffer ( "You are struck down!\n\r", vch );
-				dam = dice ( level, 4 );
+				dam = Math::instance().dice ( level, 4 );
 				damage ( ch, vch, dam, sn, DAM_ENERGY, TRUE );
 			}
 		}
@@ -3284,7 +3284,7 @@ void spell_know_alignment ( int sn, int level, Creature *ch, void *vo, int targe
 void spell_lightning_bolt ( int sn, int level, Creature *ch, void *vo, int target )
 {
 	Creature *victim = ( Creature * ) vo;
-	static const sh_int dam_each[] = {
+	static const int dam_each[] = {
 		0,
 		0,  0,  0,  0,  0,	 0,  0,  0, 25, 28,
 		31, 34, 37, 40, 40,	41, 42, 42, 43, 44,
@@ -3296,7 +3296,7 @@ void spell_lightning_bolt ( int sn, int level, Creature *ch, void *vo, int targe
 
 	level	= UMIN ( level, ( signed int ) sizeof ( dam_each ) / ( signed int ) sizeof ( dam_each[0] ) - 1 );
 	level	= UMAX ( 0, level );
-	dam		= number_range ( dam_each[level] / 2, dam_each[level] * 2 );
+	dam		= Math::instance().range ( dam_each[level] / 2, dam_each[level] * 2 );
 	if ( saves_spell ( level, victim, DAM_LIGHTNING ) )
 	{ dam /= 2; }
 	damage ( ch, victim, dam, sn, DAM_LIGHTNING , TRUE );
@@ -3322,7 +3322,7 @@ void spell_locate_object ( int sn, int level, Creature *ch, void *vo, int target
 
 	for ( obj = object_list; obj != NULL; obj = obj->next ) {
 		if ( !can_see_obj ( ch, obj ) || !is_name ( target_name, obj->name )
-				||   IS_OBJ_STAT ( obj, ITEM_NOLOCATE ) || number_percent() > 2 * level
+				||   IS_OBJ_STAT ( obj, ITEM_NOLOCATE ) || Math::instance().percent() > 2 * level
 				||   ch->level < obj->level )
 		{ continue; }
 
@@ -3367,7 +3367,7 @@ void spell_locate_object ( int sn, int level, Creature *ch, void *vo, int target
 void spell_magic_missile ( int sn, int level, Creature *ch, void *vo, int target )
 {
 	Creature *victim = ( Creature * ) vo;
-	static const sh_int dam_each[] = {
+	static const int dam_each[] = {
 		0,
 		3,  3,  4,  4,  5,	 6,  6,  6,  6,  6,
 		7,  7,  7,  7,  7,	 8,  8,  8,  8,  8,
@@ -3379,7 +3379,7 @@ void spell_magic_missile ( int sn, int level, Creature *ch, void *vo, int target
 
 	level	= UMIN ( level, ( signed int ) sizeof ( dam_each ) / ( signed int ) sizeof ( dam_each[0] ) - 1 );
 	level	= UMAX ( 0, level );
-	dam		= number_range ( dam_each[level] / 2, dam_each[level] * 2 );
+	dam		= Math::instance().range ( dam_each[level] / 2, dam_each[level] * 2 );
 	if ( saves_spell ( level, victim, DAM_ENERGY ) )
 	{ dam /= 2; }
 	damage ( ch, victim, dam, sn, DAM_ENERGY , TRUE );
@@ -3455,7 +3455,7 @@ void spell_pass_door ( int sn, int level, Creature *ch, void *vo, int target )
 	af.where     = TO_AFFECTS;
 	af.type      = sn;
 	af.level     = level;
-	af.duration  = number_fuzzy ( level / 4 );
+	af.duration  = Math::instance().fuzzy ( level / 4 );
 	af.location  = APPLY_NONE;
 	af.modifier  = 0;
 	af.bitvector = AFF_PASS_DOOR;
@@ -3654,7 +3654,7 @@ void spell_ray_of_truth ( int sn, int level, Creature *ch, void *vo, int target 
 		return;
 	}
 
-	dam = dice ( level, 10 );
+	dam = Math::instance().dice ( level, 10 );
 	if ( saves_spell ( level, victim, DAM_HOLY ) )
 	{ dam /= 2; }
 
@@ -3700,7 +3700,7 @@ void spell_recharge ( int sn, int level, Creature *ch, void *vo, int target )
 
 	chance = UMAX ( level / 2, chance );
 
-	percent = number_percent();
+	percent = Math::instance().percent();
 
 	if ( percent < chance / 2 ) {
 		act ( "$p glows softly.", ch, obj, NULL, TO_CHAR );
@@ -3875,7 +3875,7 @@ void spell_shocking_grasp ( int sn, int level, Creature *ch, void *vo, int targe
 
 	level	= UMIN ( level, ( signed int ) sizeof ( dam_each ) / ( signed int ) sizeof ( dam_each[0] ) - 1 );
 	level	= UMAX ( 0, level );
-	dam		= number_range ( dam_each[level] / 2, dam_each[level] * 2 );
+	dam		= Math::instance().range ( dam_each[level] / 2, dam_each[level] * 2 );
 	if ( saves_spell ( level, victim, DAM_LIGHTNING ) )
 	{ dam /= 2; }
 	damage ( ch, victim, dam, sn, DAM_LIGHTNING , TRUE );
@@ -4149,8 +4149,8 @@ void spell_acid_breath ( int sn, int level, Creature *ch, void *vo, int target )
 	act ( "You spit acid at $N.", ch, NULL, victim, TO_CHAR );
 
 	hpch = UMAX ( 12, ch->hit );
-	hp_dam = number_range ( hpch / 11 + 1, hpch / 6 );
-	dice_dam = dice ( level, 16 );
+	hp_dam = Math::instance().range ( hpch / 11 + 1, hpch / 6 );
+	dice_dam = Math::instance().dice ( level, 16 );
 
 	dam = UMAX ( hp_dam + dice_dam / 10, dice_dam + hp_dam / 10 );
 
@@ -4177,8 +4177,8 @@ void spell_fire_breath ( int sn, int level, Creature *ch, void *vo, int target )
 	act ( "You breath forth a cone of fire.", ch, NULL, NULL, TO_CHAR );
 
 	hpch = UMAX ( 10, ch->hit );
-	hp_dam  = number_range ( hpch / 9 + 1, hpch / 5 );
-	dice_dam = dice ( level, 20 );
+	hp_dam  = Math::instance().range ( hpch / 9 + 1, hpch / 5 );
+	dice_dam = Math::instance().dice ( level, 20 );
 
 	dam = UMAX ( hp_dam + dice_dam / 10, dice_dam + hp_dam / 10 );
 	fire_effect ( victim->in_room, level, dam / 2, TARGET_ROOM );
@@ -4223,8 +4223,8 @@ void spell_frost_breath ( int sn, int level, Creature *ch, void *vo, int target 
 	act ( "You breath out a cone of frost.", ch, NULL, NULL, TO_CHAR );
 
 	hpch = UMAX ( 12, ch->hit );
-	hp_dam = number_range ( hpch / 11 + 1, hpch / 6 );
-	dice_dam = dice ( level, 16 );
+	hp_dam = Math::instance().range ( hpch / 11 + 1, hpch / 6 );
+	dice_dam = Math::instance().dice ( level, 16 );
 
 	dam = UMAX ( hp_dam + dice_dam / 10, dice_dam + hp_dam / 10 );
 	cold_effect ( victim->in_room, level, dam / 2, TARGET_ROOM );
@@ -4268,8 +4268,8 @@ void spell_gas_breath ( int sn, int level, Creature *ch, void *vo, int target )
 	act ( "You breath out a cloud of poisonous gas.", ch, NULL, NULL, TO_CHAR );
 
 	hpch = UMAX ( 16, ch->hit );
-	hp_dam = number_range ( hpch / 15 + 1, 8 );
-	dice_dam = dice ( level, 12 );
+	hp_dam = Math::instance().range ( hpch / 15 + 1, 8 );
+	dice_dam = Math::instance().dice ( level, 12 );
 
 	dam = UMAX ( hp_dam + dice_dam / 10, dice_dam + hp_dam / 10 );
 	poison_effect ( ch->in_room, level, dam, TARGET_ROOM );
@@ -4302,8 +4302,8 @@ void spell_lightning_breath ( int sn, int level, Creature *ch, void *vo, int tar
 	act ( "You breathe a bolt of lightning at $N.", ch, NULL, victim, TO_CHAR );
 
 	hpch = UMAX ( 10, ch->hit );
-	hp_dam = number_range ( hpch / 9 + 1, hpch / 5 );
-	dice_dam = dice ( level, 20 );
+	hp_dam = Math::instance().range ( hpch / 9 + 1, hpch / 5 );
+	dice_dam = Math::instance().dice ( level, 20 );
 
 	dam = UMAX ( hp_dam + dice_dam / 10, dice_dam + hp_dam / 10 );
 
@@ -4324,7 +4324,7 @@ void spell_general_purpose ( int sn, int level, Creature *ch, void *vo, int targ
 	Creature *victim = ( Creature * ) vo;
 	int dam;
 
-	dam = number_range ( 25, 100 );
+	dam = Math::instance().range ( 25, 100 );
 	if ( saves_spell ( level, victim, DAM_PIERCE ) )
 	{ dam /= 2; }
 	damage ( ch, victim, dam, sn, DAM_PIERCE , TRUE );
@@ -4336,7 +4336,7 @@ void spell_high_explosive ( int sn, int level, Creature *ch, void *vo, int targe
 	Creature *victim = ( Creature * ) vo;
 	int dam;
 
-	dam = number_range ( 30, 120 );
+	dam = Math::instance().range ( 30, 120 );
 	if ( saves_spell ( level, victim, DAM_PIERCE ) )
 	{ dam /= 2; }
 	damage ( ch, victim, dam, sn, DAM_PIERCE , TRUE );

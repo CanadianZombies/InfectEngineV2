@@ -665,5 +665,82 @@ const char *whoami ( void )
 	return "unknown";
 }
 
+void make_grid ( char *argument )
+{
+	/* GridMaker 1.0 by Muerte of MND */
+	/* fixed for rom by Rashin of TGH2: Project X */
+
+	FILE *fp;
+	char arg1[10], arg2[10], arg3[10];
+	int width, height, vstart, vend, vnum, n, e, s, w, line_pos;
+
+	argument = one_argument ( argument, arg1 );
+	argument = one_argument ( argument, arg2 );
+	argument = one_argument ( argument, arg3 );
+
+	if ( arg1[0] == '\0' || arg2[0] == '\0' || arg3[0] == '\0' ) {
+		//send_to_char("SYNTAX: worldmake <start vnum> <width> <height>\n\r", ch);
+		return;
+	}
+
+	width = atoi ( arg2 );
+	height = atoi ( arg3 );
+	vstart = atoi ( arg1 );
+	vend = vstart + ( width * height ) - 1;
+
+	if ( ( fp = fopen ( Format ( "%sworld.are", WORLD_DIR ), "w" ) ) == NULL ) {
+		return;
+	}
+
+	fprintf ( fp, "#AREADATA\nName World~\nBuilders None~\nVNUMs %d %d\nCredits Omega~\nSecurity 9\nEnd\n", vstart, vend );
+	fprintf ( fp, "\n\n\n#ROOMS\n" );
+
+	for ( vnum = vstart; vnum <= vend; vnum++ ) {
+		/* for every room */
+		n = vnum - width;
+		s = vnum + width;
+		e = vnum + 1;
+		w = vnum - 1;
+
+		/*where it is on the line 0 to (width-1)*/
+		line_pos = ( vnum - vstart + 1 ) % ( width );
+		if ( line_pos == 0 )
+		{ line_pos = width; }
+
+		/*north border*/
+		if ( ( vnum >= vstart ) && ( vnum < vstart + width ) ) {
+			n = 0;
+		}
+		/*south border*/
+		if ( ( vnum > vend - width ) && ( vnum <= vend ) ) {
+			s = 0;
+		}
+		/*east border*/
+		if ( ( vnum - vstart + 1 ) % ( width ) == 0 ) {
+			e = 0;
+		}
+		/*west border*/
+		if ( ( vnum - vstart + 1 ) % ( width ) == 1 ) {
+			w = 0;
+		}
+
+		fprintf ( fp, "#%d\nNAME~\n\n~\n0 0 0\n", vnum );
+		if ( n > 0 )
+		{ fprintf ( fp, "D0\n\n~\n~\n0 0 %d\n", n ); }
+		if ( e > 0 )
+		{ fprintf ( fp, "D1\n\n~\n~\n0 0 %d\n", e ); }
+		if ( s > 0 )
+		{ fprintf ( fp, "D2\n\n~\n~\n0 0 %d\n", s ); }
+		if ( w > 0 )
+		{ fprintf ( fp, "D3\n\n~\n~\n0 0 %d\n", w ); }
+
+		fprintf ( fp, "S\n" );
+	}
+
+	fprintf ( fp, "#0\n" );
+	fprintf ( fp, "\n\n\n#$\n" );
+	fclose ( fp );
+	return;
+}
 
 // -- EOF

@@ -35,69 +35,102 @@
 # THE SOFTWARE.                                                                     #
 ###################################################################################*/
 
-#ifndef _Engine_H
-#define _Engine_H
+#include "Engine.h"
 
-// -- C Headers (actual .h files)
-#if defined(macintosh)
-#include <types.h>
-#else
-#include <sys/types.h>
-#include <sys/time.h>
-#endif
+template<>Math *Instance<Math>::ms_Singleton = 0;
 
-#include <cxxabi.h>
-#include <sys/wait.h>
-#include <sys/resource.h>
-#include <sys/stat.h>
-#include <sys/utsname.h>
-// -- #include <sys/prctl.h>
+Math::Math()
+{
+	mTimeSeed = time ( 0 );
+	mLastGen = 0;
 
-#include <unistd.h>
-#include <pwd.h>
-#include <dlfcn.h>
-#include <execinfo.h>
-#include <limits.h>
+	// -- generate our time
+	srandom ( mTimeSeed ^ getpid() );
+}
 
-#include <cstdio>
-#include <cstdarg>
-#include <cstdlib>
-#include <cstring>
-#include <climits>
-#include <cfloat>
+Math::~Math() { }
 
-#include <cassert>
-#include <cerrno>
-#include <unistd.h>
-#include <new>
-#include <list>
-#include <string>
-#include <map>
-#include <exception>
-#include <stdexcept>
-#include <iostream>
-#include <fstream>
-#include <typeinfo>
+int Math::fuzzy ( int number )
+{
+	switch ( bits ( 2 ) ) {
+		case 0:
+			number -= 1;
+			break;
+		case 3:
+			number += 1;
+			break;
+	}
 
-#include "FixPrototypes.h"
-#include "Version.h"
-#include "Protocol.h"
+	return UMAX ( 1, number );
+}
 
-#include "Typedefs.h"
-#include "Defines.h"
-#include "Instance.h"
+int Math::range ( int lower, int higher )
+{
+	int power;
+	int number;
 
-#include "Events.h"
-#include "Vnums.h"
-#include "Math.h"
+	if ( lower == 0 && higher == 0 )
+	{ return 0; }
 
-#include "Structures.h"
+	if ( ( higher = higher - lower + 1 ) <= 1 )
+	{ return lower; }
 
-#include "FixSkillNumbers.h"
-#include "Macros.h"
+	for ( power = 2; power < higher; power <<= 1 )
+		;
+
+	while ( ( number = my_rand() & ( power - 1 ) ) >= lower )
+		;
+
+	return lower + number;
+}
+
+int Math::percent ( void )
+{
+	return range ( 1, 100 );
+}
+
+int Math::door ( void )
+{
+	int door;
+
+	while ( ( door = my_rand() & ( 8 - 1 ) ) > 5 )
+		;
+
+	return door;
+}
+
+int Math::bits ( int number )
+{
+	return my_rand( ) & ( ( 1 << number ) - 1 );
+}
 
 
-#include "Externs.h"
-#include "Prototypes.h"
+long Math::my_rand ( void )
+{
+	return random() >> 6;
+}
 
-#endif
+
+int Math::dice ( int number, int size )
+{
+	int idice;
+	int sum;
+
+	switch ( size ) {
+		case 0:
+			return 0;
+		case 1:
+			return number;
+	}
+
+	for ( idice = 0, sum = 0; idice < number; idice++ )
+	{ sum += range ( 1, size ); }
+
+	return sum;
+}
+
+int Math::interpolate ( int level, int value_00, int value_32 )
+{
+	return value_00 + level * ( value_32 - value_00 ) / 32;
+}
+

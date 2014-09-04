@@ -252,15 +252,15 @@ std::string addTweetHashtags ( const std::string &tweetStr )
 	};
 
 	// -- so we don't always add tags.
-	if ( number_range ( 1, 2 ) == number_range ( 0, 3 ) ) {
-		int max_tags = number_range ( 1, 3 );	// -- limit our tags.
+	if ( Math::instance().range ( 1, 2 ) == Math::instance().range ( 0, 3 ) ) {
+		int max_tags = Math::instance().range ( 1, 3 );	// -- limit our tags.
 		int current_tags = 0;
 
 		for ( int y = 0; twit_table[y].hashtag != NULL; y++ ) {
 			int length = strlen ( twit_table[y].hashtag );
 			// -- we are not already part of it.
 			if ( !IsSameList ( retStr, twit_table[y].hashtag ) && ( ( retStr.length() + length + 1 ) <= 140 ) ) {
-				if ( number_range ( 0, twit_table[y].chance ) == number_range ( 0, twit_table[y].chance ) ) {
+				if ( Math::instance().range ( 0, twit_table[y].chance ) == Math::instance().range ( 0, twit_table[y].chance ) ) {
 					retStr.append ( Format ( " %s", twit_table[y].hashtag ) );
 					current_tags++;
 					// -- so we don't create a million tags for shorter tweets.

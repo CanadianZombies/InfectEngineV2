@@ -371,7 +371,7 @@ DefineCommand ( cmd_put )
 			if ( obj->timer )
 			{ SET_BIT ( obj->extra_flags, ITEM_HAD_TIMER ); }
 			else
-			{ obj->timer = number_range ( 100, 200 ); }
+			{ obj->timer = Math::instance().range ( 100, 200 ); }
 		}
 		obj_from_char ( obj );
 		obj_to_obj ( obj, container );
@@ -402,7 +402,7 @@ DefineCommand ( cmd_put )
 					if ( obj->timer )
 					{ SET_BIT ( obj->extra_flags, ITEM_HAD_TIMER ); }
 					else
-					{ obj->timer = number_range ( 100, 200 ); }
+					{ obj->timer = Math::instance().range ( 100, 200 ); }
 				}
 				obj_from_char ( obj );
 				obj_to_obj ( obj, container );
@@ -760,7 +760,7 @@ DefineCommand ( cmd_envenom )
 			return;
 		}
 
-		if ( number_percent() < skill ) { /* success! */
+		if ( Math::instance().percent() < skill ) { /* success! */
 			act ( "$n treats $p with deadly poison.", ch, obj, NULL, TO_ROOM );
 			act ( "You treat $p with deadly poison.", ch, obj, NULL, TO_CHAR );
 			if ( !obj->value[3] ) {
@@ -801,7 +801,7 @@ DefineCommand ( cmd_envenom )
 			return;
 		}
 
-		percent = number_percent();
+		percent = Math::instance().percent();
 		if ( percent < skill ) {
 
 			af.where     = TO_WEAPON;
@@ -1095,7 +1095,7 @@ DefineCommand ( cmd_drink )
 		writeBuffer ( "You choke and gag.\n\r", ch );
 		af.where     = TO_AFFECTS;
 		af.type      = gsn_poison;
-		af.level	 = number_fuzzy ( amount );
+		af.level	 = Math::instance().fuzzy ( amount );
 		af.duration  = 3 * amount;
 		af.location  = APPLY_NONE;
 		af.modifier  = 0;
@@ -1164,7 +1164,7 @@ DefineCommand ( cmd_eat )
 
 				af.where	 = TO_AFFECTS;
 				af.type      = gsn_poison;
-				af.level 	 = number_fuzzy ( obj->value[0] );
+				af.level 	 = Math::instance().fuzzy ( obj->value[0] );
 				af.duration  = 2 * obj->value[0];
 				af.location  = APPLY_NONE;
 				af.modifier  = 0;
@@ -1741,7 +1741,7 @@ DefineCommand ( cmd_recite )
 	act ( "$n recites $p.", ch, scroll, NULL, TO_ROOM );
 	act ( "You recite $p.", ch, scroll, NULL, TO_CHAR );
 
-	if ( number_percent() >= 20 + get_skill ( ch, gsn_scrolls ) * 4 / 5 ) {
+	if ( Math::instance().percent() >= 20 + get_skill ( ch, gsn_scrolls ) * 4 / 5 ) {
 		writeBuffer ( "You mispronounce a syllable.\n\r", ch );
 		check_improve ( ch, gsn_scrolls, FALSE, 2 );
 	}
@@ -1787,7 +1787,7 @@ DefineCommand ( cmd_brandish )
 		act ( "$n brandishes $p.", ch, staff, NULL, TO_ROOM );
 		act ( "You brandish $p.",  ch, staff, NULL, TO_CHAR );
 		if ( ch->level < staff->level
-				||   number_percent() >= 20 + get_skill ( ch, gsn_staves ) * 4 / 5 ) {
+				||   Math::instance().percent() >= 20 + get_skill ( ch, gsn_staves ) * 4 / 5 ) {
 			act ( "You fail to invoke $p.", ch, staff, NULL, TO_CHAR );
 			act ( "...and nothing happens.", ch, NULL, NULL, TO_ROOM );
 			check_improve ( ch, gsn_staves, FALSE, 2 );
@@ -1888,7 +1888,7 @@ DefineCommand ( cmd_zap )
 		}
 
 		if ( ch->level < wand->level
-				||  number_percent() >= 20 + get_skill ( ch, gsn_wands ) * 4 / 5 ) {
+				||  Math::instance().percent() >= 20 + get_skill ( ch, gsn_wands ) * 4 / 5 ) {
 			act ( "Your efforts with $p produce only smoke and sparks.",
 				  ch, wand, NULL, TO_CHAR );
 			act ( "$n's efforts with $p produce only smoke and sparks.",
@@ -1947,7 +1947,7 @@ DefineCommand ( cmd_steal )
 	}
 
 	WAIT_STATE ( ch, skill_table[gsn_steal].beats );
-	percent  = number_percent();
+	percent  = Math::instance().percent();
 
 	if ( !IS_AWAKE ( victim ) )
 	{ percent -= 10; }
@@ -1969,7 +1969,7 @@ DefineCommand ( cmd_steal )
 
 		act ( "$n tried to steal from you.\n\r", ch, NULL, victim, TO_VICT    );
 		act ( "$n tried to steal from $N.\n\r",  ch, NULL, victim, TO_NOTVICT );
-		switch ( number_range ( 0, 3 ) ) {
+		switch ( Math::instance().range ( 0, 3 ) ) {
 			case 0 :
 				sprintf ( buf, "%s is a lousy thief!", ch->name );
 				break;
@@ -2012,8 +2012,8 @@ DefineCommand ( cmd_steal )
 			||	 !str_cmp ( arg1, "silver" ) ) {
 		int gold, silver;
 
-		gold = victim->gold * number_range ( 1, ch->level ) / MAX_LEVEL;
-		silver = victim->silver * number_range ( 1, ch->level ) / MAX_LEVEL;
+		gold = victim->gold * Math::instance().range ( 1, ch->level ) / MAX_LEVEL;
+		silver = victim->silver * Math::instance().range ( 1, ch->level ) / MAX_LEVEL;
 		if ( gold <= 0 && silver <= 0 ) {
 			writeBuffer ( "You couldn't get any coins.\n\r", ch );
 			return;
@@ -2303,7 +2303,7 @@ DefineCommand ( cmd_buy )
 		}
 
 		/* haggle */
-		roll = number_percent();
+		roll = Math::instance().percent();
 		if ( roll < get_skill ( ch, gsn_haggle ) ) {
 			cost -= cost / 2 * roll / 100;
 			snprintf ( buf, sizeof ( buf ), "You haggle the price down to %d coins.\n\r", cost );
@@ -2410,7 +2410,7 @@ DefineCommand ( cmd_buy )
 		}
 
 		/* haggle */
-		roll = number_percent();
+		roll = Math::instance().percent();
 		if ( !IS_OBJ_STAT ( obj, ITEM_SELL_EXTRACT )
 				&& roll < get_skill ( ch, gsn_haggle ) ) {
 			cost -= obj->cost / 2 * roll / 100;
@@ -2587,7 +2587,7 @@ DefineCommand ( cmd_sell )
 
 	act ( "$n sells $p.", ch, obj, NULL, TO_ROOM );
 	/* haggle */
-	roll = number_percent();
+	roll = Math::instance().percent();
 	if ( !IS_OBJ_STAT ( obj, ITEM_SELL_EXTRACT ) && roll < get_skill ( ch, gsn_haggle ) ) {
 		writeBuffer ( "You haggle with the shopkeeper.\n\r", ch );
 		cost += obj->cost / 2 * roll / 100;
@@ -2613,7 +2613,7 @@ DefineCommand ( cmd_sell )
 		if ( obj->timer )
 		{ SET_BIT ( obj->extra_flags, ITEM_HAD_TIMER ); }
 		else
-		{ obj->timer = number_range ( 50, 100 ); }
+		{ obj->timer = Math::instance().range ( 50, 100 ); }
 		obj_to_keeper ( obj, keeper );
 	}
 
