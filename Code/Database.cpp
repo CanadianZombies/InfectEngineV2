@@ -142,6 +142,8 @@ void    load_connections ();
 
 void create_random_equipment ( Creature * mob );
 
+void reset_world ( void );
+
 /*
  * Big mama top level function.
  */
@@ -293,7 +295,7 @@ void boot_db ( void )
 		convert_objects( );           /* ROM OLC */
 
 		log_hd ( LOG_ALL, "Updating Districts..." );
-		area_update( );
+		reset_world();
 
 		log_hd ( LOG_ALL, "Loading global note system..." );
 		load_notes( );
@@ -1379,6 +1381,18 @@ void fix_mobprogs ( void )
 }
 
 
+void reset_world ( void )
+{
+	Zone *pArea, *pArea_next;
+
+	for ( pArea = area_first; pArea != NULL; pArea = pArea_next ) {
+		pArea_next = pArea->next;
+		reset_area ( pArea );
+		pArea->age = Math::instance().range ( 0, 3 );	// potential glitch fix of broken ages (so the mud will update properly)
+	}
+	return;
+}
+
 /*
  * Repopulate areas periodically.
  */
@@ -1402,7 +1416,6 @@ void area_update ( void )
 			wiznet ( Format ( "%s has just been reset.", pArea->name ), NULL, NULL, WIZ_RESETS, 0, 0 );
 
 			pArea->age = Math::instance().range ( 0, 3 );
-
 
 			pRoomIndex = get_room_index ( ROOM_VNUM_SCHOOL );
 			if ( pRoomIndex != NULL && pArea == pRoomIndex->area )

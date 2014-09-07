@@ -1,7 +1,7 @@
 #PLAYER
 Name Omega~
 Id   1407161012
-LogO 1409839570
+LogO 1410081286
 Vers 5
 Prom <%hhp %mm %vmv> ~
 Race human~
@@ -9,10 +9,10 @@ Sex  1
 Cla  3
 Levl 60
 Sec  9
-Plyd 2644067
+Plyd 2843952
 Not  0 0 0 0 0
 Scro 28
-Room 7000
+Room 2
 HMV  20 20 100 100 100 100
 Gold 0
 Silv 0

@@ -41,11 +41,11 @@ template<>Math *Instance<Math>::ms_Singleton = 0;
 
 Math::Math()
 {
-	mTimeSeed = time ( 0 );
+	mTimeSeed = time ( NULL ) ^ getpid();
 	mLastGen = 0;
 
 	// -- generate our time
-	srandom ( mTimeSeed ^ getpid() );
+	srandom ( mTimeSeed );
 }
 
 Math::~Math() { }
@@ -78,7 +78,7 @@ int Math::range ( int lower, int higher )
 	for ( power = 2; power < higher; power <<= 1 )
 		;
 
-	while ( ( number = my_rand() & ( power - 1 ) ) >= lower )
+	while ( ( number = generate() & ( power - 1 ) ) >= higher )
 		;
 
 	return lower + number;
@@ -93,7 +93,7 @@ int Math::door ( void )
 {
 	int door;
 
-	while ( ( door = my_rand() & ( 8 - 1 ) ) > 5 )
+	while ( ( door = generate() & ( 8 - 1 ) ) > 5 )
 		;
 
 	return door;
@@ -101,15 +101,14 @@ int Math::door ( void )
 
 int Math::bits ( int number )
 {
-	return my_rand( ) & ( ( 1 << number ) - 1 );
+	return generate( ) & ( ( 1 << number ) - 1 );
 }
 
-
-long Math::my_rand ( void )
+long Math::generate ( void )
 {
-	return random() >> 6;
+	long mLastGen = ( random() >> 6 );
+	return mLastGen;
 }
-
 
 int Math::dice ( int number, int size )
 {

@@ -45,8 +45,9 @@ class Math : public Instance<Math>
 		~Math();
 	private:
 		time_t mTimeSeed;
-		unsigned long mLastGen;
+		long mLastGen;
 	public:
+		long generate ( void );
 		int bits ( int number );
 
 		int range ( int lower, int higher );
@@ -56,8 +57,12 @@ class Math : public Instance<Math>
 		int door ( void );
 		int dice ( int number, int size );
 		int interpolate ( int level, int value_00, int value_32 );
-		long my_rand ( void );
-
+		template<class t_type>t_type getPercent ( t_type amount, t_type max )
+		{
+			if ( amount == max ) { return 100; }
+			t_type val = 100 * amount / max;
+			return val;
+		}
 };
 
 #endif
