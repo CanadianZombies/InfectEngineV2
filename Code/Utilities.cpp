@@ -76,34 +76,27 @@ void catchException ( bool willAbort, const std::string &file, const std::string
 		std::cerr << "Aborting The Infected City." << std::endl;
 		SUICIDE;
 	}
+	errno = 0;
 	return;
 }
 
 
 const char *grab_date_log ( time_t the_time )
 {
-	static char lickmenow[200];
 	struct tm *tm_ptr;
-
-	memset ( lickmenow, 0, sizeof ( lickmenow ) );
 
 	tm_ptr = localtime ( &the_time );
 
-	//* Easier then my ex girlfriend. *//
-	snprintf ( lickmenow, 200, "%02d-%02d-%02d", tm_ptr->tm_year + 1900, tm_ptr->tm_mon + 1, tm_ptr->tm_mday );
-	return lickmenow;
+	return Format("%02d-%02d-%02d", tm_ptr->tm_year + 1900, tm_ptr->tm_mon + 1, tm_ptr->tm_mday );
 }
 // *Same as grab_time, just without the \n at the end.* //
 const char *grab_time_log ( time_t the_ttime )
 {
-	static char lick_menow[200];
 	struct tm *tmt_ptr;
 
-	memset ( lick_menow, 0, sizeof ( lick_menow ) );
 	tmt_ptr = localtime ( &the_ttime );
 
-	snprintf ( lick_menow, 200, "%02d:%02d:%02d", tmt_ptr->tm_hour, tmt_ptr->tm_min, tmt_ptr->tm_sec );
-	return lick_menow;
+	return Format("%02d:%02d:%02d", tmt_ptr->tm_hour, tmt_ptr->tm_min, tmt_ptr->tm_sec);
 }
 
 // -- sitrep = log mechanism (coder functionality)
@@ -398,12 +391,12 @@ const char *Format ( const char *fmt, ... )
 
 		if ( length == 0 ) {
 			log_hd ( LOG_ERROR | LOG_DEBUG, "Format returned a zero length string. BAD MOJO, committing suicide!" );
-			SUICIDE;
+			SUICIDE_REAL;
 		}
 
 		return textString[lTick];
 	} catch ( ... ) {
-		log_hd ( LOG_ERROR | LOG_DEBUG, "Unknown exception has been caught." );
+		log_hd ( LOG_ERROR | LOG_DEBUG, "Unknown exception in Format has been caught." );
 	}
 	return "";
 }
@@ -623,10 +616,10 @@ void announce ( const std::string &outStr )
 
 			if ( !s->character ) { continue; }
 
-			writeBuffer ( Format ( "\a[F355]{\a[F552]ANNOUNCEMENT\a[F355]} ^y<^C%s^y>^n \a[F355]{\a[F552]ANNOUNCEMENT\a[F355]}\an \r\n", C_STR ( outStr ) ), s->character );
+			writeBuffer ( Format ( "\a[F355]{\a[F552]Situation Report:\a[F355]} \ay<\aC%s\ay>\an \r\n", C_STR ( outStr ) ), s->character );
 		}
 	} catch ( ... ) {
-		log_hd ( LOG_ERROR | LOG_DEBUG, Format ( "%s encountered an untrapped error!", __PRETTY_FUNCTION__ ) );
+		CATCH(false);
 	}
 	return;
 }
