@@ -672,7 +672,7 @@ bool read_from_descriptor ( Socket *d )
 			if ( read_buf[iStart - 1] == '\n' || read_buf[iStart - 1] == '\r' )
 			{ break; }
 		} else if ( nRead == 0 ) {
-			log_hd ( LOG_ERROR, Format ( "EOF encountered on read from %s.", d->host ) );
+			log_hd ( LOG_ERROR, Format ( "EOF encountered on read from %p:%d @ %s.",d,d->descriptor, d->host ) );
 			return FALSE;
 		} else if ( errno == EWOULDBLOCK )
 		{ break; }
@@ -1089,7 +1089,7 @@ void write_to_buffer ( Socket *d, const char *txt, int length )
 
 		if ( d->outsize >= 32000 ) {
 			// -- attempt to get the buffer overflow logged properly.
-			log_hd ( LOG_ERROR, Format ( "Buffer overflow: %d/%s\n\r", d->descriptor, d->host ) );
+			log_hd ( LOG_ERROR, Format ( "Buffer overflow: %p:%d @ %s\n\r", d, d->descriptor, d->host ) );
 			close_socket ( d );
 			return;
 		}
@@ -1157,12 +1157,12 @@ void nanny ( Socket *d, char *argument )
 	switch ( d->connected ) {
 
 		default:
-			log_hd ( LOG_ERROR, Format ( "Nanny: bad d(%d)(%p)->connected %d.", d->descriptor, d, d->connected ) );
+			log_hd ( LOG_ERROR, Format ( "Nanny: bad d(%d)(%p)->connected %d @ %s.", d->descriptor, d, d->connected, d->host ) );
 			close_socket ( d );
 			return;
 
 		case CON_GET_NAME:
-			if ( argument[0] == '\0' ) {
+			if ( IS_NULLSTR(argument) ) {
 				close_socket ( d );
 				return;
 			}
@@ -1645,9 +1645,8 @@ void nanny ( Socket *d, char *argument )
 			break;
 
 		case CON_READ_MOTD:
-			if ( ch->pcdata == NULL || ch->pcdata->pwd[0] == '\0' ) {
+			if ( ch->pcdata == NULL || IS_NULLSTR(ch->pcdata->pwd) ) {
 				write_to_buffer ( d, "Warning! Null password!\n\r", 0 );
-				write_to_buffer ( d, "Please report old password with bug.\n\r", 0 );
 				write_to_buffer ( d, "Type 'password null <new password>' to fix.\n\r", 0 );
 			}
 
@@ -1746,7 +1745,8 @@ bool check_parse_name ( char *name )
 	/*
 	 * Reserved words.
 	 */
-	if ( is_exact_name ( name, "all auto immortal self someone something the you loner none new delete" ) ) {
+	if ( is_exact_name ( name, "all auto immortal self someone something the you loner none new delete"
+				   "system mud psux mob npc staff vanguard security builder relations" ) ) {
 		return FALSE;
 	}
 
@@ -1930,7 +1930,7 @@ void stop_idling ( Creature *ch )
  */
 void writeBuffer ( const char *txt, Creature *ch )
 {
-	if ( txt != NULL && ch->desc != NULL )
+	if ( !IS_NULLSTR(txt) && ch->desc != NULL )
 	{ write_to_buffer ( ch->desc, txt, strlen ( txt ) ); }
 	return;
 }
@@ -1940,7 +1940,7 @@ void writeBuffer ( const char *txt, Creature *ch )
  */
 void writePage ( const char *txt, Creature *ch )
 {
-	if ( txt == NULL || ch->desc == NULL )
+	if ( IS_NULLSTR(txt) || ch->desc == NULL )
 	{ return; }
 
 	if ( ch->lines == 0 ) {
@@ -2033,7 +2033,7 @@ void act_new ( const char *format, Creature *ch, const void *arg1,
 	/*
 	 * Discard null and zero-length messages.
 	 */
-	if ( format == NULL || format[0] == '\0' )
+	if ( IS_NULLSTR(format))
 	{ return; }
 
 	/* discard null rooms and chars */
@@ -2158,20 +2158,5 @@ void act_new ( const char *format, Creature *ch, const void *arg1,
 		{ mp_act_trigger ( buf, to, ch, arg1, arg2, TRIG_ACT ); }
 	}
 	return;
-}
-
-
-/* source: EOD, by John Booth <???> */
-
-void printf_to_char ( Creature *ch, const char *fmt, ... )
-{
-	char buf [MAX_STRING_LENGTH];
-
-	va_list args;
-	va_start ( args, fmt );
-	vsprintf ( buf, fmt, args );
-	va_end ( args );
-
-	writeBuffer ( buf, ch );
 }
 
