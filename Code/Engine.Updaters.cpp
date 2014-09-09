@@ -60,7 +60,6 @@ int	save_number = 0;
  */
 void advance_level ( Creature *ch, bool hide )
 {
-	char buf[MAX_STRING_LENGTH];
 	int add_hp;
 	int add_mana;
 	int add_move;
@@ -68,10 +67,6 @@ void advance_level ( Creature *ch, bool hide )
 
 	ch->pcdata->last_level =
 		( ch->played + ( int ) ( current_time - ch->logon ) ) / 3600;
-
-	sprintf ( buf, "the %s",
-			  title_table [ch->archetype] [ch->level] [ch->sex == SEX_FEMALE ? 1 : 0] );
-	set_title ( ch, buf );
 
 	add_hp	= con_app[get_curr_stat ( ch, STAT_CON )].hitp + Math::instance().range (
 				  archetype_table[ch->archetype].hp_min,
@@ -103,11 +98,10 @@ void advance_level ( Creature *ch, bool hide )
 	ch->pcdata->perm_move	+= add_move;
 
 	if ( !hide ) {
-		snprintf ( buf, sizeof ( buf ),
+		writeBuffer(Format(
 				   "You gain %d hit point%s, %d mana, %d move, and %d practice%s.\n\r",
 				   add_hp, add_hp == 1 ? "" : "s", add_mana, add_move,
-				   add_prac, add_prac == 1 ? "" : "s" );
-		writeBuffer ( buf, ch );
+				   add_prac, add_prac == 1 ? "" : "s" ), ch);
 	}
 	return;
 }
@@ -375,7 +369,10 @@ void mobile_update ( void )
 	Creature *ch_next;
 	Exit *pexit;
 	int door;
-
+	static int mLastDay = 0;
+	
+	time_t cd = time(0);
+	
 	/* Examine all mobs. */
 	for ( ch = char_list; ch != NULL; ch = ch_next ) {
 		ch_next = ch->next;
@@ -395,6 +392,11 @@ void mobile_update ( void )
 		if ( ch->pIndexData->pShop != NULL ) { /* give him some gold */
 			if ( ( ch->gold * 100 + ch->silver ) < ch->pIndexData->wealth ) {
 				log_hd ( LOG_DEBUG, Format ( "Restoring SHOP wealth's for shop owner: %s.", ch->name ) );
+				if(mLastDay != cd->tm_yday) {
+					mLastDay = cd->tm_yday;
+					tweetStatement(Format("Vendors have replenished their stock!"));
+					// -- insert check here to add random items to certain shops and strip old ones
+				}
 				ch->gold += ch->pIndexData->wealth * Math::instance().range ( 1, 20 ) / 5000000;
 				ch->silver += ch->pIndexData->wealth * Math::instance().range ( 1, 20 ) / 50000;
 			}
@@ -476,13 +478,13 @@ void weather_update ( void )
 	char buf[MAX_STRING_LENGTH];
 	Socket *d;
 	int diff;
-
 	buf[0] = '\0';
 
 	switch ( ++time_info.hour ) {
 		case  5:
 			weather_info.sunlight = SUN_LIGHT;
 			strcat ( buf, "The day has begun.\n\r" );
+			tweetStatement(Format("The day has begun a new within The Infected City once more"));
 			break;
 
 		case  6:
@@ -498,6 +500,7 @@ void weather_update ( void )
 		case 20:
 			weather_info.sunlight = SUN_DARK;
 			strcat ( buf, "The night has begun.\n\r" );
+			tweetStatement(Format("The night has creeped upon the city once more #nightdanger #warning"));
 			break;
 
 		case 24:
@@ -627,7 +630,7 @@ void char_update ( void )
 			if ( IS_NPC ( ch ) && ch->zone != NULL && ch->zone != ch->in_room->area
 					&& ch->desc == NULL &&  ch->fighting == NULL
 					&& !IS_AFFECTED ( ch, AFF_CHARM ) && Math::instance().percent() < 5 ) {
-				act ( "$n wanders on home.", ch, NULL, NULL, TO_ROOM );
+				act ( "$n has wandered home.", ch, NULL, NULL, TO_ROOM );
 				log_hd ( LOG_DEBUG, Format ( "NPC: %s added to extraction queue, (away from home too long)", ch->name ) );
 				extract_char ( ch, TRUE );
 				continue;
