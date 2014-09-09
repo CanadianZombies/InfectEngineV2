@@ -90,7 +90,7 @@ int EventManager::updateEvents ( void )
 				int status;
 				char* demangled_name = __cxxabiv1::__cxa_demangle ( mangled_name, 0, 0, &status );
 
-				log_hd ( LOG_DEBUG, Format ( "Running Event: (%p)%s", ev, demangled_name ) );
+				log_hd ( LOG_DEBUG, Format ( "Running Event: (%p) - %s", ev, demangled_name ) );
 				if ( demangled_name ) {
 					free ( demangled_name );
 					demangled_name = NULL;
@@ -166,6 +166,7 @@ void EventManager::destroyEvent ( Event *ev )
 		Event *e = ( *iter );
 		iter_next = ++iter;
 		if ( e == ev ) {
+			log_hd(LOG_DEBUG, Format("Destroying Event: %p", ev);
 			mEventList.remove ( ev );
 			delete ev;
 			ev = NULL;
@@ -248,6 +249,8 @@ Event *EventManager::addEvent ( Event *ev, bool repeat, double seconds )
 	ev->setInitTime ( time ( NULL ) );
 	ev->setType ( EV_CPP );
 
+	// -- ensure we log everything!
+	log_hd(LOG_DEBUG, Format("New Event: %p / Repeats: %s / Seconds till Execution: %ld", ev, repeat ? "yes" : "no", seconds));
 	return ev;
 }
 
@@ -292,6 +295,7 @@ void EventManager::newEventTime ( const std::string &name, int seconds )
 			// -- really isn't.
 			LuaEvent *ev = ( LuaEvent * ) e;
 			if ( SameString ( ev->getScriptName(), name ) ) {
+				log_hd(LOG_DEBUG, Format("Event: %s (%p) has been assigned a new execution time in %d seconds", C_STR(name), ev, seconds));
 				ev->setSeconds ( seconds );
 			}
 		}
@@ -375,12 +379,10 @@ void EventManager::purgeFromOwner ( RoomData *r )
 
 Event::Event() : mInitTime ( 0 ), mSecondsToExecute ( 0 ), mWillRestart ( 0 )
 {
-
 	cOwner = NULL;
 	cExtractOnDeath = false;
 	iOwner = NULL;
 	rOwner = NULL;
-
 }
 Event::~Event() { }
 
@@ -391,6 +393,9 @@ void Event::addData ( void *dataPtr, short pos )
 		throw ( "Events Broken: Exceeded MAX data position!" );
 		return;
 	}
+
+	// -- logging is fun!
+	log_hd(LOG_DEBUG, Format("Event(%p):addData -> Added data %p at position %d", this, dataPtr, pos));
 	mDataTable[pos] = dataPtr;
 	return;
 }
@@ -417,6 +422,7 @@ void TwitterEvent::Execute ( void )
 												  C_STR ( tweetStr ) ) );
 			// -- change scope.
 			{
+				log_hd(LOG_DEBUG, Format("Twitter: tweet removed from queue! (%s)", C_STR(tweetStr)));
 				tweetList.erase ( iter );
 			}
 			// -- again change scope.
