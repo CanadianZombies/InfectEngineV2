@@ -113,7 +113,8 @@ void gain_exp ( Creature *ch, int gain )
 
 	if ( ch->level == MAX_LEVEL ) { return; }
 
-	log_hd ( LOG_DEBUG, Format ( "%s has gained %d experience.", ch->name, gain ) );
+	// -- detail if they have lost experience.
+	log_hd ( LOG_DEBUG, Format ( "%s has %s %d experience.", ch->name, gain > 0 ? "gained" : "lossed", gain ) );
 
 	ch->exp_pool += gain;
 	if ( ch->exp_pool > 100000 ) {
@@ -978,12 +979,9 @@ void obj_update ( void )
  */
 void aggr_update ( void )
 {
-	Creature *wch;
-	Creature *wch_next;
-	Creature *ch;
-	Creature *ch_next;
-	Creature *vch;
-	Creature *vch_next;
+	Creature *wch, *wch_next;
+	Creature *ch, *ch_next;
+	Creature *vch, *vch_next;
 	Creature *victim;
 
 	for ( wch = char_list; wch != NULL; wch = wch_next ) {
@@ -1172,9 +1170,10 @@ void update_handler ( void )
 	static  int     pulse_mobile;
 	static  int     pulse_violence;
 	static  int     pulse_point;
-	static  int	    pulse_music;
+	static  int	pulse_music;
 	static  int     pulse_msdp;
-
+	static  int     pulse_weather;
+	
 	if ( --pulse_msdp <= 0 ) {
 		// log_hd(LOG_DEBUG, "MSDP update"); // -- disabled due to spam
 		pulse_msdp      = PULSE_PER_SECOND;
@@ -1206,12 +1205,18 @@ void update_handler ( void )
 		violence_update	( );
 	}
 
+	/// -- temporary solution until we create an event to handle this.
+	if( --pulse_weather <= 0) {
+		log_hd(LOG_DEBUG, Format("pulse_weather = %d; weather_update will be initiated.", PULSE_TICK*2));
+		pulse_weather = PULSE_TICK*2;
+		weather_update();
+	}
+
 	if ( --pulse_point    <= 0 ) {
-		log_hd ( LOG_DEBUG, Format ( "pulse_tick = %d; weather_update, char_update, obj_update will be initiated", PULSE_TICK ) );
+		log_hd ( LOG_DEBUG, Format ( "pulse_tick = %d;  char_update, obj_update will be initiated", PULSE_TICK ) );
 		wiznet ( "TICK!", NULL, NULL, WIZ_TICKS, 0, 0 );
 		pulse_point     = PULSE_TICK;
 		/* Math::instance().range( PULSE_TICK / 2, 3 * PULSE_TICK / 2 ); */
-		weather_update	( );
 		char_update	( );
 		obj_update	( );
 	}
