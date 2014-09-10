@@ -717,9 +717,9 @@ void one_hit ( Creature *ch, Creature *victim, int dt )
 }
 
 
-/*
- * Inflict damage from a hit.
- */
+// -- Relic code, we preserved this old damage call to ease the transformation to our
+// -- new system.  Essentially, we do not require this, but we want it to ensure we work properly.
+// -- also spells do not attack body parts.
 bool damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type, bool show )
 {
 	return new_damage ( ch, victim, dam, dt, dam_type, show, -1 );
@@ -1652,6 +1652,9 @@ void raw_kill ( Creature *victim )
 		return;
 	}
 
+	// -- This is where pfile deletion will be called
+	// -- and everything below will be removed
+
 	extract_char ( victim, FALSE );
 	while ( victim->affected )
 	{ affect_remove ( victim, victim->affected ); }
@@ -1746,7 +1749,7 @@ void group_gain ( Creature *ch, Creature *victim )
 int xp_compute ( Creature *gch, Creature *victim, int total_levels )
 {
 	int xp, base_exp;
-	int align, level_range;
+	int level_range;
 	int change;
 	int time_per_level;
 
@@ -1839,115 +1842,6 @@ int xp_compute ( Creature *gch, Creature *victim, int total_levels )
 			else if ( SameString ( spec_name ( victim->spec_fun ), "spec_poison" ) )
 			{ base_exp = ( base_exp * 20 ) / 10; }
 		}
-	}
-
-	/* do alignment computations */
-	align = victim->alignment - gch->alignment;
-
-	if ( IS_SET ( victim->act, ACT_NOALIGN ) ) {
-		/* no change */
-	}
-
-	else if ( align > 500 ) { /* monster is more good than slayer */
-		change = ( align - 500 ) * base_exp / 500 * gch->level / total_levels;
-		change = UMAX ( 1, change );
-		gch->alignment = UMAX ( -1000, gch->alignment - change );
-	}
-
-	else if ( align < -500 ) { /* monster is more evil than slayer */
-		change =  ( -1 * align - 500 ) * base_exp / 500 * gch->level / total_levels;
-		change = UMAX ( 1, change );
-		gch->alignment = UMIN ( 1000, gch->alignment + change );
-	}
-
-	else { /* improve this someday */
-		change =  gch->alignment * base_exp / 500 * gch->level / total_levels;
-		gch->alignment -= change;
-	}
-
-	/* calculate exp multiplier */
-	if ( IS_SET ( victim->act, ACT_NOALIGN ) )
-	{ xp = base_exp; }
-
-	else if ( gch->alignment > 500 ) { /* for goodie two shoes */
-		if ( victim->alignment < -750 )
-		{ xp = ( base_exp * 4 ) / 3; }
-
-		else if ( victim->alignment < -500 )
-		{ xp = ( base_exp * 5 ) / 4; }
-
-		else if ( victim->alignment > 750 )
-		{ xp = base_exp / 4; }
-
-		else if ( victim->alignment > 500 )
-		{ xp = base_exp / 2; }
-
-		else if ( victim->alignment > 250 )
-		{ xp = ( base_exp * 3 ) / 4; }
-
-		else
-		{ xp = base_exp; }
-	}
-
-	else if ( gch->alignment < -500 ) { /* for baddies */
-		if ( victim->alignment > 750 )
-		{ xp = ( base_exp * 5 ) / 4; }
-
-		else if ( victim->alignment > 500 )
-		{ xp = ( base_exp * 11 ) / 10; }
-
-		else if ( victim->alignment < -750 )
-		{ xp = base_exp / 2; }
-
-		else if ( victim->alignment < -500 )
-		{ xp = ( base_exp * 3 ) / 4; }
-
-		else if ( victim->alignment < -250 )
-		{ xp = ( base_exp * 9 ) / 10; }
-
-		else
-		{ xp = base_exp; }
-	}
-
-	else if ( gch->alignment > 200 ) { /* a little good */
-
-		if ( victim->alignment < -500 )
-		{ xp = ( base_exp * 6 ) / 5; }
-
-		else if ( victim->alignment > 750 )
-		{ xp = base_exp / 2; }
-
-		else if ( victim->alignment > 0 )
-		{ xp = ( base_exp * 3 ) / 4; }
-
-		else
-		{ xp = base_exp; }
-	}
-
-	else if ( gch->alignment < -200 ) { /* a little bad */
-		if ( victim->alignment > 500 )
-		{ xp = ( base_exp * 6 ) / 5; }
-
-		else if ( victim->alignment < -750 )
-		{ xp = base_exp / 2; }
-
-		else if ( victim->alignment < 0 )
-		{ xp = ( base_exp * 3 ) / 4; }
-
-		else
-		{ xp = base_exp; }
-	}
-
-	else { /* neutral */
-
-		if ( victim->alignment > 500 || victim->alignment < -500 )
-		{ xp = ( base_exp * 4 ) / 3; }
-
-		else if ( victim->alignment < 200 && victim->alignment > -200 )
-		{ xp = base_exp / 2; }
-
-		else
-		{ xp = base_exp; }
 	}
 
 	if ( gch->level < 6 )                       	/* more exp at the low levels */
