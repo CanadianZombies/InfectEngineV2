@@ -1136,21 +1136,18 @@ DefineCommand ( cmd_exits )
 
 DefineCommand ( cmd_worth )
 {
-	char buf[MAX_STRING_LENGTH];
-
 	if ( IS_NPC ( ch ) ) {
-		snprintf ( buf, sizeof ( buf ), "You have %ld gold and %ld silver.\n\r",
-				   ch->gold, ch->silver );
+		writeBuffer(Format( "You have %ld gold and %ld silver.\n\r",
+				   ch->gold, ch->silver ),ch);
 		writeBuffer ( buf, ch );
 		return;
 	}
 
-	snprintf ( buf, sizeof ( buf ),
+	writeBuffer(Format(
 			   "You have %ld gold, %ld silver, and %d experience (%d exp to level).\n\r",
 			   ch->gold, ch->silver, ch->exp,
-			   ( ch->level + 1 ) * exp_per_level ( ch, ch->pcdata->points ) - ch->exp );
+			   ( ch->level + 1 ) * exp_per_level ( ch, ch->pcdata->points ) - ch->exp ), ch);
 
-	writeBuffer ( buf, ch );
 
 	return;
 }
@@ -1549,6 +1546,7 @@ DefineCommand ( cmd_colours )
 	int r, g, b, cnt;
 
 	cnt = r = g = b = 0;
+
 	writeBuffer ( Format ( "                  Colours of %s\n\r\n\r", "The Infected City" ), ch );
 
 	writeBuffer ( "Initiating Tag for colours: ^^\n\r", ch );
@@ -2102,7 +2100,7 @@ DefineCommand ( cmd_description )
 			int len;
 			bool found = FALSE;
 
-			if ( ch->description == NULL || ch->description[0] == '\0' ) {
+			if ( IS_NULLSTR(ch->description) ) {
 				writeBuffer ( "No lines left to remove.\n\r", ch );
 				return;
 			}
@@ -2299,7 +2297,7 @@ DefineCommand ( cmd_wimpy )
 	}
 
 	if ( wimpy > ch->max_hit / 2 ) {
-		writeBuffer ( "Such cowarMath::instance().dice ill becomes you.\n\r", ch );
+		writeBuffer ( "Such cowardice ill becomes you.\n\r", ch );
 		return;
 	}
 
