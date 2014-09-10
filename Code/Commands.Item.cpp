@@ -1249,9 +1249,8 @@ void wear_obj ( Creature *ch, Item *obj, bool fReplace )
 	} // -- end of IS_NPC check for stats
 
 	if ( ch->level < obj->level ) {
-		sprintf ( buf, "You must be level %d to use this object.\n\r",
-				  obj->level );
-		writeBuffer ( buf, ch );
+		writeBuffer(Format("You must be level %d to use this item.\n\r",
+				  obj->level ), ch);
 		act ( "$n tries to use $p, but is too inexperienced.",
 			  ch, obj, NULL, TO_ROOM );
 		return;
@@ -2629,6 +2628,8 @@ DefineCommand ( cmd_use )
 	int to_mn;
 	int to_mv;
 
+	if(IS_NPC(ch)) { return; }
+
 	argument = one_argument ( argument, arg );
 
 	if ( ( arg == '\0' ) ) {
@@ -2641,6 +2642,8 @@ DefineCommand ( cmd_use )
 		return;
 	}
 
+	// -- add in item_elixer for stat boosts like, strength, dex, etc.
+	// -- these are 1 time use, perm updates.
 	if ( obj->item_type != ITEM_SOURCE ) {
 		writeBuffer ( "That isn't a source.\n\r", ch );
 		return;
