@@ -93,10 +93,11 @@ void save_area_list()
 		 */
 		fprintf ( fp, "social.are\n" );   /* ROM OLC */
 
-		for ( ha = had_list; ha; ha = ha->next )
+		for ( ha = had_list; ha; ha = ha->next ) {
 			if ( ha->area == NULL )
 			{ fprintf ( fp, "%s\n", ha->filename ); }
-
+		}
+		
 		for ( pArea = area_first; pArea; pArea = pArea->next ) {
 			fprintf ( fp, "%s\n", pArea->file_name );
 		}
@@ -886,16 +887,6 @@ DefineCommand ( cmd_asave )
 	{ sec = ch->pcdata->security; }
 	else
 	{ sec = 0; }
-
-	/*    {
-		save_area_list();
-		for( pArea = area_first; pArea; pArea = pArea->next )
-		{
-		    save_area( pArea );
-		    REMOVE_BIT( pArea->area_flags, AREA_CHANGED );
-		}
-		return;
-	    } */
 
 	smash_tilde ( argument );
 	strcpy ( arg1, argument );
