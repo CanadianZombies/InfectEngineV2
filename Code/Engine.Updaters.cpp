@@ -471,6 +471,48 @@ void mobile_update ( void )
 	return;
 }
 
+void announceNightFall() {
+	switch(Math::instance().range(0,3)) {
+		default:
+		case 0:
+			tweetStatement("Night has fallen on the Infected City");
+			break;
+		case 1:
+			tweetStatement("Night Fall: Shriekers have been seen within the Infected City");
+			break;
+		case 2:
+			tweetStatement("Darkness has fallen upon The Infected City");
+			break;
+		case 3:
+			tweetStatement("#warning night creatures have begun to stir!");
+			break;
+	}
+	// -- remove day-only mobs
+	
+	// -- place night mobs
+}
+
+void announceDayLight() {
+	switch(Math::instance().range(0,3)) {
+		default:
+		case 0:
+			tweetStatement(Format("The day has begun a new within The Infected City once more"));
+			break;
+		case 1:
+			tweetStatement("Day light: Shriekers have retreated to the Darkness");
+			break;
+		case 2:
+			tweetStatement("Day break has occurred, night creatures have gone to rest");
+			break;
+		case 3:
+			tweetStatement("#fearnot the night creatures have returned home");
+			break;
+	}
+	// -- remove night mobs
+	
+	// -- place day-only mobs
+}
+
 /*
  * Update the weather.
  */
@@ -485,7 +527,7 @@ void weather_update ( void )
 		case  5:
 			weather_info.sunlight = SUN_LIGHT;
 			strcat ( buf, "The day has begun.\n\r" );
-			tweetStatement(Format("The day has begun a new within The Infected City once more"));
+			announceDayLight();
 			break;
 
 		case  6:
@@ -501,7 +543,7 @@ void weather_update ( void )
 		case 20:
 			weather_info.sunlight = SUN_DARK;
 			strcat ( buf, "The night has begun.\n\r" );
-			tweetStatement(Format("The night has creeped upon the city once more #nightdanger #warning"));
+			announceNightFall();
 			break;
 
 		case 24:
