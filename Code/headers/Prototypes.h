@@ -766,7 +766,7 @@ Command ( cmd_oedit        );
 Command ( cmd_medit        );
 Command ( cmd_mpedit	);
 Command ( cmd_hedit	);
-
+Command ( cmd_randomitem );
 // -- mob_cmds
 /*
  * Command functions.
