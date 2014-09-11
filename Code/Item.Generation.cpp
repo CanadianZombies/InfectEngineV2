@@ -1138,7 +1138,7 @@ void string_object ( Item* obj, const char *buf )
 	set_long ( obj );
 }
 
-void make_armor ( Item* obj, Creature* mob, int random_vnum, int item_type, int wear_flags, const char* wear_name )
+Item * make_armor ( Item* obj, Creature* mob, int random_vnum, int item_type, int wear_flags, const char* wear_name )
 {
 	/*create the object*/
 	obj = create_object ( get_obj_index ( random_vnum ), 0 );
@@ -1183,11 +1183,12 @@ void make_armor ( Item* obj, Creature* mob, int random_vnum, int item_type, int 
 	i made a call later to item_inventory the items so that they
 	dont sell out after a couple purchases. This way every reboot
 	your shoppy has new and different stuff to sell all the time*/
-	if ( !mob->pIndexData->pShop )
+	if ( mob->pIndexData && !mob->pIndexData->pShop )
 	{ wear_obj ( mob, obj, FALSE ); }
+	return obj;
 }
 
-void make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb )
+Item * make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb )
 {
 	char buf[MSL];
 	char weapon[MSL];
@@ -1402,16 +1403,17 @@ void make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb )
 
 	set_material_based_flags ( obj, mob );
 
-	if ( !mob->pIndexData->pShop )
+	if ( mob->pIndexData && !mob->pIndexData->pShop )
 	{ wear_obj ( mob, obj, FALSE ); }
 }
 
 extern const char *target_name;
 
 /*This is the generator.*/
-void create_random ( Creature * mob, const char *argument )
+Item * create_random ( Creature * mob, const char *argument )
 {
 	Item *obj = NULL;
+	Item *ret_item = obj;
 	char arg[MIL];
 	/*These arent needed IF you want to have all the code set
 	in the same spots. Im only using different vnums in order to
@@ -1425,44 +1427,79 @@ void create_random ( Creature * mob, const char *argument )
 	target_name = one_argument ( argument, arg );
 
 	if ( !str_cmp ( arg, "light" ) ) {
-		make_armor ( obj, mob, light_vnum, ITEM_LIGHT, ITEM_TAKE, light_types[Math::instance().range ( 0, MAX_LIGHT )] );
+		ret_item = make_armor ( obj, mob, light_vnum, ITEM_LIGHT, ITEM_TAKE, light_types[Math::instance().range ( 0, MAX_LIGHT )] );
 	} else if ( !str_cmp ( arg, "neck" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_NECK | ITEM_TAKE, neck_types[Math::instance().range ( 0, MAX_NECK )] );
+		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_NECK | ITEM_TAKE, neck_types[Math::instance().range ( 0, MAX_NECK )] );
 	} else if ( !str_cmp ( arg, "about" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_ABOUT | ITEM_TAKE, about_types[Math::instance().range ( 0, MAX_ABOUT )] );
+		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_ABOUT | ITEM_TAKE, about_types[Math::instance().range ( 0, MAX_ABOUT )] );
 	} else if ( !str_cmp ( arg, "helm" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_HEAD | ITEM_TAKE, head_types[Math::instance().range ( 0, MAX_HEAD )] );
+		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_HEAD | ITEM_TAKE, head_types[Math::instance().range ( 0, MAX_HEAD )] );
 	} else if ( !str_cmp ( arg, "arms" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_ARMS | ITEM_TAKE, arms_types[Math::instance().range ( 0, MAX_ARMS )] );
+		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_ARMS | ITEM_TAKE, arms_types[Math::instance().range ( 0, MAX_ARMS )] );
 	} else if ( !str_cmp ( arg, "legs" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_LEGS | ITEM_TAKE, legs_types[Math::instance().range ( 0, MAX_LEGS )] );
+		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_LEGS | ITEM_TAKE, legs_types[Math::instance().range ( 0, MAX_LEGS )] );
 	} else if ( !str_cmp ( arg, "hands" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_HANDS | ITEM_TAKE, hand_types[Math::instance().range ( 0, MAX_HAND )] );
+		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_HANDS | ITEM_TAKE, hand_types[Math::instance().range ( 0, MAX_HAND )] );
 	} else if ( !str_cmp ( arg, "feet" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_FEET | ITEM_TAKE, feet_types[Math::instance().range ( 0, MAX_FEET )] );
+		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_FEET | ITEM_TAKE, feet_types[Math::instance().range ( 0, MAX_FEET )] );
 	} else if ( !str_cmp ( arg, "wrist" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_WRIST | ITEM_TAKE, wrist_types[Math::instance().range ( 0, MAX_WRIST )] );
+		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_WRIST | ITEM_TAKE, wrist_types[Math::instance().range ( 0, MAX_WRIST )] );
 	} else if ( !str_cmp ( arg, "shield" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_SHIELD | ITEM_TAKE, shield_types[Math::instance().range ( 0, MAX_SHIELD )] );
+		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_SHIELD | ITEM_TAKE, shield_types[Math::instance().range ( 0, MAX_SHIELD )] );
 	} else if ( !str_cmp ( arg, "waist" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_WAIST | ITEM_TAKE, waist_types[Math::instance().range ( 0, MAX_WAIST )] );
+		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_WAIST | ITEM_TAKE, waist_types[Math::instance().range ( 0, MAX_WAIST )] );
 	} else if ( !str_cmp ( arg, "torso" ) ) {
-		make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_BODY | ITEM_TAKE, body_types[Math::instance().range ( 0, MAX_BODY )] );
+		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_BODY | ITEM_TAKE, body_types[Math::instance().range ( 0, MAX_BODY )] );
 	} else if ( !str_cmp ( arg, "weapon" ) ) {
-		make_weapon ( obj, mob, weapon_vnum, verb_types[Math::instance().range ( 0, MAX_VERBS )] );
+		ret_item = make_weapon ( obj, mob, weapon_vnum, verb_types[Math::instance().range ( 0, MAX_VERBS )] );
 	}
 	tail_chain( );
+	return ret_item;
 }
 
 // -- used to test the randomitem generation
 DefineCommand(cmd_randomitem)
 {
+	Creature *o;
 	if(IS_NULLSTR(argument)) {
-		writeBuffer("Syntax: /randomitem [light,neck,about,helm,legs,hands,feet,wrist,shield,torso,weapon]\r\n", ch);
+		writeBuffer("Syntax: /randomitem [creature name] [light,neck,about,helm,legs,hands,feet,wrist,shield,torso,weapon,all]\r\n", ch);
 		return;
 	}
-	
-	create_random(ch, argument);
+
+	char arg[MIL];
+	argument = one_argument(argument, arg);
+
+	if(IS_NULLSTR(argument)) {
+		cmd_function(ch, cmd_randomitem, "");
+		return;
+	}
+
+	// -- find our victim to give a cool-random item.
+	o = get_char_world(ch, arg, ch);
+	if(!o) {
+		writeBuffer("That creature does not exist!\r\n",ch);
+		return;
+	}
+
+	if(SameString(argument, "all")) {
+		create_random(o, "light");
+		create_random(o, "neck");
+		create_random(o, "about");
+		create_random(o, "helm");
+		create_random(o, "legs");
+		create_random(o, "hands");
+		create_random(o, "feet");
+		create_random(o, "wrist");
+		create_random(o, "shield");
+	} else {
+		Item *my_item = create_random(o, argument);
+		if(my_item) {
+			writeBuffer(Format("You have randomly generated: '%s' in %s's backpack!\r\n", my_item->short_descr, o->name),ch);
+			writeBuffer(Format("%s appears in your backpack.\r\n", my_item->short_descr),o);
+		} else {
+			writeBuffer("You didn't use an appropriate option.\r\n",ch);
+		}
+	}
 	return;
 }
 
