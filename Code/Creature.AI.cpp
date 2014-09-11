@@ -55,7 +55,6 @@ DECLARE_SPEC_FUN (	spec_executioner	);
 DECLARE_SPEC_FUN (	spec_fido		);
 DECLARE_SPEC_FUN (	spec_guard		);
 DECLARE_SPEC_FUN (	spec_janitor		);
-DECLARE_SPEC_FUN (	spec_mayor		);
 DECLARE_SPEC_FUN (	spec_poison		);
 DECLARE_SPEC_FUN (	spec_thief		);
 DECLARE_SPEC_FUN (	spec_nasty		);
@@ -80,7 +79,6 @@ const   struct  spec_type    spec_table[] = {
 	{	"spec_fido",			spec_fido		},
 	{	"spec_guard",			spec_guard		},
 	{	"spec_janitor",			spec_janitor		},
-	{	"spec_mayor",			spec_mayor		},
 	{	"spec_poison",			spec_poison		},
 	{	"spec_thief",			spec_thief		},
 	{	"spec_nasty",			spec_nasty		},
@@ -959,103 +957,6 @@ bool spec_janitor ( Creature *ch )
 	return FALSE;
 }
 
-
-
-bool spec_mayor ( Creature *ch )
-{
-	static const char open_path[] =
-		"W3a3003b33000c111d0d111Oe333333Oe22c222112212111a1S.";
-
-	static const char close_path[] =
-		"W3a3003b33000c111d0d111CE333333CE22c222112212111a1S.";
-
-	static const char *path;
-	static int pos;
-	static bool move;
-
-	if ( !move ) {
-		if ( time_info.hour ==  6 ) {
-			path = open_path;
-			move = TRUE;
-			pos  = 0;
-		}
-
-		if ( time_info.hour == 20 ) {
-			path = close_path;
-			move = TRUE;
-			pos  = 0;
-		}
-	}
-
-	if ( ch->fighting != NULL )
-	{ return spec_cast_mage ( ch ); }
-	if ( !move || ch->position < POS_SLEEPING )
-	{ return FALSE; }
-
-	switch ( path[pos] ) {
-		case '0':
-		case '1':
-		case '2':
-		case '3':
-			move_char ( ch, path[pos] - '0', FALSE );
-			break;
-
-		case 'W':
-			ch->position = POS_STANDING;
-			act ( "$n awakens and groans loudly.", ch, NULL, NULL, TO_ROOM );
-			break;
-
-		case 'S':
-			ch->position = POS_SLEEPING;
-			act ( "$n lies down and falls asleep.", ch, NULL, NULL, TO_ROOM );
-			break;
-
-		case 'a':
-			act ( "$n says 'Hello Honey!'", ch, NULL, NULL, TO_ROOM );
-			break;
-
-		case 'b':
-			act ( "$n says 'What a view!  I must do something about that dump!'",
-				  ch, NULL, NULL, TO_ROOM );
-			break;
-
-		case 'c':
-			act ( "$n says 'Vandals!  Youngsters have no respect for anything!'",
-				  ch, NULL, NULL, TO_ROOM );
-			break;
-
-		case 'd':
-			act ( "$n says 'Good day, citizens!'", ch, NULL, NULL, TO_ROOM );
-			break;
-
-		case 'e':
-			act ( "$n says 'I hereby declare the city of Midgaard open!'",
-				  ch, NULL, NULL, TO_ROOM );
-			break;
-
-		case 'E':
-			act ( "$n says 'I hereby declare the city of Midgaard closed!'",
-				  ch, NULL, NULL, TO_ROOM );
-			break;
-
-		case 'O':
-			/*	cmd_function(ch, &cmd_unlock, "gate" ); */
-			cmd_function ( ch, &cmd_open, "gate" );
-			break;
-
-		case 'C':
-			cmd_function ( ch, &cmd_close, "gate" );
-			/*	cmd_function(ch, &cmd_lock, "gate" ); */
-			break;
-
-		case '.' :
-			move = FALSE;
-			break;
-	}
-
-	pos++;
-	return FALSE;
-}
 
 
 
