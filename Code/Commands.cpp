@@ -60,6 +60,8 @@ const struct staff_cmd_type staff_cmd_table[] = {
 	{ "makestaff",	cmd_makestaff,	CR_CODER, LOG_ALWAYS, 1, "Toggle staff flags on/off for selected users" },
 	{ "sitrep",	cmd_sitrep,	CR_CODER, LOG_NORMAL, 1, "Sitrep displays system logs to the coder" },
 	{ "levelset",	cmd_advance,	CR_HEAD,  LOG_ALWAYS, 1, "Change the level of a selected PC" },
+	{ "randomitem", cmd_randomitem, CR_HEAD,  LOG_ALWAYS, 1, "Generates a random item on the player" },
+	
 	{ "dump",	cmd_dump,	CR_CODER, LOG_ALWAYS, 1, "Dump drops current memory buckets to flatfile for debugging" },
 	{ "trust",	cmd_trust,	CR_HEAD,  LOG_ALWAYS, 1, "Trust allows you to raise/lower the trust value" },
 	{ "violate",	cmd_violate,	CR_SECURITY,  LOG_ALWAYS, 1, "Violate allows you to enter rooms you couldn't normally enter" },
