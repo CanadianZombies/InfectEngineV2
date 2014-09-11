@@ -167,7 +167,7 @@ const char *face_types[] = {
 	"lip spike"
 };
 
-#define MAX_HEAD 12
+#define MAX_HEAD 14
 const char *head_types[] = {
 	"helm",
 	"war helm",
@@ -181,6 +181,8 @@ const char *head_types[] = {
 	"sallet",
 	"bascinet",
 	"barbute",
+	"burgonet",
+	"armet",
 	"close helm"
 };
 
@@ -215,18 +217,20 @@ const char *hand_types[] = {
 	"gloves"
 };
 
-#define MAX_FEET 6
+#define MAX_FEET 8
 const char *feet_types[] = {
 	"boots",
 	"shoes",
 	"sandles",
 	"clogs",
 	"sollerets",
+	"sabaton",
 	"gaiters",
+	"socks",
 	"sabots"
 };
 
-#define MAX_LEGS 6
+#define MAX_LEGS 10
 const char *legs_types[] = {
 	"leggings",
 	"leg plates",
@@ -234,16 +238,23 @@ const char *legs_types[] = {
 	"chausses",
 	"greaves",
 	"tassets",
+	"pants",
+	"pantaloons",
+	"bloomers",
+	"faulds"
 	"poleyn"
 };
 
-#define MAX_ARMS 4
+#define MAX_ARMS 7
 const char *arms_types[] = {
 	"sleeves",
 	"vambraces",
 	"bracers",
 	"armbands",
-	"arm plates"
+	"couter",
+	"ailette",
+	"arm plates",
+	"rerebrace"
 };
 
 #define MAX_SHIELD 20
@@ -271,19 +282,23 @@ const char *shield_types[] = {
 	"aegis"
 };
 
-#define MAX_BODY 4
+#define MAX_BODY 7
 const char *body_types[] = {
 	"breastplate",
+	"brigandine",
 	"chestplate",
 	"body armor",
+	"cuirass",
+	"culet",
 	"torso",
 	"vest"
 };
 
-#define MAX_ABOUT 1
+#define MAX_ABOUT 2
 const char *about_types[] = {
 	"poncho",
-	"pouldron"
+	"pouldron",
+	"spaulders",
 };
 
 void affect_strip_obj ( Item *obj )
@@ -1392,6 +1407,7 @@ void make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb )
 }
 
 extern const char *target_name;
+
 /*This is the generator.*/
 void create_random ( Creature * mob, const char *argument )
 {
@@ -1436,6 +1452,18 @@ void create_random ( Creature * mob, const char *argument )
 		make_weapon ( obj, mob, weapon_vnum, verb_types[Math::instance().range ( 0, MAX_VERBS )] );
 	}
 	tail_chain( );
+}
+
+// -- used to test the randomitem generation
+DefineCommand(cmd_randomitem)
+{
+	if(IS_NULLSTR(argument)) {
+		writeBuffer("Syntax: /randomitem [light,neck,about,helm,legs,hands,feet,wrist,shield,torso,weapon]\r\n", ch);
+		return;
+	}
+	
+	create_random(ch, argument);
+	return;
 }
 
 void create_random_equipment ( Creature * mob )
