@@ -394,10 +394,38 @@ void mobile_update ( void )
 			if ( ( ch->gold * 100 + ch->silver ) < ch->pIndexData->wealth ) {
 				log_hd ( LOG_DEBUG, Format ( "Restoring SHOP wealth's for shop owner: %s.", ch->name ) );
 				if(mLastDay != cd->tm_yday) {
-					mLastDay = cd->tm_yday;
+					mLastDay = cd->tm_yday; // -- assign this now so it doesn't effect every single NPC
+								// -- to follow.
+								
+					// -- notify our twitter that we have replenished our stocks.
 					tweetStatement(Format("Vendors have replenished their stock!"));
 					// -- insert check here to add random items to certain shops and strip old ones
-				}
+					Creature *ps, *ps_n;
+					
+					// -- search for shops to update and outfit with new random items
+					// -- if so inclined.
+					for(ps = char_list; ps; ps = ps_n) {
+						ps_n = ps->next;
+						if(IS_NPC(ps)) {
+							if(ps->pMobIndex && ps->pMobIndex->pShop) {
+								Item *i, *in;
+								for(i = ps->carrying; i; i = in) {
+									in = i->next_content;
+									
+									// -- remove old random items.
+									if(i->pIndexData && (i->pIndexData->vnum == OBJ_VNUM_RANDOM_LIGHT ||
+									i->pIndexData->vnum == OBJ_VNUM_RANDOM_ARMOR ||
+									i->pIndexData->vnum == OBJ_VNUM_RANDOM_WEAPON)) {
+										obj_from_char(i);
+										extract_obj(i);
+									}
+								}
+								// -- generate new random items for this NPC
+								random_shop(ps);
+							} // -- end shop-check on ps
+						} // -- end npc check on ps
+					} // -- end ps for-loop
+				} // -- end mLastDay check
 				ch->gold += ch->pIndexData->wealth * Math::instance().range ( 1, 20 ) / 5000000;
 				ch->silver += ch->pIndexData->wealth * Math::instance().range ( 1, 20 ) / 50000;
 			}
