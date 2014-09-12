@@ -510,6 +510,8 @@ void		recycle_mpcode		args ( ( MPROG_CODE *pMcode ) );
 void song_update args ( ( void ) );
 void load_songs	args ( ( void ) );
 
+void random_shop(Creature *mob);
+
 int	clan_lookup	args ( ( const char *name ) );
 int	position_lookup	args ( ( const char *name ) );
 int 	sex_lookup	args ( ( const char *name ) );
