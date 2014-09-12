@@ -358,7 +358,7 @@ void attempt_staff_command ( Creature *ch, const std::string &pcomm, const std::
 	}
 
 	// -- LOG_NEVER means we stop logging it! (Atleast to the wiznet/staffaid channel)
-	if ( cmd_table[cmd].log == LOG_NEVER )
+	if ( staff_cmd_table[cmd].log == LOG_NEVER )
 	{ strcpy ( logline, "" ); }
 
 	// -- log the command data

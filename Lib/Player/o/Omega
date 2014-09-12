@@ -1,7 +1,7 @@
 #PLAYER
 Name Omega~
 Id   1407161012
-LogO 1410541056
+LogO 1410541537
 Vers 5
 Prom <%hhp %mm %vmv> ~
 Race human~
@@ -9,7 +9,7 @@ Sex  1
 Cla  3
 Levl 60
 Sec  9
-Plyd 3303722
+Plyd 3304021
 Not  0 0 0 0 0
 Scro 28
 Room 2
@@ -27,10 +27,11 @@ Prac 5
 Trai 3
 Save  -1
 Alig  0
-Hit   1
-ACs 95 95 95 99
+Hit   10
+Dam   9
+ACs -165 -165 -165 41
 Attr 25 25 25 25 25
-AMod 0 0 0 0 0
+AMod 9 0 0 0 2
 Pass OmLtTe29L9oWQ~
 Titl  boobs are great!~
 Pnts 40
@@ -84,20 +85,8 @@ ShD  a training vest~
 Desc You see a old training vest here.~
 Mat 0
 Requirements 0 0 0 0 0 0
-Wear 5
+Wear -1
 Cost 0
-End
-
-#O
-Vnum 35
-Nest 0
-Name plastic sword~
-ShD  a plastic sword~
-Desc A plastic sword lays here.~
-Mat 0
-Requirements 0 0 0 0 0 0
-Wear 16
-Cost 360
 End
 
 #O
@@ -110,6 +99,239 @@ Mat 0
 Requirements 6 0 0 0 0 0
 Wear 11
 Cost 0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name adamantanium bascinet~
+ShD  a adamantanium bascinet~
+Desc A adamantanium bascinet has been left here.~
+ExtF 64
+WeaF 17
+Wt   576
+Cond 96
+Mat Z
+Requirements 2 0 0 0 0 0
+Wear 6
+Lev  60
+Cost 144000
+Val  19 19 19 4 0
+Affc 'reserved'   1  60  -1   1  19          0
+Affc 'reserved'   1  60  -1   1   1          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name adamantanium bracers~
+ShD  a adamantanium bracers~
+Desc A adamantanium bracers is lying here.~
+ExtF 64
+WeaF 257
+Wt   516
+Cond 90
+Mat Z
+Requirements 2 0 0 0 0 0
+Wear 10
+Lev  60
+Cost 129000
+Val  17 17 17 4 0
+Affc 'reserved'   1  60  -1   1  19          0
+Affc 'reserved'   1  60  -1   1   1          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name adamantanium gloves~
+ShD  a adamantanium gloves~
+Desc A adamantanium gloves is lying here.~
+ExtF 64
+WeaF 129
+Wt   452
+Cond 95
+Mat Z
+Requirements 2 0 0 0 0 0
+Wear 9
+Lev  60
+Cost 113000
+Val  15 15 15 3 0
+Affc 'reserved'   1  60  -1   1  19          0
+Affc 'reserved'   1  60  -1   1   1          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name adamantanium pantaloons~
+ShD  a adamantanium pantaloons~
+Desc A adamantanium pantaloons is lying here.~
+ExtF 64
+WeaF 33
+Wt   400
+Cond 91
+Mat Z
+Requirements 2 0 0 0 0 0
+Wear 7
+Lev  60
+Cost 100000
+Val  13 13 13 3 0
+Affc 'reserved'   1  60  -1   1  19          0
+Affc 'reserved'   1  60  -1   1   1          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name adamantanium socks~
+ShD  a adamantanium socks~
+Desc A adamantanium socks has been left here.~
+ExtF 64
+WeaF 65
+Wt   584
+Cond 93
+Mat Z
+Requirements 2 0 0 0 0 0
+Wear 8
+Lev  60
+Cost 146000
+Val  19 19 19 4 0
+Affc 'reserved'   1  60  -1   1  19          0
+Affc 'reserved'   1  60  -1   1   1          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name adamantanium string~
+ShD  a adamantanium string~
+Desc A adamantanium string is lying here.~
+ExtF 64
+WeaF 2049
+Wt   468
+Cond 93
+Mat Z
+Requirements 2 0 0 0 0 0
+Wear 13
+Lev  60
+Cost 117000
+Val  15 15 15 3 0
+Affc 'reserved'   1  60  -1   1  19          0
+Affc 'reserved'   1  60  -1   1   1          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name adamantanium poncho~
+ShD  a adamantanium poncho~
+Desc A adamantanium poncho is lying here.~
+ExtF 64
+WeaF 1025
+Wt   920
+Cond 94
+Mat Z
+Requirements 2 0 0 0 0 0
+Wear 12
+Lev  60
+Cost 230000
+Val  30 30 30 7 0
+Affc 'reserved'   1  60  -1   2  19          0
+Affc 'reserved'   1  60  -1   3  18          0
+Affc 'reserved'   1  60  -1   1   1          0
+Affc 'reserved'   1  60  -1   1   5          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name adamantanium armlet~
+ShD  a adamantanium armlet~
+Desc A adamantanium armlet is lying here.~
+ExtF 66
+WeaF 4097
+Wt   236
+Cond 93
+Mat Z
+Requirements 2 0 0 0 0 0
+Wear 14
+Lev  60
+Cost 59000
+Val  7 7 7 1 0
+Affc 'reserved'   1  60  -1   1  18          0
+Affc 'reserved'   1  60  -1   1   1          0
+End
+
+#O
+Vnum 49
+Enchanted
+Nest 0
+Name ancient dire flail~
+ShD  a ancient dire flail~
+Desc A ancient dire flail has been left here.~
+ExtF 64
+WeaF 8193
+Wt   155
+Cond 97
+Mat Z
+Requirements 2 0 0 0 0 0
+Wear 16
+Lev  60
+Cost 38750
+Val  6 7 8 37 0
+Affc 'reserved'   1  60  -1   4  18          0
+End
+
+#O
+Vnum 48
+Enchanted
+Nest 0
+Name none light~
+ShD  a none light~
+Desc A none light has been left here.~
+ExtF 65
+WeaF 1
+Wt   105
+Cond 92
+Mat D
+Requirements 2 0 0 0 0 0
+Wear -1
+Lev  60
+Cost 6300
+Val  0 0 100 0 0
+Affc 'reserved'   1  60  -1  -2  24          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name adamantanium torso~
+ShD  a adamantanium torso~
+Desc A adamantanium torso has been dropped here.~
+ExtF 64
+WeaF 9
+Wt   688
+Cond 95
+Mat Z
+Requirements 2 0 0 0 0 0
+Wear 5
+Lev  60
+Cost 172000
+Val  22 22 22 5 0
+Affc 'reserved'   1  60  -1   1  19          0
+Affc 'reserved'   1  60  -1   2  18          0
+Affc 'reserved'   1  60  -1   1   1          0
+Affc 'reserved'   1  60  -1   1   5          0
 End
 
 #END

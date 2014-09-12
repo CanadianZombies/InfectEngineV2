@@ -1488,7 +1488,7 @@ DefineCommand ( cmd_randomitem )
 			"light", "helm", "face", "torso",
 			"arms", "hands", "legs",
 			"feet", "waist", "about",
-			"wrist", "neck"
+			"wrist", "neck", "weapon"
 		};
 
 		int max_n = nelems ( type ) - 1;
