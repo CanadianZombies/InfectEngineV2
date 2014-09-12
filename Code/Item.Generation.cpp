@@ -39,8 +39,8 @@
 
 void set_material args ( ( Item *obj, int bit ) );
 void rem_material args ( ( Item *obj, int bit ) );
-void create_random ( Creature * mob, const char *argument );
-void make_armor ( Item* obj, Creature* mob, int random_vnum, int item_type, int wear_flags, const char* wear_name );
+Item * create_random ( Creature * mob, const char *argument );
+Item * make_armor ( Item* obj, Creature* mob, int random_vnum, int item_type, int wear_flags, const char* wear_name );
 #define MAX_VERBS 40
 const char *verb_types[] = {
 	"expensive looking",
@@ -1405,6 +1405,8 @@ Item * make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb
 
 	if ( mob->pIndexData && !mob->pIndexData->pShop )
 	{ wear_obj ( mob, obj, FALSE ); }
+
+	return obj;
 }
 
 extern const char *target_name;
@@ -1458,215 +1460,60 @@ Item * create_random ( Creature * mob, const char *argument )
 }
 
 // -- used to test the randomitem generation
-DefineCommand(cmd_randomitem)
+DefineCommand ( cmd_randomitem )
 {
 	Creature *o;
-	if(IS_NULLSTR(argument)) {
-		writeBuffer("Syntax: /randomitem [creature name] [light,neck,about,helm,legs,hands,feet,wrist,shield,torso,weapon,all]\r\n", ch);
+	if ( IS_NULLSTR ( argument ) ) {
+		writeBuffer ( "Syntax: /randomitem [creature name] [light,neck,about,helm,legs,hands,feet,wrist,shield,torso,weapon,all]\r\n", ch );
 		return;
 	}
 
 	char arg[MIL];
-	argument = one_argument(argument, arg);
+	argument = one_argument ( argument, arg );
 
-	if(IS_NULLSTR(argument)) {
-		cmd_function(ch, cmd_randomitem, "");
+	if ( IS_NULLSTR ( argument ) ) {
+		cmd_function ( ch, cmd_randomitem, "" );
 		return;
 	}
 
 	// -- find our victim to give a cool-random item.
-	o = get_char_world(ch, arg, ch);
-	if(!o) {
-		writeBuffer("That creature does not exist!\r\n",ch);
+	o = get_char_world ( ch, arg );
+	if ( !o ) {
+		writeBuffer ( "That creature does not exist!\r\n", ch );
 		return;
 	}
 
-	if(SameString(argument, "all")) {
+	if ( SameString ( argument, "all" ) ) {
 		static const char *type[] = {
 			"light", "helm", "face", "torso",
 			"arms", "hands", "legs",
 			"feet", "waist", "about",
 			"wrist", "neck"
 		};
-		
+
+		int max_n = nelems ( type ) - 1;
 		// -- generate the random items
-		for(int x = 0; x < nelems(type)-1; x++) {
-			create_random(o, type[x]);
+		for ( int x = 0; x < max_n; x++ ) {
+			create_random ( o, type[x] );
 		}
-		log_hd(LOG_BASIC|LOG_SECURITY, Format("%s has been outfitted with random gear by %s", o->name, ch->name));
-		writeBuffer(Format("Random gear has been placed on %s\r\n",o->name), ch);
-		writeBuffer("Your backpack feels heavier.\r\n",o);
+
+		log_hd ( LOG_BASIC | LOG_SECURITY, Format ( "%s has been outfitted with random gear by %s", o->name, ch->name ) );
+		writeBuffer ( Format ( "Random gear has been placed on %s\r\n", o->name ), ch );
+		writeBuffer ( "Your backpack feels heavier.\r\n", o );
 	} else {
-		Item *my_item = create_random(o, argument);
-		if(my_item) {
-			log_hd(LOG_BASIC|LOG_SECURITY, Format("%s has been outfitted with random gear(%s) by %s", o->name, my_item->short_descr, ch->name));
-			writeBuffer(Format("You have randomly generated: '%s' in %s's backpack!\r\n", my_item->short_descr, o->name),ch);
-			writeBuffer(Format("%s appears in your backpack.\r\n", my_item->short_descr),o);
+		Item *my_item = create_random ( o, argument );
+		if ( my_item ) {
+			log_hd ( LOG_BASIC | LOG_SECURITY, Format ( "%s has been outfitted with random gear(%s) by %s", o->name, my_item->short_descr, ch->name ) );
+			writeBuffer ( Format ( "You have randomly generated: '%s' in %s's backpack!\r\n", my_item->short_descr, o->name ), ch );
+			writeBuffer ( Format ( "%s appears in your backpack.\r\n", my_item->short_descr ), o );
 		} else {
-			writeBuffer("You didn't use an appropriate option.\r\n",ch);
+			writeBuffer ( "You didn't use an appropriate option.\r\n", ch );
 		}
 	}
 	return;
 }
 
-void random_shop(Creature *mob) {
-	static const char *type[] = {
-		"light", "helm", "face", "torso",
-		"arms", "hands", "legs",
-		"feet", "waist", "about",
-		"wrist", "neck"
-	};
-
-	int n_type = Math::instance().range ( 0, nelems ( type ) - 1 );
-
-	if(!IS_MPC(mob)) { return; }
-	if(!IS_SET(mob->act, ACT_RANDOM_EQ)) { return; }
-	
-	if ( mob->pIndexData->pShop ) {
-		// -- completely random shop
-		if(!IS_SET(mob->random, RANDOM_WEAPON) && !IS_SET(mob->random, RANDOM_LIGHT)
-		&& !IS_SET(mob->random, RANDOM_HELM) && !IS_SET(mob->random, RANDOM_TORSO)
-		&& !IS_SET(mob->random, RANDOM_ARMS) && !IS_SET(mob->random, RANDOM_HANDS)
-		&& !IS_SET(mob->random, RANDOM_LEGS) && !IS_SET(mob->random, RANDOM_FEET)
-		&& !IS_SET(mob->random, RANDOM_WAIST) && !IS_SET(mob->random, RANDOM_WRIST)
-		&& !IS_SET(mob->random, RANDOM_NECK) && !IS_SET(mob->random, RANDOM_SHIELD))
-		{
-			// -- generate a random shop-set
-			for(int x = 0; x < 5; x++) {
-				n_type = Math::instance().range ( 0, nelems ( type ) - 1 );
-				create_random(mob, type[n_type]);
-				// -- possibly add more items to the shop
-				for(int y = 0; y < 3; y++) {
-					if(Math::instance().range(0,2) == 2) {
-						create_random ( mob, type[n_type] );
-					}
-				}
- 			}
-			return;
-		}
-
-		if ( IS_SET ( mob->random, RANDOM_WEAPON ) ) {
-			create_random(mob, "weapon");
-			for(int x = 0; x < 5; x++ ) {
-				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
-					create_random(mob, "weapon");
-				}
-			}
-		}
-
-		if ( IS_SET ( mob->random, RANDOM_LIGHT ) ) {
-			create_random(mob, "light");
-			for(int x = 0; x < 5; x++ ) {
-				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
-					create_random(mob, "light");
-				}
-			}
-		} 
-		
-		// -- if the percent is over 91, we generate the random items here.
-		if(Math::instance().percent() > 91)
-		{
-			create_random ( mob, type[n_type] );
-			create_random ( mob, type[n_type] );
-			create_random ( mob, type[n_type] );
-			create_random ( mob, type[n_type] );
-			create_random ( mob, type[n_type] );
-		}
-
-	if ( IS_SET ( mob->random, RANDOM_HELM ) )
-	{ 			create_random(mob, "helm");
-			for(int x = 0; x < 5; x++ ) {
-				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
-					create_random(mob, "helm");
-				}
-			} }
-	if ( IS_SET ( mob->random, RANDOM_TORSO ) )
-	{ 			create_random(mob, "torso");
-			for(int x = 0; x < 5; x++ ) {
-				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
-					create_random(mob, "torso");
-				}
-			} }
-	if ( IS_SET ( mob->random, RANDOM_ARMS ) )
-	{ 
-			create_random(mob, "arms");
-			for(int x = 0; x < 5; x++ ) {
-				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
-					create_random(mob, "arms");
-				}
-			}	
-	
-	}
-	if ( IS_SET ( mob->random, RANDOM_HANDS ) )
-	{ 			create_random(mob, "hands");
-			for(int x = 0; x < 5; x++ ) {
-				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
-					create_random(mob, "hands");
-				}
-			} }
-	if ( IS_SET ( mob->random, RANDOM_LEGS ) )
-	{ 			create_random(mob, "legs");
-			for(int x = 0; x < 5; x++ ) {
-				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
-					create_random(mob, "legs");
-				}
-			} }
-	if ( IS_SET ( mob->random, RANDOM_FEET ) )
-	{			create_random(mob, "feet");
-			for(int x = 0; x < 5; x++ ) {
-				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
-					create_random(mob, "feet");
-				}
-			} }
-	if ( IS_SET ( mob->random, RANDOM_WAIST ) )
-	{ 			create_random(mob, "waist");
-			for(int x = 0; x < 5; x++ ) {
-				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
-					create_random(mob, "waist");
-				}
-			} }
-	if ( IS_SET ( mob->random, RANDOM_ABOUT ) )
-	{ 			create_random(mob, "about");
-			for(int x = 0; x < 5; x++ ) {
-				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
-					create_random(mob, "about");
-				}
-			} }
-	if ( IS_SET ( mob->random, RANDOM_WRIST ) ) {
-			create_random(mob, "wrist");
-			for(int x = 0; x < 5; x++ ) {
-				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
-					create_random(mob, "wrist");
-				}
-			}
-		if ( Math::instance().percent ( ) <= 25 )
-		{ create_random ( mob, "wrist" ); }
-	}
-
-	if ( IS_SET ( mob->random, RANDOM_NECK ) ) {
-			create_random(mob, "neck");
-			for(int x = 0; x < 5; x++ ) {
-				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
-					create_random(mob, "neck");
-				}
-			}
-		if ( Math::instance().percent ( ) <= 25 )
-		{ create_random ( mob, "neck" ); }
-	}
-
-	if ( IS_SET ( mob->random, RANDOM_SHIELD ) )
-	{			create_random(mob, "shield");
-			for(int x = 0; x < 5; x++ ) {
-				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
-					create_random(mob, "shield");
-				}
-			}}
-
-		
-	} // -- end of the shop_check.
-}
-
-void create_random_equipment ( Creature * mob )
+void random_shop ( Creature *mob )
 {
 	static const char *type[] = {
 		"light", "helm", "face", "torso",
@@ -1677,6 +1524,160 @@ void create_random_equipment ( Creature * mob )
 
 	int n_type = Math::instance().range ( 0, nelems ( type ) - 1 );
 
+	if ( !IS_NPC ( mob ) ) { return; }
+	if ( !IS_SET ( mob->act, ACT_RANDOM_EQ ) ) { return; }
+
+	if ( mob->pIndexData->pShop ) {
+		// -- completely random shop
+		if ( !IS_SET ( mob->random, RANDOM_WEAPON ) && !IS_SET ( mob->random, RANDOM_LIGHT )
+				&& !IS_SET ( mob->random, RANDOM_HELM ) && !IS_SET ( mob->random, RANDOM_TORSO )
+				&& !IS_SET ( mob->random, RANDOM_ARMS ) && !IS_SET ( mob->random, RANDOM_HANDS )
+				&& !IS_SET ( mob->random, RANDOM_LEGS ) && !IS_SET ( mob->random, RANDOM_FEET )
+				&& !IS_SET ( mob->random, RANDOM_WAIST ) && !IS_SET ( mob->random, RANDOM_WRIST )
+				&& !IS_SET ( mob->random, RANDOM_NECK ) && !IS_SET ( mob->random, RANDOM_SHIELD ) ) {
+			// -- generate a random shop-set
+			for ( int x = 0; x < 5; x++ ) {
+				n_type = Math::instance().range ( 0, nelems ( type ) - 1 );
+				create_random ( mob, type[n_type] );
+				// -- possibly add more items to the shop
+				for ( int y = 0; y < 3; y++ ) {
+					if ( Math::instance().range ( 0, 2 ) == 2 ) {
+						create_random ( mob, type[n_type] );
+					}
+				}
+			}
+			return;
+		}
+
+		if ( IS_SET ( mob->random, RANDOM_WEAPON ) ) {
+			create_random ( mob, "weapon" );
+			for ( int x = 0; x < 5; x++ ) {
+				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
+					create_random ( mob, "weapon" );
+				}
+			}
+		}
+
+		if ( IS_SET ( mob->random, RANDOM_LIGHT ) ) {
+			create_random ( mob, "light" );
+			for ( int x = 0; x < 5; x++ ) {
+				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
+					create_random ( mob, "light" );
+				}
+			}
+		}
+
+		// -- if the percent is over 91, we generate the random items here.
+		if ( Math::instance().percent() > 91 ) {
+			create_random ( mob, type[n_type] );
+			create_random ( mob, type[n_type] );
+			create_random ( mob, type[n_type] );
+			create_random ( mob, type[n_type] );
+			create_random ( mob, type[n_type] );
+		}
+
+		if ( IS_SET ( mob->random, RANDOM_HELM ) ) {
+			create_random ( mob, "helm" );
+			for ( int x = 0; x < 5; x++ ) {
+				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
+					create_random ( mob, "helm" );
+				}
+			}
+		}
+		if ( IS_SET ( mob->random, RANDOM_TORSO ) ) {
+			create_random ( mob, "torso" );
+			for ( int x = 0; x < 5; x++ ) {
+				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
+					create_random ( mob, "torso" );
+				}
+			}
+		}
+		if ( IS_SET ( mob->random, RANDOM_ARMS ) ) {
+			create_random ( mob, "arms" );
+			for ( int x = 0; x < 5; x++ ) {
+				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
+					create_random ( mob, "arms" );
+				}
+			}
+
+		}
+		if ( IS_SET ( mob->random, RANDOM_HANDS ) ) {
+			create_random ( mob, "hands" );
+			for ( int x = 0; x < 5; x++ ) {
+				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
+					create_random ( mob, "hands" );
+				}
+			}
+		}
+		if ( IS_SET ( mob->random, RANDOM_LEGS ) ) {
+			create_random ( mob, "legs" );
+			for ( int x = 0; x < 5; x++ ) {
+				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
+					create_random ( mob, "legs" );
+				}
+			}
+		}
+		if ( IS_SET ( mob->random, RANDOM_FEET ) ) {
+			create_random ( mob, "feet" );
+			for ( int x = 0; x < 5; x++ ) {
+				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
+					create_random ( mob, "feet" );
+				}
+			}
+		}
+		if ( IS_SET ( mob->random, RANDOM_WAIST ) ) {
+			create_random ( mob, "waist" );
+			for ( int x = 0; x < 5; x++ ) {
+				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
+					create_random ( mob, "waist" );
+				}
+			}
+		}
+		if ( IS_SET ( mob->random, RANDOM_ABOUT ) ) {
+			create_random ( mob, "about" );
+			for ( int x = 0; x < 5; x++ ) {
+				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
+					create_random ( mob, "about" );
+				}
+			}
+		}
+		if ( IS_SET ( mob->random, RANDOM_WRIST ) ) {
+			create_random ( mob, "wrist" );
+			for ( int x = 0; x < 5; x++ ) {
+				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
+					create_random ( mob, "wrist" );
+				}
+			}
+			if ( Math::instance().percent ( ) <= 25 )
+			{ create_random ( mob, "wrist" ); }
+		}
+
+		if ( IS_SET ( mob->random, RANDOM_NECK ) ) {
+			create_random ( mob, "neck" );
+			for ( int x = 0; x < 5; x++ ) {
+				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
+					create_random ( mob, "neck" );
+				}
+			}
+			if ( Math::instance().percent ( ) <= 25 )
+			{ create_random ( mob, "neck" ); }
+		}
+
+		if ( IS_SET ( mob->random, RANDOM_SHIELD ) ) {
+			create_random ( mob, "shield" );
+			for ( int x = 0; x < 5; x++ ) {
+				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
+					create_random ( mob, "shield" );
+				}
+			}
+		}
+
+
+	} // -- end of the shop_check.
+}
+
+void create_random_equipment ( Creature * mob )
+{
 	if ( !IS_NPC ( mob ) )
 	{ return; }
 
@@ -1684,7 +1685,7 @@ void create_random_equipment ( Creature * mob )
 	{ return; }
 
 	if ( mob->pIndexData && mob->pIndexData->pShop ) {
-		random_shop(mob);
+		random_shop ( mob );
 		tail_chain();
 		return;
 	}

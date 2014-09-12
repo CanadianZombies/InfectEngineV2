@@ -87,7 +87,7 @@ const char *grab_date_log ( time_t the_time )
 
 	tm_ptr = localtime ( &the_time );
 
-	return Format("%02d-%02d-%02d", tm_ptr->tm_year + 1900, tm_ptr->tm_mon + 1, tm_ptr->tm_mday );
+	return Format ( "%02d-%02d-%02d", tm_ptr->tm_year + 1900, tm_ptr->tm_mon + 1, tm_ptr->tm_mday );
 }
 // *Same as grab_time, just without the \n at the end.* //
 const char *grab_time_log ( time_t the_ttime )
@@ -96,7 +96,7 @@ const char *grab_time_log ( time_t the_ttime )
 
 	tmt_ptr = localtime ( &the_ttime );
 
-	return Format("%02d:%02d:%02d", tmt_ptr->tm_hour, tmt_ptr->tm_min, tmt_ptr->tm_sec);
+	return Format ( "%02d:%02d:%02d", tmt_ptr->tm_hour, tmt_ptr->tm_min, tmt_ptr->tm_sec );
 }
 
 // -- sitrep = log mechanism (coder functionality)
@@ -619,7 +619,7 @@ void announce ( const std::string &outStr )
 			writeBuffer ( Format ( "\a[F355]{\a[F552]Situation Report:\a[F355]} \ay<\aC%s\ay>\an \r\n", C_STR ( outStr ) ), s->character );
 		}
 	} catch ( ... ) {
-		CATCH(false);
+		CATCH ( false );
 	}
 	return;
 }

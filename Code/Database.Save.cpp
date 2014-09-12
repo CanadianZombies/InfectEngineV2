@@ -97,7 +97,7 @@ void save_area_list()
 			if ( ha->area == NULL )
 			{ fprintf ( fp, "%s\n", ha->filename ); }
 		}
-		
+
 		for ( pArea = area_first; pArea; pArea = pArea->next ) {
 			fprintf ( fp, "%s\n", pArea->file_name );
 		}
@@ -817,7 +817,7 @@ void save_other_helps ( Creature *ch )
 			save_helps ( fp, ha );
 
 			if ( ch )
-			{ printf_to_char ( ch, "%s\n\r", ha->filename ); }
+			{ writeBuffer ( Format ( "%s\n\r", ha->filename ), ch ); }
 
 			fprintf ( fp, "#$\n" );
 			fclose ( fp );

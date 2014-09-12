@@ -105,7 +105,7 @@ HEDIT ( hedit_level )
 	lev = atoi ( argument );
 
 	if ( lev < -1 || lev > MAX_LEVEL ) {
-		printf_to_char ( ch, "HEdit : Level must be between -1 and %d, inclusive.\n\r", MAX_LEVEL );
+		writeBuffer ( Format ( "HEdit : Level must be between -1 and %d, inclusive.\n\r", MAX_LEVEL ), ch );
 		return FALSE;
 	}
 

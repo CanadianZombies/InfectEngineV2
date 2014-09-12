@@ -166,7 +166,7 @@ void EventManager::destroyEvent ( Event *ev )
 		Event *e = ( *iter );
 		iter_next = ++iter;
 		if ( e == ev ) {
-			log_hd(LOG_DEBUG, Format("Destroying Event: %p", ev);
+			log_hd ( LOG_DEBUG, Format ( "Destroying Event: %p", ev ) );
 			mEventList.remove ( ev );
 			delete ev;
 			ev = NULL;
@@ -250,7 +250,7 @@ Event *EventManager::addEvent ( Event *ev, bool repeat, double seconds )
 	ev->setType ( EV_CPP );
 
 	// -- ensure we log everything!
-	log_hd(LOG_DEBUG, Format("New Event: %p / Repeats: %s / Seconds till Execution: %ld", ev, repeat ? "yes" : "no", seconds));
+	log_hd ( LOG_DEBUG, Format ( "New Event: %p / Repeats: %s / Seconds till Execution: %ld", ev, repeat ? "yes" : "no", seconds ) );
 	return ev;
 }
 
@@ -295,7 +295,7 @@ void EventManager::newEventTime ( const std::string &name, int seconds )
 			// -- really isn't.
 			LuaEvent *ev = ( LuaEvent * ) e;
 			if ( SameString ( ev->getScriptName(), name ) ) {
-				log_hd(LOG_DEBUG, Format("Event: %s (%p) has been assigned a new execution time in %d seconds", C_STR(name), ev, seconds));
+				log_hd ( LOG_DEBUG, Format ( "Event: %s (%p) has been assigned a new execution time in %d seconds", C_STR ( name ), ev, seconds ) );
 				ev->setSeconds ( seconds );
 			}
 		}
@@ -395,7 +395,7 @@ void Event::addData ( void *dataPtr, short pos )
 	}
 
 	// -- logging is fun!
-	log_hd(LOG_DEBUG, Format("Event(%p):addData -> Added data %p at position %d", this, dataPtr, pos));
+	log_hd ( LOG_DEBUG, Format ( "Event(%p):addData -> Added data %p at position %d", this, dataPtr, pos ) );
 	mDataTable[pos] = dataPtr;
 	return;
 }
@@ -422,7 +422,7 @@ void TwitterEvent::Execute ( void )
 												  C_STR ( tweetStr ) ) );
 			// -- change scope.
 			{
-				log_hd(LOG_DEBUG, Format("Twitter: tweet removed from queue! (%s)", C_STR(tweetStr)));
+				log_hd ( LOG_DEBUG, Format ( "Twitter: tweet removed from queue! (%s)", C_STR ( tweetStr ) ) );
 				tweetList.erase ( iter );
 			}
 			// -- again change scope.

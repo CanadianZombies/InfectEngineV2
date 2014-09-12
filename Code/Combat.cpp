@@ -1748,9 +1748,9 @@ void group_gain ( Creature *ch, Creature *victim )
  */
 int xp_compute ( Creature *gch, Creature *victim, int total_levels )
 {
-	int xp, base_exp;
+	int xp = 0, base_exp;
 	int level_range;
-	int change;
+
 	int time_per_level;
 
 	level_range = victim->level - gch->level;

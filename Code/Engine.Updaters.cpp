@@ -98,10 +98,10 @@ void advance_level ( Creature *ch, bool hide )
 	ch->pcdata->perm_move	+= add_move;
 
 	if ( !hide ) {
-		writeBuffer(Format(
-				   "You gain %d hit point%s, %d mana, %d move, and %d practice%s.\n\r",
-				   add_hp, add_hp == 1 ? "" : "s", add_mana, add_move,
-				   add_prac, add_prac == 1 ? "" : "s" ), ch);
+		writeBuffer ( Format (
+						  "You gain %d hit point%s, %d mana, %d move, and %d practice%s.\n\r",
+						  add_hp, add_hp == 1 ? "" : "s", add_mana, add_move,
+						  add_prac, add_prac == 1 ? "" : "s" ), ch );
 	}
 	return;
 }
@@ -371,9 +371,10 @@ void mobile_update ( void )
 	Exit *pexit;
 	int door;
 	static int mLastDay = 0;
-	
-	time_t cd = time(0);
-	
+
+	time_t cd = time ( 0 );
+	struct tm *t = localtime ( &cd );
+
 	/* Examine all mobs. */
 	for ( ch = char_list; ch != NULL; ch = ch_next ) {
 		ch_next = ch->next;
@@ -393,36 +394,36 @@ void mobile_update ( void )
 		if ( ch->pIndexData->pShop != NULL ) { /* give him some gold */
 			if ( ( ch->gold * 100 + ch->silver ) < ch->pIndexData->wealth ) {
 				log_hd ( LOG_DEBUG, Format ( "Restoring SHOP wealth's for shop owner: %s.", ch->name ) );
-				if(mLastDay != cd->tm_yday) {
-					mLastDay = cd->tm_yday; // -- assign this now so it doesn't effect every single NPC
-								// -- to follow.
-								
+				if ( mLastDay != t->tm_yday ) {
+					mLastDay = t->tm_yday; // -- assign this now so it doesn't effect every single NPC
+					// -- to follow.
+
 					// -- notify our twitter that we have replenished our stocks.
-					tweetStatement(Format("Vendors have replenished their stock!"));
+					tweetStatement ( Format ( "Vendors have replenished their stock!" ) );
 					// -- insert check here to add random items to certain shops and strip old ones
 					Creature *ps, *ps_n;
-					
-					log_hd(LOG_BASIC, "Replenishing shops with Random Gear");
+
+					log_hd ( LOG_BASIC, "Replenishing shops with Random Gear" );
 					// -- search for shops to update and outfit with new random items
 					// -- if so inclined.
-					for(ps = char_list; ps; ps = ps_n) {
+					for ( ps = char_list; ps; ps = ps_n ) {
 						ps_n = ps->next;
-						if(IS_NPC(ps)) {
-							if(ps->pMobIndex && ps->pMobIndex->pShop) {
+						if ( IS_NPC ( ps ) ) {
+							if ( ps->pIndexData && ps->pIndexData->pShop ) {
 								Item *i, *in;
-								for(i = ps->carrying; i; i = in) {
+								for ( i = ps->carrying; i; i = in ) {
 									in = i->next_content;
-									
+
 									// -- remove old random items.
-									if(i->pIndexData && (i->pIndexData->vnum == OBJ_VNUM_RANDOM_LIGHT ||
-									i->pIndexData->vnum == OBJ_VNUM_RANDOM_ARMOR ||
-									i->pIndexData->vnum == OBJ_VNUM_RANDOM_WEAPON)) {
-										obj_from_char(i);
-										extract_obj(i);
+									if ( i->pIndexData && ( i->pIndexData->vnum == OBJ_VNUM_RANDOM_LIGHT ||
+															i->pIndexData->vnum == OBJ_VNUM_RANDOM_ARMOR ||
+															i->pIndexData->vnum == OBJ_VNUM_RANDOM_WEAPON ) ) {
+										obj_from_char ( i );
+										extract_obj ( i );
 									}
 								}
 								// -- generate new random items for this NPC
-								random_shop(ps);
+								random_shop ( ps );
 							} // -- end shop-check on ps
 						} // -- end npc check on ps
 					} // -- end ps for-loop
@@ -500,45 +501,47 @@ void mobile_update ( void )
 	return;
 }
 
-void announceNightFall() {
-	switch(Math::instance().range(0,3)) {
+void announceNightFall()
+{
+	switch ( Math::instance().range ( 0, 3 ) ) {
 		default:
 		case 0:
-			tweetStatement("Night has fallen on the Infected City");
+			tweetStatement ( "Night has fallen on the Infected City" );
 			break;
 		case 1:
-			tweetStatement("Night Fall: Shriekers have been seen within the Infected City");
+			tweetStatement ( "Night Fall: Shriekers have been seen within the Infected City" );
 			break;
 		case 2:
-			tweetStatement("Darkness has fallen upon The Infected City");
+			tweetStatement ( "Darkness has fallen upon The Infected City" );
 			break;
 		case 3:
-			tweetStatement("#warning night creatures have begun to stir!");
+			tweetStatement ( "#warning night creatures have begun to stir!" );
 			break;
 	}
 	// -- remove day-only mobs
-	
+
 	// -- place night mobs
 }
 
-void announceDayLight() {
-	switch(Math::instance().range(0,3)) {
+void announceDayLight()
+{
+	switch ( Math::instance().range ( 0, 3 ) ) {
 		default:
 		case 0:
-			tweetStatement(Format("The day has begun a new within The Infected City once more"));
+			tweetStatement ( Format ( "The day has begun a new within The Infected City once more" ) );
 			break;
 		case 1:
-			tweetStatement("Day light: Shriekers have retreated to the Darkness");
+			tweetStatement ( "Day light: Shriekers have retreated to the Darkness" );
 			break;
 		case 2:
-			tweetStatement("Day break has occurred, night creatures have gone to rest");
+			tweetStatement ( "Day break has occurred, night creatures have gone to rest" );
 			break;
 		case 3:
-			tweetStatement("#fearnot the night creatures have returned home");
+			tweetStatement ( "#fearnot the night creatures have returned home" );
 			break;
 	}
 	// -- remove night mobs
-	
+
 	// -- place day-only mobs
 }
 
@@ -1244,7 +1247,7 @@ void update_handler ( void )
 	static  int	pulse_music;
 	static  int     pulse_msdp;
 	static  int     pulse_weather;
-	
+
 	if ( --pulse_msdp <= 0 ) {
 		// log_hd(LOG_DEBUG, "MSDP update"); // -- disabled due to spam
 		pulse_msdp      = PULSE_PER_SECOND;
@@ -1277,9 +1280,9 @@ void update_handler ( void )
 	}
 
 	/// -- temporary solution until we create an event to handle this.
-	if( --pulse_weather <= 0) {
-		log_hd(LOG_DEBUG, Format("pulse_weather = %d; weather_update will be initiated.", PULSE_TICK*2));
-		pulse_weather = PULSE_TICK*2;
+	if ( --pulse_weather <= 0 ) {
+		log_hd ( LOG_DEBUG, Format ( "pulse_weather = %d; weather_update will be initiated.", PULSE_TICK * 2 ) );
+		pulse_weather = PULSE_TICK * 2;
 		weather_update();
 	}
 

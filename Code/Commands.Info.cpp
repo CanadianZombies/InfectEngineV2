@@ -1137,16 +1137,15 @@ DefineCommand ( cmd_exits )
 DefineCommand ( cmd_worth )
 {
 	if ( IS_NPC ( ch ) ) {
-		writeBuffer(Format( "You have %ld gold and %ld silver.\n\r",
-				   ch->gold, ch->silver ),ch);
-		writeBuffer ( buf, ch );
+		writeBuffer ( Format ( "You have %ld gold and %ld silver.\n\r",
+							   ch->gold, ch->silver ), ch );
 		return;
 	}
 
-	writeBuffer(Format(
-			   "You have %ld gold, %ld silver, and %d experience (%d exp to level).\n\r",
-			   ch->gold, ch->silver, ch->exp,
-			   ( ch->level + 1 ) * exp_per_level ( ch, ch->pcdata->points ) - ch->exp ), ch);
+	writeBuffer ( Format (
+					  "You have %ld gold, %ld silver, and %d experience (%d exp to level).\n\r",
+					  ch->gold, ch->silver, ch->exp,
+					  ( ch->level + 1 ) * exp_per_level ( ch, ch->pcdata->points ) - ch->exp ), ch );
 
 
 	return;
@@ -2100,7 +2099,7 @@ DefineCommand ( cmd_description )
 			int len;
 			bool found = FALSE;
 
-			if ( IS_NULLSTR(ch->description) ) {
+			if ( IS_NULLSTR ( ch->description ) ) {
 				writeBuffer ( "No lines left to remove.\n\r", ch );
 				return;
 			}

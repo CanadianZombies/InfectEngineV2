@@ -1217,7 +1217,6 @@ bool remove_obj ( Creature *ch, int iWear, bool fReplace )
  */
 void wear_obj ( Creature *ch, Item *obj, bool fReplace )
 {
-	char buf[MAX_STRING_LENGTH];
 
 	if ( !obj ) { SUICIDE; }
 
@@ -1249,8 +1248,8 @@ void wear_obj ( Creature *ch, Item *obj, bool fReplace )
 	} // -- end of IS_NPC check for stats
 
 	if ( ch->level < obj->level ) {
-		writeBuffer(Format("You must be level %d to use this item.\n\r",
-				  obj->level ), ch);
+		writeBuffer ( Format ( "You must be level %d to use this item.\n\r",
+							   obj->level ), ch );
 		act ( "$n tries to use $p, but is too inexperienced.",
 			  ch, obj, NULL, TO_ROOM );
 		return;
@@ -2628,7 +2627,7 @@ DefineCommand ( cmd_use )
 	int to_mn;
 	int to_mv;
 
-	if(IS_NPC(ch)) { return; }
+	if ( IS_NPC ( ch ) ) { return; }
 
 	argument = one_argument ( argument, arg );
 

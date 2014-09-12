@@ -672,7 +672,7 @@ bool read_from_descriptor ( Socket *d )
 			if ( read_buf[iStart - 1] == '\n' || read_buf[iStart - 1] == '\r' )
 			{ break; }
 		} else if ( nRead == 0 ) {
-			log_hd ( LOG_ERROR, Format ( "EOF encountered on read from %p:%d @ %s.",d,d->descriptor, d->host ) );
+			log_hd ( LOG_ERROR, Format ( "EOF encountered on read from %p:%d @ %s.", d, d->descriptor, d->host ) );
 			return FALSE;
 		} else if ( errno == EWOULDBLOCK )
 		{ break; }
@@ -1162,7 +1162,7 @@ void nanny ( Socket *d, char *argument )
 			return;
 
 		case CON_GET_NAME:
-			if ( IS_NULLSTR(argument) ) {
+			if ( IS_NULLSTR ( argument ) ) {
 				close_socket ( d );
 				return;
 			}
@@ -1645,7 +1645,7 @@ void nanny ( Socket *d, char *argument )
 			break;
 
 		case CON_READ_MOTD:
-			if ( ch->pcdata == NULL || IS_NULLSTR(ch->pcdata->pwd) ) {
+			if ( ch->pcdata == NULL || IS_NULLSTR ( ch->pcdata->pwd ) ) {
 				write_to_buffer ( d, "Warning! Null password!\n\r", 0 );
 				write_to_buffer ( d, "Type 'password null <new password>' to fix.\n\r", 0 );
 			}
@@ -1746,7 +1746,7 @@ bool check_parse_name ( char *name )
 	 * Reserved words.
 	 */
 	if ( is_exact_name ( name, "all auto immortal self someone something the you loner none new delete"
-				   "system mud psux mob npc staff vanguard security builder relations" ) ) {
+						 "system mud psux mob npc staff vanguard security builder relations" ) ) {
 		return FALSE;
 	}
 
@@ -1930,7 +1930,7 @@ void stop_idling ( Creature *ch )
  */
 void writeBuffer ( const char *txt, Creature *ch )
 {
-	if ( !IS_NULLSTR(txt) && ch->desc != NULL )
+	if ( !IS_NULLSTR ( txt ) && ch->desc != NULL )
 	{ write_to_buffer ( ch->desc, txt, strlen ( txt ) ); }
 	return;
 }
@@ -1940,7 +1940,7 @@ void writeBuffer ( const char *txt, Creature *ch )
  */
 void writePage ( const char *txt, Creature *ch )
 {
-	if ( IS_NULLSTR(txt) || ch->desc == NULL )
+	if ( IS_NULLSTR ( txt ) || ch->desc == NULL )
 	{ return; }
 
 	if ( ch->lines == 0 ) {
@@ -2033,7 +2033,7 @@ void act_new ( const char *format, Creature *ch, const void *arg1,
 	/*
 	 * Discard null and zero-length messages.
 	 */
-	if ( IS_NULLSTR(format))
+	if ( IS_NULLSTR ( format ) )
 	{ return; }
 
 	/* discard null rooms and chars */
