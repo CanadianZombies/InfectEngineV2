@@ -1039,8 +1039,14 @@ void set_name ( Item *obj, const char* wear_slot )
 	PURGE_DATA ( obj->name );
 	if ( obj->item_type == ITEM_WEAPON )
 	{ sprintf ( buf, "%s", wear_slot ); }
-	else
-	{ sprintf ( buf, "%s %s", flag_string ( material_flags, obj->material_flags ), wear_slot ); }
+	else {
+		// -- we dont' want 'none' in our naming convention.
+		if ( SameString ( flag_string ( material_flags, obj->material_flags ), "none" ) )
+		{ sprintf ( buf, "%s", wear_slot ); }
+		else
+		{ sprintf ( buf, "%s %s", flag_string ( material_flags, obj->material_flags ), wear_slot ); }
+	}
+
 	obj->name = assign_string ( buf );
 }
 
@@ -1126,6 +1132,24 @@ void set_material ( Item *obj, int bit )
 		if ( obj->pIndexData->vnum == OBJ_VNUM_RANDOM_ARMOR
 				|| obj->pIndexData->vnum == OBJ_VNUM_RANDOM_WEAPON ) {
 			SET_BIT ( obj->material_flags, armor_types[n_armor] );
+		} else {
+			if ( obj->pIndexData->vnum == OBJ_VNUM_RANDOM_LIGHT ) {
+				switch ( Math::instance().range ( 0, 3 ) ) {
+					default:
+					case 0:
+						SET_BIT ( obj->material_flags, MAT_WOOD );
+						break;
+					case 1:
+						SET_BIT ( obj->material_flags, MAT_BONE );
+						break;
+					case 2:
+						SET_BIT ( obj->material_flags, MAT_IRON );
+						break;
+					case 3:
+						SET_BIT ( obj->material_flags, MAT_STEEL );
+						break;
+				}
+			}
 		}
 	} else
 	{ SET_BIT ( obj->material_flags, bit ); }
