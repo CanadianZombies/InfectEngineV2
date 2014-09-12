@@ -738,7 +738,7 @@ void obj_level ( Item *obj, Creature * mob )
 	int level;
 
 	/*Base that level on something.*/
-	if ( mob->pIndexData->pShop ) {
+	if ( mob->pIndexData && mob->pIndexData->pShop ) {
 		obj->level = Math::instance().range ( 1, 60 );
 		obj->requirements[SIZ_REQ] = Math::instance().range ( 0, SIZE_MAGIC ); // -- random sizes
 	} else {
