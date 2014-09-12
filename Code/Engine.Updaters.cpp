@@ -402,6 +402,7 @@ void mobile_update ( void )
 					// -- insert check here to add random items to certain shops and strip old ones
 					Creature *ps, *ps_n;
 					
+					log_hd(LOG_BASIC, "Replenishing shops with Random Gear");
 					// -- search for shops to update and outfit with new random items
 					// -- if so inclined.
 					for(ps = char_list; ps; ps = ps_n) {
