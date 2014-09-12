@@ -100,8 +100,10 @@ char *format_obj_to_char ( Item *obj, Creature *ch, bool fShort )
 		if ( !IS_NULLSTR ( obj->short_descr ) )
 		{ strcat ( buf, Format ( "\aW%s\an", obj->short_descr ) ); }
 	} else {
-		if ( !IS_NULLSTR ( obj->description ) )
-		{ strcat ( buf, obj->description ); }
+		if ( !IS_NULLSTR ( obj->description ) ) {
+			// -- fix the possible leaking colours glitch
+			strcat ( buf, Format ( "\aW%s\an", obj->description ) );
+		}
 	}
 
 	return buf;

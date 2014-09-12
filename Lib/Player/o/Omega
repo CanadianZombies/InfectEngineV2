@@ -1,7 +1,7 @@
 #PLAYER
 Name Omega~
 Id   1407161012
-LogO 1410541834
+LogO 1410542948
 Vers 5
 Prom <%hhp %mm %vmv> ~
 Race human~
@@ -9,7 +9,7 @@ Sex  1
 Cla  3
 Levl 60
 Sec  9
-Plyd 3304245
+Plyd 3305326
 Not  0 0 0 0 0
 Scro 28
 Room 2
@@ -27,11 +27,11 @@ Prac 5
 Trai 3
 Save  -1
 Alig  0
-Hit   11
+Hit   12
 Dam   9
-ACs -175 -175 -175 39
+ACs -183 -183 -183 37
 Attr 25 25 25 25 25
-AMod 10 0 0 0 2
+AMod 11 0 0 0 2
 Pass OmLtTe29L9oWQ~
 Titl  boobs are great!~
 Pnts 40
@@ -324,23 +324,24 @@ Affc 'reserved'   1  60  -1   1   1          0
 End
 
 #O
-Vnum 48
+Vnum 47
 Enchanted
 Nest 0
-Name none lamp~
-ShD  a none lamp~
-Desc A none lamp is lying here.~
-ExtF 65
-WeaF 1
-Wt   116
-Cond 94
-Mat D
+Name adamantanium beads~
+ShD  a adamantanium beads~
+Desc A adamantanium beads has been dropped here.~
+ExtF 64
+WeaF 5
+Wt   256
+Cond 99
+Mat Z
 Requirements 2 0 0 0 0 0
-Wear -1
+Wear 3
 Lev  60
-Cost 6960
-Val  0 0 50 0 0
-Affc 'reserved'   1  60  -1   3   1          0
+Cost 64000
+Val  8 8 8 2 0
+Affc 'reserved'   1  60  -1   1   1          0
+Affc 'reserved'   1  60  -1   1  18          0
 End
 
 #END

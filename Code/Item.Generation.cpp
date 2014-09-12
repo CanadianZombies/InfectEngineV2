@@ -739,10 +739,11 @@ void obj_level ( Item *obj, Creature * mob )
 
 	/*Base that level on something.*/
 	if ( mob->pIndexData && mob->pIndexData->pShop ) {
-		obj->level = Math::instance().range ( 1, 60 );
+		obj->level = Math::instance().range ( 1, MAX_LEVEL );
 		obj->requirements[SIZ_REQ] = Math::instance().range ( 0, SIZE_MAGIC ); // -- random sizes
 	} else {
-		obj->level = mob->level;
+		// -- generate the level in accordance with the level
+		obj->level = UMAX ( Math::instance().fuzzy ( mob->level / 3 ), Math::instance().fuzzy ( mob->level ) );
 		obj->requirements[SIZ_REQ] = mob->size; // -- make it fit!
 	}
 
@@ -1124,9 +1125,9 @@ void set_material ( Item *obj, int bit )
 	/*I ADDED THIS SO THAT I DIDNT GET LEATHER WEAPONS AT LOW LEVELS
 	AND OR PRACTICE ARMORS, NEITHER MADE SENSE:)*/
 	if ( obj->pIndexData->vnum == OBJ_VNUM_RANDOM_ARMOR )
-	{ n_armor = URANGE ( 1, obj->level / 2.38, nelems ( armor_types ) - 1 ); }
+	{ n_armor = URANGE ( 1, obj->level / 2.38, nelems ( armor_types ) - 1  ); }
 	else
-	{ n_armor = URANGE ( 0, obj->level / 2.38, nelems ( armor_types ) - 1 ); }
+	{ n_armor = URANGE ( 0, obj->level / 2.38, nelems ( armor_types ) - 1  ); }
 
 	if ( !bit ) {
 		if ( obj->pIndexData->vnum == OBJ_VNUM_RANDOM_ARMOR
