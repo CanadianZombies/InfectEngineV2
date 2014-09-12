@@ -1482,18 +1482,17 @@ DefineCommand(cmd_randomitem)
 	}
 
 	if(SameString(argument, "all")) {
-		create_random(o, "light");
-		create_random(o, "neck");
-		create_random(o, "about");
-		create_random(o, "helm");
-		create_random(o, "face");
-		create_random(o, "torso");
-		create_random(o, "legs");
-		create_random(o, "hands");
-		create_random(o, "feet");
-		create_random(o, "wrist");
-		create_random(o, "shield");
-		create_random(o, "weapon");
+		static const char *type[] = {
+			"light", "helm", "face", "torso",
+			"arms", "hands", "legs",
+			"feet", "waist", "about",
+			"wrist", "neck"
+		};
+		
+		// -- generate the random items
+		for(int x = 0; x < nelems(type)-1; x++) {
+			create_random(o, type[x]);
+		}
 		log_hd(LOG_BASIC|LOG_SECURITY, Format("%s has been outfitted with random gear by %s", o->name, ch->name));
 		writeBuffer(Format("Random gear has been placed on %s\r\n",o->name), ch);
 		writeBuffer("Your backpack feels heavier.\r\n",o);
