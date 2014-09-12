@@ -1486,14 +1486,21 @@ DefineCommand(cmd_randomitem)
 		create_random(o, "neck");
 		create_random(o, "about");
 		create_random(o, "helm");
+		create_random(o, "face");
+		create_random(o, "torso");
 		create_random(o, "legs");
 		create_random(o, "hands");
 		create_random(o, "feet");
 		create_random(o, "wrist");
 		create_random(o, "shield");
+		create_random(o, "weapon");
+		log_hd(LOG_BASIC|LOG_SECURITY, Format("%s has been outfitted with random gear by %s", o->name, ch->name));
+		writeBuffer(Format("Random gear has been placed on %s\r\n",o->name), ch);
+		writeBuffer("Your backpack feels heavier.\r\n",o);
 	} else {
 		Item *my_item = create_random(o, argument);
 		if(my_item) {
+			log_hd(LOG_BASIC|LOG_SECURITY, Format("%s has been outfitted with random gear(%s) by %s", o->name, my_item->short_descr, ch->name));
 			writeBuffer(Format("You have randomly generated: '%s' in %s's backpack!\r\n", my_item->short_descr, o->name),ch);
 			writeBuffer(Format("%s appears in your backpack.\r\n", my_item->short_descr),o);
 		} else {
@@ -1503,10 +1510,112 @@ DefineCommand(cmd_randomitem)
 	return;
 }
 
+void random_shop(Creature *mob) {
+	static const char *type[] = {
+		"light", "helm", "face", "torso",
+		"arms", "hands", "legs",
+		"feet", "waist", "about",
+		"wrist", "neck"
+	};
+
+	int n_type = Math::instance().range ( 0, nelems ( type ) - 1 );
+
+	if(!IS_MPC(mob)) { return; }
+	if(!IS_SET(mob->act, ACT_RANDOM_EQ)) { return; }
+	
+	if ( mob->pIndexData->pShop ) {
+		// -- completely random shop
+		if(!IS_SET(mob->random, RANDOM_WEAPON) && !IS_SET(mob->random, RANDOM_LIGHT)
+		&& !IS_SET(mob->random, RANDOM_HELM) && !IS_SET(mob->random, RANDOM_TORSO)
+		&& !IS_SET(mob->random, RANDOM_ARMS) && !IS_SET(mob->random, RANDOM_HANDS)
+		&& !IS_SET(mob->random, RANDOM_LEGS) && !IS_SET(mob->random, RANDOM_FEET)
+		&& !IS_SET(mob->random, RANDOM_WAIST) && !IS_SET(mob->random, RANDOM_WRIST)
+		&& !IS_SET(mob->random, RANDOM_NECK) && !IS_SET(mob->random, RANDOM_SHIELD))
+		{
+			// -- generate a random shop-set
+			for(int x = 0; x < 5; x++) {
+				n_type = Math::instance().range ( 0, nelems ( type ) - 1 );
+				create_random(mob, type[n_type]);
+				// -- possibly add more items to the shop
+				for(int y = 0; y < 3; y++) {
+					if(Math::instance().range(0,2) == 2) {
+						create_random ( mob, type[n_type] );
+					}
+				}
+ 			}
+			return;
+		}
+
+		if ( IS_SET ( mob->random, RANDOM_WEAPON ) ) {
+			for(int x = 0; x < 5; x++ ) {
+				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
+					create_random(mob, "weapon");
+				}
+			}
+		}
+
+		if ( IS_SET ( mob->random, RANDOM_LIGHT ) ) {
+			create_random ( mob, "light" );
+			create_random ( mob, "light" );
+			create_random ( mob, "light" );
+			create_random ( mob, "light" );
+			create_random ( mob, "light" );
+		} 
+		
+		// -- if the percent is over 91, we generate the random items here.
+		if(Math::instance().percent() > 91)
+		{
+			create_random ( mob, type[n_type] );
+			create_random ( mob, type[n_type] );
+			create_random ( mob, type[n_type] );
+			create_random ( mob, type[n_type] );
+			create_random ( mob, type[n_type] );
+		}
+
+	if ( IS_SET ( mob->random, RANDOM_HELM ) )
+	{ create_random ( mob, "helm" ); }
+	if ( IS_SET ( mob->random, RANDOM_TORSO ) )
+	{ create_random ( mob, "torso" ); }
+	if ( IS_SET ( mob->random, RANDOM_ARMS ) )
+	{ create_random ( mob, "arms" ); }
+	if ( IS_SET ( mob->random, RANDOM_HANDS ) )
+	{ create_random ( mob, "hands" ); }
+	if ( IS_SET ( mob->random, RANDOM_LEGS ) )
+	{ create_random ( mob, "legs" ); }
+	if ( IS_SET ( mob->random, RANDOM_FEET ) )
+	{ create_random ( mob, "feet" ); }
+	if ( IS_SET ( mob->random, RANDOM_WAIST ) )
+	{ create_random ( mob, "waist" ); }
+	if ( IS_SET ( mob->random, RANDOM_ABOUT ) )
+	{ create_random ( mob, "about" ); }
+	if ( IS_SET ( mob->random, RANDOM_WRIST ) ) {
+		create_random ( mob, "wrist" );
+		if ( Math::instance().percent ( ) <= 25 )
+		{ create_random ( mob, "wrist" ); }
+	}
+
+	if ( IS_SET ( mob->random, RANDOM_NECK ) ) {
+		create_random ( mob, "neck" );
+		if ( Math::instance().percent ( ) <= 25 )
+		{ create_random ( mob, "neck" ); }
+	}
+
+	if ( IS_SET ( mob->random, RANDOM_LIGHT ) )
+	{ create_random ( mob, "light" ); }
+
+	if ( IS_SET ( mob->random, RANDOM_WEAPON ) )
+	{ create_random ( mob, "weapon" ); }
+	if ( IS_SET ( mob->random, RANDOM_SHIELD ) )
+	{ create_random ( mob, "shield" ); }
+
+		
+	} // -- end of the shop_check.
+}
+
 void create_random_equipment ( Creature * mob )
 {
 	static const char *type[] = {
-		"helm", "face", "body",
+		"light", "helm", "face", "torso",
 		"arms", "hands", "legs",
 		"feet", "waist", "about",
 		"wrist", "neck"
@@ -1520,37 +1629,10 @@ void create_random_equipment ( Creature * mob )
 	if ( !IS_SET ( mob->act, ACT_RANDOM_EQ ) )
 	{ return; }
 
-	if ( mob->pIndexData->pShop ) {
-		/*so if your shopkeeper is set with the
-		act random flag AND has a weapon chosen as his
-		random eq, he will load 5 of them. If he has
-		light chosen as his random eq he will load 5
-		of them, OR he will just mix his stuff up from
-		the list above. This is basic, ive extended my
-		code here quite a bit:)*/
-		if ( IS_SET ( mob->random, RANDOM_WEAPON ) ) {
-			create_random ( mob, "weapon" );
-			create_random ( mob, "weapon" );
-			create_random ( mob, "weapon" );
-			create_random ( mob, "weapon" );
-			create_random ( mob, "weapon" );
-			return;
-		}
-
-		else if ( IS_SET ( mob->random, RANDOM_LIGHT ) ) {
-			create_random ( mob, "light" );
-			create_random ( mob, "light" );
-			create_random ( mob, "light" );
-			create_random ( mob, "light" );
-			create_random ( mob, "light" );
-			return;
-		} else {
-			create_random ( mob, type[n_type] );
-			create_random ( mob, type[n_type] );
-			create_random ( mob, type[n_type] );
-			create_random ( mob, type[n_type] );
-			create_random ( mob, type[n_type] );
-		}
+	if ( mob->pIndexData && mob->pIndexData->pShop ) {
+		random_shop(mob);
+		tail_chain();
+		return;
 	}
 
 	/*If your mobs NOT a shop keeper, he will load his eq
