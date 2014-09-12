@@ -743,7 +743,7 @@ void obj_level ( Item *obj, Creature * mob )
 		obj->requirements[SIZ_REQ] = Math::instance().range ( 0, SIZE_MAGIC ); // -- random sizes
 	} else {
 		// -- generate the level in accordance with the level
-		obj->level = UMAX ( Math::instance().fuzzy ( mob->level / 3 ), Math::instance().fuzzy ( mob->level ) );
+		obj->level = Math::instance().range ( Math::instance().fuzzy ( mob->level / 3 ), UMAX ( Math::instance().fuzzy ( mob->level ), MAX_LEVEL ) );
 		obj->requirements[SIZ_REQ] = mob->size; // -- make it fit!
 	}
 
