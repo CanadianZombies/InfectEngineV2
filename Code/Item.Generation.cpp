@@ -1547,6 +1547,7 @@ void random_shop(Creature *mob) {
 		}
 
 		if ( IS_SET ( mob->random, RANDOM_WEAPON ) ) {
+			create_random(mob, "weapon");
 			for(int x = 0; x < 5; x++ ) {
 				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
 					create_random(mob, "weapon");
@@ -1555,11 +1556,12 @@ void random_shop(Creature *mob) {
 		}
 
 		if ( IS_SET ( mob->random, RANDOM_LIGHT ) ) {
-			create_random ( mob, "light" );
-			create_random ( mob, "light" );
-			create_random ( mob, "light" );
-			create_random ( mob, "light" );
-			create_random ( mob, "light" );
+			create_random(mob, "light");
+			for(int x = 0; x < 5; x++ ) {
+				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
+					create_random(mob, "light");
+				}
+			}
 		} 
 		
 		// -- if the percent is over 91, we generate the random items here.
@@ -1573,40 +1575,93 @@ void random_shop(Creature *mob) {
 		}
 
 	if ( IS_SET ( mob->random, RANDOM_HELM ) )
-	{ create_random ( mob, "helm" ); }
+	{ 			create_random(mob, "helm");
+			for(int x = 0; x < 5; x++ ) {
+				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
+					create_random(mob, "helm");
+				}
+			} }
 	if ( IS_SET ( mob->random, RANDOM_TORSO ) )
-	{ create_random ( mob, "torso" ); }
+	{ 			create_random(mob, "torso");
+			for(int x = 0; x < 5; x++ ) {
+				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
+					create_random(mob, "torso");
+				}
+			} }
 	if ( IS_SET ( mob->random, RANDOM_ARMS ) )
-	{ create_random ( mob, "arms" ); }
+	{ 
+			create_random(mob, "arms");
+			for(int x = 0; x < 5; x++ ) {
+				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
+					create_random(mob, "arms");
+				}
+			}	
+	
+	}
 	if ( IS_SET ( mob->random, RANDOM_HANDS ) )
-	{ create_random ( mob, "hands" ); }
+	{ 			create_random(mob, "hands");
+			for(int x = 0; x < 5; x++ ) {
+				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
+					create_random(mob, "hands");
+				}
+			} }
 	if ( IS_SET ( mob->random, RANDOM_LEGS ) )
-	{ create_random ( mob, "legs" ); }
+	{ 			create_random(mob, "legs");
+			for(int x = 0; x < 5; x++ ) {
+				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
+					create_random(mob, "legs");
+				}
+			} }
 	if ( IS_SET ( mob->random, RANDOM_FEET ) )
-	{ create_random ( mob, "feet" ); }
+	{			create_random(mob, "feet");
+			for(int x = 0; x < 5; x++ ) {
+				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
+					create_random(mob, "feet");
+				}
+			} }
 	if ( IS_SET ( mob->random, RANDOM_WAIST ) )
-	{ create_random ( mob, "waist" ); }
+	{ 			create_random(mob, "waist");
+			for(int x = 0; x < 5; x++ ) {
+				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
+					create_random(mob, "waist");
+				}
+			} }
 	if ( IS_SET ( mob->random, RANDOM_ABOUT ) )
-	{ create_random ( mob, "about" ); }
+	{ 			create_random(mob, "about");
+			for(int x = 0; x < 5; x++ ) {
+				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
+					create_random(mob, "about");
+				}
+			} }
 	if ( IS_SET ( mob->random, RANDOM_WRIST ) ) {
-		create_random ( mob, "wrist" );
+			create_random(mob, "wrist");
+			for(int x = 0; x < 5; x++ ) {
+				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
+					create_random(mob, "wrist");
+				}
+			}
 		if ( Math::instance().percent ( ) <= 25 )
 		{ create_random ( mob, "wrist" ); }
 	}
 
 	if ( IS_SET ( mob->random, RANDOM_NECK ) ) {
-		create_random ( mob, "neck" );
+			create_random(mob, "neck");
+			for(int x = 0; x < 5; x++ ) {
+				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
+					create_random(mob, "neck");
+				}
+			}
 		if ( Math::instance().percent ( ) <= 25 )
 		{ create_random ( mob, "neck" ); }
 	}
 
-	if ( IS_SET ( mob->random, RANDOM_LIGHT ) )
-	{ create_random ( mob, "light" ); }
-
-	if ( IS_SET ( mob->random, RANDOM_WEAPON ) )
-	{ create_random ( mob, "weapon" ); }
 	if ( IS_SET ( mob->random, RANDOM_SHIELD ) )
-	{ create_random ( mob, "shield" ); }
+	{			create_random(mob, "shield");
+			for(int x = 0; x < 5; x++ ) {
+				if(Math::instance().range(0,3) == Math::instance().range(0,2)) {
+					create_random(mob, "shield");
+				}
+			}}
 
 		
 	} // -- end of the shop_check.
