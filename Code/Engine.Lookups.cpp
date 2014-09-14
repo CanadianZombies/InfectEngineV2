@@ -150,7 +150,7 @@ HELP_DATA * help_lookup ( const char *keyword )
 	argall[0] = '\0';
 
 	while ( keyword[0] != '\0' ) {
-		keyword = one_argument ( keyword, temp );
+		keyword = ChopC ( keyword, temp );
 		if ( argall[0] != '\0' )
 		{ strcat ( argall, " " ); }
 		strcat ( argall, temp );

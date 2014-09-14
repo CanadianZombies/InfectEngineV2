@@ -196,7 +196,7 @@ DefineCommand ( cmd_play )
 	int song, i;
 	bool global = FALSE;
 
-	str = one_argument ( argument, arg );
+	str = ChopC ( argument, arg );
 
 	for ( juke = ch->in_room->contents; juke != NULL; juke = juke->next_content )
 		if ( juke->item_type == ITEM_JUKEBOX && can_see_obj ( ch, juke ) )
@@ -220,7 +220,7 @@ DefineCommand ( cmd_play )
 
 		buffer = new_buf();
 		argument = str;
-		argument = one_argument ( argument, arg );
+		argument = ChopC ( argument, arg );
 
 		if ( !str_cmp ( arg, "artist" ) )
 		{ artist = TRUE; }

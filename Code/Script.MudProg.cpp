@@ -368,7 +368,7 @@ int cmd_eval ( int vnum, char *line, int check,
 	int lval = 0, oper = 0, rval = -1;
 
 	original = line;
-	line = one_argument ( line, buf );
+	line = ChopC ( line, buf );
 	if ( buf[0] == '\0' || mob == NULL )
 	{ return FALSE; }
 
@@ -433,7 +433,7 @@ int cmd_eval ( int vnum, char *line, int check,
 										 vnum, original ) );
 			return FALSE;
 		}
-		one_argument ( line, buf );
+		ChopC ( line, buf );
 		lval = rval;
 		rval = atoi ( buf );
 		return ( num_eval ( lval, oper, rval ) );
@@ -531,7 +531,7 @@ int cmd_eval ( int vnum, char *line, int check,
 	/*
 	 * Case 4: Keyword, actor and value
 	 */
-	line = one_argument ( line, buf );
+	line = ChopC ( line, buf );
 	switch ( check ) {
 		case CHK_AFFECTED:
 			return ( lval_char != NULL
@@ -594,7 +594,7 @@ int cmd_eval ( int vnum, char *line, int check,
 									 vnum, original ) );
 		return FALSE;
 	}
-	one_argument ( line, buf );
+	ChopC ( line, buf );
 	rval = atoi ( buf );
 
 	switch ( check ) {
@@ -707,7 +707,7 @@ void expand_arg ( char *buf,
 				i = " <@@@> ";
 				break;
 			case 'i':
-				one_argument ( mob->name, fname );
+				ChopC ( mob->name, fname );
 				i = fname;
 				break;
 			case 'I':
@@ -716,7 +716,7 @@ void expand_arg ( char *buf,
 			case 'n':
 				i = someone;
 				if ( ch != NULL && can_see ( mob, ch ) ) {
-					one_argument ( ch->name, fname );
+					ChopC ( ch->name, fname );
 					i = capitalize ( fname );
 				}
 				break;
@@ -728,7 +728,7 @@ void expand_arg ( char *buf,
 			case 't':
 				i = someone;
 				if ( vch != NULL && can_see ( mob, vch ) ) {
-					one_argument ( vch->name, fname );
+					ChopC ( vch->name, fname );
 					i = capitalize ( fname );
 				}
 				break;
@@ -742,7 +742,7 @@ void expand_arg ( char *buf,
 				{ rch = get_random_char ( mob ); }
 				i = someone;
 				if ( rch != NULL && can_see ( mob, rch ) ) {
-					one_argument ( rch->name, fname );
+					ChopC ( rch->name, fname );
 					i = capitalize ( fname );
 				}
 				break;
@@ -756,7 +756,7 @@ void expand_arg ( char *buf,
 			case 'q':
 				i = someone;
 				if ( mob->mprog_target != NULL && can_see ( mob, mob->mprog_target ) ) {
-					one_argument ( mob->mprog_target->name, fname );
+					ChopC ( mob->mprog_target->name, fname );
 					i = capitalize ( fname );
 				}
 				break;
@@ -841,7 +841,7 @@ void expand_arg ( char *buf,
 			case 'o':
 				i = something;
 				if ( obj1 != NULL && can_see_obj ( mob, obj1 ) ) {
-					one_argument ( obj1->name, fname );
+					ChopC ( obj1->name, fname );
 					i = fname;
 				}
 				break;
@@ -853,7 +853,7 @@ void expand_arg ( char *buf,
 			case 'p':
 				i = something;
 				if ( obj2 != NULL && can_see_obj ( mob, obj2 ) ) {
-					one_argument ( obj2->name, fname );
+					ChopC ( obj2->name, fname );
 					i = fname;
 				}
 				break;
@@ -977,7 +977,7 @@ void program_flow (
 				cond[level] = FALSE;
 				continue;
 			}
-			line = one_argument ( line, control );
+			line = ChopC ( line, control );
 			if ( ( check = keyword_lookup ( fn_keyword, control ) ) >= 0 ) {
 				cond[level] = cmd_eval ( pvnum, line, check, mob, ch, arg1, arg2, rch );
 			} else {
@@ -993,7 +993,7 @@ void program_flow (
 				return;
 			}
 			if ( level && cond[level - 1] == FALSE ) { continue; }
-			line = one_argument ( line, control );
+			line = ChopC ( line, control );
 			if ( ( check = keyword_lookup ( fn_keyword, control ) ) >= 0 ) {
 				eval = cmd_eval ( pvnum, line, check, mob, ch, arg1, arg2, rch );
 			} else {
@@ -1009,7 +1009,7 @@ void program_flow (
 				return;
 			}
 			if ( level && cond[level - 1] == FALSE ) { continue; }
-			line = one_argument ( line, control );
+			line = ChopC ( line, control );
 			if ( ( check = keyword_lookup ( fn_keyword, control ) ) >= 0 ) {
 				eval = cmd_eval ( pvnum, line, check, mob, ch, arg1, arg2, rch );
 			} else {
@@ -1047,7 +1047,7 @@ void program_flow (
 				/*
 				 * Found a mob restricted command, pass it to mob interpreter
 				 */
-				line = one_argument ( data, control );
+				line = ChopC ( data, control );
 				mob_interpret ( mob, line );
 			} else {
 				/*
@@ -1180,7 +1180,7 @@ void mp_give_trigger ( Creature *mob, Creature *ch, Item *obj )
 			 */
 			else {
 				while ( *p ) {
-					p = one_argument ( p, buf );
+					p = ChopC ( p, buf );
 
 					if ( is_name ( buf, obj->name )
 							||   !str_cmp ( "all", buf ) ) {

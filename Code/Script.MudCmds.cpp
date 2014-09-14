@@ -104,7 +104,7 @@ void mob_interpret ( Creature *ch, const char *argument )
 	char command[MAX_INPUT_LENGTH];
 	int cmd;
 
-	argument = one_argument ( argument, command );
+	argument = ChopC ( argument, command );
 
 	/*
 	 * Look for command in command table.
@@ -173,7 +173,7 @@ DefineCommand ( cmd_mpstat )
 	Creature   *victim;
 	int i;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Mpstat whom?\n\r", ch );
@@ -236,7 +236,7 @@ DefineCommand ( cmd_mpdump )
 	char buf[ MAX_INPUT_LENGTH ];
 	MPROG_CODE *mprg;
 
-	one_argument ( argument, buf );
+	ChopC ( argument, buf );
 	if ( ( mprg = get_mprog_index ( atoi ( buf ) ) ) == NULL ) {
 		writeBuffer ( "No such MOBprogram.\n\r", ch );
 		return;
@@ -341,7 +341,7 @@ DefineCommand ( cmd_mpkill )
 	char      arg[ MAX_INPUT_LENGTH ];
 	Creature *victim;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' )
 	{ return; }
@@ -372,7 +372,7 @@ DefineCommand ( cmd_mpassist )
 	char      arg[ MAX_INPUT_LENGTH ];
 	Creature *victim;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' )
 	{ return; }
@@ -402,7 +402,7 @@ DefineCommand ( cmd_mpjunk )
 	Item *obj;
 	Item *obj_next;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' )
 	{ return; }
@@ -441,7 +441,7 @@ DefineCommand ( cmd_mpechoaround )
 	char       arg[ MAX_INPUT_LENGTH ];
 	Creature *victim;
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' )
 	{ return; }
@@ -462,7 +462,7 @@ DefineCommand ( cmd_mpechoat )
 	char       arg[ MAX_INPUT_LENGTH ];
 	Creature *victim;
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' || argument[0] == '\0' )
 	{ return; }
@@ -497,7 +497,7 @@ DefineCommand ( cmd_mpmload )
 	Creature      *victim;
 	int vnum;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( ch->in_room == NULL || arg[0] == '\0' || !is_number ( arg ) )
 	{ return; }
@@ -528,9 +528,9 @@ DefineCommand ( cmd_mpoload )
 	int             level;
 	bool            fToroom = FALSE, fWear = FALSE;
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
-	one_argument ( argument, arg3 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
+	ChopC ( argument, arg3 );
 
 	if ( arg1[0] == '\0' || !is_number ( arg1 ) ) {
 		log_hd ( LOG_ERROR, Format ( "Mpoload - Bad syntax from vnum %d.",
@@ -599,7 +599,7 @@ DefineCommand ( cmd_mppurge )
 	Creature *victim;
 	Item  *obj;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		/* 'purge' */
@@ -652,7 +652,7 @@ DefineCommand ( cmd_mpgoto )
 	char             arg[ MAX_INPUT_LENGTH ];
 	RoomData *location;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	if ( arg[0] == '\0' ) {
 		log_hd ( LOG_ERROR, Format ( "Mpgoto - No argument from vnum %d.",
 									 IS_NPC ( ch ) ? ch->pIndexData->vnum : 0 ) );
@@ -687,7 +687,7 @@ DefineCommand ( cmd_mpat )
 	Creature       *wch;
 	Item 	    *on;
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' || argument[0] == '\0' ) {
 		log_hd ( LOG_ERROR, Format ( "Mpat - Bad argument from vnum %d.",
@@ -736,8 +736,8 @@ DefineCommand ( cmd_mptransfer )
 	RoomData *location;
 	Creature       *victim;
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 
 	if ( arg1[0] == '\0' ) {
 		log_hd ( LOG_ERROR, Format ( "Mptransfer - Bad syntax from vnum %d.",
@@ -800,8 +800,8 @@ DefineCommand ( cmd_mpgtransfer )
 	char	     buf[MAX_STRING_LENGTH];
 	Creature       *who, *victim, *victim_next;
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 
 	if ( arg1[0] == '\0' ) {
 		log_hd ( LOG_ERROR, Format ( "Mpgtransfer - Bad syntax from vnum %d.",
@@ -832,7 +832,7 @@ DefineCommand ( cmd_mpforce )
 {
 	char arg[ MAX_INPUT_LENGTH ];
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' || argument[0] == '\0' ) {
 		log_hd ( LOG_ERROR, Format ( "Mpforce - Bad syntax from vnum %d.",
@@ -878,7 +878,7 @@ DefineCommand ( cmd_mpgforce )
 	char arg[ MAX_INPUT_LENGTH ];
 	Creature *victim, *vch, *vch_next;
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' || argument[0] == '\0' ) {
 		log_hd ( LOG_ERROR, Format ( "MpGforce - Bad syntax from vnum %d.",
@@ -913,7 +913,7 @@ DefineCommand ( cmd_mpvforce )
 	char arg[ MAX_INPUT_LENGTH ];
 	int vnum;
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' || argument[0] == '\0' ) {
 		log_hd ( LOG_ERROR, Format ( "MpVforce - Bad syntax from vnum %d.",
@@ -957,8 +957,8 @@ DefineCommand ( cmd_mpcast )
 		 target[ MAX_INPUT_LENGTH ];
 	int sn;
 
-	argument = one_argument ( argument, spell );
-	one_argument ( argument, target );
+	argument = ChopC ( argument, spell );
+	ChopC ( argument, target );
 
 	if ( spell[0] == '\0' ) {
 		log_hd ( LOG_ERROR, Format ( "MpCast - Bad syntax from vnum %d.",
@@ -1016,9 +1016,9 @@ DefineCommand ( cmd_mpdamage )
 	int low, high;
 	bool fAll = FALSE, fKill = FALSE;
 
-	argument = one_argument ( argument, target );
-	argument = one_argument ( argument, min );
-	argument = one_argument ( argument, max );
+	argument = ChopC ( argument, target );
+	argument = ChopC ( argument, min );
+	argument = ChopC ( argument, max );
 
 	if ( target[0] == '\0' ) {
 		log_hd ( LOG_ERROR, Format ( "MpDamage - Bad syntax from vnum %d.",
@@ -1044,7 +1044,7 @@ DefineCommand ( cmd_mpdamage )
 									 IS_NPC ( ch ) ? ch->pIndexData->vnum : 0 ) );
 		return;
 	}
-	one_argument ( argument, target );
+	ChopC ( argument, target );
 
 	/*
 	 * If kill parameter is omitted, this command is "safe" and will not
@@ -1079,7 +1079,7 @@ DefineCommand ( cmd_mpdamage )
 DefineCommand ( cmd_mpremember )
 {
 	char arg[ MAX_INPUT_LENGTH ];
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	if ( arg[0] != '\0' )
 	{ ch->mprog_target = get_char_world ( ch, arg ); }
 	else
@@ -1108,7 +1108,7 @@ DefineCommand ( cmd_mpdelay )
 {
 	char arg[ MAX_INPUT_LENGTH ];
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	if ( !is_number ( arg ) ) {
 		log_hd ( LOG_ERROR, Format ( "MpDelay: invalid arg from vnum %d.",
 									 IS_NPC ( ch ) ? ch->pIndexData->vnum : 0 ) );
@@ -1144,7 +1144,7 @@ DefineCommand ( cmd_mpcall )
 	MPROG_CODE *prg;
 	extern void program_flow ( int, char *, Creature *, Creature *, const void *, const void * );
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 	if ( arg[0] == '\0' ) {
 		log_hd ( LOG_ERROR, Format ( "MpCall: missing arguments from vnum %d.",
 									 IS_NPC ( ch ) ? ch->pIndexData->vnum : 0 ) );
@@ -1157,13 +1157,13 @@ DefineCommand ( cmd_mpcall )
 	}
 	vch = NULL;
 	obj1 = obj2 = NULL;
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 	if ( arg[0] != '\0' )
 	{ vch = get_char_room ( ch, arg ); }
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 	if ( arg[0] != '\0' )
 	{ obj1 = get_obj_here ( ch, arg ); }
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 	if ( arg[0] != '\0' )
 	{ obj2 = get_obj_here ( ch, arg ); }
 	program_flow ( prg->vnum, prg->code, ch, vch, ( void * ) obj1, ( void * ) obj2 );
@@ -1215,13 +1215,13 @@ DefineCommand ( cmd_mpotransfer )
 	char arg[ MAX_INPUT_LENGTH ];
 	char buf[ MAX_INPUT_LENGTH ];
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 	if ( arg[0] == '\0' ) {
 		log_hd ( LOG_ERROR, Format ( "MpOTransfer - Missing argument from vnum %d.",
 									 IS_NPC ( ch ) ? ch->pIndexData->vnum : 0 ) );
 		return;
 	}
-	one_argument ( argument, buf );
+	ChopC ( argument, buf );
 	if ( ( location = find_location ( ch, buf ) ) == NULL ) {
 		log_hd ( LOG_ERROR, Format ( "MpOTransfer - No such location from vnum %d.",
 									 IS_NPC ( ch ) ? ch->pIndexData->vnum : 0 ) );
@@ -1253,11 +1253,11 @@ DefineCommand ( cmd_mpremove )
 	bool fAll = FALSE;
 	char arg[ MAX_INPUT_LENGTH ];
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 	if ( ( victim = get_char_room ( ch, arg ) ) == NULL )
 	{ return; }
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	if ( !str_cmp ( arg, "all" ) )
 	{ fAll = TRUE; }
 	else if ( !is_number ( arg ) ) {

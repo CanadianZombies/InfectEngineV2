@@ -146,7 +146,7 @@ HEDIT ( hedit_new )
 	}
 
 	strcpy ( fullarg, argument );
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( ! ( had = had_lookup ( arg ) ) ) {
 		had = ch->in_room->area->helps;
@@ -212,7 +212,7 @@ HEDIT ( hedit_text )
 		return FALSE;
 	}
 
-	string_append ( ch, &help->text );
+	EnterStringEditor ( ch, &help->text );
 
 	return TRUE;
 }
@@ -227,7 +227,7 @@ void hedit ( Creature *ch, const char *argument )
 
 	smash_tilde ( argument );
 	strcpy ( arg, argument );
-	argument = one_argument ( argument, command );
+	argument = ChopC ( argument, command );
 
 	EDIT_HELP ( ch, pHelp );
 

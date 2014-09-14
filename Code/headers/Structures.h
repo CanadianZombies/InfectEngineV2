@@ -96,7 +96,8 @@ struct	descriptor_data {
 	char *		showstr_head;
 	char *		showstr_point;
 	void *              pEdit;		/* OLC */
-	char **             pString;	/* OLC */
+	char **             pEditString;	/* OLC */
+	char *		    pEditBackup;
 	int			editor;		/* OLC */
 	protocol_t *        pProtocol;
 };

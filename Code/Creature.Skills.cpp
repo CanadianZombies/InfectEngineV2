@@ -55,7 +55,7 @@ DefineCommand ( cmd_spells )
 		fAll = TRUE;
 
 		if ( str_prefix ( argument, "all" ) ) {
-			argument = one_argument ( argument, arg );
+			argument = ChopC ( argument, arg );
 			if ( !is_number ( arg ) ) {
 				writeBuffer ( "Arguments must be numerical or all.\n\r", ch );
 				return;
@@ -69,7 +69,7 @@ DefineCommand ( cmd_spells )
 			}
 
 			if ( argument[0] != '\0' ) {
-				argument = one_argument ( argument, arg );
+				argument = ChopC ( argument, arg );
 				if ( !is_number ( arg ) ) {
 					writeBuffer ( "Arguments must be numerical or all.\n\r", ch );
 					return;
@@ -161,7 +161,7 @@ DefineCommand ( cmd_skills )
 		fAll = TRUE;
 
 		if ( str_prefix ( argument, "all" ) ) {
-			argument = one_argument ( argument, arg );
+			argument = ChopC ( argument, arg );
 			if ( !is_number ( arg ) ) {
 				writeBuffer ( "Arguments must be numerical or all.\n\r", ch );
 				return;
@@ -175,7 +175,7 @@ DefineCommand ( cmd_skills )
 			}
 
 			if ( argument[0] != '\0' ) {
-				argument = one_argument ( argument, arg );
+				argument = ChopC ( argument, arg );
 				if ( !is_number ( arg ) ) {
 					writeBuffer ( "Arguments must be numerical or all.\n\r", ch );
 					return;
@@ -415,7 +415,7 @@ bool parse_gen_groups ( Creature *ch, char *argument )
 	if ( argument[0] == '\0' )
 	{ return FALSE; }
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( !str_prefix ( arg, "help" ) ) {
 		if ( argument[0] == '\0' ) {

@@ -485,7 +485,7 @@ DefineCommand ( cmd_scroll )
 	char buf[100];
 	int lines;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		if ( ch->lines == 0 )
@@ -805,8 +805,8 @@ DefineCommand ( cmd_look )
 		return;
 	}
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 	number = number_argument ( arg1, arg3 );
 	count = 0;
 
@@ -1022,7 +1022,7 @@ DefineCommand ( cmd_examine )
 	char arg[MAX_INPUT_LENGTH];
 	Item *obj;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Examine what?\n\r", ch );
@@ -1329,7 +1329,7 @@ DefineCommand ( cmd_score )
 
 	/* RT wizinvis and holy light */
 	if ( IsStaff ( ch ) ) {
-		writeBuffer ( "Holy Light: ", ch );
+		writeBuffer ( "God Sight: ", ch );
 		if ( IS_SET ( ch->act, PLR_HOLYLIGHT ) )
 		{ writeBuffer ( "on", ch ); }
 		else
@@ -1498,7 +1498,7 @@ DefineCommand ( cmd_help )
 	/* this parts handles help a b so that it returns help 'a b' */
 	argall[0] = '\0';
 	while ( argument[0] != '\0' ) {
-		argument = one_argument ( argument, argone );
+		argument = ChopC ( argument, argone );
 		if ( argall[0] != '\0' )
 		{ strcat ( argall, " " ); }
 		strcat ( argall, argone );
@@ -1862,8 +1862,8 @@ DefineCommand ( cmd_compare )
 	int value2;
 	const char *msg;
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 	if ( arg1[0] == '\0' ) {
 		writeBuffer ( "Compare what to what?\n\r", ch );
 		return;
@@ -1964,7 +1964,7 @@ DefineCommand ( cmd_where )
 	Socket *d;
 	bool found;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Players near you:\n\r", ch );
@@ -2017,7 +2017,7 @@ DefineCommand ( cmd_consider )
 	const char *msg;
 	int diff;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Consider killing whom?\n\r", ch );
@@ -2285,7 +2285,7 @@ DefineCommand ( cmd_wimpy )
 	char arg[MAX_INPUT_LENGTH];
 	int wimpy;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' )
 	{ wimpy = ch->max_hit / 5; }
@@ -2321,7 +2321,7 @@ DefineCommand ( cmd_password )
 	{ return; }
 
 	/*
-	 * Can't use one_argument here because it smashes case.
+	 * Can't use ChopC here because it smashes case.
 	 * So we just steal all its code.  Bleagh.
 	 */
 	pArg = arg1;

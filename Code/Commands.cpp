@@ -442,7 +442,7 @@ void interpret ( Creature *ch, const char *argument )
 		char argbuf[100000];
 		char *comm1;
 
-		comm1 = one_argument ( argument, argbuf );
+		comm1 = ChopC ( argument, argbuf );
 		attempt_staff_command ( ch, argbuf, comm1 );
 		return;
 	}
@@ -459,7 +459,7 @@ void interpret ( Creature *ch, const char *argument )
 		while ( isspace ( *argument ) )
 		{ argument++; }
 	} else {
-		argument = one_argument ( argument, command );
+		argument = ChopC ( argument, command );
 	}
 
 	/*
@@ -623,7 +623,7 @@ bool check_social ( Creature *ch, const char *command, const char *argument )
 			return TRUE;
 	}
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	victim = NULL;
 	if ( arg[0] == '\0' ) {
 		act ( social_table[cmd].others_no_arg, ch, NULL, victim, TO_ROOM    );
@@ -735,40 +735,6 @@ int mult_argument ( const char *argument, char *arg )
 
 	strcpy ( arg, argument );
 	return 1;
-}
-
-/*
- * Pick off one argument from a string and return the rest.
- * Understands quotes.
- */
-char *one_argument ( const char *argument, char *arg_first )
-{
-	char cEnd;
-
-	char *rargument = ( char * ) argument;
-
-	while ( isspace ( *rargument ) )
-	{ rargument++; }
-
-	cEnd = ' ';
-	if ( *rargument == '\'' || *rargument == '"' )
-	{ cEnd = *rargument++; }
-
-	while ( *rargument != '\0' ) {
-		if ( *rargument == cEnd ) {
-			rargument++;
-			break;
-		}
-		*arg_first = LOWER ( *rargument );
-		arg_first++;
-		rargument++;
-	}
-	*arg_first = '\0';
-
-	while ( isspace ( *rargument ) )
-	{ rargument++; }
-
-	return rargument;
 }
 
 DefineCommand ( cmd_commands )

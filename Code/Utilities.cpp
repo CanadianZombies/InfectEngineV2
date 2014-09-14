@@ -380,7 +380,7 @@ const char *Format ( const char *fmt, ... )
 		// -- in the future so we can use this.
 		//              TODO ( "Variable name Assignment - Unique identifiers" )
 
-		// -- attempt to zeroize the current tick
+		// -- attempt to memset the current tick
 		memset ( textString[lTick], 0, sizeof ( textString[0] ) );
 
 		// -- Assign our variable length in totality!
@@ -622,28 +622,6 @@ void announce ( const std::string &outStr )
 		CATCH ( false );
 	}
 	return;
-}
-
-const char *wrapstr ( const char *str )
-{
-	static char strwrap[MAX_OUTPUT_BUFFER] = {'\0'};
-	unsigned int i;
-	int count = 0;
-
-	memset ( strwrap, 0, MAX_OUTPUT_BUFFER );
-
-	for ( i = 0; i < strlen ( str ); i++ ) {
-		count++;
-		if ( count > 66 && str[i] == ' ' ) {
-			strwrap[i] = '\n';
-			strwrap[i + 1] = '\r';
-			count = 0;
-		} else {
-			strwrap[i] = str[i];
-		}
-	}
-	strwrap[i] = '\0';
-	return strwrap;
 }
 
 const char *whoami ( void )

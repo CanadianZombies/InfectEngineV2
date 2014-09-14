@@ -941,7 +941,7 @@ bool is_name ( const char *str, char *namelist )
 	string = ( char * ) str;
 	/* we need ALL parts of string to match part of namelist */
 	for ( ; ; ) { /* start parsing string */
-		str = one_argument ( str, part );
+		str = ChopC ( str, part );
 
 		if ( part[0] == '\0' )
 		{ return TRUE; }
@@ -949,7 +949,7 @@ bool is_name ( const char *str, char *namelist )
 		/* check to see if this is part of namelist */
 		list = namelist;
 		for ( ; ; ) { /* start parsing namelist */
-			list = one_argument ( list, name );
+			list = ChopC ( list, name );
 			if ( name[0] == '\0' ) /* this name was not found */
 			{ return FALSE; }
 
@@ -970,7 +970,7 @@ bool is_exact_name ( const char *str, const char *namelist )
 	{ return FALSE; }
 
 	for ( ; ; ) {
-		namelist = one_argument ( namelist, name );
+		namelist = ChopC ( namelist, name );
 		if ( name[0] == '\0' )
 		{ return FALSE; }
 		if ( !str_cmp ( str, name ) )

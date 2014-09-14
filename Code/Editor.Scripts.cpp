@@ -62,7 +62,7 @@ void mpedit ( Creature *ch, const char *argument )
 
 	smash_tilde ( argument );
 	strcpy ( arg, argument );
-	argument = one_argument ( argument, command );
+	argument = ChopC ( argument, command );
 
 	EDIT_MPCODE ( ch, pMcode );
 
@@ -110,7 +110,7 @@ DefineCommand ( cmd_mpedit )
 	MPROG_CODE *pMcode;
 	char command[MAX_INPUT_LENGTH];
 
-	argument = one_argument ( argument, command );
+	argument = ChopC ( argument, command );
 
 	if ( is_number ( command ) ) {
 		int vnum = atoi ( command );
@@ -217,7 +217,7 @@ MPEDIT ( mpedit_code )
 	EDIT_MPCODE ( ch, pMcode );
 
 	if ( argument[0] == '\0' ) {
-		string_append ( ch, &pMcode->code );
+		EnterStringEditor ( ch, &pMcode->code );
 		return TRUE;
 	}
 

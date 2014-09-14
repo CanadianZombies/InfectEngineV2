@@ -126,7 +126,7 @@ int flag_value ( const struct flag_type *flag_table, const char *argument )
 	 * Accept multiple flags.
 	 */
 	for ( ; ; ) {
-		argument = one_argument ( argument, word );
+		argument = ChopC ( argument, word );
 
 		if ( word[0] == '\0' )
 		{ break; }

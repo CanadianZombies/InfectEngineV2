@@ -71,7 +71,7 @@ void substitute_alias ( Socket *d, char *argument )
 		{ break; }
 
 		if ( !str_prefix ( ch->pcdata->alias[alias], argument ) ) {
-			point = one_argument ( argument, name );
+			point = ChopC ( argument, name );
 			if ( !strcmp ( ch->pcdata->alias[alias], name ) ) {
 				buf[0] = '\0';
 				strcat ( buf, ch->pcdata->alias_sub[alias] );
@@ -112,7 +112,7 @@ DefineCommand ( cmd_alias )
 	if ( IS_NPC ( rch ) )
 	{ return; }
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 
 	if ( arg[0] == '\0' ) {
@@ -204,7 +204,7 @@ DefineCommand ( cmd_unalias )
 	if ( IS_NPC ( rch ) )
 	{ return; }
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Unalias what?\n\r", ch );

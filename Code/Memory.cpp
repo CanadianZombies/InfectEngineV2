@@ -201,7 +201,7 @@ RoomData *new_room_index ( void )
 
 	pRoom->name             =   NULL;
 	pRoom->description      =   NULL;
-	pRoom->owner	    =	NULL;
+	pRoom->owner	    			=		NULL;
 	pRoom->vnum             =   0;
 	pRoom->room_flags       =   0;
 	pRoom->light            =   0;

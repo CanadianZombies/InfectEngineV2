@@ -428,7 +428,7 @@ void aedit ( Creature *ch, const char *argument )
 	EDIT_AREA ( ch, pArea );
 	smash_tilde ( argument );
 	strcpy ( arg, argument );
-	argument = one_argument ( argument, command );
+	argument = ChopC ( argument, command );
 
 	if ( !IS_BUILDER ( ch, pArea ) ) {
 		writeBuffer ( "AEdit:  Insufficient security to modify area.\n\r", ch );
@@ -485,7 +485,7 @@ void redit ( Creature *ch, const char *argument )
 
 	smash_tilde ( argument );
 	strcpy ( arg, argument );
-	argument = one_argument ( argument, command );
+	argument = ChopC ( argument, command );
 
 	if ( !IS_BUILDER ( ch, pArea ) ) {
 		writeBuffer ( "REdit:  Insufficient security to modify room.\n\r", ch );
@@ -532,7 +532,7 @@ void oedit ( Creature *ch, const char *argument )
 
 	smash_tilde ( argument );
 	strcpy ( arg, argument );
-	argument = one_argument ( argument, command );
+	argument = ChopC ( argument, command );
 
 	EDIT_OBJ ( ch, pObj );
 	pArea = pObj->area;
@@ -582,7 +582,7 @@ void medit ( Creature *ch, const char *argument )
 
 	smash_tilde ( argument );
 	strcpy ( arg, argument );
-	argument = one_argument ( argument, command );
+	argument = ChopC ( argument, command );
 
 	EDIT_MOB ( ch, pMob );
 	pArea = pMob->area;
@@ -645,7 +645,7 @@ DefineCommand ( cmd_olc )
 	if ( IS_NPC ( ch ) )
 	{ return; }
 
-	argument = one_argument ( argument, command );
+	argument = ChopC ( argument, command );
 
 	if ( command[0] == '\0' ) {
 		cmd_function ( ch, &cmd_help, "olc" );
@@ -679,7 +679,7 @@ DefineCommand ( cmd_aedit )
 
 	pArea	= ch->in_room->area;
 
-	argument	= one_argument ( argument, arg );
+	argument	= ChopC ( argument, arg );
 
 	if ( is_number ( arg ) ) {
 		value = atoi ( arg );
@@ -719,7 +719,7 @@ DefineCommand ( cmd_redit )
 	if ( IS_NPC ( ch ) )
 	{ return; }
 
-	argument = one_argument ( argument, arg1 );
+	argument = ChopC ( argument, arg1 );
 
 	pRoom = ch->in_room;
 
@@ -788,7 +788,7 @@ DefineCommand ( cmd_oedit )
 	if ( IS_NPC ( ch ) )
 	{ return; }
 
-	argument = one_argument ( argument, arg1 );
+	argument = ChopC ( argument, arg1 );
 
 	if ( is_number ( arg1 ) ) {
 		value = atoi ( arg1 );
@@ -847,7 +847,7 @@ DefineCommand ( cmd_medit )
 	int value;
 	char arg1[MAX_STRING_LENGTH];
 
-	argument = one_argument ( argument, arg1 );
+	argument = ChopC ( argument, arg1 );
 
 	if ( IS_NPC ( ch ) )
 	{ return; }
@@ -1153,13 +1153,13 @@ DefineCommand ( cmd_resets )
 	char arg7[MAX_INPUT_LENGTH];
 	Reset *pReset = NULL;
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
-	argument = one_argument ( argument, arg3 );
-	argument = one_argument ( argument, arg4 );
-	argument = one_argument ( argument, arg5 );
-	argument = one_argument ( argument, arg6 );
-	argument = one_argument ( argument, arg7 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
+	argument = ChopC ( argument, arg3 );
+	argument = ChopC ( argument, arg4 );
+	argument = ChopC ( argument, arg5 );
+	argument = ChopC ( argument, arg6 );
+	argument = ChopC ( argument, arg7 );
 
 	if ( !IS_BUILDER ( ch, ch->in_room->area ) ) {
 		writeBuffer ( "Resets: Invalid security for editing this area.\n\r",

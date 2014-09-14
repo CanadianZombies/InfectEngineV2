@@ -389,8 +389,8 @@ void RunMudLoop ( int control )
 					( *d->character->queries.queryfunc )
 					( d->character, Format ( "queried_command:%p", d->character->queries.queryfunc ),
 					  d->incomm ? d->incomm : "", d->character->queries.querycommand );
-				} else if ( d->pString )
-				{ string_add ( d->character, d->incomm ); }
+				} else if ( d->pEditString )
+				{ StringEditorOptions ( d->character, d->incomm ); }
 				else {
 					switch ( d->connected ) {
 						case CON_PLAYING:
@@ -522,7 +522,8 @@ void init_descriptor ( int control )
 	dnew->showstr_point = NULL;
 	dnew->outsize	= 2000;
 	dnew->pEdit		= NULL;			/* OLC */
-	dnew->pString	= NULL;			/* OLC */
+	dnew->pEditString	= NULL;			/* OLC */
+	dnew->pEditBackup = NULL;
 	dnew->editor	= 0;			/* OLC */
 	ALLOC_DATA ( dnew->outbuf, char, dnew->outsize );
 	dnew->pProtocol     = ProtocolCreate();
@@ -801,13 +802,13 @@ bool process_output ( Socket *d, bool fPrompt )
 		// -- display our queryprompt
 		write_to_buffer ( d, d->character->queries.queryprompt, 0 );
 
-		// -- zeroize it so we don't have any problems (should stop the spamming of screenreaders)
+		// -- memset it so we don't have any problems (should stop the spamming of screenreaders)
 		memset ( d->character->queries.queryprompt, 0, sizeof ( d->character->queries.queryprompt ) );
 	} else if ( d->pProtocol->WriteOOB )
 		; /* The last sent data was OOB, so do NOT draw the prompt */
 	else if ( !is_shutdown && d->showstr_point )
 	{ write_to_buffer ( d, "\r\n\r\n\a[F500] { \a[F535]Shoot that Return Key \a[F500]} \an\r\n\r\n", 0 ); }
-	else if ( fPrompt && d->pString && d->connected == CON_PLAYING )
+	else if ( fPrompt && d->pEditBackup && d->connected == CON_PLAYING )
 	{ write_to_buffer ( d, "} ", 2 ); }
 	else if ( fPrompt && d->connected == CON_PLAYING ) {
 		Creature *ch;
@@ -1394,10 +1395,10 @@ void nanny ( Socket *d, char *argument )
 			break;
 
 		case CON_GET_NEW_RACE:
-			one_argument ( argument, arg );
+			ChopC ( argument, arg );
 
 			if ( !strcmp ( arg, "help" ) ) {
-				argument = one_argument ( argument, arg );
+				argument = ChopC ( argument, arg );
 				if ( argument[0] == '\0' )
 				{ cmd_function ( ch, &cmd_help, "race help" ); }
 				else
@@ -1966,7 +1967,7 @@ void show_string ( struct descriptor_data *d, const char *input )
 	int lines = 0, toggle = 1;
 	int show_lines;
 
-	one_argument ( input, buf );
+	ChopC ( input, buf );
 	if ( buf[0] != '\0' ) {
 		if ( d->showstr_head ) {
 			PURGE_DATA ( d->showstr_head );
@@ -2134,7 +2135,7 @@ void act_new ( const char *format, Creature *ch, const void *arg1,
 						if ( arg2 == NULL || ( ( char * ) arg2 ) [0] == '\0' ) {
 							i = "door";
 						} else {
-							one_argument ( ( char * ) arg2, fname );
+							ChopC ( ( char * ) arg2, fname );
 							i = fname;
 						}
 						break;

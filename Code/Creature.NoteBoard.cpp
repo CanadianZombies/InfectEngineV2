@@ -374,7 +374,7 @@ void note_remove ( Creature *ch, NOTE_DATA *pnote, bool idelete )
 		to_new[0]	= '\0';
 		to_list	= pnote->to_list;
 		while ( *to_list != '\0' ) {
-			to_list	= one_argument ( to_list, to_one );
+			to_list	= ChopC ( to_list, to_one );
 			if ( to_one[0] != '\0' && str_cmp ( ch->name, to_one ) ) {
 				strcat ( to_new, " " );
 				strcat ( to_new, to_one );
@@ -541,7 +541,7 @@ void parse_note ( Creature *ch, const char *argument, int type )
 			break;
 	}
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 	smash_tilde ( argument );
 
 	if ( arg[0] == '\0' || !str_prefix ( arg, "read" ) ) {

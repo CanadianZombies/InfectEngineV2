@@ -309,7 +309,7 @@ DefineCommand ( cmd_open )
 	Item *obj;
 	int door;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Open what?\n\r", ch );
@@ -393,7 +393,7 @@ DefineCommand ( cmd_close )
 	Item *obj;
 	int door;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Close what?\n\r", ch );
@@ -482,7 +482,7 @@ DefineCommand ( cmd_lock )
 	Item *obj;
 	int door;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Lock what?\n\r", ch );
@@ -578,7 +578,7 @@ DefineCommand ( cmd_unlock )
 	Item *obj;
 	int door;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Unlock what?\n\r", ch );
@@ -675,7 +675,7 @@ DefineCommand ( cmd_pick )
 	Item *obj;
 	int door;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Pick what?\n\r", ch );
@@ -1133,7 +1133,7 @@ DefineCommand ( cmd_wake )
 	char arg[MAX_INPUT_LENGTH];
 	Creature *victim;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	if ( arg[0] == '\0' )
 	{ cmd_function ( ch, &cmd_stand, "" ); return; }
 

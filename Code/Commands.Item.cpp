@@ -182,11 +182,11 @@ DefineCommand ( cmd_get )
 	Item *container;
 	bool found;
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 
 	if ( !str_cmp ( arg2, "from" ) )
-	{ argument = one_argument ( argument, arg2 ); }
+	{ argument = ChopC ( argument, arg2 ); }
 
 	/* Get type. */
 	if ( arg1[0] == '\0' ) {
@@ -306,11 +306,11 @@ DefineCommand ( cmd_put )
 	Item *obj;
 	Item *obj_next;
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 
 	if ( !str_cmp ( arg2, "in" ) || !str_cmp ( arg2, "on" ) )
-	{ argument = one_argument ( argument, arg2 ); }
+	{ argument = ChopC ( argument, arg2 ); }
 
 	if ( arg1[0] == '\0' || arg2[0] == '\0' ) {
 		writeBuffer ( "Put what in what?\n\r", ch );
@@ -428,7 +428,7 @@ DefineCommand ( cmd_drop )
 	Item *obj_next;
 	bool found;
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Drop what?\n\r", ch );
@@ -440,7 +440,7 @@ DefineCommand ( cmd_drop )
 		int amount, gold = 0, silver = 0;
 
 		amount   = atoi ( arg );
-		argument = one_argument ( argument, arg );
+		argument = ChopC ( argument, arg );
 		if ( amount <= 0
 				|| ( str_cmp ( arg, "coins" ) && str_cmp ( arg, "coin" ) &&
 					 str_cmp ( arg, "gold"  ) && str_cmp ( arg, "silver" ) ) ) {
@@ -572,8 +572,8 @@ DefineCommand ( cmd_give )
 	Creature *victim;
 	Item  *obj;
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 
 	if ( arg1[0] == '\0' || arg2[0] == '\0' ) {
 		writeBuffer ( "Give what to whom?\n\r", ch );
@@ -595,7 +595,7 @@ DefineCommand ( cmd_give )
 
 		silver = str_cmp ( arg2, "gold" );
 
-		argument = one_argument ( argument, arg2 );
+		argument = ChopC ( argument, arg2 );
 		if ( arg2[0] == '\0' ) {
 			writeBuffer ( "Give what to whom?\n\r", ch );
 			return;
@@ -838,7 +838,7 @@ DefineCommand ( cmd_fill )
 	Item *fountain;
 	bool found;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Fill what?\n\r", ch );
@@ -897,7 +897,7 @@ DefineCommand ( cmd_pour )
 	Creature *vch = NULL;
 	int amount;
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' || argument[0] == '\0' ) {
 		writeBuffer ( "Pour what into what?\n\r", ch );
@@ -1008,7 +1008,7 @@ DefineCommand ( cmd_drink )
 	int amount;
 	int liquid;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		for ( obj = ch->in_room->contents; obj; obj = obj->next_content ) {
@@ -1114,7 +1114,7 @@ DefineCommand ( cmd_eat )
 	char arg[MAX_INPUT_LENGTH];
 	Item *obj;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Eat what?\n\r", ch );
 		return;
@@ -1516,7 +1516,7 @@ DefineCommand ( cmd_wear )
 	char arg[MAX_INPUT_LENGTH];
 	Item *obj;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Wear, wield, or hold what?\n\r", ch );
@@ -1551,7 +1551,7 @@ DefineCommand ( cmd_remove )
 	char arg[MAX_INPUT_LENGTH];
 	Item *obj;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Remove what?\n\r", ch );
@@ -1582,7 +1582,7 @@ DefineCommand ( cmd_sacrifice )
 	char buffer[100];
 
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' || !str_cmp ( arg, ch->name ) ) {
 		act ( "$n offers $mself to Mota, who graciously declines.",
@@ -1665,7 +1665,7 @@ DefineCommand ( cmd_quaff )
 	char arg[MAX_INPUT_LENGTH];
 	Item *obj;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Quaff what?\n\r", ch );
@@ -1706,8 +1706,8 @@ DefineCommand ( cmd_recite )
 	Item *scroll;
 	Item *obj;
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 
 	if ( ( scroll = get_obj_carry ( ch, arg1, ch ) ) == NULL ) {
 		writeBuffer ( "You do not have that scroll.\n\r", ch );
@@ -1841,7 +1841,7 @@ DefineCommand ( cmd_zap )
 	Item *wand;
 	Item *obj;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	if ( arg[0] == '\0' && ch->fighting == NULL ) {
 		writeBuffer ( "Zap whom or what?\n\r", ch );
 		return;
@@ -1916,8 +1916,8 @@ DefineCommand ( cmd_steal )
 	Item *obj;
 	int percent;
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 
 	if ( arg1[0] == '\0' || arg2[0] == '\0' ) {
 		writeBuffer ( "Steal what from whom?\n\r", ch );
@@ -2259,7 +2259,7 @@ DefineCommand ( cmd_buy )
 		if ( IS_NPC ( ch ) )
 		{ return; }
 
-		argument = one_argument ( argument, arg );
+		argument = ChopC ( argument, arg );
 
 		/* hack to make new thalos pets work */
 		if ( ch->in_room->vnum == 9621 )
@@ -2316,7 +2316,7 @@ DefineCommand ( cmd_buy )
 		SET_BIT ( pet->affected_by, AFF_CHARM );
 		pet->comm = COMM_NOTELL | COMM_NOSHOUT | COMM_NOCHANNELS;
 
-		argument = one_argument ( argument, arg );
+		argument = ChopC ( argument, arg );
 		if ( arg[0] != '\0' ) {
 			sprintf ( buf, "%s %s", pet->name, arg );
 			PURGE_DATA ( pet->name );
@@ -2493,7 +2493,7 @@ DefineCommand ( cmd_list )
 
 		if ( ( keeper = find_keeper ( ch ) ) == NULL )
 		{ return; }
-		one_argument ( argument, arg );
+		ChopC ( argument, arg );
 
 		found = FALSE;
 		for ( obj = keeper->carrying; obj; obj = obj->next_content ) {
@@ -2504,11 +2504,11 @@ DefineCommand ( cmd_list )
 						   ||  is_name ( arg, obj->name ) ) ) {
 				if ( !found ) {
 					found = TRUE;
-					writeBuffer ( "[Lv Price Qty] [str dex int wis con size  ]   Item\n\r", ch );
+					writeBuffer ( "[Lv Price Qty]  [ str dex int wis con size  ]   Item\n\r", ch );
 				}
 
 				if ( IS_OBJ_STAT ( obj, ITEM_INVENTORY ) )
-					snprintf ( buf, sizeof ( buf ), "[%2d %5d -- ] [%3d %3d %3d %3d %3d %5s] %s\n\r",
+					snprintf ( buf, sizeof ( buf ), "[%2d %5d -- ] [ %3d %3d %3d %3d %3d %7s] %s\n\r",
 							   obj->level, cost,
 							   obj->requirements[STR_REQ], obj->requirements[DEX_REQ], obj->requirements[INT_REQ],
 							   obj->requirements[WIS_REQ], obj->requirements[CON_REQ], size_table[ ( int ) obj->requirements[SIZ_REQ]].name,
@@ -2522,7 +2522,7 @@ DefineCommand ( cmd_list )
 						obj = obj->next_content;
 						count++;
 					}
-					snprintf ( buf, sizeof ( buf ), "[%2d %5d %2d ]  [%3d %3d %3d %3d %3d %5s] %s\n\r",
+					snprintf ( buf, sizeof ( buf ), "[%2d %5d %2d ]  [ %3d %3d %3d %3d %3d %7s] %s\n\r",
 							   obj->level, cost, count,
 							   obj->requirements[STR_REQ], obj->requirements[DEX_REQ], obj->requirements[INT_REQ],
 							   obj->requirements[WIS_REQ], obj->requirements[CON_REQ], size_table[ ( int ) obj->requirements[SIZ_REQ]].name,
@@ -2546,7 +2546,7 @@ DefineCommand ( cmd_sell )
 	Item *obj;
 	int cost, roll;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Sell what?\n\r", ch );
@@ -2629,7 +2629,7 @@ DefineCommand ( cmd_use )
 
 	if ( IS_NPC ( ch ) ) { return; }
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( ( arg == '\0' ) ) {
 		writeBuffer ( "Syntax:  use [item name]\n\r", ch );
@@ -2667,7 +2667,7 @@ DefineCommand ( cmd_value )
 	Item *obj;
 	int cost;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Value what?\n\r", ch );

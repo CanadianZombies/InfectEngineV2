@@ -53,7 +53,7 @@ DefineCommand ( cmd_scan )
 	Exit *pExit;
 	int door, depth;
 
-	argument = one_argument ( argument, arg1 );
+	argument = ChopC ( argument, arg1 );
 
 	if ( arg1[0] == '\0' ) {
 		act ( "$n looks all around.", ch, NULL, NULL, TO_ROOM );

@@ -646,7 +646,7 @@ void load_old_mob ( FILE *fp )
 		pMobIndex->sex			= fread_number ( fp );
 
 		/* compute the race BS */
-		one_argument ( pMobIndex->player_name, name );
+		ChopC ( pMobIndex->player_name, name );
 
 		if ( name[0] == '\0' || ( race =  race_lookup ( name ) ) == 0 ) {
 			/* fill in with blanks */
@@ -1507,7 +1507,7 @@ void reset_room ( RoomData *pRoom )
 
 				/* */
 
-				if ( pMobIndex->repop_percent > Math::instance().percent() ) {
+				if (  Math::instance().percent() > pMobIndex->repop_percent ) {
 					log_hd ( LOG_DEBUG, Format ( "MOBILE: %d didn't repop due to low repop percent", pMobIndex->vnum ) );
 					break;
 				}
@@ -1560,7 +1560,7 @@ void reset_room ( RoomData *pRoom )
 					break;
 				}
 
-				if ( pObjIndex->repop_percent > Math::instance().percent() ) {
+				if ( Math::instance().percent() > pObjIndex->repop_percent ) {
 					break;
 				}
 
@@ -1673,7 +1673,7 @@ void reset_room ( RoomData *pRoom )
 
 						}
 
-					if ( pObjIndex->repop_percent > Math::instance().percent() ) {
+					if ( Math::instance().percent() > pObjIndex->repop_percent ) {
 						log_hd ( LOG_DEBUG, Format ( "ITEM: %d didn't repop due to low repop percent", pMobIndex->vnum ) );
 						break;
 					}
@@ -1690,7 +1690,7 @@ void reset_room ( RoomData *pRoom )
 					else
 					{ limit = pReset->arg2; }
 
-					if ( pObjIndex->repop_percent > Math::instance().percent() ) {
+					if ( Math::instance().percent() > pObjIndex->repop_percent ) {
 						break;
 					}
 
@@ -2687,7 +2687,7 @@ char *fread_word ( FILE *fp )
  * Fread_strings are read-only and shared.
  * Ignoring string-space now
  */
-char *assign_string ( const char *str )
+char *assign_string_old ( const char *str )
 {
 	char *str_new;
 
@@ -2901,38 +2901,6 @@ DefineCommand ( cmd_dump )
 	fclose ( fp );
 	fpReserve = fopen ( NULL_FILE, "r" );
 }
-
-/*
- * Removes the tildes from a string.
- * Used for player-entered strings that go into disk files.
- */
-void smash_tilde ( const char *str )
-{
-	char *mstr = ( char * ) str;
-	for ( ; *mstr != '\0'; mstr++ ) {
-		if ( *mstr == '~' )
-		{ *mstr = '-'; }
-	}
-
-	str = mstr;
-	return;
-}
-
-/*
- * Returns an initial-capped string.
- */
-char *capitalize ( const char *str )
-{
-	static char strcap[MAX_STRING_LENGTH];
-	int i;
-
-	for ( i = 0; str[i] != '\0'; i++ )
-	{ strcap[i] = LOWER ( str[i] ); }
-	strcap[i] = '\0';
-	strcap[0] = UPPER ( strcap[0] );
-	return strcap;
-}
-
 
 /*
  * Append a string to a file.

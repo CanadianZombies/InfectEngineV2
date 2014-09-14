@@ -296,8 +296,8 @@ DefineCommand ( cmd_cast )
 	if ( IS_NPC ( ch ) && ch->desc == NULL )
 	{ return; }
 
-	target_name = one_argument ( argument, arg1 );
-	one_argument ( target_name, arg2 );
+	target_name = ChopC ( argument, arg1 );
+	ChopC ( target_name, arg2 );
 
 	if ( arg1[0] == '\0' ) {
 		writeBuffer ( "Cast which what where?\n\r", ch );
@@ -4065,7 +4065,7 @@ void spell_ventriloquate ( int sn, int level, Creature *ch, void *vo, int target
 	char speaker[MAX_INPUT_LENGTH];
 	Creature *vch;
 
-	target_name = one_argument ( target_name, speaker );
+	target_name = ChopC ( target_name, speaker );
 
 	sprintf ( buf1, "%s says '%s'.\n\r",              speaker, target_name );
 	sprintf ( buf2, "Someone makes %s say '%s'.\n\r", speaker, target_name );

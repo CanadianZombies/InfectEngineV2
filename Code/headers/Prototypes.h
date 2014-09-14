@@ -126,8 +126,8 @@ long	flag_convert	args ( ( char letter ) );
 void *	alloc_mem	args ( ( int sMem ) );
 void *	alloc_perm	args ( ( int sMem ) );
 void	recycle_mem	args ( ( void *pMem, int sMem ) );
-char *	assign_string		args ( ( const char *str ) );
-void	freeSharedString	args ( ( const char *pstr ) );
+char *	assign_string_old		args ( ( const char *str ) );
+char *assign_string ( const std::string &str );
 int	number_fuzzy	args ( ( int number ) );
 int	number_range	args ( ( int from, int to ) );
 int	number_percent	args ( ( void ) );
@@ -289,7 +289,7 @@ void	interpret	args ( ( Creature *ch, const char *argument ) );
 bool	is_number	args ( ( const char *arg ) );
 int	number_argument	args ( ( const char *argument, char *arg ) );
 int	mult_argument	args ( ( const char *argument, char *arg ) );
-char *	one_argument	args ( ( const char *argument, char *arg_first ) );
+char *	ChopC	args ( ( const char *argument, char *arg_first ) );
 
 /* magic.c */
 int	find_spell	args ( ( Creature *ch, const char *name ) );
@@ -374,11 +374,13 @@ void	update_handler	args ( ( void ) );
 void	msdp_update	args ( ( void ) );
 
 /* string.c */
-void	string_edit	args ( ( Creature *ch, char **pString ) );
-void    string_append   args ( ( Creature *ch, char **pString ) );
-char *	string_replace	args ( ( const char * orig, const char * old, const char * inew ) );
-void    string_add      args ( ( Creature *ch, char *argument ) );
-char *  format_string   args ( ( char *oldstring /*, bool fSpace */ ) );
+void EnterStringEditor ( Creature *cr, char **pEditString );
+char *ChopC ( const char *argument, char *first_arg );
+std::string ChopString ( const std::string &argument, std::string &first );
+char * string_replace ( const char * orig, const char * old, const char * inew );
+//char *	string_replace	args ( ( const char * orig, const char * old, const char * inew ) );
+void    StringEditorOptions      args ( ( Creature *ch, char *argument ) );
+char *  StringEditor_FormatString   args ( ( char *oldstring /*, bool fSpace */ ) );
 char *  first_arg       args ( ( char *argument, char *arg_first, bool fCase ) );
 char *	string_unpad	args ( ( char * argument ) );
 char *	string_proper	args ( ( char * argument ) );

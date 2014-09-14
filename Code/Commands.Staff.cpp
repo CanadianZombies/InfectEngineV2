@@ -167,8 +167,8 @@ DefineCommand ( cmd_guild )
 	Creature *victim;
 	int clan;
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 
 	if ( arg1[0] == '\0' || arg2[0] == '\0' ) {
 		writeBuffer ( "Syntax: guild <char> <cln name>\n\r", ch );
@@ -271,7 +271,7 @@ DefineCommand ( cmd_nochannels )
 	char arg[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
 	Creature *victim;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Nochannel whom?", ch );
@@ -451,7 +451,7 @@ DefineCommand ( cmd_deny )
 	char arg[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
 	Creature *victim;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Deny whom?\n\r", ch );
 		return;
@@ -492,7 +492,7 @@ DefineCommand ( cmd_disconnect )
 	Socket *d;
 	Creature *victim;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Disconnect whom?\n\r", ch );
 		return;
@@ -542,8 +542,8 @@ DefineCommand ( cmd_pardon )
 	char arg2[MAX_INPUT_LENGTH];
 	Creature *victim;
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 
 	if ( arg1[0] == '\0' || arg2[0] == '\0' ) {
 		writeBuffer ( "Syntax: pardon <character> <killer|thief>.\n\r", ch );
@@ -656,7 +656,7 @@ DefineCommand ( cmd_pecho )
 	char arg[MAX_INPUT_LENGTH];
 	Creature *victim;
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( argument[0] == '\0' || arg[0] == '\0' ) {
 		writeBuffer ( "Personal echo what?\n\r", ch );
@@ -706,8 +706,8 @@ DefineCommand ( cmd_transfer )
 	Socket *d;
 	Creature *victim;
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 
 	if ( arg1[0] == '\0' ) {
 		writeBuffer ( "Transfer whom (and where)?\n\r", ch );
@@ -778,7 +778,7 @@ DefineCommand ( cmd_at )
 	Item *on;
 	Creature *wch;
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' || argument[0] == '\0' ) {
 		writeBuffer ( "At where what?\n\r", ch );
@@ -933,7 +933,7 @@ DefineCommand ( cmd_stat )
 	RoomData *location;
 	Creature *victim;
 
-	string = one_argument ( argument, arg );
+	string = ChopC ( argument, arg );
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Syntax:\n\r", ch );
 		writeBuffer ( "  stat <name>\n\r", ch );
@@ -990,7 +990,7 @@ DefineCommand ( cmd_rstat )
 	Creature *rch;
 	int door;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	location = ( arg[0] == '\0' ) ? ch->in_room : find_location ( ch, arg );
 	if ( location == NULL ) {
 		writeBuffer ( "No such location.\n\r", ch );
@@ -1039,7 +1039,7 @@ DefineCommand ( cmd_rstat )
 	for ( rch = location->people; rch; rch = rch->next_in_room ) {
 		if ( can_see ( ch, rch ) ) {
 			writeBuffer ( " ", ch );
-			one_argument ( rch->name, buf );
+			ChopC ( rch->name, buf );
 			writeBuffer ( buf, ch );
 		}
 	}
@@ -1047,7 +1047,7 @@ DefineCommand ( cmd_rstat )
 	writeBuffer ( ".\n\rObjects:   ", ch );
 	for ( obj = location->contents; obj; obj = obj->next_content ) {
 		writeBuffer ( " ", ch );
-		one_argument ( obj->name, buf );
+		ChopC ( obj->name, buf );
 		writeBuffer ( buf, ch );
 	}
 	writeBuffer ( ".\n\r", ch );
@@ -1082,7 +1082,7 @@ DefineCommand ( cmd_ostat )
 	Affect *paf;
 	Item *obj;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Stat what?\n\r", ch );
@@ -1384,7 +1384,7 @@ DefineCommand ( cmd_mstat )
 	Affect *paf;
 	Creature *victim;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Stat whom?\n\r", ch );
@@ -1576,7 +1576,7 @@ DefineCommand ( cmd_vnum )
 	char arg[MAX_INPUT_LENGTH];
 	char *string;
 
-	string = one_argument ( argument, arg );
+	string = ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Syntax:\n\r", ch );
@@ -1617,7 +1617,7 @@ DefineCommand ( cmd_mfind )
 	bool fAll;
 	bool found;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Find whom?\n\r", ch );
 		return;
@@ -1664,7 +1664,7 @@ DefineCommand ( cmd_ofind )
 	bool fAll;
 	bool found;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Find what?\n\r", ch );
 		return;
@@ -1979,7 +1979,7 @@ DefineCommand ( cmd_snoop )
 	Creature *victim;
 	char buf[MAX_STRING_LENGTH];
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Snoop whom?\n\r", ch );
@@ -2048,7 +2048,7 @@ DefineCommand ( cmd_switch )
 	char arg[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
 	Creature *victim;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Switch into whom?\n\r", ch );
@@ -2173,7 +2173,7 @@ DefineCommand ( cmd_clone )
 	Creature *mob;
 	Item  *obj;
 
-	rest = one_argument ( argument, arg );
+	rest = ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Clone what?\n\r", ch );
@@ -2271,7 +2271,7 @@ DefineCommand ( cmd_load )
 {
 	char arg[MAX_INPUT_LENGTH];
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Syntax:\n\r", ch );
@@ -2301,7 +2301,7 @@ DefineCommand ( cmd_mload )
 	Creature *victim;
 	char buf[MAX_STRING_LENGTH];
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' || !is_number ( arg ) ) {
 		writeBuffer ( "Syntax: load mob <vnum>.\n\r", ch );
@@ -2331,8 +2331,8 @@ DefineCommand ( cmd_oload )
 	Item *obj;
 	int level;
 
-	argument = one_argument ( argument, arg1 );
-	one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	ChopC ( argument, arg2 );
 
 	if ( arg1[0] == '\0' || !is_number ( arg1 ) ) {
 		writeBuffer ( "Syntax: load obj <vnum> <level>.\n\r", ch );
@@ -2377,7 +2377,7 @@ DefineCommand ( cmd_purge )
 	Item *obj;
 	Socket *d;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		/* 'purge' */
@@ -2448,8 +2448,8 @@ DefineCommand ( cmd_advance )
 	int level;
 	int iLevel;
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 
 	if ( arg1[0] == '\0' || arg2[0] == '\0' || !is_number ( arg2 ) ) {
 		writeBuffer ( "Syntax: levelset <player> <level>.\n\r", ch );
@@ -2525,8 +2525,8 @@ DefineCommand ( cmd_trust )
 	Creature *victim;
 	int level;
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 
 	if ( arg1[0] == '\0' || arg2[0] == '\0' || !is_number ( arg2 ) ) {
 		writeBuffer ( "Syntax: trust <char> <level>.\n\r", ch );
@@ -2562,7 +2562,7 @@ DefineCommand ( cmd_restore )
 	Creature *vch;
 	Socket *d;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	if ( arg[0] == '\0' || !str_cmp ( arg, "room" ) ) {
 		/* cure room */
 
@@ -2642,7 +2642,7 @@ DefineCommand ( cmd_freeze )
 	char arg[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
 	Creature *victim;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Freeze whom?\n\r", ch );
@@ -2690,7 +2690,7 @@ DefineCommand ( cmd_log )
 	char arg[MAX_INPUT_LENGTH];
 	Creature *victim;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Log whom?\n\r", ch );
@@ -2739,7 +2739,7 @@ DefineCommand ( cmd_noemote )
 	char arg[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
 	Creature *victim;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Noemote whom?\n\r", ch );
@@ -2781,7 +2781,7 @@ DefineCommand ( cmd_noshout )
 	char arg[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
 	Creature *victim;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Noshout whom?\n\r", ch );
@@ -2827,7 +2827,7 @@ DefineCommand ( cmd_notell )
 	char arg[MAX_INPUT_LENGTH], buf[MAX_STRING_LENGTH];
 	Creature *victim;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Notell whom?", ch );
@@ -2919,7 +2919,7 @@ DefineCommand ( cmd_slookup )
 	char arg[MAX_INPUT_LENGTH];
 	int sn;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Lookup which skill or spell?\n\r", ch );
 		return;
@@ -2952,7 +2952,7 @@ DefineCommand ( cmd_set )
 {
 	char arg[MAX_INPUT_LENGTH];
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Syntax:\n\r", ch );
@@ -2997,9 +2997,9 @@ DefineCommand ( cmd_sset )
 	int sn;
 	bool fAll;
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
-	argument = one_argument ( argument, arg3 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
+	argument = ChopC ( argument, arg3 );
 
 	if ( arg1[0] == '\0' || arg2[0] == '\0' || arg3[0] == '\0' ) {
 		writeBuffer ( "Syntax:\n\r", ch );
@@ -3063,8 +3063,8 @@ DefineCommand ( cmd_mset )
 	int value;
 
 	smash_tilde ( argument );
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 	strcpy ( arg3, argument );
 
 	if ( arg1[0] == '\0' || arg2[0] == '\0' || arg3[0] == '\0' ) {
@@ -3413,9 +3413,9 @@ DefineCommand ( cmd_string )
 	Item *obj;
 
 	smash_tilde ( argument );
-	argument = one_argument ( argument, type );
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, type );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 	strcpy ( arg3, argument );
 
 	if ( type[0] == '\0' || arg1[0] == '\0' || arg2[0] == '\0' || arg3[0] == '\0' ) {
@@ -3521,7 +3521,7 @@ DefineCommand ( cmd_string )
 		if ( !str_prefix ( arg2, "ed" ) || !str_prefix ( arg2, "extended" ) ) {
 			DescriptionData *ed;
 
-			argument = one_argument ( argument, arg3 );
+			argument = ChopC ( argument, arg3 );
 			if ( argument == NULL ) {
 				writeBuffer ( "Syntax: oset <object> ed <keyword> <string>\n\r",
 							  ch );
@@ -3558,8 +3558,8 @@ DefineCommand ( cmd_oset )
 	int value;
 
 	smash_tilde ( argument );
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 	strcpy ( arg3, argument );
 
 	if ( arg1[0] == '\0' || arg2[0] == '\0' || arg3[0] == '\0' ) {
@@ -3657,8 +3657,8 @@ DefineCommand ( cmd_rset )
 	int value;
 
 	smash_tilde ( argument );
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 	strcpy ( arg3, argument );
 
 	if ( arg1[0] == '\0' || arg2[0] == '\0' || arg3[0] == '\0' ) {
@@ -3722,7 +3722,7 @@ DefineCommand ( cmd_sockets )
 	count	= 0;
 	buf[0]	= '\0';
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	for ( d = socket_list; d != NULL; d = d->next ) {
 		if ( d->character != NULL && can_see ( ch, d->character )
 				&& ( arg[0] == '\0' || is_name ( arg, d->character->name )
@@ -3759,14 +3759,14 @@ DefineCommand ( cmd_force )
 	char arg[MAX_INPUT_LENGTH];
 	char arg2[MAX_INPUT_LENGTH];
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' || argument[0] == '\0' ) {
 		writeBuffer ( "Force whom to do what?\n\r", ch );
 		return;
 	}
 
-	one_argument ( argument, arg2 );
+	ChopC ( argument, arg2 );
 
 	if ( !str_cmp ( arg2, "delete" ) || !str_prefix ( arg2, "mob" ) ) {
 		writeBuffer ( "That will NOT be done.\n\r", ch );
@@ -3877,7 +3877,7 @@ DefineCommand ( cmd_invis )
 	char arg[MAX_STRING_LENGTH];
 
 	/* RT code for taking a level argument */
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' )
 		/* take the default path */
@@ -3916,7 +3916,7 @@ DefineCommand ( cmd_incognito )
 	char arg[MAX_STRING_LENGTH];
 
 	/* RT code for taking a level argument */
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' )
 		/* take the default path */
@@ -4011,8 +4011,8 @@ DefineCommand ( cmd_makestaff )
 	char first[1000];
 	char second[1000];
 
-	argument = one_argument ( argument, first );
-	argument = one_argument ( argument, second );
+	argument = ChopC ( argument, first );
+	argument = ChopC ( argument, second );
 
 
 	if ( IS_NULLSTR ( first ) || IS_NULLSTR ( second ) || IS_NULLSTR ( argument ) ) {
@@ -4131,7 +4131,7 @@ DefineCommand ( cmd_sitrep )
 
 	char first[MAX_STRING_LENGTH];
 	char *second;
-	second = one_argument ( argument, first );
+	second = ChopC ( argument, first );
 	if ( second[0] == '\0' || second == NULL ) {
 		writeBuffer ( "Syntax: staffrep <flagname> <on|off>\n\r", cr );
 		return;

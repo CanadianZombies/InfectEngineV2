@@ -135,8 +135,8 @@ void ban_site ( Creature *ch, const char *argument, bool fPerm )
 	bool prefix = FALSE, suffix = FALSE;
 	int type;
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 
 	if ( arg1[0] == '\0' ) {
 		if ( ban_list == NULL ) {
@@ -250,7 +250,7 @@ DefineCommand ( cmd_allow )
 	Ban *prev;
 	Ban *curr;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Remove which site from the ban list?\n\r", ch );

@@ -265,7 +265,6 @@ static bool IsValidColour         ( const char *apArgument );
 
 static bool MatchString           ( const char *apFirst, const char *apSecond );
 static bool PrefixString          ( const char *apPart, const char *apWhole );
-static bool IsNumber              ( const char *apString );
 static char  *AllocString           ( const char *apString );
 
 /******************************************************************************
@@ -2215,7 +2214,7 @@ static void ExecuteMSDPPair ( descriptor_t *apDescriptor, const char *apVariable
 							while ( *apValue == ' ' )
 							{ ++apValue; }
 
-							if ( *apValue != '\0' && IsNumber ( apValue ) ) {
+							if ( *apValue != '\0' && is_number ( apValue ) ) {
 								int Value = atoi ( apValue );
 								if ( Value >= VariableNameTable[i].Min &&
 										Value <= VariableNameTable[i].Max ) {
@@ -2583,13 +2582,6 @@ static bool PrefixString ( const char *apPart, const char *apWhole )
 	while ( *apPart && tolower ( *apPart ) == tolower ( *apWhole ) )
 	{ ++apPart, ++apWhole; }
 	return ( !*apPart );
-}
-
-static bool IsNumber ( const char *apString )
-{
-	while ( *apString && isdigit ( *apString ) )
-	{ ++apString; }
-	return ( !*apString );
 }
 
 static char *AllocString ( const char *apString )

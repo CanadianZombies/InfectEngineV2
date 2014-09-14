@@ -2159,7 +2159,7 @@ DefineCommand ( cmd_bash )
 	Creature *victim;
 	int chance;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( ( chance = get_skill ( ch, gsn_bash ) ) == 0
 			||	 ( IS_NPC ( ch ) && !IS_SET ( ch->off_flags, OFF_BASH ) )
@@ -2279,7 +2279,7 @@ DefineCommand ( cmd_dirt )
 	Creature *victim;
 	int chance;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( ( chance = get_skill ( ch, gsn_dirt ) ) == 0
 			||   ( IS_NPC ( ch ) && !IS_SET ( ch->off_flags, OFF_KICK_DIRT ) )
@@ -2417,7 +2417,7 @@ DefineCommand ( cmd_trip )
 	Creature *victim;
 	int chance;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( ( chance = get_skill ( ch, gsn_trip ) ) == 0
 			||   ( IS_NPC ( ch ) && !IS_SET ( ch->off_flags, OFF_TRIP ) )
@@ -2520,7 +2520,7 @@ DefineCommand ( cmd_kill )
 	char arg[MAX_INPUT_LENGTH];
 	Creature *victim;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Kill whom?\n\r", ch );
@@ -2585,7 +2585,7 @@ DefineCommand ( cmd_murder )
 	char arg[MAX_INPUT_LENGTH];
 	Creature *victim;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Murder whom?\n\r", ch );
@@ -2644,7 +2644,7 @@ DefineCommand ( cmd_backstab )
 	Creature *victim;
 	Item *obj;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Backstab whom?\n\r", ch );
@@ -2766,7 +2766,7 @@ DefineCommand ( cmd_rescue )
 	Creature *victim;
 	Creature *fch;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Rescue whom?\n\r", ch );
 		return;
@@ -2957,7 +2957,7 @@ DefineCommand ( cmd_slay )
 	Creature *victim;
 	char arg[MAX_INPUT_LENGTH];
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Slay whom?\n\r", ch );
 		return;

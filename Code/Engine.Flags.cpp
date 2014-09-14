@@ -48,14 +48,14 @@ DefineCommand ( cmd_flag )
 	char type;
 	const struct flag_type *flag_table;
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
-	argument = one_argument ( argument, arg3 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
+	argument = ChopC ( argument, arg3 );
 
 	type = argument[0];
 
 	if ( type == '=' || type == '-' || type == '+' )
-	{ argument = one_argument ( argument, word ); }
+	{ argument = ChopC ( argument, word ); }
 
 	if ( arg1[0] == '\0' ) {
 		writeBuffer ( "Syntax:\n\r", ch );
@@ -172,7 +172,7 @@ DefineCommand ( cmd_flag )
 
 		/* mark the words */
 		for ( ; ; ) {
-			argument = one_argument ( argument, word );
+			argument = ChopC ( argument, word );
 
 			if ( word[0] == '\0' )
 			{ break; }

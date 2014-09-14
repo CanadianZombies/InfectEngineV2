@@ -710,7 +710,7 @@ DefineCommand ( cmd_tell )
 		return;
 	}
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' || argument[0] == '\0' ) {
 		writeBuffer ( "Tell whom what?\n\r", ch );
@@ -1328,7 +1328,7 @@ DefineCommand ( cmd_follow )
 	char arg[MAX_INPUT_LENGTH];
 	Creature *victim;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Follow whom?\n\r", ch );
@@ -1464,8 +1464,8 @@ DefineCommand ( cmd_order )
 	bool found;
 	bool fAll;
 
-	argument = one_argument ( argument, arg );
-	one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg );
+	ChopC ( argument, arg2 );
 
 	if ( !str_cmp ( arg2, "delete" ) || !str_cmp ( arg2, "mob" ) ) {
 		writeBuffer ( "That will NOT be done.\n\r", ch );
@@ -1532,7 +1532,7 @@ DefineCommand ( cmd_group )
 	char arg[MAX_INPUT_LENGTH];
 	Creature *victim;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		Creature *gch;
@@ -1614,8 +1614,8 @@ DefineCommand ( cmd_split )
 	int share_gold, share_silver;
 	int extra_gold, extra_silver;
 
-	argument = one_argument ( argument, arg1 );
-	one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	ChopC ( argument, arg2 );
 
 	if ( arg1[0] == '\0' ) {
 		writeBuffer ( "Split how much?\n\r", ch );

@@ -244,8 +244,8 @@ bool show_help ( Creature *ch, const char *argument )
 	char spell[MAX_INPUT_LENGTH];
 	int cnt;
 
-	argument = one_argument ( argument, arg );
-	one_argument ( argument, spell );
+	argument = ChopC ( argument, arg );
+	ChopC ( argument, spell );
 
 	/*
 	 * Display syntax.
@@ -325,7 +325,7 @@ REDIT ( redit_rlist )
 	int vnum;
 	int  col = 0;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	pArea = ch->in_room->area;
 	buf1 = new_buf();
@@ -367,7 +367,7 @@ REDIT ( redit_mlist )
 	int vnum;
 	int  col = 0;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Syntax:  mlist <all/name>\n\r", ch );
 		return FALSE;
@@ -418,7 +418,7 @@ REDIT ( redit_olist )
 	int vnum;
 	int  col = 0;
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 	if ( arg[0] == '\0' ) {
 		writeBuffer ( "Syntax:  olist <all/name/item_type>\n\r", ch );
 		return FALSE;
@@ -681,7 +681,7 @@ AEDIT ( aedit_file )
 
 	EDIT_AREA ( ch, pArea );
 
-	one_argument ( argument, file );	/* Forces Lowercase */
+	ChopC ( argument, file );	/* Forces Lowercase */
 
 	if ( argument[0] == '\0' ) {
 		writeBuffer ( "Syntax:  filename [$file]\n\r", ch );
@@ -724,7 +724,7 @@ AEDIT ( aedit_age )
 
 	EDIT_AREA ( ch, pArea );
 
-	one_argument ( argument, age );
+	ChopC ( argument, age );
 
 	if ( !is_number ( age ) || age[0] == '\0' ) {
 		writeBuffer ( "Syntax:  age [#xage]\n\r", ch );
@@ -746,7 +746,7 @@ AEDIT ( aedit_security )
 
 	EDIT_AREA ( ch, pArea );
 
-	one_argument ( argument, sec );
+	ChopC ( argument, sec );
 
 	if ( !is_number ( sec ) || sec[0] == '\0' ) {
 		writeBuffer ( "Syntax:  security [#xlevel]\n\r", ch );
@@ -780,7 +780,7 @@ AEDIT ( aedit_builder )
 
 	EDIT_AREA ( ch, pArea );
 
-	one_argument ( argument, name );
+	ChopC ( argument, name );
 
 	if ( name[0] == '\0' ) {
 		writeBuffer ( "Syntax:  builder [$name]  -toggles builder\n\r", ch );
@@ -835,8 +835,8 @@ AEDIT ( aedit_vnum )
 
 	EDIT_AREA ( ch, pArea );
 
-	argument = one_argument ( argument, lower );
-	one_argument ( argument, upper );
+	argument = ChopC ( argument, lower );
+	ChopC ( argument, upper );
 
 	if ( !is_number ( lower ) || lower[0] == '\0'
 			|| !is_number ( upper ) || upper[0] == '\0' ) {
@@ -886,7 +886,7 @@ AEDIT ( aedit_lvnum )
 
 	EDIT_AREA ( ch, pArea );
 
-	one_argument ( argument, lower );
+	ChopC ( argument, lower );
 
 	if ( !is_number ( lower ) || lower[0] == '\0' ) {
 		writeBuffer ( "Syntax:  min_vnum [#xlower]\n\r", ch );
@@ -925,7 +925,7 @@ AEDIT ( aedit_uvnum )
 
 	EDIT_AREA ( ch, pArea );
 
-	one_argument ( argument, upper );
+	ChopC ( argument, upper );
 
 	if ( !is_number ( upper ) || upper[0] == '\0' ) {
 		writeBuffer ( "Syntax:  max_vnum [#xupper]\n\r", ch );
@@ -1021,7 +1021,7 @@ REDIT ( redit_show )
 	strcat ( buf1, "Characters: [" );
 	fcnt = FALSE;
 	for ( rch = pRoom->people; rch; rch = rch->next_in_room ) {
-		one_argument ( rch->name, buf );
+		ChopC ( rch->name, buf );
 		strcat ( buf1, buf );
 		strcat ( buf1, " " );
 		fcnt = TRUE;
@@ -1039,7 +1039,7 @@ REDIT ( redit_show )
 	strcat ( buf1, "Objects:    [" );
 	fcnt = FALSE;
 	for ( obj = pRoom->contents; obj; obj = obj->next_content ) {
-		one_argument ( obj->name, buf );
+		ChopC ( obj->name, buf );
 		strcat ( buf1, buf );
 		strcat ( buf1, " " );
 		fcnt = TRUE;
@@ -1077,7 +1077,7 @@ REDIT ( redit_show )
 			state = ( char * ) flag_string ( exit_flags, pexit->exit_info );
 			strcat ( buf1, " Exit flags: [" );
 			for ( ; ; ) {
-				state = one_argument ( state, word );
+				state = ChopC ( state, word );
 
 				if ( word[0] == '\0' ) {
 					int end;
@@ -1163,8 +1163,8 @@ bool change_exit ( Creature *ch, const char *argument, int door )
 	/*
 	 * Now parse the arguments.
 	 */
-	argument = one_argument ( argument, command );
-	one_argument ( argument, arg );
+	argument = ChopC ( argument, command );
+	ChopC ( argument, arg );
 
 	if ( command[0] == '\0' && argument[0] == '\0' ) {	/* Move command. */
 		move_char ( ch, door, TRUE );                   /* ROM OLC */
@@ -1348,7 +1348,7 @@ bool change_exit ( Creature *ch, const char *argument, int door )
 				return FALSE;
 			}
 
-			string_append ( ch, &pRoom->exit[door]->description );
+			EnterStringEditor ( ch, &pRoom->exit[door]->description );
 			return TRUE;
 		}
 
@@ -1430,8 +1430,8 @@ REDIT ( redit_ed )
 
 	EDIT_ROOM ( ch, pRoom );
 
-	argument = one_argument ( argument, command );
-	one_argument ( argument, keyword );
+	argument = ChopC ( argument, command );
+	ChopC ( argument, keyword );
 
 	if ( command[0] == '\0' || keyword[0] == '\0' ) {
 		writeBuffer ( "Syntax:  ed add [keyword]\n\r", ch );
@@ -1453,7 +1453,7 @@ REDIT ( redit_ed )
 		ed->next		=   pRoom->extra_descr;
 		pRoom->extra_descr	=   ed;
 
-		string_append ( ch, &ed->description );
+		EnterStringEditor ( ch, &ed->description );
 
 		return TRUE;
 	}
@@ -1475,7 +1475,7 @@ REDIT ( redit_ed )
 			return FALSE;
 		}
 
-		string_append ( ch, &ed->description );
+		EnterStringEditor ( ch, &ed->description );
 
 		return TRUE;
 	}
@@ -1528,7 +1528,7 @@ REDIT ( redit_ed )
 			return FALSE;
 		}
 
-		ed->description = format_string ( ed->description );
+		ed->description = StringEditor_FormatString ( ed->description );
 
 		writeBuffer ( "Extra description formatted.\n\r", ch );
 		return TRUE;
@@ -1617,7 +1617,7 @@ REDIT ( redit_desc )
 	EDIT_ROOM ( ch, pRoom );
 
 	if ( argument[0] == '\0' ) {
-		string_append ( ch, &pRoom->description );
+		EnterStringEditor ( ch, &pRoom->description );
 		return TRUE;
 	}
 
@@ -1675,7 +1675,7 @@ REDIT ( redit_format )
 
 	EDIT_ROOM ( ch, pRoom );
 
-	pRoom->description = format_string ( pRoom->description );
+	pRoom->description = StringEditor_FormatString ( pRoom->description );
 
 	writeBuffer ( "String formatted.\n\r", ch );
 	return TRUE;
@@ -1696,8 +1696,8 @@ REDIT ( redit_mreset )
 
 	EDIT_ROOM ( ch, pRoom );
 
-	argument = one_argument ( argument, arg );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg );
+	argument = ChopC ( argument, arg2 );
 
 	if ( arg[0] == '\0' || !is_number ( arg ) ) {
 		writeBuffer ( "Syntax:  mreset <vnum> <max #x> <mix #x>\n\r", ch );
@@ -1830,8 +1830,8 @@ REDIT ( redit_oreset )
 
 	EDIT_ROOM ( ch, pRoom );
 
-	argument = one_argument ( argument, arg1 );
-	argument = one_argument ( argument, arg2 );
+	argument = ChopC ( argument, arg1 );
+	argument = ChopC ( argument, arg2 );
 
 	if ( arg1[0] == '\0' || !is_number ( arg1 ) ) {
 		writeBuffer ( "Syntax:  oreset <vnum> <args>\n\r", ch );
@@ -2732,8 +2732,8 @@ OEDIT ( oedit_addaffect )
 
 	EDIT_OBJ ( ch, pObj );
 
-	argument = one_argument ( argument, loc );
-	one_argument ( argument, mod );
+	argument = ChopC ( argument, loc );
+	ChopC ( argument, mod );
 
 	if ( loc[0] == '\0' || mod[0] == '\0' || !is_number ( mod ) ) {
 		writeBuffer ( "Syntax:  addaffect [location] [#xmod]\n\r", ch );
@@ -2773,10 +2773,10 @@ OEDIT ( oedit_addapply )
 
 	EDIT_OBJ ( ch, pObj );
 
-	argument = one_argument ( argument, type );
-	argument = one_argument ( argument, loc );
-	argument = one_argument ( argument, mod );
-	one_argument ( argument, bvector );
+	argument = ChopC ( argument, type );
+	argument = ChopC ( argument, loc );
+	argument = ChopC ( argument, mod );
+	ChopC ( argument, bvector );
 
 	if ( type[0] == '\0' || ( typ = flag_value ( apply_types, type ) ) == NO_FLAG ) {
 		writeBuffer ( "Invalid apply type. Valid apply types are:\n\r", ch );
@@ -2832,7 +2832,7 @@ OEDIT ( oedit_delaffect )
 
 	EDIT_OBJ ( ch, pObj );
 
-	one_argument ( argument, affect );
+	ChopC ( argument, affect );
 
 	if ( !is_number ( affect ) || affect[0] == '\0' ) {
 		writeBuffer ( "Syntax:  delaffect [#xaffect]\n\r", ch );
@@ -3111,8 +3111,8 @@ OEDIT ( oedit_ed )
 
 	EDIT_OBJ ( ch, pObj );
 
-	argument = one_argument ( argument, command );
-	one_argument ( argument, keyword );
+	argument = ChopC ( argument, command );
+	ChopC ( argument, keyword );
 
 	if ( command[0] == '\0' ) {
 		writeBuffer ( "Syntax:  ed add [keyword]\n\r", ch );
@@ -3133,7 +3133,7 @@ OEDIT ( oedit_ed )
 		ed->next            =   pObj->extra_descr;
 		pObj->extra_descr   =   ed;
 
-		string_append ( ch, &ed->description );
+		EnterStringEditor ( ch, &ed->description );
 
 		return TRUE;
 	}
@@ -3154,7 +3154,7 @@ OEDIT ( oedit_ed )
 			return FALSE;
 		}
 
-		string_append ( ch, &ed->description );
+		EnterStringEditor ( ch, &ed->description );
 
 		return TRUE;
 	}
@@ -3206,7 +3206,7 @@ OEDIT ( oedit_ed )
 			return FALSE;
 		}
 
-		ed->description = format_string ( ed->description );
+		ed->description = StringEditor_FormatString ( ed->description );
 
 		writeBuffer ( "Extra description formatted.\n\r", ch );
 		return TRUE;
@@ -3215,9 +3215,6 @@ OEDIT ( oedit_ed )
 	oedit_ed ( ch, "" );
 	return FALSE;
 }
-
-
-
 
 
 /* ROM object functions : */
@@ -3897,7 +3894,7 @@ MEDIT ( medit_desc )
 	EDIT_MOB ( ch, pMob );
 
 	if ( argument[0] == '\0' ) {
-		string_append ( ch, &pMob->description );
+		EnterStringEditor ( ch, &pMob->description );
 		return TRUE;
 	}
 
@@ -3974,8 +3971,8 @@ MEDIT ( medit_shop )
 	char command[MAX_INPUT_LENGTH];
 	char arg1[MAX_INPUT_LENGTH];
 
-	argument = one_argument ( argument, command );
-	argument = one_argument ( argument, arg1 );
+	argument = ChopC ( argument, command );
+	argument = ChopC ( argument, arg1 );
 
 	EDIT_MOB ( ch, pMob );
 
@@ -4200,23 +4197,23 @@ MEDIT ( medit_ac )
 		if ( argument[0] == '\0' )  { break; }
 
 		EDIT_MOB ( ch, pMob );
-		argument = one_argument ( argument, arg );
+		argument = ChopC ( argument, arg );
 
 		if ( !is_number ( arg ) )  { break; }
 		pierce = atoi ( arg );
-		argument = one_argument ( argument, arg );
+		argument = ChopC ( argument, arg );
 
 		if ( arg[0] != '\0' ) {
 			if ( !is_number ( arg ) )  { break; }
 			bash = atoi ( arg );
-			argument = one_argument ( argument, arg );
+			argument = ChopC ( argument, arg );
 		} else
 		{ bash = pMob->ac[AC_BASH]; }
 
 		if ( arg[0] != '\0' ) {
 			if ( !is_number ( arg ) )  { break; }
 			slash = atoi ( arg );
-			argument = one_argument ( argument, arg );
+			argument = ChopC ( argument, arg );
 		} else
 		{ slash = pMob->ac[AC_SLASH]; }
 
@@ -4269,7 +4266,7 @@ MEDIT ( medit_random )
 		EDIT_MOB ( ch, pMob );
 
 		if ( ( value = flag_value ( random_eq_flags, argument ) ) != NO_FLAG ) {
-			pMob->parts ^= value;
+			pMob->random ^= value;
 			writeBuffer ( "Random Item Type toggled.\n\r", ch );
 			return TRUE;
 		}
@@ -4597,7 +4594,7 @@ MEDIT ( medit_position )
 	char arg[MAX_INPUT_LENGTH];
 	int value;
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	switch ( arg[0] ) {
 		default:
@@ -4745,7 +4742,7 @@ MEDIT ( medit_group )
 		return TRUE;
 	}
 
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( !strcmp ( arg, "show" ) && is_number ( argument ) ) {
 		if ( atoi ( argument ) == 0 ) {
@@ -4809,9 +4806,9 @@ MEDIT ( medit_addmprog )
 	char num[MAX_STRING_LENGTH];
 
 	EDIT_MOB ( ch, pMob );
-	argument = one_argument ( argument, num );
-	argument = one_argument ( argument, trigger );
-	argument = one_argument ( argument, phrase );
+	argument = ChopC ( argument, num );
+	argument = ChopC ( argument, trigger );
+	argument = ChopC ( argument, phrase );
 
 	if ( !is_number ( num ) || trigger[0] == '\0' || phrase[0] == '\0' ) {
 		writeBuffer ( "Syntax:   addmprog [vnum] [trigger] [phrase]\n\r", ch );
@@ -4853,7 +4850,7 @@ MEDIT ( medit_delmprog )
 
 	EDIT_MOB ( ch, pMob );
 
-	one_argument ( argument, mprog );
+	ChopC ( argument, mprog );
 	if ( !is_number ( mprog ) || mprog[0] == '\0' ) {
 		writeBuffer ( "Syntax:  delmprog [#mprog]\n\r", ch );
 		return FALSE;

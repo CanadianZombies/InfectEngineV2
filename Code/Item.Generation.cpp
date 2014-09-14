@@ -1453,7 +1453,7 @@ Item * create_random ( Creature * mob, const char *argument )
 	int light_vnum = OBJ_VNUM_RANDOM_LIGHT;
 	int weapon_vnum = OBJ_VNUM_RANDOM_WEAPON;
 
-	target_name = one_argument ( argument, arg );
+	target_name = ChopC ( argument, arg );
 
 	if ( !str_cmp ( arg, "light" ) ) {
 		ret_item = make_armor ( obj, mob, light_vnum, ITEM_LIGHT, ITEM_TAKE, light_types[Math::instance().range ( 0, MAX_LIGHT )] );
@@ -1496,7 +1496,7 @@ DefineCommand ( cmd_randomitem )
 	}
 
 	char arg[MIL];
-	argument = one_argument ( argument, arg );
+	argument = ChopC ( argument, arg );
 
 	if ( IS_NULLSTR ( argument ) ) {
 		cmd_function ( ch, cmd_randomitem, "" );

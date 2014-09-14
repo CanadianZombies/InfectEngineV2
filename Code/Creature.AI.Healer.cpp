@@ -56,7 +56,7 @@ DefineCommand ( cmd_heal )
 		return;
 	}
 
-	one_argument ( argument, arg );
+	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
 		/* display price list */
