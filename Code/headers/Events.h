@@ -169,5 +169,10 @@ class TwitterEvent : public Event
 		DEFINE_EVENT ( TwitterEvent );
 };
 
+class TimeEvent : public Event
+{
+		DEFINE_EVENT ( TimeEvent );
+};
+
 #endif
 

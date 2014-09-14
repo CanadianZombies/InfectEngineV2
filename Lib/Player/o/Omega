@@ -1,7 +1,7 @@
 #PLAYER
 Name Omega~
 Id   1407161012
-LogO 1410542979
+LogO 1410670350
 Vers 5
 Prom <%hhp %mm %vmv> ~
 Race human~
@@ -9,7 +9,7 @@ Sex  1
 Cla  3
 Levl 60
 Sec  9
-Plyd 3305357
+Plyd 3432650
 Not  0 0 0 0 0
 Scro 28
 Room 2
@@ -27,11 +27,11 @@ Prac 5
 Trai 3
 Save  -1
 Alig  0
-Hit   12
+Hit   13
 Dam   9
-ACs -183 -183 -183 37
+ACs -190 -190 -190 36
 Attr 25 25 25 25 25
-AMod 11 0 0 0 2
+AMod 12 0 0 0 2
 Pass OmLtTe29L9oWQ~
 Titl  boobs are great!~
 Pnts 40
@@ -106,8 +106,8 @@ Wear 6
 Lev  60
 Cost 144000
 Val  19 19 19 4 0
-Affc 'reserved'   1  60  -1   1   1          0
 Affc 'reserved'   1  60  -1   1  19          0
+Affc 'reserved'   1  60  -1   1   1          0
 End
 
 #O
@@ -127,8 +127,8 @@ Wear 10
 Lev  60
 Cost 129000
 Val  17 17 17 4 0
-Affc 'reserved'   1  60  -1   1   1          0
 Affc 'reserved'   1  60  -1   1  19          0
+Affc 'reserved'   1  60  -1   1   1          0
 End
 
 #O
@@ -148,8 +148,8 @@ Wear 9
 Lev  60
 Cost 113000
 Val  15 15 15 3 0
-Affc 'reserved'   1  60  -1   1   1          0
 Affc 'reserved'   1  60  -1   1  19          0
+Affc 'reserved'   1  60  -1   1   1          0
 End
 
 #O
@@ -169,8 +169,8 @@ Wear 7
 Lev  60
 Cost 100000
 Val  13 13 13 3 0
-Affc 'reserved'   1  60  -1   1   1          0
 Affc 'reserved'   1  60  -1   1  19          0
+Affc 'reserved'   1  60  -1   1   1          0
 End
 
 #O
@@ -190,8 +190,8 @@ Wear 8
 Lev  60
 Cost 146000
 Val  19 19 19 4 0
-Affc 'reserved'   1  60  -1   1   1          0
 Affc 'reserved'   1  60  -1   1  19          0
+Affc 'reserved'   1  60  -1   1   1          0
 End
 
 #O
@@ -211,8 +211,8 @@ Wear 13
 Lev  60
 Cost 117000
 Val  15 15 15 3 0
-Affc 'reserved'   1  60  -1   1   1          0
 Affc 'reserved'   1  60  -1   1  19          0
+Affc 'reserved'   1  60  -1   1   1          0
 End
 
 #O
@@ -232,10 +232,10 @@ Wear 12
 Lev  60
 Cost 230000
 Val  30 30 30 7 0
-Affc 'reserved'   1  60  -1   1   5          0
-Affc 'reserved'   1  60  -1   1   1          0
-Affc 'reserved'   1  60  -1   3  18          0
 Affc 'reserved'   1  60  -1   2  19          0
+Affc 'reserved'   1  60  -1   3  18          0
+Affc 'reserved'   1  60  -1   1   1          0
+Affc 'reserved'   1  60  -1   1   5          0
 End
 
 #O
@@ -255,8 +255,8 @@ Wear 14
 Lev  60
 Cost 59000
 Val  7 7 7 1 0
-Affc 'reserved'   1  60  -1   1   1          0
 Affc 'reserved'   1  60  -1   1  18          0
+Affc 'reserved'   1  60  -1   1   1          0
 End
 
 #O
@@ -296,10 +296,10 @@ Wear 5
 Lev  60
 Cost 172000
 Val  22 22 22 5 0
-Affc 'reserved'   1  60  -1   1   5          0
-Affc 'reserved'   1  60  -1   1   1          0
-Affc 'reserved'   1  60  -1   2  18          0
 Affc 'reserved'   1  60  -1   1  19          0
+Affc 'reserved'   1  60  -1   2  18          0
+Affc 'reserved'   1  60  -1   1   1          0
+Affc 'reserved'   1  60  -1   1   5          0
 End
 
 #O
@@ -319,8 +319,8 @@ Wear 15
 Lev  60
 Cost 75000
 Val  10 10 10 2 0
-Affc 'reserved'   1  60  -1   1  18          0
 Affc 'reserved'   1  60  -1   1   1          0
+Affc 'reserved'   1  60  -1   1  18          0
 End
 
 #O
@@ -340,8 +340,261 @@ Wear 3
 Lev  60
 Cost 64000
 Val  8 8 8 2 0
-Affc 'reserved'   1  60  -1   1   1          0
 Affc 'reserved'   1  60  -1   1  18          0
+Affc 'reserved'   1  60  -1   1   1          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name adamantanium choker~
+ShD  a adamantanium choker~
+Desc A adamantanium choker is lying here.~
+ExtF 64
+WeaF 5
+Wt   224
+Cond 96
+Mat Z
+Requirements 2 0 0 0 0 0
+Wear 4
+Lev  60
+Cost 56000
+Val  7 7 7 1 0
+Affc 'reserved'   1  60  -1   1  18          0
+Affc 'reserved'   1  60  -1   1   1          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name obsidian girdle~
+ShD  a obsidian girdle~
+Desc A obsidian girdle is lying here.~
+ExtF 96
+WeaF 2049
+Wt   205
+Cond 70
+Mat R
+Requirements 2 19 0 0 0 0
+Wear -1
+Lev  35
+Cost 7175
+Val  6 6 12 0 0
+Affc 'reserved'   1  35  -1   1  19          0
+Affc 'reserved'   1  35  -1   1  18          0
+Affc 'reserved'   1  35  -1  -3  24          0
+End
+
+#O
+Vnum 48
+Enchanted
+Nest 0
+Name bone light~
+ShD  a bone light~
+Desc A bone light has been left here.~
+ExtF 67
+WeaF 1
+Wt   138
+Cond 91
+Mat D
+Requirements 2 0 0 0 0 0
+Wear -1
+Lev  46
+Cost 6348
+Val  0 0 50 0 0
+Affc 'reserved'   1  46  -1   3   1          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name onyx sallet~
+ShD  a onyx sallet~
+Desc A onyx sallet has been dropped here.~
+ExtF 1088
+WeaF 17
+Wt   146
+Cond 86
+Mat S
+Requirements 2 0 0 0 0 22
+Wear -1
+Lev  38
+Cost 5548
+Val  4 4 4 2 0
+Affc 'reserved'   1  38  -1   2  18          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name silver culet~
+ShD  a silver culet~
+Desc A silver culet has been dropped here.~
+ExtF 66
+WeaF 9
+Wt   117
+Cond 71
+Mat V
+Requirements 2 0 0 0 0 0
+Wear -1
+Lev  43
+Cost 40950
+Val  3 3 3 1 0
+Affc 'reserved'   1  43  -1   3  19          0
+Affc 'reserved'   1  43  -1  -6  24          0
+End
+
+#O
+Vnum 47
+Nest 0
+Name bronze vambraces~
+ShD  a bronze vambraces~
+Desc A bronze vambraces has been left here.~
+WeaF 257
+Wt   211
+Cond 62
+Mat M
+Requirements 2 0 0 0 0 0
+Wear -1
+Lev  23
+Cost 4853
+Val  7 7 7 3 0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name gold gauntlets~
+ShD  a gold gauntlets~
+Desc A gold gauntlets is lying here.~
+ExtF 65
+WeaF 129
+Wt   63
+Cond 84
+Mat W
+Requirements 2 17 0 0 0 0
+Wear -1
+Lev  47
+Cost 28350
+Val  2 2 2 1 0
+Affc 'reserved'   1  47  -1   3  18          0
+Affc 'reserved'   1  47  -1  -3  24          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name platinum tassets~
+ShD  a platinum tassets~
+Desc A platinum tassets is lying here.~
+ExtF 65
+WeaF 33
+Wt   222
+Cond 93
+Mat X
+Requirements 2 0 0 0 0 0
+Wear -1
+Lev  48
+Cost 33300
+Val  7 7 7 21 0
+Affc 'reserved'   1  48  -1  -5  24          0
+End
+
+#O
+Vnum 47
+Nest 0
+Name copper shoes~
+ShD  a copper shoes~
+Desc A copper shoes is lying here.~
+WeaF 65
+Wt   223
+Cond 45
+Mat K
+Requirements 2 0 0 0 0 0
+Wear -1
+Lev  19
+Cost 4237
+Val  7 7 7 3 0
+End
+
+#O
+Vnum 47
+Nest 0
+Name brass sash~
+ShD  a brass sash~
+Desc A brass sash is lying here.~
+WeaF 2049
+Wt   292
+Cond 78
+Mat L
+Requirements 2 0 0 0 0 0
+Wear -1
+Lev  21
+Cost 6132
+Val  9 9 9 4 0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name onyx spaulders~
+ShD  a onyx spaulders~
+Desc A onyx spaulders is lying here.~
+ExtF 1088
+WeaF 1025
+Wt   195
+Cond 87
+Mat S
+Requirements 2 0 0 0 0 22
+Wear -1
+Lev  37
+Cost 7215
+Val  6 6 6 3 0
+Affc 'reserved'   1  37  -1   2  18          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name opal shackle~
+ShD  a opal shackle~
+Desc A opal shackle has been dropped here.~
+ExtF 576
+WeaF 4097
+Wt   78
+Cond 81
+Mat T
+Requirements 2 0 17 0 0 0
+Wear -1
+Lev  40
+Cost 3120
+Val  2 2 2 1 0
+Affc 'reserved'   1  40  -1   1  19          0
+End
+
+#O
+Vnum 47
+Nest 0
+Name bronze locket~
+ShD  a bronze locket~
+Desc A bronze locket has been left here.~
+WeaF 5
+Wt   131
+Cond 37
+Mat M
+Requirements 2 0 0 0 0 0
+Wear -1
+Lev  23
+Cost 3013
+Val  4 4 4 2 0
 End
 
 #END

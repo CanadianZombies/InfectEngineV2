@@ -43,8 +43,9 @@ void EventManager::BootupEvents()
 {
 	// -- Event manager is now being tested with a repeating event every 15 minutes (60*15)
 	// -- if all works out, this will announce the time every 15 minutes to all connected sockets.
-	addEvent ( new TwitterEvent(), true, EV_MINUTE + ( EV_SECOND * 30 ) );		// Every 1 and a half minutes
-	addEvent ( new ExpEvent(), true, EV_MINUTE );					// Every minute
+	addEvent ( new TwitterEvent(), true, EV_MINUTE + ( EV_SECOND * 30 ) );		// -- Every 1 and a half minutes
+	addEvent ( new ExpEvent(), true, EV_MINUTE );															// -- Every minute
+	addEvent ( new TimeEvent(), true, ( EV_MINUTE * 15 ) ); 									// -- every 15 minutes, 60 minutes = 2 hours in-game.
 	return;
 }
 
@@ -505,3 +506,64 @@ void ExpEvent::Execute ( void )
 	return;
 }
 
+
+void announceDayLight();
+void announceNightFall();
+
+void TimeEvent::Execute()
+{
+
+	char buf[MAX_STRING_LENGTH];
+	Socket *d;
+
+	switch ( ++time_info.hour ) {
+		case  5:
+			weather_info.sunlight = SUN_LIGHT;
+			strcat ( buf, "The day has begun.\n\r" );
+			announceDayLight();
+			break;
+
+		case  6:
+			weather_info.sunlight = SUN_RISE;
+			strcat ( buf, "The sun rises in the east.\n\r" );
+			break;
+
+		case 19:
+			weather_info.sunlight = SUN_SET;
+			strcat ( buf, "The sun slowly disappears in the west.\n\r" );
+			break;
+
+		case 20:
+			weather_info.sunlight = SUN_DARK;
+			strcat ( buf, "The night has begun.\n\r" );
+			announceNightFall();
+			break;
+
+		case 24:
+			time_info.hour = 0;
+			time_info.day++;
+			break;
+	}
+
+	if ( time_info.day   >= 35 ) {
+		time_info.day = 0;
+		time_info.month++;
+	}
+
+	if ( time_info.month >= 17 ) {
+		time_info.month = 0;
+		time_info.year++;
+	}
+
+
+	if ( buf[0] != '\0' ) {
+		for ( d = socket_list; d != NULL; d = d->next ) {
+			if ( d->connected == CON_PLAYING
+					&&   IS_OUTSIDE ( d->character )
+					&&   IS_AWAKE ( d->character ) )
+			{ writeBuffer ( buf, d->character ); }
+		}
+	}
+
+	return;
+}

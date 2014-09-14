@@ -555,45 +555,6 @@ void weather_update ( void )
 	int diff;
 	buf[0] = '\0';
 
-	switch ( ++time_info.hour ) {
-		case  5:
-			weather_info.sunlight = SUN_LIGHT;
-			strcat ( buf, "The day has begun.\n\r" );
-			announceDayLight();
-			break;
-
-		case  6:
-			weather_info.sunlight = SUN_RISE;
-			strcat ( buf, "The sun rises in the east.\n\r" );
-			break;
-
-		case 19:
-			weather_info.sunlight = SUN_SET;
-			strcat ( buf, "The sun slowly disappears in the west.\n\r" );
-			break;
-
-		case 20:
-			weather_info.sunlight = SUN_DARK;
-			strcat ( buf, "The night has begun.\n\r" );
-			announceNightFall();
-			break;
-
-		case 24:
-			time_info.hour = 0;
-			time_info.day++;
-			break;
-	}
-
-	if ( time_info.day   >= 35 ) {
-		time_info.day = 0;
-		time_info.month++;
-	}
-
-	if ( time_info.month >= 17 ) {
-		time_info.month = 0;
-		time_info.year++;
-	}
-
 	/*
 	 * Weather change.
 	 */
@@ -1244,9 +1205,9 @@ void update_handler ( void )
 	static  int     pulse_mobile;
 	static  int     pulse_violence;
 	static  int     pulse_point;
-	static  int	pulse_music;
+	static  int			pulse_music;
 	static  int     pulse_msdp;
-	static  int     pulse_weather;
+	static  int     pulse_weather = PULSE_TICK / 2;
 
 	if ( --pulse_msdp <= 0 ) {
 		// log_hd(LOG_DEBUG, "MSDP update"); // -- disabled due to spam
@@ -1281,8 +1242,8 @@ void update_handler ( void )
 
 	/// -- temporary solution until we create an event to handle this.
 	if ( --pulse_weather <= 0 ) {
-		log_hd ( LOG_DEBUG, Format ( "pulse_weather = %d; weather_update will be initiated.", PULSE_TICK * 2 ) );
-		pulse_weather = PULSE_TICK * 2;
+		log_hd ( LOG_DEBUG, Format ( "pulse_weather = %d; weather_update will be initiated.", PULSE_TICK ) );
+		pulse_weather = PULSE_TICK;
 		weather_update();
 	}
 

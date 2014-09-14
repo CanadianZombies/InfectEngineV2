@@ -739,11 +739,12 @@ void obj_level ( Item *obj, Creature * mob )
 
 	/*Base that level on something.*/
 	if ( mob->pIndexData && mob->pIndexData->pShop ) {
-		obj->level = Math::instance().range ( 1, MAX_LEVEL );
+		// -- shops will generate mob->level/3 to mob->level+3 gear, with a max of max_level ofcourse.
+		obj->level = Math::instance().range ( 1, UMAX ( Math::instance().fuzzy ( mob->level + 3 ), MAX_LEVEL ) );
 		obj->requirements[SIZ_REQ] = Math::instance().range ( 0, SIZE_MAGIC ); // -- random sizes
 	} else {
-		// -- generate the level in accordance with the level
-		obj->level = Math::instance().range ( Math::instance().fuzzy ( mob->level / 3 ), UMAX ( Math::instance().fuzzy ( mob->level ), MAX_LEVEL ) );
+		// -- generate the level in accordance with the level (+1 mob level to ensure no crash if mob level == 0)
+		obj->level = Math::instance().range ( Math::instance().fuzzy ( ( mob->level + 1 ) / 3 ), UMAX ( Math::instance().fuzzy ( mob->level + 2 ), MAX_LEVEL ) );
 		obj->requirements[SIZ_REQ] = mob->size; // -- make it fit!
 	}
 
@@ -912,10 +913,11 @@ void set_obj_stats ( Item *obj, Creature * mob, bool special )
 		case ITEM_WEAPON:
 			/*The number is based on a max level weapon of 60 to keep
 			weapons in check. 60 / 4 = 7.5*/
-			number = obj->level / 8 + .5;
+			number = ( obj->level / 6 + .5 ); // -- bigger damage now old was /8
 
 			if ( number <= 1 )
 			{ number = 1; }
+
 			/*the type is based on the weapon, smallest to biggest damage.*/
 			/*A level 60 dagger/exotic/whip will do an average of 20 damage*/
 			if ( obj->value[0] == WEAPON_DAGGER
