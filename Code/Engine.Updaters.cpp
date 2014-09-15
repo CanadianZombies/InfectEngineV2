@@ -370,7 +370,7 @@ void mobile_update ( void )
 	Creature *ch_next;
 	Exit *pexit;
 	int door;
-	static int mLastDay = 0;
+	static int mLastDay;
 
 	time_t cd = time ( 0 );
 	struct tm *t = localtime ( &cd );
@@ -391,47 +391,58 @@ void mobile_update ( void )
 			{ continue; }
 		}
 
-		if ( ch->pIndexData->pShop != NULL ) { /* give him some gold */
-			if ( ( ch->gold * 100 + ch->silver ) < ch->pIndexData->wealth ) {
+		if ( ch->pIndexData && ch->pIndexData->pShop != NULL ) { /* give him some gold */
+			if ( mLastDay != t->tm_yday ) {
+				mLastDay = t->tm_yday; // -- assign this now so it doesn't effect every single NPC
+
 				log_hd ( LOG_DEBUG, Format ( "Restoring SHOP wealth's for shop owner: %s.", ch->name ) );
-				if ( mLastDay != t->tm_yday ) {
-					mLastDay = t->tm_yday; // -- assign this now so it doesn't effect every single NPC
-					// -- to follow.
 
-					// -- notify our twitter that we have replenished our stocks.
-					tweetStatement ( Format ( "Vendors have replenished their stock!" ) );
-					// -- insert check here to add random items to certain shops and strip old ones
-					Creature *ps, *ps_n;
+				// -- notify our twitter that we have replenished our stocks.
+				tweetStatement ( Format ( "Vendors have replenished their stock!" ) );
+				announce ( Format ( "Vendors have replenished their stock!" ) );
 
-					log_hd ( LOG_BASIC, "Replenishing shops with Random Gear" );
-					// -- search for shops to update and outfit with new random items
-					// -- if so inclined.
-					for ( ps = char_list; ps; ps = ps_n ) {
-						ps_n = ps->next;
-						if ( IS_NPC ( ps ) ) {
-							if ( ps->pIndexData && ps->pIndexData->pShop ) {
-								Item *i, *in;
-								for ( i = ps->carrying; i; i = in ) {
-									in = i->next_content;
+				// -- insert check here to add random items to certain shops and strip old ones
+				Creature *ps, *ps_n;
 
-									// -- remove old random items.
-									if ( i->pIndexData && ( i->pIndexData->vnum == OBJ_VNUM_RANDOM_LIGHT ||
-															i->pIndexData->vnum == OBJ_VNUM_RANDOM_ARMOR ||
-															i->pIndexData->vnum == OBJ_VNUM_RANDOM_WEAPON ) ) {
-										obj_from_char ( i );
-										extract_obj ( i );
-									}
+				log_hd ( LOG_BASIC, "Replenishing shops with Random Gear" );
+				// -- search for shops to update and outfit with new random items
+				// -- if so inclined.
+				for ( ps = char_list; ps; ps = ps_n ) {
+					ps_n = ps->next;
+					if ( IS_NPC ( ps ) ) {
+						if ( ps->pIndexData && ps->pIndexData->pShop ) {
+							Item *i, *in;
+							for ( i = ps->carrying; i; i = in ) {
+								in = i->next_content;
+
+								// -- remove old random items.
+								if ( i->pIndexData && ( i->pIndexData->vnum == OBJ_VNUM_RANDOM_LIGHT ||
+														i->pIndexData->vnum == OBJ_VNUM_RANDOM_ARMOR ||
+														i->pIndexData->vnum == OBJ_VNUM_RANDOM_WEAPON ) ) {
+									obj_from_char ( i );
+									extract_obj ( i );
 								}
-								// -- generate new random items for this NPC
-								random_shop ( ps );
-							} // -- end shop-check on ps
-						} // -- end npc check on ps
-					} // -- end ps for-loop
-				} // -- end mLastDay check
-				ch->gold += ch->pIndexData->wealth * Math::instance().range ( 1, 20 ) / 5000000;
-				ch->silver += ch->pIndexData->wealth * Math::instance().range ( 1, 20 ) / 50000;
-			}
-		}
+							}
+
+							if ( ch->pIndexData->wealth == 0 ) {
+								ch->silver = 0;
+								ch->gold   = 0;
+							} else {
+								long wealth;
+								// -- generate a new batch of money.
+								wealth = Math::instance().range ( ch->pIndexData->wealth / 2, 3 * ch->pIndexData->wealth / 2 );
+								ch->gold = Math::instance().range ( wealth / 200, wealth / 100 );
+								ch->silver = wealth - ( ch->gold * 100 );
+							}
+
+
+							// -- generate new random items for this NPC
+							random_shop ( ps );
+						} // -- end shop-check on ps
+					} // -- end npc check on ps
+				} // -- end ps for-loop
+			} // -- end mLastDay check
+		} // -- end pShop check
 
 		/*
 		 * Check triggers only if mobile still in default position
@@ -580,7 +591,7 @@ void weather_update ( void )
 		case SKY_CLOUDLESS:
 			if ( weather_info.mmhg <  990
 					|| ( weather_info.mmhg < 1010 && Math::instance().bits ( 2 ) == 0 ) ) {
-				strcat ( buf, "The sky is getting cloudy.\n\r" );
+				strcpy ( buf, "The sky is getting cloudy.\n\r" );
 				weather_info.sky = SKY_CLOUDY;
 			}
 			break;
@@ -588,7 +599,7 @@ void weather_update ( void )
 		case SKY_CLOUDY:
 			if ( weather_info.mmhg <  970
 					|| ( weather_info.mmhg <  990 && Math::instance().bits ( 2 ) == 0 ) ) {
-				strcat ( buf, "It starts to rain.\n\r" );
+				strcpy ( buf, "It starts to rain.\n\r" );
 				weather_info.sky = SKY_RAINING;
 			}
 
@@ -600,13 +611,13 @@ void weather_update ( void )
 
 		case SKY_RAINING:
 			if ( weather_info.mmhg <  970 && Math::instance().bits ( 2 ) == 0 ) {
-				strcat ( buf, "Lightning flashes in the sky.\n\r" );
+				strcpy ( buf, "Lightning flashes in the sky.\n\r" );
 				weather_info.sky = SKY_LIGHTNING;
 			}
 
 			if ( weather_info.mmhg > 1030
 					|| ( weather_info.mmhg > 1010 && Math::instance().bits ( 2 ) == 0 ) ) {
-				strcat ( buf, "The rain stopped.\n\r" );
+				strcpy ( buf, "The rain stopped.\n\r" );
 				weather_info.sky = SKY_CLOUDY;
 			}
 			break;
@@ -614,7 +625,7 @@ void weather_update ( void )
 		case SKY_LIGHTNING:
 			if ( weather_info.mmhg > 1010
 					|| ( weather_info.mmhg >  990 && Math::instance().bits ( 2 ) == 0 ) ) {
-				strcat ( buf, "The lightning has stopped.\n\r" );
+				strcpy ( buf, "The lightning has stopped.\n\r" );
 				weather_info.sky = SKY_RAINING;
 				break;
 			}
@@ -972,16 +983,15 @@ void obj_update ( void )
 				if ( obj->in_obj ) /* in another object */
 				{ obj_to_obj ( t_obj, obj->in_obj ); }
 
-				else if ( obj->carried_by ) /* carried */
-					if ( obj->wear_loc == WEAR_FLOAT )
+				else if ( obj->carried_by ) { /* carried */
+					if ( obj->wear_loc == WEAR_FLOAT ) {
 						if ( obj->carried_by->in_room == NULL )
 						{ extract_obj ( t_obj ); }
 						else
 						{ obj_to_room ( t_obj, obj->carried_by->in_room ); }
-					else
+					} else
 					{ obj_to_char ( t_obj, obj->carried_by ); }
-
-				else if ( obj->in_room == NULL ) /* destroy it */
+				} else if ( obj->in_room == NULL ) /* destroy it */
 				{ extract_obj ( t_obj ); }
 
 				else /* to a room */

@@ -512,30 +512,31 @@ void announceNightFall();
 
 void TimeEvent::Execute()
 {
-
 	char buf[MAX_STRING_LENGTH];
+	buf[0] = '\0';
+
 	Socket *d;
 
 	switch ( ++time_info.hour ) {
 		case  5:
 			weather_info.sunlight = SUN_LIGHT;
-			strcat ( buf, "The day has begun.\n\r" );
+			strcpy ( buf, "The day has begun.\n\r" );
 			announceDayLight();
 			break;
 
 		case  6:
 			weather_info.sunlight = SUN_RISE;
-			strcat ( buf, "The sun rises in the east.\n\r" );
+			strcpy ( buf, "The sun rises in the east.\n\r" );
 			break;
 
 		case 19:
 			weather_info.sunlight = SUN_SET;
-			strcat ( buf, "The sun slowly disappears in the west.\n\r" );
+			strcpy ( buf, "The sun slowly disappears in the west.\n\r" );
 			break;
 
 		case 20:
 			weather_info.sunlight = SUN_DARK;
-			strcat ( buf, "The night has begun.\n\r" );
+			strcpy ( buf, "The night has begun.\r\n" );
 			announceNightFall();
 			break;
 

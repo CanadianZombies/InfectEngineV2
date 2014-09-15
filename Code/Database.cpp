@@ -2225,6 +2225,10 @@ void clone_object ( Item *parent, Item *clone )
 	{ return; }
 
 	/* start fixing the object */
+	PURGE_DATA ( clone->name );
+	PURGE_DATA ( clone->short_descr );
+	PURGE_DATA ( clone->description );
+
 	clone->name 	= assign_string ( parent->name );
 	clone->short_descr 	= assign_string ( parent->short_descr );
 	clone->description	= assign_string ( parent->description );
@@ -2258,6 +2262,7 @@ void clone_object ( Item *parent, Item *clone )
 		ed_new                  = new_extra_descr();
 		ed_new->keyword    	= assign_string ( ed->keyword );
 		ed_new->description     = assign_string ( ed->description );
+
 		ed_new->next           	= clone->extra_descr;
 		clone->extra_descr  	= ed_new;
 	}

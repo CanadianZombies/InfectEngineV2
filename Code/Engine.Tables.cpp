@@ -77,7 +77,7 @@ const struct size_type size_table[] = {
 	{	"large"		},
 	{	"huge"	 	},
 	{	"giant" 	},
-	{	"magic"		},
+	{	"any"		},
 	{	NULL		}
 };
 

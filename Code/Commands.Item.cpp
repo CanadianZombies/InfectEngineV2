@@ -2431,9 +2431,11 @@ DefineCommand ( cmd_buy )
 		keeper->silver += cost * number - ( cost * number / 100 ) * 100;
 
 		for ( count = 0; count < number; count++ ) {
-			if ( IS_SET ( obj->extra_flags, ITEM_INVENTORY ) )
-			{ t_obj = create_object ( obj->pIndexData, obj->level ); }
-			else {
+			if ( IS_SET ( obj->extra_flags, ITEM_INVENTORY ) ) {
+				// -- make sure the clone is handled properly!
+				t_obj = create_object ( obj->pIndexData, obj->level );
+				clone_object ( obj, t_obj );
+			} else {
 				t_obj = obj;
 				obj = obj->next_content;
 				obj_from_char ( t_obj );
@@ -2504,7 +2506,7 @@ DefineCommand ( cmd_list )
 						   ||  is_name ( arg, obj->name ) ) ) {
 				if ( !found ) {
 					found = TRUE;
-					writeBuffer ( "[Lv Price Qty]  [ str dex int wis con size  ]   Item\n\r", ch );
+					writeBuffer ( "[Lv Price Qty]  [ str dex int wis con   size ]   Item\n\r", ch );
 				}
 
 				if ( IS_OBJ_STAT ( obj, ITEM_INVENTORY ) )
@@ -2522,10 +2524,14 @@ DefineCommand ( cmd_list )
 						obj = obj->next_content;
 						count++;
 					}
+					int size = obj->requirements[SIZ_REQ];
+					if ( size < 0 || size > SIZE_MAGIC ) {
+						log_hd ( LOG_ERROR, Format ( "Item with broken size: %s | %d", obj->name, size ) );
+					}
 					snprintf ( buf, sizeof ( buf ), "[%2d %5d %2d ]  [ %3d %3d %3d %3d %3d %7s] %s\n\r",
 							   obj->level, cost, count,
 							   obj->requirements[STR_REQ], obj->requirements[DEX_REQ], obj->requirements[INT_REQ],
-							   obj->requirements[WIS_REQ], obj->requirements[CON_REQ], size_table[ ( int ) obj->requirements[SIZ_REQ]].name,
+							   obj->requirements[WIS_REQ], obj->requirements[CON_REQ], size_table[size].name ? size_table[size].name : "Unknown",
 							   obj->short_descr );
 				}
 				writeBuffer ( buf, ch );

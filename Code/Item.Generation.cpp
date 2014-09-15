@@ -731,6 +731,11 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 			obj->requirements[x] = Math::instance().range ( 0, 15 );
 		}
 	}
+
+	// -- correcting glitches
+	if ( obj->requirements[SIZ_REQ] > SIZE_MAGIC ) {
+		obj->requirements[SIZ_REQ] = SIZE_MAGIC;
+	}
 }
 
 void obj_level ( Item *obj, Creature * mob )
@@ -740,12 +745,22 @@ void obj_level ( Item *obj, Creature * mob )
 	/*Base that level on something.*/
 	if ( mob->pIndexData && mob->pIndexData->pShop ) {
 		// -- shops will generate mob->level/3 to mob->level+3 gear, with a max of max_level ofcourse.
-		obj->level = Math::instance().range ( 1, UMAX ( Math::instance().fuzzy ( mob->level + 3 ), MAX_LEVEL ) );
+		obj->level = Math::instance().range ( 1, Math::instance().fuzzy ( mob->level + 3 ) );
 		obj->requirements[SIZ_REQ] = Math::instance().range ( 0, SIZE_MAGIC ); // -- random sizes
+
+		// -- correct any broken sizes
+		if ( obj->level < 1 ) { obj->level = 1; }
+		if ( obj->level > MAX_LEVEL ) { obj->level = MAX_LEVEL; }
+		if ( obj->requirements[SIZ_REQ] < 0 ) { obj->requirements[SIZ_REQ] = 0; }
+		if ( obj->requirements[SIZ_REQ] > SIZE_MAGIC ) { obj->requirements[SIZ_REQ] = SIZE_MAGIC; }
 	} else {
 		// -- generate the level in accordance with the level (+1 mob level to ensure no crash if mob level == 0)
 		obj->level = Math::instance().range ( Math::instance().fuzzy ( ( mob->level + 1 ) / 3 ), UMAX ( Math::instance().fuzzy ( mob->level + 2 ), MAX_LEVEL ) );
 		obj->requirements[SIZ_REQ] = mob->size; // -- make it fit!
+		if ( obj->level < 1 ) { obj->level = 1; }
+		if ( obj->level > MAX_LEVEL ) { obj->level = MAX_LEVEL; }
+		if ( obj->requirements[SIZ_REQ] < 0 ) { obj->requirements[SIZ_REQ] = 0; }
+		if ( obj->requirements[SIZ_REQ] > SIZE_MAGIC ) { obj->requirements[SIZ_REQ] = SIZE_MAGIC; }
 	}
 
 	/*I added this because I noticed decent 'looking' weapons
@@ -1206,12 +1221,36 @@ Item * make_armor ( Item* obj, Creature* mob, int random_vnum, int item_type, in
 		remove_material ( obj, obj->material_flags );
 		set_material ( obj, MAT_GLASS );
 	}
+
+	// -- correcting glitches properly
+	if ( obj->requirements[SIZ_REQ] > SIZE_MAGIC ) {
+		obj->requirements[SIZ_REQ] = SIZE_MAGIC;
+	}
+	if ( obj->requirements[SIZ_REQ] < 0 ) { obj->requirements[SIZ_REQ] = 0; }
+
 	/*shop keepers need to have items in the inventory to sell them,
 	i made a call later to item_inventory the items so that they
 	dont sell out after a couple purchases. This way every reboot
 	your shoppy has new and different stuff to sell all the time*/
 	if ( mob->pIndexData && !mob->pIndexData->pShop )
 	{ wear_obj ( mob, obj, FALSE ); }
+
+	if ( mob->pIndexData && mob->pIndexData->pShop ) {
+		// -- chance to make it have infinate copies.
+		if ( Math::instance().percent() == Math::instance().range ( 0, 100 ) ) {
+			SET_BIT ( obj->extra_flags, ITEM_INVENTORY );
+		}
+		if ( Math::instance().range ( 0, 1 ) == Math::instance().range ( 0, 5 ) ) {
+			int clones = Math::instance().range ( 1, 5 );
+
+			// -- generate multiple copies of the items.
+			for ( int x = 0; x < clones; x++ ) {
+				Item *t_clone = create_object ( obj->pIndexData, obj->level );
+				clone_object ( obj, t_clone );
+				obj_to_char ( t_clone, mob );
+			}
+		}
+	}
 	return obj;
 }
 
@@ -1430,8 +1469,32 @@ Item * make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb
 
 	set_material_based_flags ( obj, mob );
 
+	// -- correcting glitches properly
+	if ( obj->requirements[SIZ_REQ] > SIZE_MAGIC ) {
+		obj->requirements[SIZ_REQ] = SIZE_MAGIC;
+	}
+	if ( obj->requirements[SIZ_REQ] < 0 ) {
+		obj->requirements[SIZ_REQ] = 0;
+	}
+
 	if ( mob->pIndexData && !mob->pIndexData->pShop )
 	{ wear_obj ( mob, obj, FALSE ); }
+
+	if ( mob->pIndexData && mob->pIndexData->pShop ) {
+		// -- chance to make it have infinate copies.
+		if ( Math::instance().percent() == Math::instance().range ( 0, 100 ) ) {
+			SET_BIT ( obj->extra_flags, ITEM_INVENTORY );
+		} else if ( Math::instance().range ( 0, 1 ) == Math::instance().range ( 0, 5 ) ) {
+			int clones = Math::instance().range ( 1, 5 );
+
+			// -- generate multiple copies of the items.
+			for ( int x = 0; x < clones; x++ ) {
+				Item *t_clone = create_object ( obj->pIndexData, obj->level );
+				clone_object ( obj, t_clone );
+				obj_to_char ( t_clone, mob );
+			}
+		}
+	}
 
 	return obj;
 }
