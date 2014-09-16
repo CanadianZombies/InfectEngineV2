@@ -617,6 +617,12 @@ void obj_cost ( Item *obj, Creature * mob )
 	else
 	{ cost = cost * obj->level; }
 
+
+	// -- MAT_PRACTICE gets its own cost value!  Cheap weapons!
+	if ( IS_SET ( obj->material_flags, MAT_PRACTICE ) )
+	{
+		cost = Math::instance().range(5, Math::instance().fuzzy((10+obj->level));
+	}
 	obj->cost = cost;
 }
 
@@ -650,6 +656,11 @@ void obj_condition ( Item *obj )
 			|| IS_SET ( obj->material_flags, MAT_MITHRIL ) )
 	{ condition = 100; }
 
+	// -- practice gear is always cheaply made!
+	if (IS_SET(obj->material_flags, MAT_PRACTICE) ){
+		condition = 50;	
+	}
+
 	obj->condition = condition;
 }
 
@@ -661,7 +672,9 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 	}
 
 	if ( IS_SET ( obj->material_flags, MAT_SILVER ) )
-	{ SET_BIT ( obj->extra_flags, ITEM_HUM ); }
+	{ SET_BIT ( obj->extra_flags, ITEM_HUM ); 
+		obj->requirements[CON_REQ] = Math::instance().range(13,15);	
+	}
 
 	if ( IS_SET ( obj->material_flags, MAT_GOLD ) ) {
 		SET_BIT ( obj->extra_flags, ITEM_GLOW );
@@ -728,7 +741,25 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 		if ( !IS_SET ( obj->extra_flags, ITEM_MELT_DROP ) )
 		{ SET_BIT ( obj->extra_flags, ITEM_MELT_DROP ); }
 		for ( int x = 0; x < MAX_REQ; x++ ) {
-			obj->requirements[x] = Math::instance().range ( 0, 15 );
+			obj->requirements[x] = Math::instance().range ( 1, 15 );
+		}
+	}
+
+	// -- lowbie gear assigned 1-5 for stats
+	if(IS_SET(obj->material_flags, MAT_PRACTICE)) {
+		for ( int x = 0; x < MAX_REQ; x++ ) {
+			obj->requirements[x] = Math::instance().range ( 1, 5 );
+		}
+		// -- practice gear is ALWAYS one size fits all!
+		obj->requirements[SIZ_REQ] = SIZE_MAGIC;
+	} else {
+		// -- add some requirements if we haven't already set them (possibly)
+		if(Math::instance().range(0,3) == Math::instance().range(0,3)) {
+			int size_req = obj->requierments[SIZ_REQ];
+			for(int x = 0; x < MAX_REQ; x++) {
+				if(x == SIZ_REQ) { break; }	// -- do not adjust size if previously set!
+				obj->requirements[x] += Math::instance().range(0,3);	
+			}	
 		}
 	}
 
@@ -740,15 +771,13 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 
 void obj_level ( Item *obj, Creature * mob )
 {
-	int level;
-
 	/*Base that level on something.*/
 	if ( mob->pIndexData && mob->pIndexData->pShop ) {
 		// -- shops will generate mob->level/3 to mob->level+3 gear, with a max of max_level ofcourse.
 		obj->level = Math::instance().range ( 1, Math::instance().fuzzy ( mob->level + 3 ) );
 		obj->requirements[SIZ_REQ] = Math::instance().range ( 0, SIZE_MAGIC ); // -- random sizes
 
-		// -- correct any broken sizes
+		// -- correct any broken sizes / levels
 		if ( obj->level < 1 ) { obj->level = 1; }
 		if ( obj->level > MAX_LEVEL ) { obj->level = MAX_LEVEL; }
 		if ( obj->requirements[SIZ_REQ] < 0 ) { obj->requirements[SIZ_REQ] = 0; }
@@ -762,12 +791,6 @@ void obj_level ( Item *obj, Creature * mob )
 		if ( obj->requirements[SIZ_REQ] < 0 ) { obj->requirements[SIZ_REQ] = 0; }
 		if ( obj->requirements[SIZ_REQ] > SIZE_MAGIC ) { obj->requirements[SIZ_REQ] = SIZE_MAGIC; }
 	}
-
-	/*I added this because I noticed decent 'looking' weapons
-	at low levels doing really bad damage, and not worth even
-	looking at. A level 10 weapon is good stuff at a low lvl.*/
-	if ( obj->item_type == ITEM_WIELD && level < 10 )
-	{ level = 10; }
 }
 
 void obj_weight ( Item *obj )
@@ -1485,7 +1508,7 @@ Item * make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb
 		if ( Math::instance().percent() == Math::instance().range ( 0, 100 ) ) {
 			SET_BIT ( obj->extra_flags, ITEM_INVENTORY );
 		} else if ( Math::instance().range ( 0, 1 ) == Math::instance().range ( 0, 5 ) ) {
-			int clones = Math::instance().range ( 1, 5 );
+			int clones = Math::instance().range ( 1, Math::instance().fuzzy(5) );
 
 			// -- generate multiple copies of the items.
 			for ( int x = 0; x < clones; x++ ) {

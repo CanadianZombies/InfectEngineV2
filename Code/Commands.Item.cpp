@@ -2510,7 +2510,7 @@ DefineCommand ( cmd_list )
 				}
 
 				if ( IS_OBJ_STAT ( obj, ITEM_INVENTORY ) )
-					snprintf ( buf, sizeof ( buf ), "[%2d %5d -- ] [ %3d %3d %3d %3d %3d %7s] %s\n\r",
+					snprintf ( buf, sizeof ( buf ), "[%2d %5d -- ]  [ %3d %3d %3d %3d %3d %7s] %s\n\r",
 							   obj->level, cost,
 							   obj->requirements[STR_REQ], obj->requirements[DEX_REQ], obj->requirements[INT_REQ],
 							   obj->requirements[WIS_REQ], obj->requirements[CON_REQ], size_table[ ( int ) obj->requirements[SIZ_REQ]].name,
