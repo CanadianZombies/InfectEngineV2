@@ -1,7 +1,7 @@
 #PLAYER
 Name Omega~
 Id   1407161012
-LogO 1410839398
+LogO 1410875455
 Vers 5
 Prom <%hhp %mm %vmv> ~
 Race human~
@@ -9,13 +9,13 @@ Sex  1
 Cla  3
 Levl 60
 Sec  9
-Plyd 3593834
+Plyd 3629891
 Not  0 0 0 0 0
 Scro 28
 Room 3
 HMV  20 20 100 100 100 100
-Gold 0
-Silv 0
+Gold 99992
+Silv 72
 Exp  1000
 ExpPool 0
 Act  CDGQ
@@ -710,6 +710,42 @@ Wear -1
 Lev  23
 Cost 3013
 Val  4 4 4 2 0
+End
+
+#O
+Vnum 47
+Nest 0
+Name wood battle helm~
+ShD  a wood battle helm~
+Desc A wood battle helm has been left here.~
+ExtF 1056770
+WeaF 17
+Wt   104
+Cond 20
+Mat 0
+Requirements 1 9 14 12 4 10
+Wear -1
+Lev  6
+Cost 366
+Val  3 3 3 1 0
+End
+
+#O
+Vnum 47
+Nest 0
+Name wood battle helm~
+ShD  a wood battle helm~
+Desc A wood battle helm has been left here.~
+ExtF 1056770
+WeaF 17
+Wt   104
+Cond 20
+Mat 0
+Requirements 1 9 14 12 4 10
+Wear -1
+Lev  6
+Cost 362
+Val  3 3 3 1 0
 End
 
 #END

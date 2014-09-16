@@ -1304,7 +1304,7 @@ Item * make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb
 			obj->value[0] = WEAPON_SWORD;
 			obj->value[3] = 3;
 
-			switch ( Math::instance().range ( 0, 7 ) ) {
+			switch ( Math::instance().range ( 0, 10 ) ) {
 				case ( 0 ) :
 					sprintf ( weapon, "shortsword" );
 					break;
@@ -1329,6 +1329,15 @@ Item * make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb
 				case ( 7 ) :
 					sprintf ( weapon, "greatsword" );
 					obj->value[4] = WEAPON_TWO_HANDS;
+					break;
+				case ( 8 ) :
+					sprintf (weapon, "sabre");
+					break;
+				case ( 9 ) :
+					sprintf (weapon, "dao sabre");
+					break;
+				case ( 10 ) :
+					sprintf (weapon, "takoba");
 					break;
 			}
 			break;
@@ -1451,7 +1460,41 @@ Item * make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb
 			obj->value[0] = WEAPON_WHIP;
 			obj->value[3] = 4;
 
-			sprintf ( weapon, "whip" );
+			switch(Math::instance().range(0,10)) {
+				case ( 0 ):
+					sprintf ( weapon, "whip" );
+					break;
+				case ( 1 ):
+					sprintf ( weapon, "bullwhip" );
+					break;
+				case ( 2 ):
+					sprintf ( weapon, "blacksnake whip");
+					break;
+				case ( 3 ):
+					sprintf ( weapon, "cat o' nine tails");
+					break;
+				case ( 4 ):
+					sprintf ( weapon, "weaves");
+					break;
+				case ( 5 ):
+					sprintf ( weapon, "romal reins" );
+					break;
+				case ( 6 ):
+					sprintf ( weapon, "yard whip" );
+					break;
+				case ( 7 ):
+					sprintf ( weapon, "chop" );
+					break;
+				case ( 8 ):
+					sprintf ( weapon, "qilinbian" );
+					break;
+				case ( 9 ):
+					sprintf ( weapon, "sjambok");
+					break;
+				case ( 10 ):
+					sprintf ( weapon, "jiujiebian");
+					break;
+			}
 			break;
 	}
 
