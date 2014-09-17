@@ -101,6 +101,8 @@
 #define OBJ_VNUM_RANDOM_ARMOR 47
 #define OBJ_VNUM_RANDOM_LIGHT 48
 #define OBJ_VNUM_RANDOM_WEAPON 49
+#define OBJ_VNUM_TREASURE_CHEST 50
+#define OBJ_VNUM_GEM 51
 
 /*
  * Well known room virtual numbers.

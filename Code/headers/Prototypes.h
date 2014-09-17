@@ -128,14 +128,6 @@ void *	alloc_perm	args ( ( int sMem ) );
 void	recycle_mem	args ( ( void *pMem, int sMem ) );
 char *	assign_string_old		args ( ( const char *str ) );
 char *assign_string ( const std::string &str );
-int	number_fuzzy	args ( ( int number ) );
-int	number_range	args ( ( int from, int to ) );
-int	number_percent	args ( ( void ) );
-int	number_door	args ( ( void ) );
-int	number_bits	args ( ( int width ) );
-long     number_mm       args ( ( void ) );
-int	dice		args ( ( int number, int size ) );
-int	interpolate	args ( ( int level, int value_00, int value_32 ) );
 void	smash_tilde	args ( ( const char *str ) );
 bool	str_cmp		args ( ( const char *astr, const char *bstr ) );
 bool	str_prefix	args ( ( const char *astr, const char *bstr ) );
@@ -522,6 +514,7 @@ int	flag_lookup	args ( ( const char *, const struct flag_type * ) );
 HELP_DATA * help_lookup	args ( ( const char * ) );
 HELP_AREA * had_lookup	args ( ( const char * ) );
 
+void    make_treasure_chest args ( ( Creature *ch, Creature *victim, int level ) );
 
 
 // -- Commands

@@ -2131,6 +2131,9 @@ Item *create_object ( ItemData *pObjIndex, int level )
 			{ obj->value[2] = -1; }
 			break;
 
+
+		case ITEM_TREASURECHEST:
+		case ITEM_LOCKPICK:
 		case ITEM_FURNITURE:
 		case ITEM_TRASH:
 		case ITEM_CONTAINER:

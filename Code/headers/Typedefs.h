@@ -78,7 +78,7 @@ typedef unsigned char			bool;
 /*
  * Structure types.
  */
-typedef struct	affect_data		Affect;
+typedef struct	Affect		Affect;
 typedef struct	area_data		Zone;
 typedef struct	ban_data		Ban;
 typedef struct 	buf_type	 	BUFFER;
@@ -92,7 +92,7 @@ typedef struct	kill_data		KILL_DATA;
 typedef struct	mem_data		MobMemory;
 typedef struct	mob_index_data		NPCData;
 typedef struct	note_data		NOTE_DATA;
-typedef struct	obj_data		Item;
+typedef struct	Item		Item;
 typedef struct	obj_index_data		ItemData;
 typedef struct	pc_data			PlayerData;
 typedef struct  gen_data		GEN_DATA;

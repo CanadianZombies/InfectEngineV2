@@ -60,6 +60,18 @@ void	set_fighting	args ( ( Creature *ch, Creature *victim ) );
 void	disarm		args ( ( Creature *ch, Creature *victim ) );
 bool new_damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type, bool show, int where );
 
+// -- we will add more races here later on when we
+// -- are done rebuilding our race_table
+bool is_human ( Creature *ch )
+{
+	if ( !IS_NPC ( ch ) ) { return FALSE; }
+
+	if ( ch->race == race_lookup ( "human" ) )
+	{ return TRUE; }
+
+	return FALSE;
+}
+
 
 const struct wear_data wear_info[] = {
 	//      partname	ispart	%hit	wear flag	item flag 		required part	AC?	superceded by
@@ -949,6 +961,14 @@ bool new_damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type,
 		}
 
 		raw_kill ( victim );
+		int chance = Math::instance().percent();
+		int chance_diff = Math::instance().range ( 1, victim->level ) / 2;
+		if ( chance < chance_diff ) {
+			if ( is_human ( victim ) && !IS_NPC ( ch ) ) {
+				make_treasure_chest ( ch, victim, victim->level );
+			}
+		}
+
 		/* dump the flags */
 		if ( ch != victim && !IS_NPC ( ch ) && !is_same_clan ( ch, victim ) ) {
 			if ( IS_SET ( victim->act, PLR_KILLER ) )

@@ -715,7 +715,8 @@
 #define ITEM_JEWELRY		     33
 #define ITEM_JUKEBOX		     34
 #define ITEM_SOURCE	     35
-
+#define ITEM_TREASURECHEST       36 /* for treasure code -Dal */
+#define ITEM_LOCKPICK            37 /* used for picking locks */
 
 /*
  * Extra flags.
@@ -745,6 +746,16 @@
 #define ITEM_SELL_EXTRACT	(W)
 #define ITEM_BURN_PROOF		(Y)
 #define ITEM_NOUNCURSE		(Z)
+
+
+// -- Traps for the Treasure Chests
+#define TRAP_BOOMER (A)
+#define TRAP_GASSER (B)
+#define TRAP_BLADE  (C)
+#define TRAP_NEEDLE (D)
+#define TRAP_MANA   (E)
+#define TRAP_FIRE   (F)
+#define TRAP_ACID   (G)
 
 
 /*

@@ -619,9 +619,8 @@ void obj_cost ( Item *obj, Creature * mob )
 
 
 	// -- MAT_PRACTICE gets its own cost value!  Cheap weapons!
-	if ( IS_SET ( obj->material_flags, MAT_PRACTICE ) )
-	{
-		cost = Math::instance().range(5, Math::instance().fuzzy((10+obj->level));
+	if ( IS_SET ( obj->material_flags, MAT_PRACTICE ) ) {
+		cost = Math::instance().range ( 5, Math::instance().fuzzy ( ( 10 + obj->level ) ) );
 	}
 	obj->cost = cost;
 }
@@ -657,8 +656,8 @@ void obj_condition ( Item *obj )
 	{ condition = 100; }
 
 	// -- practice gear is always cheaply made!
-	if (IS_SET(obj->material_flags, MAT_PRACTICE) ){
-		condition = 50;	
+	if ( IS_SET ( obj->material_flags, MAT_PRACTICE ) ) {
+		condition = 50;
 	}
 
 	obj->condition = condition;
@@ -671,9 +670,9 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 		SET_BIT ( obj->extra_flags, ITEM_ANTI_NEUTRAL );
 	}
 
-	if ( IS_SET ( obj->material_flags, MAT_SILVER ) )
-	{ SET_BIT ( obj->extra_flags, ITEM_HUM ); 
-		obj->requirements[CON_REQ] = Math::instance().range(13,15);	
+	if ( IS_SET ( obj->material_flags, MAT_SILVER ) ) {
+		SET_BIT ( obj->extra_flags, ITEM_HUM );
+		obj->requirements[CON_REQ] = Math::instance().range ( 13, 15 );
 	}
 
 	if ( IS_SET ( obj->material_flags, MAT_GOLD ) ) {
@@ -746,7 +745,7 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 	}
 
 	// -- lowbie gear assigned 1-5 for stats
-	if(IS_SET(obj->material_flags, MAT_PRACTICE)) {
+	if ( IS_SET ( obj->material_flags, MAT_PRACTICE ) ) {
 		for ( int x = 0; x < MAX_REQ; x++ ) {
 			obj->requirements[x] = Math::instance().range ( 1, 5 );
 		}
@@ -754,12 +753,11 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 		obj->requirements[SIZ_REQ] = SIZE_MAGIC;
 	} else {
 		// -- add some requirements if we haven't already set them (possibly)
-		if(Math::instance().range(0,3) == Math::instance().range(0,3)) {
-			int size_req = obj->requierments[SIZ_REQ];
-			for(int x = 0; x < MAX_REQ; x++) {
-				if(x == SIZ_REQ) { break; }	// -- do not adjust size if previously set!
-				obj->requirements[x] += Math::instance().range(0,3);	
-			}	
+		if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 3 ) ) {
+			for ( int x = 0; x < MAX_REQ; x++ ) {
+				if ( x == SIZ_REQ ) { break; }	// -- do not adjust size if previously set!
+				obj->requirements[x] += Math::instance().range ( 0, 3 );
+			}
 		}
 	}
 
@@ -1331,13 +1329,13 @@ Item * make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb
 					obj->value[4] = WEAPON_TWO_HANDS;
 					break;
 				case ( 8 ) :
-					sprintf (weapon, "sabre");
+					sprintf ( weapon, "sabre" );
 					break;
 				case ( 9 ) :
-					sprintf (weapon, "dao sabre");
+					sprintf ( weapon, "dao sabre" );
 					break;
 				case ( 10 ) :
-					sprintf (weapon, "takoba");
+					sprintf ( weapon, "takoba" );
 					break;
 			}
 			break;
@@ -1460,39 +1458,39 @@ Item * make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb
 			obj->value[0] = WEAPON_WHIP;
 			obj->value[3] = 4;
 
-			switch(Math::instance().range(0,10)) {
-				case ( 0 ):
+			switch ( Math::instance().range ( 0, 10 ) ) {
+				case ( 0 ) :
 					sprintf ( weapon, "whip" );
 					break;
-				case ( 1 ):
+				case ( 1 ) :
 					sprintf ( weapon, "bullwhip" );
 					break;
-				case ( 2 ):
-					sprintf ( weapon, "blacksnake whip");
+				case ( 2 ) :
+					sprintf ( weapon, "blacksnake whip" );
 					break;
-				case ( 3 ):
-					sprintf ( weapon, "cat o' nine tails");
+				case ( 3 ) :
+					sprintf ( weapon, "cat o' nine tails" );
 					break;
-				case ( 4 ):
-					sprintf ( weapon, "weaves");
+				case ( 4 ) :
+					sprintf ( weapon, "weaves" );
 					break;
-				case ( 5 ):
+				case ( 5 ) :
 					sprintf ( weapon, "romal reins" );
 					break;
-				case ( 6 ):
+				case ( 6 ) :
 					sprintf ( weapon, "yard whip" );
 					break;
-				case ( 7 ):
+				case ( 7 ) :
 					sprintf ( weapon, "chop" );
 					break;
-				case ( 8 ):
+				case ( 8 ) :
 					sprintf ( weapon, "qilinbian" );
 					break;
-				case ( 9 ):
-					sprintf ( weapon, "sjambok");
+				case ( 9 ) :
+					sprintf ( weapon, "sjambok" );
 					break;
-				case ( 10 ):
-					sprintf ( weapon, "jiujiebian");
+				case ( 10 ) :
+					sprintf ( weapon, "jiujiebian" );
 					break;
 			}
 			break;
@@ -1551,7 +1549,7 @@ Item * make_weapon ( Item* obj, Creature* mob, int random_vnum, const char* verb
 		if ( Math::instance().percent() == Math::instance().range ( 0, 100 ) ) {
 			SET_BIT ( obj->extra_flags, ITEM_INVENTORY );
 		} else if ( Math::instance().range ( 0, 1 ) == Math::instance().range ( 0, 5 ) ) {
-			int clones = Math::instance().range ( 1, Math::instance().fuzzy(5) );
+			int clones = Math::instance().range ( 1, Math::instance().fuzzy ( 5 ) );
 
 			// -- generate multiple copies of the items.
 			for ( int x = 0; x < clones; x++ ) {

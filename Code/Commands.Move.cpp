@@ -341,14 +341,24 @@ DefineCommand ( cmd_open )
 		}
 
 		/* 'open object' */
-		if ( obj->item_type != ITEM_CONTAINER )
-		{ writeBuffer ( "That's not a container.\n\r", ch ); return; }
+		if ( obj->item_type != ITEM_CONTAINER ) {
+			if ( obj->item_type != ITEM_TREASURECHEST ) {
+				writeBuffer ( "That's not a container.\n\r", ch );
+				return;
+			}
+		}
 		if ( !IS_SET ( obj->value[1], CONT_CLOSED ) )
 		{ writeBuffer ( "It's already open.\n\r",      ch ); return; }
 		if ( !IS_SET ( obj->value[1], CONT_CLOSEABLE ) )
 		{ writeBuffer ( "You can't do that.\n\r",      ch ); return; }
 		if ( IS_SET ( obj->value[1], CONT_LOCKED ) )
 		{ writeBuffer ( "It's locked.\n\r",            ch ); return; }
+
+		if ( obj->item_type == ITEM_TREASURECHEST ) {
+			// -- we are treapped?
+			if ( obj->value[3] > 0 )
+			{ writeBuffer ( "BOOM! hehehe.\n\r", ch ); }
+		}
 
 		REMOVE_BIT ( obj->value[1], CONT_CLOSED );
 		act ( "You open $p.", ch, obj, NULL, TO_CHAR );
@@ -422,8 +432,12 @@ DefineCommand ( cmd_close )
 		}
 
 		/* 'close object' */
-		if ( obj->item_type != ITEM_CONTAINER )
-		{ writeBuffer ( "That's not a container.\n\r", ch ); return; }
+		if ( obj->item_type != ITEM_CONTAINER ) {
+			if ( obj->item_type != ITEM_TREASURECHEST ) {
+				writeBuffer ( "That's not a container.\n\r", ch );
+				return;
+			}
+		}
 		if ( IS_SET ( obj->value[1], CONT_CLOSED ) )
 		{ writeBuffer ( "It's already closed.\n\r",    ch ); return; }
 		if ( !IS_SET ( obj->value[1], CONT_CLOSEABLE ) )
@@ -524,8 +538,12 @@ DefineCommand ( cmd_lock )
 		}
 
 		/* 'lock object' */
-		if ( obj->item_type != ITEM_CONTAINER )
-		{ writeBuffer ( "That's not a container.\n\r", ch ); return; }
+		if ( obj->item_type != ITEM_CONTAINER ) {
+			if ( obj->item_type != ITEM_TREASURECHEST ) {
+				writeBuffer ( "That's not a container.\n\r", ch );
+				return;
+			}
+		}
 		if ( !IS_SET ( obj->value[1], CONT_CLOSED ) )
 		{ writeBuffer ( "It's not closed.\n\r",        ch ); return; }
 		if ( obj->value[2] < 0 )
@@ -616,6 +634,13 @@ DefineCommand ( cmd_unlock )
 			REMOVE_BIT ( obj->value[1], EX_LOCKED );
 			act ( "You unlock $p.", ch, obj, NULL, TO_CHAR );
 			act ( "$n unlocks $p.", ch, obj, NULL, TO_ROOM );
+			return;
+		}
+
+		if ( obj->item_type == ITEM_TREASURECHEST ) {
+			writeBuffer ( "You unlock the treasure chest.\n\r", ch );
+			writeBuffer ( "We now check to see if it's trapped, and if so, if it's disarmed.\n\r", ch );
+			writeBuffer ( "If not, make loud scary noises and go boom!\n\r", ch );
 			return;
 		}
 
@@ -730,12 +755,13 @@ DefineCommand ( cmd_pick )
 		}
 
 
-
-
-
 		/* 'pick object' */
-		if ( obj->item_type != ITEM_CONTAINER )
-		{ writeBuffer ( "That's not a container.\n\r", ch ); return; }
+		if ( obj->item_type != ITEM_CONTAINER ) {
+			if ( obj->item_type != ITEM_TREASURECHEST ) {
+				writeBuffer ( "That's not a container.\n\r", ch );
+				return;
+			}
+		}
 		if ( !IS_SET ( obj->value[1], CONT_CLOSED ) )
 		{ writeBuffer ( "It's not closed.\n\r",        ch ); return; }
 		if ( obj->value[2] < 0 )
@@ -744,6 +770,30 @@ DefineCommand ( cmd_pick )
 		{ writeBuffer ( "It's already unlocked.\n\r",  ch ); return; }
 		if ( IS_SET ( obj->value[1], CONT_PICKPROOF ) )
 		{ writeBuffer ( "You failed.\n\r",             ch ); return; }
+
+		if ( obj->item_type == ITEM_TREASURECHEST ) {
+			int lock_diff = obj->value[2];
+			int chance = get_skill ( ch, gsn_pick_lock );
+			int result = Math::instance().range ( chance * 8 / 12, chance ) + dex_app[get_curr_stat ( ch, STAT_DEX )].defensive;
+			result += 5; // -- pick->condition / 10;
+			if ( result < lock_diff ) {
+				writeBuffer ( Format ( "You attempt to pick the lock on %s, but fail.\n\r", obj->short_descr ), ch );
+				/*ptc(ch,"Result was %d chance, and you needed to go over %d lock_diff.\n\r", result, lock_diff);*/
+				obj->value[2] -= dex_app[get_curr_stat ( ch, STAT_DEX )].defensive / 10;
+				if ( Math::instance().percent() > Math::instance().percent() + dex_app[get_curr_stat ( ch, STAT_DEX )].defensive ) {
+					act ( "You wince as you feel your lockpick bend inside the lock.", ch, NULL, NULL, TO_CHAR );
+					act ( "You hear a wince from $n as $e tests $s skill at lockpicking.", ch, NULL, NULL, TO_ROOM );
+					/*					pick->condition -= Math::instance().range ( 1, 3 );
+										if ( pick->condition < 1 ) {
+											act ( "With a *snap* your lockpick breaks off inside the lock.", ch, NULL, NULL, TO_CHAR );
+											act ( "You hear a *snap* and a muttered curse from $n as $s lockpick breaks in two.", ch, NULL, NULL, TO_ROOM );
+											extract_obj ( pick );
+										} */
+				}
+				check_improve ( ch, gsn_pick_lock, FALSE, 9 );
+				return;
+			}
+		}
 
 		REMOVE_BIT ( obj->value[1], CONT_LOCKED );
 		act ( "You pick the lock on $p.", ch, obj, NULL, TO_CHAR );

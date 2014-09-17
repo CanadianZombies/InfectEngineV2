@@ -871,6 +871,15 @@ DefineCommand ( cmd_look )
 				writeBuffer ( buf, ch );
 				break;
 
+			case ITEM_TREASURECHEST:
+				if ( IS_SET ( obj->value[1], CONT_CLOSED ) ) {
+					writeBuffer ( "It is closed.\n\r", ch );
+					break;
+				}
+				act ( "$p holds:", ch, obj, NULL, TO_CHAR );
+				show_list_to_char ( obj->contains, ch, TRUE, TRUE );
+				break;
+
 			case ITEM_CONTAINER:
 			case ITEM_CORPSE_NPC:
 			case ITEM_CORPSE_PC:

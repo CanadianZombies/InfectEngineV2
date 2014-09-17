@@ -81,6 +81,8 @@ const struct item_type		item_table	[]	= {
 	{	ITEM_JEWELRY,	"jewelry"	},
 	{   ITEM_JUKEBOX,	"jukebox"	},
 	{ ITEM_SOURCE,	"source"	 },
+	{   ITEM_TREASURECHEST,   "treasurechest"},
+	{   ITEM_LOCKPICK,        "lockpick"     },
 	{   0,		NULL		}
 };
 

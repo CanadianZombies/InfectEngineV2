@@ -244,6 +244,13 @@ DefineCommand ( cmd_get )
 			case ITEM_CORPSE_NPC:
 				break;
 
+			case ITEM_TREASURECHEST:
+				if ( IS_SET ( container->value[1], CONT_CLOSED ) ) {
+					act ( "The $d is closed.", ch, NULL, container->name, TO_CHAR );
+					return;
+				}
+				break;
+
 			case ITEM_CORPSE_PC: {
 
 					if ( !can_loot ( ch, container ) ) {
@@ -328,8 +335,10 @@ DefineCommand ( cmd_put )
 	}
 
 	if ( container->item_type != ITEM_CONTAINER ) {
-		writeBuffer ( "That's not a container.\n\r", ch );
-		return;
+		if ( container->item_type != ITEM_TREASURECHEST ) {
+			writeBuffer ( "That's not a container.\n\r", ch );
+			return;
+		}
 	}
 
 	if ( IS_SET ( container->value[1], CONT_CLOSED ) ) {
@@ -353,6 +362,16 @@ DefineCommand ( cmd_put )
 			writeBuffer ( "You can't let go of it.\n\r", ch );
 			return;
 		}
+
+		if ( obj->item_type == ITEM_TREASURECHEST ) {
+			writeBuffer ( "Cannot put a container in a treasure chest.\n\r", ch );
+			return;
+		}
+		if ( obj->item_type == ITEM_TREASURECHEST && container->item_type == ITEM_TREASURECHEST ) {
+			writeBuffer ( "Cannot put a treasure chest in a treasure chest.\n\r", ch );
+			return;
+		}
+
 
 		if ( WEIGHT_MULT ( obj ) != 100 ) {
 			writeBuffer ( "You have a feeling that would be a bad idea.\n\r", ch );

@@ -270,7 +270,7 @@ struct	note_data {
 /*
  * An affect.
  */
-struct	affect_data {
+struct	Affect {
 	Affect *	next;
 	bool		valid;
 	int		where;
@@ -559,7 +559,7 @@ struct	obj_index_data {
 /*
  * One object.
  */
-struct	obj_data {
+struct	Item {
 	Item *		next;
 	Item *		next_content;
 	Item *		contains;

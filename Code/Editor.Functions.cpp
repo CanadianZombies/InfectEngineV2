@@ -2031,6 +2031,26 @@ void show_obj_values ( Creature *ch, ItemData *obj )
 			writeBuffer ( buf, ch );
 			break;
 
+		case ITEM_TREASURECHEST:
+			writeBuffer ( Format (
+							  "[v0] Silver:       [%d]\n\r"
+							  "[v1] Flags:        [%s]\n\r"
+							  "[v2] Lock Diff: %s [%d]\n\r"
+							  "[v3] Trap Type     [%d]\n\r"
+							  "[v4] Trap Dmg      [%d]\n\r",
+							  obj->value[0],
+							  flag_string ( container_flags, obj->value[1] ),
+							  obj->value[2],
+							  obj->value[3],
+							  obj->value[4] ), ch );
+			break;
+
+		case ITEM_LOCKPICK:
+			writeBuffer ( Format (
+							  "[v0] Strength:     [%d] 1-100\n\r",
+							  obj->value[0] ), ch );
+			break;
+
 		case ITEM_WAND:
 		case ITEM_STAFF:
 			sprintf ( buf,
