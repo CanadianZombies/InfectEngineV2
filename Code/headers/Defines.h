@@ -749,6 +749,7 @@
 
 
 // -- Traps for the Treasure Chests
+#define TRAP_NONE    0
 #define TRAP_BOOMER (A)
 #define TRAP_GASSER (B)
 #define TRAP_BLADE  (C)

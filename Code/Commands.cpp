@@ -281,6 +281,8 @@ const	struct	cmd_type	cmd_table	[] = {
 	{ "value",		cmd_value,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
 	{ "wear",		cmd_wear,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
 	{ "zap",		cmd_zap,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "search", cmd_search, POS_RESTING, 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "unarm",  cmd_unarm, POS_RESTING,  0,  LOG_NORMAL, 1, CAT_ITEM },
 
 	{ "backstab",		cmd_backstab,	POS_FIGHTING,	 0,  LOG_NORMAL, 1, CAT_COMBAT },
 	{ "bash",		cmd_bash,	POS_FIGHTING,    0,  LOG_NORMAL, 1, CAT_COMBAT },

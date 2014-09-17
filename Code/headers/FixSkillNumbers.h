@@ -91,5 +91,6 @@ SkillNumber ( gsn_scrolls );
 SkillNumber ( gsn_staves );
 SkillNumber ( gsn_wands );
 SkillNumber ( gsn_recall );
-
+SkillNumber ( gsn_unarm_traps );
+SkillNumber ( gsn_search );
 #endif

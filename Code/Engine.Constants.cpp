@@ -1965,7 +1965,22 @@ const	struct	skill_type	skill_table	[MAX_SKILL]	= {
 		spell_null,		TAR_IGNORE,		POS_STANDING,
 		&gsn_recall,		SLOT ( 0 ),	0,	12,
 		"",			"!Recall!",		""
+	},
+
+	{
+		"unarm",		{  1,  1,  1,  1 },	{ 2, 2, 2, 2},
+		spell_null,		TAR_IGNORE,		POS_STANDING,
+		&gsn_unarm_traps,		SLOT ( 0 ),	0,	12,
+		"",			"!Unarm!",		""
+	},
+
+	{
+		"search",		{  1,  1,  1,  1 },	{ 2, 2, 2, 2},
+		spell_null,		TAR_IGNORE,		POS_STANDING,
+		&gsn_search,		SLOT ( 0 ),	0,	12,
+		"",			"!search!",		""
 	}
+
 };
 
 const   struct  group_type      group_table     [MAX_GROUP]     = {

@@ -764,6 +764,8 @@ Command ( cmd_medit        );
 Command ( cmd_mpedit	);
 Command ( cmd_hedit	);
 Command ( cmd_randomitem );
+Command ( cmd_search );
+Command ( cmd_unarm );
 // -- mob_cmds
 /*
  * Command functions.

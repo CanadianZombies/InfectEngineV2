@@ -56,6 +56,7 @@ const	int	movement_loss	[SECT_MAX]	= {
  */
 int	find_door	args ( ( Creature *ch, char *arg ) );
 bool	has_key		args ( ( Creature *ch, int key ) );
+void	raw_kill	args ( ( Creature *victim ) );
 
 
 
@@ -693,6 +694,404 @@ DefineCommand ( cmd_unlock )
 	return;
 }
 
+void trap_damage ( Creature *ch, Item *obj )
+{
+	int dam;
+	bool die = FALSE;
+
+	dam = obj->value[4];
+
+	if ( obj->value[3] == TRAP_BOOMER ) {
+		dam *= 3;
+		ch->hit -= UMIN ( dam, ch->max_hit );
+		if ( ch->hit <= 0 )
+		{ die = TRUE; }
+		act ( "A sudden explosion erupts, knocking $n back and shattering $p to splinters!", ch, obj, NULL, TO_ROOM );
+		act ( "A sudden explosion erupts, knocking you back and shattering $p to splinters!", ch, obj, NULL, TO_CHAR );
+	}
+	if ( obj->value[3] == TRAP_GASSER ) {
+		dam *= 4;
+		ch->hit -= UMIN ( dam, ch->max_hit );
+		if ( ch->hit <= 0 )
+		{ die = TRUE; }
+		act ( "A cloud of noxious gas pours from a $p $n is holding.", ch, obj, NULL, TO_ROOM );
+		act ( "A cloud of noxious gas pours from $p.", ch, obj, NULL, TO_CHAR );
+	}
+	if ( obj->value[3] == TRAP_NEEDLE ) {
+		dam *= 2;
+		ch->hit -= UMIN ( dam, ch->max_hit );
+		if ( ch->hit <= 0 )
+		{ die = TRUE; }
+		act ( "$n jerks $s hand away from $p with a muttered curse.", ch, obj, NULL, TO_ROOM );
+		act ( "A thin needle from $p pricks your hand!", ch, obj, NULL, TO_CHAR );
+	}
+	if ( obj->value[3] == TRAP_BLADE ) {
+		dam *= 3;
+		ch->hit -= UMIN ( dam, ch->max_hit );
+		if ( ch->hit <= 0 )
+		{ die = TRUE; }
+		act ( "A thin blade slices out from $p $n is holding, slashing $s hand!", ch, obj, NULL, TO_ROOM );
+		act ( "A thin blade slices out from $p, slashing your hand!", ch, obj, NULL, TO_CHAR );
+	}
+	if ( obj->value[3] == TRAP_MANA ) {
+		dam *= 4;
+		ch->mana -= UMIN ( dam, ch->max_mana );
+		if ( ch->hit <= 0 )
+		{ die = TRUE; }
+		act ( "$n's eyes roll back into $s skull.", ch, obj, NULL, TO_ROOM );
+		act ( "You feel your eyes roll back into your skull.", ch, obj, NULL, TO_ROOM );
+	}
+	if ( obj->value[3] == TRAP_FIRE ) {
+		dam *= 5;
+		ch->hit -= UMIN ( dam, ch->max_hit );
+		if ( ch->hit <= 0 )
+		{ die = TRUE; }
+		act ( "A spray of fire leaps out to sear $n, burning $p like kindling!", ch, obj, NULL, TO_ROOM );
+		act ( "A spray of fire leaps out to sear you, burning $p like kindling!", ch, obj, NULL, TO_CHAR );
+	}
+	if ( obj->value[3] == TRAP_ACID ) {
+		dam *= 5;
+		ch->hit -= UMIN ( dam, ch->max_hit );
+		if ( ch->hit <= 0 )
+		{ die = TRUE; }
+		act ( "A spray of acid from $p catches $n in the face!", ch, obj, NULL, TO_ROOM );
+		act ( "A spray of acid from $p catches you in the face!", ch, obj, NULL, TO_CHAR );
+	}
+	if ( die ) {
+		writeBuffer ( "You have been KILLED!!\n\r\n\r", ch );
+		raw_kill ( ch );
+	}
+
+	return;
+}
+
+DefineCommand ( cmd_unarm )
+{
+	Item *obj;
+	int rank, base, oppose;
+	//bool fail = FALSE;
+
+	/* search obj for traps */
+	if ( ( obj = get_obj_carry ( ch, argument, ch ) ) == NULL ) {
+		writeBuffer ( "Unarm what? You don't see that here.\n\r", ch );
+		return;
+	}
+	if ( obj->item_type != ITEM_TREASURECHEST ) {
+		writeBuffer ( "That's not a treasure chest.\n\r", ch );
+		return;
+	}
+
+	rank = ch->pcdata->learned[gsn_unarm_traps];
+	rank += get_curr_stat ( ch, STAT_DEX );
+	rank += get_curr_stat ( ch, STAT_WIS );
+	base = Math::instance().range ( 1, 100 );
+	oppose = obj->value[4];
+
+	base += oppose;
+
+	if ( Math::instance().range ( 1, rank ) < Math::instance().range ( 1, base ) && obj->value[3] > TRAP_NONE ) {
+		act ( "$n fiddles with $p for a moment, concentrating intently.", ch, obj, NULL, TO_ROOM );
+		act ( "You attempt to unarm the trap on $p, but manage to spring it instead!", ch, obj, NULL, TO_CHAR );
+
+		if ( obj->value[3] == TRAP_BOOMER ) {
+			trap_damage ( ch, obj );
+
+			/* if the box explodes or erupts in flame, remove it */
+			check_improve ( ch, gsn_unarm_traps, FALSE, 3 );
+			obj_from_char ( obj );
+			extract_obj ( obj );
+		}
+		/* blade needs to sever limbs in the future */
+		if ( obj->value[3] == TRAP_BLADE || obj->value[3] == TRAP_MANA ) {
+			trap_damage ( ch, obj );
+		}
+		/* acid - nasty stuff */
+		if ( obj->value[3] == TRAP_ACID ) {
+			Item *aObj, *aObj_next;
+
+			trap_damage ( ch, obj );
+			check_improve ( ch, gsn_unarm_traps, FALSE, 3 );
+
+			for ( aObj = ch->carrying; aObj != NULL; aObj = aObj_next ) {
+				aObj_next = aObj->next_content;
+				acid_effect ( aObj, obj->value[4], obj->value[4], TARGET_OBJ );
+				break;
+			}
+		}
+		/* poison */
+		if ( obj->value[3] == TRAP_NEEDLE || obj->value[3] == TRAP_GASSER ) {
+			/* get the char */
+			if ( obj->value[3] == TRAP_NEEDLE ) {
+				Affect af;
+				trap_damage ( ch, obj );
+				check_improve ( ch, gsn_unarm_traps, FALSE, 3 );
+
+				af.type = gsn_poison;
+				af.duration = obj->value[4];
+				af.location = APPLY_STR;
+				af.modifier = -3;
+				af.bitvector = AFF_PLAGUE;
+				affect_join ( ch, &af );
+			}
+			/* get the room */
+			if ( obj->value[3] == TRAP_GASSER ) {
+				Affect af;
+				trap_damage ( ch, obj );
+				check_improve ( ch, gsn_unarm_traps, FALSE, 3 );
+				/* if save, they held their breath */
+				af.type = gsn_poison;
+				af.duration = obj->value[4];
+				af.location = APPLY_DEX;
+				af.modifier = -3;
+				af.bitvector = AFF_PLAGUE;
+				affect_join ( ch, &af );
+			}
+		}
+		if ( obj->value[3] == TRAP_FIRE ) {
+			Item *aObj, *aObj_next;
+
+			trap_damage ( ch, obj );
+
+			/* if the box explodes or erupts in flame, remove it */
+			for ( aObj = ch->carrying; aObj != NULL; aObj = aObj_next ) {
+				aObj_next = aObj->next_content;
+				fire_effect ( aObj, obj->value[4], obj->value[4], TARGET_OBJ );
+				break;
+			}
+			check_improve ( ch, gsn_unarm_traps, FALSE, 3 );
+			obj_from_char ( obj );
+			extract_obj ( obj );
+		}
+
+	} else if ( Math::instance().range ( 1, rank / 2 ) < Math::instance().range ( 1, base ) && obj->value[3] > TRAP_NONE ) {
+		act ( "$n fiddles with $p for a moment, concentrating intently.", ch, obj, NULL, TO_ROOM );
+		act ( "You attempt to unarm the trap on $p, but can't quite figure out the mechanism.", ch, obj, NULL, TO_CHAR );
+		check_improve ( ch, gsn_unarm_traps, FALSE, 6 );
+		return;
+	} else if ( obj->value[3] == TRAP_NONE ) {
+		act ( "$p doesn't appear to be trapped.", ch, obj, NULL, TO_CHAR );
+		return;
+	}
+	/* success */
+	else {
+		act ( "$n fiddles with $p for a moment, concentrating intently.", ch, obj, NULL, TO_ROOM );
+		act ( "You fiddle with the trap on $p until you manage to render the mechanism useless!", ch, obj, NULL, TO_CHAR );
+		check_improve ( ch, gsn_unarm_traps, TRUE, 6 );
+		obj->value[3] = TRAP_NONE;
+		return;
+	}
+	return;
+}
+
+DefineCommand ( cmd_search )
+{
+	Creature *vch;
+	Item *obj;
+	int chance, num_found, rank, base, oppose;
+	bool found;
+	char arg[MIL];
+
+	argument = ChopC ( argument, arg );
+
+	/* init the variables */
+	if ( IS_NPC ( ch ) )
+	{ chance = 75; }
+	else
+	{ chance = get_skill ( ch, gsn_search ); }
+	num_found = 0;
+	found = FALSE;
+
+	/*if ( ch->level < skill_table[gsn_search].skill_level[ch->class] )
+	{
+	writeBuffer("{cMight as well search for the needle in the haystack.\n\r", ch );
+	return;
+	}*/
+	if ( IS_NPC ( ch ) ) {
+		/* npcs dont get checked for skill */
+
+		if ( arg[0] == '\0' ) {
+			act ( "$n searches around the area for a moment.", ch, NULL, NULL, TO_ROOM );
+			for ( vch = ch->in_room->people; vch != NULL; vch = vch->next ) {
+				/* hunt up some hiders */
+				if ( vch->in_room != ch->in_room )
+				{ continue; }
+				if ( vch == ch )
+				{ continue; }
+				/* do this partly to keep people from finding wizi imms, and
+				* to allow mobs to be unsearchable */
+				if ( vch->level >= LEVEL_HERO && ch->level < LEVEL_HERO )
+				{ continue; }
+				/* formulate the chance */
+				if ( ch->level >= vch->level )
+				{ chance += 1; }
+				else
+				{ chance -= 2; }
+				if ( get_curr_stat ( ch, STAT_INT ) >= get_curr_stat ( vch, STAT_INT ) )
+				{ chance += 1; }
+				else
+				{ chance -= 2; }
+				if ( get_curr_stat ( ch, STAT_DEX ) >= get_curr_stat ( vch, STAT_DEX ) )
+				{ chance += 1; }
+				else
+				{ chance -= 2; }
+				if ( get_curr_stat ( ch, STAT_WIS ) >= get_curr_stat ( vch, STAT_WIS ) )
+				{ chance += 1; }
+				else
+				{ chance -= 2; }
+
+				/* Always a chance to fail */
+				if ( chance > 99 ) { chance = 99; }
+				/* ok, now show the found people */
+				if ( Math::instance().percent() > chance )
+				{ continue; }
+				if ( is_affected ( vch, gsn_invis )
+						|| is_affected ( vch, gsn_sneak )
+						|| IS_AFFECTED ( vch, AFF_SNEAK )
+						|| IS_AFFECTED ( vch, AFF_INVISIBLE )
+						|| IS_AFFECTED ( vch, AFF_HIDE )
+						|| is_affected ( vch, gsn_hide ) ) {
+					writeBuffer ( Format ( "You see %s.\n\r", vch->name ), ch );
+					writeBuffer ( Format ( "%s has spotted you!\n\r", ch->name ), vch );
+					affect_strip ( vch, gsn_invis );
+					affect_strip ( vch, gsn_sneak );
+					REMOVE_BIT ( vch->affected_by, AFF_HIDE );
+					REMOVE_BIT ( vch->affected_by, AFF_INVISIBLE );
+					REMOVE_BIT ( vch->affected_by, AFF_SNEAK );
+					found = TRUE;
+					num_found += 1;
+					check_improve ( ch, gsn_search, TRUE, 9 );
+				}
+			}
+			/* AWW uses hidden portals. Remove this loop if not needed. */
+			for ( obj = ch->in_room->contents; obj; obj = obj->next_content ) {
+				if ( obj->item_type == ITEM_PORTAL ) {
+					writeBuffer ( Format ( "You see %s.\n\r", obj->short_descr ), ch );
+					found = TRUE;
+					num_found += 1;
+				}
+			}
+			if ( !found ) {
+				writeBuffer ( "You didn't find anyone here.\n\r", ch );
+				if ( IsStaff ( ch ) ) {
+					writeBuffer ( Format ( "Chance was %d.\n\r", chance ), ch );
+				}
+			}
+			/* make em wait longer for each person found */
+			WAIT_STATE ( ch, PULSE_VIOLENCE * num_found );
+			return;
+		}
+
+	}
+	if ( !IS_NPC ( ch ) ) {
+		if ( get_skill ( ch, gsn_search ) <= 0 ) {
+			writeBuffer ( "You dont know enough about searching.\n\r", ch );
+			return;
+		}
+	}
+
+	if ( arg[0] == '\0' ) {
+		for ( vch = ch->in_room->people; vch != NULL; vch = vch->next ) {
+			/* hunt up some hiders */
+			if ( vch->in_room != ch->in_room )
+			{ continue; }
+			if ( vch == ch )
+			{ continue; }
+			/* formulate the chance */
+			if ( ch->level >= vch->level )
+			{ chance += 1; }
+			else
+			{ chance -= 2; }
+			if ( get_curr_stat ( ch, STAT_INT ) >= get_curr_stat ( vch, STAT_INT ) )
+			{ chance += 1; }
+			else
+			{ chance -= 2; }
+			if ( get_curr_stat ( ch, STAT_DEX ) >= get_curr_stat ( vch, STAT_DEX ) )
+			{ chance += 1; }
+			else
+			{ chance -= 2; }
+			if ( get_curr_stat ( ch, STAT_WIS ) >= get_curr_stat ( vch, STAT_WIS ) )
+			{ chance += 1; }
+			else
+			{ chance -= 2; }
+
+			/* Always a chance to fail */
+			if ( chance > 99 ) { chance = 99; }
+			/* ok, now show the found people */
+			if ( Math::instance().percent() > chance )
+			{ continue; }
+			if ( is_affected ( vch, gsn_invis )
+					|| is_affected ( vch, gsn_sneak )
+					|| IS_AFFECTED ( vch, AFF_SNEAK )
+					|| IS_AFFECTED ( vch, AFF_INVISIBLE )
+					|| IS_AFFECTED ( vch, AFF_HIDE )
+					|| is_affected ( vch, gsn_hide ) ) {
+				writeBuffer ( Format ( "You see %s.\n\r", vch->name ), ch );
+				writeBuffer ( Format ( "%s has spotted you!\n\r", ch->name ), vch );
+				affect_strip ( vch, gsn_invis );
+				affect_strip ( vch, gsn_sneak );
+				REMOVE_BIT ( vch->affected_by, AFF_HIDE );
+				REMOVE_BIT ( vch->affected_by, AFF_INVISIBLE );
+				REMOVE_BIT ( vch->affected_by, AFF_SNEAK );
+				found = TRUE;
+				num_found += 1;
+				check_improve ( ch, gsn_search, TRUE, 9 );
+			}
+		}
+		/* AWW uses hidden portals. Remove this loop if not needed. */
+		for ( obj = ch->in_room->contents; obj; obj = obj->next_content ) {
+			if ( obj->item_type == ITEM_PORTAL ) {
+				writeBuffer ( Format ( "You see %s.\n\r", obj->short_descr ), ch );
+				found = TRUE;
+				num_found += 1;
+			}
+		}
+		if ( !found ) {
+			writeBuffer ( "You didn't find anyone here.\n\r", ch );
+			if ( IsStaff ( ch ) ) {
+				writeBuffer ( Format ( "Chance is %d.\n\r", chance ), ch );
+			}
+		}
+		/* make em wait longer for each person found */
+		WAIT_STATE ( ch, PULSE_VIOLENCE * num_found );
+		return;
+	}
+	/* search obj for traps */
+	if ( ( obj = get_obj_carry ( ch, arg, ch ) ) == NULL ) {
+		writeBuffer ( "Search what? You don't see that here.\n\r", ch );
+		return;
+	}
+	if ( obj->item_type != ITEM_TREASURECHEST ) {
+		writeBuffer ( "That's not a treasure chest.\n\r", ch );
+		return;
+	}
+
+	rank = ch->pcdata->learned[gsn_unarm_traps];
+	rank += get_curr_stat ( ch, STAT_INT );
+	rank += get_curr_stat ( ch, STAT_DEX );
+	base = Math::instance().range ( 1, 100 );
+	oppose = obj->value[4];
+
+	base += oppose;
+
+	if ( Math::instance().range ( 1, rank ) < Math::instance().range ( 1, base ) ) {
+		writeBuffer ( "It doesn't appear to be trapped.\n\r", ch );
+		return;
+	} else if ( obj->value[3] == TRAP_NONE ) {
+		writeBuffer ( "It doesn't appear to be trapped.\n\r", ch );
+		return;
+	} else {
+		writeBuffer ( Format ( "You see a %s.\n\r", obj->value[3] == TRAP_BOOMER ? "small black cube inside the lock" :
+							   obj->value[3] == TRAP_GASSER ? "small green cannister hidden within the lock" :
+							   obj->value[3] == TRAP_NEEDLE ? "small needle dripping with a green liquid inside the lock" :
+							   obj->value[3] == TRAP_BLADE ? "razor sharp blade hidden within the lock" :
+							   obj->value[3] == TRAP_MANA ? "small shimmering sphere tucked inside the lock" :
+							   obj->value[3] == TRAP_FIRE ? "reddish-gold casement placed behind the lock" :
+							   obj->value[3] == TRAP_ACID ? "bluish-green vial rigged to burst inside the lock" :
+							   "odd shape within the lock" ), ch );
+	}
+	return;
+}
+
 DefineCommand ( cmd_pick )
 {
 	char arg[MAX_INPUT_LENGTH];
@@ -790,6 +1189,77 @@ DefineCommand ( cmd_pick )
 											extract_obj ( pick );
 										} */
 				}
+				/* traps! these only kick in if not unarmed first */
+				if ( obj->value[3] == TRAP_BOOMER ) {
+					trap_damage ( ch, obj );
+
+					/* if the box explodes or erupts in flame, remove it */
+					if ( obj->value[3] == TRAP_BOOMER || obj->value[3] == TRAP_FIRE ) {
+						obj_from_char ( obj );
+						extract_obj ( obj );
+						return;
+					}
+				}
+				/* blade needs to sever limbs in the future */
+				if ( obj->value[3] == TRAP_BLADE || obj->value[3] == TRAP_MANA ) {
+					trap_damage ( ch, obj );
+				}
+				/* acid - nasty stuff */
+				if ( obj->value[3] == TRAP_ACID ) {
+					Item *aObj, *aObj_next;
+
+					trap_damage ( ch, obj );
+
+					for ( aObj = ch->carrying; aObj != NULL; aObj = aObj_next ) {
+						aObj_next = aObj->next_content;
+						acid_effect ( aObj, obj->value[4], obj->value[4], TARGET_OBJ );
+						break;
+					}
+				}
+				/* poison */
+				if ( obj->value[3] == TRAP_NEEDLE || obj->value[3] == TRAP_GASSER ) {
+					/* get the char */
+					if ( obj->value[3] == TRAP_NEEDLE ) {
+						Affect af;
+						trap_damage ( ch, obj );
+
+						af.type = gsn_poison;
+						af.duration = obj->value[4];
+						af.location = APPLY_STR;
+						af.modifier = -3;
+						af.bitvector = AFF_PLAGUE;
+						affect_join ( ch, &af );
+					}
+					/* get the room */
+					if ( obj->value[3] == TRAP_GASSER ) {
+						Affect af;
+						trap_damage ( ch, obj );
+						/* if save, they held their breath */
+						af.type = gsn_poison;
+						af.duration = obj->value[4];
+						af.location = APPLY_DEX;
+						af.modifier = -3;
+						af.bitvector = AFF_PLAGUE;
+						affect_join ( ch, &af );
+					}
+				}
+				if ( obj->value[3] == TRAP_FIRE ) {
+					Item *aObj, *aObj_next;
+
+					trap_damage ( ch, obj );
+
+					/* if the box explodes or erupts in flame, remove it */
+					for ( aObj = ch->carrying; aObj != NULL; aObj = aObj_next ) {
+						aObj_next = aObj->next_content;
+						fire_effect ( aObj, obj->value[4], obj->value[4], TARGET_OBJ );
+						break;
+					}
+					obj_from_char ( obj );
+					extract_obj ( obj );
+					return;
+				}
+				/* end traps */
+
 				check_improve ( ch, gsn_pick_lock, FALSE, 9 );
 				return;
 			}
