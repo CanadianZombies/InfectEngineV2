@@ -57,7 +57,7 @@ const	int	movement_loss	[SECT_MAX]	= {
 int	find_door	args ( ( Creature *ch, char *arg ) );
 bool	has_key		args ( ( Creature *ch, int key ) );
 void	raw_kill	args ( ( Creature *victim ) );
-
+void trap_damage ( Creature *ch, Item *obj );
 
 
 void move_char ( Creature *ch, int door, bool follow )
@@ -356,9 +356,78 @@ DefineCommand ( cmd_open )
 		{ writeBuffer ( "It's locked.\n\r",            ch ); return; }
 
 		if ( obj->item_type == ITEM_TREASURECHEST ) {
-			// -- we are treapped?
-			if ( obj->value[3] > 0 )
-			{ writeBuffer ( "BOOM! hehehe.\n\r", ch ); }
+			// -- we are trapped?
+			/* traps! these only kick in if not unarmed first */
+			if ( obj->value[3] == TRAP_BOOMER ) {
+				trap_damage ( ch, obj );
+
+				/* if the box explodes or erupts in flame, remove it */
+				if ( obj->value[3] == TRAP_BOOMER || obj->value[3] == TRAP_FIRE ) {
+					obj_from_char ( obj );
+					extract_obj ( obj );
+					return;
+				}
+			}
+			/* blade needs to sever limbs in the future */
+			if ( obj->value[3] == TRAP_BLADE || obj->value[3] == TRAP_MANA ) {
+				trap_damage ( ch, obj );
+			}
+			/* acid - nasty stuff */
+			if ( obj->value[3] == TRAP_ACID ) {
+				Item *aObj, *aObj_next;
+
+				trap_damage ( ch, obj );
+
+				for ( aObj = ch->carrying; aObj != NULL; aObj = aObj_next ) {
+					aObj_next = aObj->next_content;
+					acid_effect ( aObj, obj->value[4], obj->value[4], TARGET_OBJ );
+					break;
+				}
+			}
+			/* poison */
+			if ( obj->value[3] == TRAP_NEEDLE || obj->value[3] == TRAP_GASSER ) {
+				/* get the char */
+				if ( obj->value[3] == TRAP_NEEDLE ) {
+					Affect af;
+					trap_damage ( ch, obj );
+
+					af.type = gsn_poison;
+					af.duration = obj->value[4];
+					af.location = APPLY_STR;
+					af.modifier = -3;
+					af.bitvector = AFF_PLAGUE;
+					affect_join ( ch, &af );
+				}
+				/* get the room */
+				if ( obj->value[3] == TRAP_GASSER ) {
+					Affect af;
+					trap_damage ( ch, obj );
+					/* if save, they held their breath */
+					af.type = gsn_poison;
+					af.duration = obj->value[4];
+					af.location = APPLY_DEX;
+					af.modifier = -3;
+					af.bitvector = AFF_PLAGUE;
+					affect_join ( ch, &af );
+				}
+			}
+			if ( obj->value[3] == TRAP_FIRE ) {
+				Item *aObj, *aObj_next;
+
+				trap_damage ( ch, obj );
+
+				/* if the box explodes or erupts in flame, remove it */
+				for ( aObj = ch->carrying; aObj != NULL; aObj = aObj_next ) {
+					aObj_next = aObj->next_content;
+					fire_effect ( aObj, obj->value[4], obj->value[4], TARGET_OBJ );
+					break;
+				}
+				obj_from_char ( obj );
+				extract_obj ( obj );
+				return;
+			}
+			/* end traps */
+
 		}
 
 		REMOVE_BIT ( obj->value[1], CONT_CLOSED );
