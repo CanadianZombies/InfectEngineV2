@@ -503,7 +503,7 @@ const struct flag_type wear_flags[] = {
 	{	"hold",			ITEM_HOLD,		TRUE	},
 	{   "nosac",		ITEM_NO_SAC,		TRUE	},
 	{	"wearfloat",		ITEM_WEAR_FLOAT,	TRUE	},
-	/*    {   "twohands",            ITEM_TWO_HANDS,         TRUE    }, */
+	//	{   "twohands",            ITEM_TWO_HANDS,         TRUE    },
 	{	NULL,			0,			0	}
 };
 

@@ -2517,46 +2517,91 @@ DefineCommand ( cmd_list )
 		ChopC ( argument, arg );
 
 		found = FALSE;
-		for ( obj = keeper->carrying; obj; obj = obj->next_content ) {
-			if ( obj->wear_loc == WEAR_NONE
-					&&   can_see_obj ( ch, obj )
-					&&   ( cost = get_cost ( keeper, obj, TRUE ) ) > 0
-					&&   ( arg[0] == '\0'
-						   ||  is_name ( arg, obj->name ) ) ) {
-				if ( !found ) {
-					found = TRUE;
-					writeBuffer ( "[Lv Price Qty]  [ str dex int wis con   size ]   Item\n\r", ch );
-				}
 
-				if ( IS_OBJ_STAT ( obj, ITEM_INVENTORY ) )
-					snprintf ( buf, sizeof ( buf ), "[%2d %5d -- ]  [ %3d %3d %3d %3d %3d %7s] %s\n\r",
-							   obj->level, cost,
-							   obj->requirements[STR_REQ], obj->requirements[DEX_REQ], obj->requirements[INT_REQ],
-							   obj->requirements[WIS_REQ], obj->requirements[CON_REQ], size_table[ ( int ) obj->requirements[SIZ_REQ]].name,
-							   obj->short_descr );
-				else {
-					count = 1;
+		char char_level;
+		int t = 0, size = 0, flag = 0;
 
-					while ( obj->next_content != NULL
-							&& obj->pIndexData == obj->next_content->pIndexData
-							&& !str_cmp ( obj->short_descr, obj->next_content->short_descr ) ) {
-						obj = obj->next_content;
-						count++;
-					}
-					int size = obj->requirements[SIZ_REQ];
-					if ( size < 0 || size > SIZE_MAGIC ) {
-						log_hd ( LOG_ERROR, Format ( "Item with broken size: %s | %d", obj->name, size ) );
-					}
-					snprintf ( buf, sizeof ( buf ), "[%2d %5d %2d ]  [ %3d %3d %3d %3d %3d %7s] %s\n\r",
-							   obj->level, cost, count,
-							   obj->requirements[STR_REQ], obj->requirements[DEX_REQ], obj->requirements[INT_REQ],
-							   obj->requirements[WIS_REQ], obj->requirements[CON_REQ], size_table[size].name ? size_table[size].name : "Unknown",
-							   obj->short_descr );
-				}
-				writeBuffer ( buf, ch );
-			}
-		}
+		struct z_type {
+			const char *name;
+			int flag;
+		};
 
+		const struct z_type n_table[] = {
+			{"Floating", ITEM_WEAR_FLOAT},
+			{"Trinket", ITEM_HOLD },
+			{"Wield", ITEM_WIELD },
+			{"Wrist", ITEM_WEAR_WRIST },
+			{"Waist", ITEM_WEAR_WAIST },
+			{"Shoulders", ITEM_WEAR_ABOUT },
+			{"Arms", ITEM_WEAR_ARMS },
+			{"Hands", ITEM_WEAR_HANDS },
+			{"Feet", ITEM_WEAR_FEET },
+			{"Legs", ITEM_WEAR_LEGS },
+			{"Head", ITEM_WEAR_HEAD },
+			{"Torso", ITEM_WEAR_BODY },
+			{"Neck", ITEM_WEAR_NECK },
+			{"Finger", ITEM_WEAR_FINGER },
+			{ NULL, 0 }
+		};
+
+		for ( t = 0; item_table[t].name != NULL; t++ ) {
+			for ( flag = 0; n_table[flag].name != NULL; flag++ ) {
+				bool item_found = false;
+				for ( char_level = 'a'; char_level <= 'z'; char_level++ ) {
+					for ( size = 0; size <= SIZE_MAGIC; size++ ) {
+						for ( obj = keeper->carrying; obj; obj = obj->next_content ) {
+							if ( obj->wear_loc == WEAR_NONE
+									&&   can_see_obj ( ch, obj )
+									&&   ( cost = get_cost ( keeper, obj, TRUE ) ) > 0
+									&&   obj->name[0] == char_level
+									&&   obj->item_type == item_table[t].type
+									&&   obj->requirements[SIZ_REQ] == size
+									&&   IS_SET ( obj->wear_flags, n_table[flag].flag )
+									&&   ( arg[0] == '\0' ||  is_name ( arg, obj->name ) ) ) {
+
+								if ( !found ) {
+									found = TRUE;
+									writeBuffer ( "Type:   [Lv Price Qty]  [ str dex int wis con   size ] Item\r\n", ch );
+									writeBuffer ( "                        [        REQUIREMENTS        ]\r\n", ch );
+								}
+
+								if ( !item_found ) {
+									item_found = true;
+									writeBuffer ( Format ( "Type: \a[F313]%s : %s\an\r\n", item_table[t].name, n_table[flag].name ), ch );
+								}
+
+								if ( IS_OBJ_STAT ( obj, ITEM_INVENTORY ) )
+									snprintf ( buf, sizeof ( buf ), "\t[%2d %5d -- ]  [ %3d %3d %3d %3d %3d %7s] %s\r\n",
+											   obj->level, cost,
+											   obj->requirements[STR_REQ], obj->requirements[DEX_REQ], obj->requirements[INT_REQ],
+											   obj->requirements[WIS_REQ], obj->requirements[CON_REQ], size_table[ ( int ) obj->requirements[SIZ_REQ]].name,
+											   obj->short_descr );
+								else {
+									count = 1;
+
+									while ( obj->next_content != NULL
+											&& obj->pIndexData == obj->next_content->pIndexData
+											&& !str_cmp ( obj->short_descr, obj->next_content->short_descr ) ) {
+										obj = obj->next_content;
+										count++;
+									}
+									int size = obj->requirements[SIZ_REQ];
+									if ( size < 0 || size > SIZE_MAGIC ) {
+										log_hd ( LOG_ERROR, Format ( "Item with broken size: %s | %d", obj->name ? obj->name : "{No Name}", size ) );
+									}
+									snprintf ( buf, sizeof ( buf ), "\t[%2d %5d %2d ]  [ %3d %3d %3d %3d %3d %7s] %s\n\r",
+											   obj->level, cost, count,
+											   obj->requirements[STR_REQ], obj->requirements[DEX_REQ], obj->requirements[INT_REQ],
+											   obj->requirements[WIS_REQ], obj->requirements[CON_REQ], size_table[size].name ? size_table[size].name : "Unknown",
+											   obj->short_descr );
+								}
+								writeBuffer ( buf, ch );
+							} // -- is_name block
+						} // -- size block
+					} // -- n_table block
+				} // -- carrying loop
+			} // -- char_level loop
+		} // -- end item_type loop
 		if ( !found )
 		{ writeBuffer ( "You can't buy anything here.\n\r", ch ); }
 		return;

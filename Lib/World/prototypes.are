@@ -74,7 +74,7 @@ Bob the Shop Keeper is here.
 Bob the Shop Keeper pours over designs for new and unique items.
 ~
 human~
-B ABMN AD 0 0 0
+B ABDFIKMNP AD 0 0 0
 5 1 5d10+1 0d0+0 5d0+4 none
 -1 -1 -1 -1
 0 0 0 0
@@ -489,7 +489,7 @@ This room is here as a test of our shop system.  There is a NPC
 that will sell randomly generated equipment.  This is how/where
 we are testing and debugging the system before release/beta.
 ~
-0 525312 0
+0 525316 0
 S
 #0
 
