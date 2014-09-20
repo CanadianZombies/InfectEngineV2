@@ -54,7 +54,7 @@ const struct position_type position_table[] = {
 	{	"stunned",		"stun"	},
 	{	"sleeping",		"sleep"	},
 	{	"resting",		"rest"	},
-		"sitting",		"sit"   },
+	{	"sitting",		"sit"   },
 	{	"fighting",		"fight"	},
 	{	"standing",		"stand"	},
 	{	NULL,			NULL	}
