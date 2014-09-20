@@ -1161,223 +1161,83 @@ DefineCommand ( cmd_worth )
 
 	return;
 }
-
+char *outputStat(Creature *ch, int lstat) {
+	std::string output("");
+	int statcount = 0;
+	if (get_curr_stat(ch,lstat)<=0)
+	{
+		output.append("\t[U9675/O]");
+		statcount=1;
+		while (statcount < 25)
+		{
+			output.append( "\t[U9675/O]");
+			statcount++;
+		}
+	}
+	else
+	{
+		while (statcount < get_curr_stat(ch,lstat))
+		{
+			output.append( "\t[U9679/*]");
+			statcount++;
+		}
+		while (statcount < 25)
+		{
+			output.append("\t[U9675/O]");
+			statcount++;
+		}
+	}
+	// -- return a char * instead of a const char *.
+	return (char *)output.c_str();
+}
 DefineCommand ( cmd_score )
 {
-	char buf[MAX_STRING_LENGTH];
-	int i;
+	int statcount = 0;
+	int align = ch->alignment;
 
-	sprintf ( buf,
-			  "You are %s%s, level %d, %d years old (%d hours).\n\r",
-			  ch->name,
-			  IS_NPC ( ch ) ? "" : ch->pcdata->title,
-			  ch->level, get_age ( ch ),
-			  ( ch->played + ( int ) ( current_time - ch->logon ) ) / 3600 );
-	writeBuffer ( buf, ch );
-
-	if ( get_trust ( ch ) != ch->level ) {
-		sprintf ( buf, "You are trusted at level %d.\n\r",
-				  get_trust ( ch ) );
-		writeBuffer ( buf, ch );
+	if(IS_NPC(ch)) {
+		writeBuffer("NPC's cannot see their sheet!\r\n", ch);
+		return;
 	}
 
-	snprintf ( buf, sizeof ( buf ), "Race: %s  Sex: %s  Class: %s\n\r",
-			   race_table[ch->race].name,
-			   ch->sex == 0 ? "sexless" : ch->sex == 1 ? "male" : "female",
-			   IS_NPC ( ch ) ? "mobile" : archetype_table[ch->archetype].name );
-	writeBuffer ( buf, ch );
+	// -- align colour will change the colour of various variables later on.
+	char alignColour[10] = {'\0'};
+	snprintf(alignColour, sizeof(alignColour), "%s", align > 0 ? "\aW" : "\ar");
+
+	writeBuffer(Format("                                         _______________"), ch);
+        writeBuffer(Format("  %8s %8s %8s                           /%-15s\\\r\n", 
+									ch->pcdata->condition[COND_DRUNK]   > 10 ? "Drunk" : "",
+									ch->pcdata->condition[COND_THIRST] ==  0 ? "Thirsty" : "",
+									ch->pcdata->condition[COND_HUNGER]   ==  0 ? "Hungry" : "",
+									ch->name),ch);
+	writeBuffer(Format("+--------------------------------------+ %-15s|"," "), ch);
+	writeBuffer(Format("+--------------------------------< About >--------------+\r\n"),ch );
+	writeBuffer(Format("|Age:       %3dyr                   Level:    %2d       |\r\n", get_age(ch), ch->level), ch); 
+	writeBuffer(Format("|Hours:     %5d                     Exp:      %5d       |\r\n", ( ch->played + ( int ) ( current_time - ch->logon ) ) / 3600, ch->exp), ch);
+	writeBuffer(Format("|Race:      %10s                    TNL:      %5d       |\r\n", race_table[ch->race].name, ((ch->level*200)-ch->exp) ), ch );
+	writeBuffer(Format("|Archetype: %10s                    Coward:   %5d       |\r\n", archetype_table[ch->archetype].name, ch->wimpy), ch);
+	writeBuffer(Format("|Gender:    %10s                    Position: %10s      |\r\n", ch->sex == 0 ? "sexless" : ch->sex == 1 ? "male" : "female",position_table[ch->position].name), ch);
+	writeBuffer(Format("+--------------------------------<Statistics>-----------+\r\n"),ch );
+	writeBuffer(Format("|Rating: Pierce: %5d Crush:  %5d    Health: %4d/%4d     |\r\n", GET_AC(ch, AC_PIERCE), GET_AC(ch, AC_BASH), ch->hit, ch->max_hit), ch); 
+	writeBuffer(Format("|        Slash:  %5d Unique: %5d    Breath: %4d/%4d     |\r\n", GET_AC(ch, AC_SLASH ), GET_AC(ch, AC_EXOTIC ), ch->move, ch->max_move), ch);
+	writeBuffer(Format("|        To Hit: %5d To Dam: %5d    Magic:  %4d/%4d     |\r\n", GET_HITROLL(ch), GET_DAMROLL(ch), ch->mana, ch->max_mana), ch);
+	writeBuffer(Format("+--------------------------------<Attributes>-----------+\r\n"), ch);
+	writeBuffer(Format("|STR: %10s DEX: %10s\r\n", outputStat(ch, STAT_STR), outputStat(ch, STAT_DEX)), ch);
+	writeBuffer(Format("|INT: %10s WIS: %10s\r\n", outputStat(ch, STAT_INT), outputStat(ch, STAT_WIS)), ch);
+	writeBuffer(Format("|CON: %10s\r\n");
+	writeBuffer(Format("+--------------------------------<Loot>-----------------+\r\n"),ch );
+	writeBuffer(Format("|Gold: %5d Silver: %5d  Carrying: %5d Items, Weighing %dlbs \r\n", ch->gold, ch->silver, ch->carry_number, get_carry_weight(ch)/10), ch);
+	writeBuffer(Format("+--------------------------------<==========>-----------+\r\n"),ch );
 
 
-	sprintf ( buf,
-			  "You have %d/%d hit, %d/%d mana, %d/%d movement.\n\r",
-			  ch->hit,  ch->max_hit,
-			  ch->mana, ch->max_mana,
-			  ch->move, ch->max_move );
-	writeBuffer ( buf, ch );
+	/*
+	 	-- practice and trains are being stripped out of the mud, skill points will be added
+		   shortly to LEARN skills, only actual usage of skills will cause them to improve.
+		"You have %d practices and %d training sessions.\n\r",  ch->practice, ch->train );
+	*/
 
-	sprintf ( buf,
-			  "You have %d practices and %d training sessions.\n\r",
-			  ch->practice, ch->train );
-	writeBuffer ( buf, ch );
-
-	sprintf ( buf,
-			  "You are carrying %d/%d items with weight %ld/%d pounds.\n\r",
-			  ch->carry_number, can_carry_n ( ch ),
-			  get_carry_weight ( ch ) / 10, can_carry_w ( ch ) / 10 );
-	writeBuffer ( buf, ch );
-
-	sprintf ( buf,
-			  "Str: %d(%d)  Int: %d(%d)  Wis: %d(%d)  Dex: %d(%d)  Con: %d(%d)\n\r",
-			  ch->perm_stat[STAT_STR],
-			  get_curr_stat ( ch, STAT_STR ),
-			  ch->perm_stat[STAT_INT],
-			  get_curr_stat ( ch, STAT_INT ),
-			  ch->perm_stat[STAT_WIS],
-			  get_curr_stat ( ch, STAT_WIS ),
-			  ch->perm_stat[STAT_DEX],
-			  get_curr_stat ( ch, STAT_DEX ),
-			  ch->perm_stat[STAT_CON],
-			  get_curr_stat ( ch, STAT_CON ) );
-	writeBuffer ( buf, ch );
-
-	sprintf ( buf,
-			  "You have scored %d exp, and have %ld gold and %ld silver coins.\n\r",
-			  ch->exp,  ch->gold, ch->silver );
-	writeBuffer ( buf, ch );
-
-	/* RT shows exp to level */
-	if ( !IS_NPC ( ch ) && ch->level < LEVEL_HERO ) {
-		sprintf ( buf,
-				  "You need %d exp to level.\n\r",
-				  ( ( ch->level + 1 ) * exp_per_level ( ch, ch->pcdata->points ) - ch->exp ) );
-		writeBuffer ( buf, ch );
-	}
-
-	sprintf ( buf, "Wimpy set to %d hit points.\n\r", ch->wimpy );
-	writeBuffer ( buf, ch );
-
-	if ( !IS_NPC ( ch ) && ch->pcdata->condition[COND_DRUNK]   > 10 )
-	{ writeBuffer ( "You are drunk.\n\r",   ch ); }
-	if ( !IS_NPC ( ch ) && ch->pcdata->condition[COND_THIRST] ==  0 )
-	{ writeBuffer ( "You are thirsty.\n\r", ch ); }
-	if ( !IS_NPC ( ch ) && ch->pcdata->condition[COND_HUNGER]   ==  0 )
-	{ writeBuffer ( "You are hungry.\n\r",  ch ); }
-
-	switch ( ch->position ) {
-		case POS_DEAD:
-			writeBuffer ( "You are DEAD!!\n\r",		ch );
-			break;
-		case POS_MORTAL:
-			writeBuffer ( "You are mortally wounded.\n\r",	ch );
-			break;
-		case POS_INCAP:
-			writeBuffer ( "You are incapacitated.\n\r",	ch );
-			break;
-		case POS_STUNNED:
-			writeBuffer ( "You are stunned.\n\r",		ch );
-			break;
-		case POS_SLEEPING:
-			writeBuffer ( "You are sleeping.\n\r",		ch );
-			break;
-		case POS_RESTING:
-			writeBuffer ( "You are resting.\n\r",		ch );
-			break;
-		case POS_SITTING:
-			writeBuffer ( "You are sitting.\n\r",		ch );
-			break;
-		case POS_STANDING:
-			writeBuffer ( "You are standing.\n\r",		ch );
-			break;
-		case POS_FIGHTING:
-			writeBuffer ( "You are fighting.\n\r",		ch );
-			break;
-	}
-
-
-	/* print AC values */
-	if ( ch->level >= 25 ) {
-		sprintf ( buf, "Armor: pierce: %d  bash: %d  slash: %d  magic: %d\n\r",
-				  GET_AC ( ch, AC_PIERCE ),
-				  GET_AC ( ch, AC_BASH ),
-				  GET_AC ( ch, AC_SLASH ),
-				  GET_AC ( ch, AC_EXOTIC ) );
-		writeBuffer ( buf, ch );
-	}
-
-	for ( i = 0; i < 4; i++ ) {
-		const char * temp;
-
-		switch ( i ) {
-			case ( AC_PIERCE ) :
-				temp = "piercing";
-				break;
-			case ( AC_BASH ) :
-				temp = "bashing";
-				break;
-			case ( AC_SLASH ) :
-				temp = "slashing";
-				break;
-			case ( AC_EXOTIC ) :
-				temp = "magic";
-				break;
-			default:
-				temp = "error";
-				break;
-		}
-
-		writeBuffer ( "You are ", ch );
-
-		if      ( GET_AC ( ch, i ) >=  101 )
-		{ snprintf ( buf, sizeof ( buf ), "hopelessly vulnerable to %s.\n\r", temp ); }
-		else if ( GET_AC ( ch, i ) >= 80 )
-		{ snprintf ( buf, sizeof ( buf ), "defenseless against %s.\n\r", temp ); }
-		else if ( GET_AC ( ch, i ) >= 60 )
-		{ snprintf ( buf, sizeof ( buf ), "barely protected from %s.\n\r", temp ); }
-		else if ( GET_AC ( ch, i ) >= 40 )
-		{ snprintf ( buf, sizeof ( buf ), "slightly armored against %s.\n\r", temp ); }
-		else if ( GET_AC ( ch, i ) >= 20 )
-		{ snprintf ( buf, sizeof ( buf ), "somewhat armored against %s.\n\r", temp ); }
-		else if ( GET_AC ( ch, i ) >= 0 )
-		{ snprintf ( buf, sizeof ( buf ), "armored against %s.\n\r", temp ); }
-		else if ( GET_AC ( ch, i ) >= -20 )
-		{ snprintf ( buf, sizeof ( buf ), "well-armored against %s.\n\r", temp ); }
-		else if ( GET_AC ( ch, i ) >= -40 )
-		{ snprintf ( buf, sizeof ( buf ), "very well-armored against %s.\n\r", temp ); }
-		else if ( GET_AC ( ch, i ) >= -60 )
-		{ snprintf ( buf, sizeof ( buf ), "heavily armored against %s.\n\r", temp ); }
-		else if ( GET_AC ( ch, i ) >= -80 )
-		{ snprintf ( buf, sizeof ( buf ), "superbly armored against %s.\n\r", temp ); }
-		else if ( GET_AC ( ch, i ) >= -100 )
-		{ snprintf ( buf, sizeof ( buf ), "almost invulnerable to %s.\n\r", temp ); }
-		else
-		{ snprintf ( buf, sizeof ( buf ), "divinely armored against %s.\n\r", temp ); }
-
-		writeBuffer ( buf, ch );
-	}
-
-
-	/* RT wizinvis and holy light */
-	if ( IsStaff ( ch ) ) {
-		writeBuffer ( "God Sight: ", ch );
-		if ( IS_SET ( ch->act, PLR_HOLYLIGHT ) )
-		{ writeBuffer ( "on", ch ); }
-		else
-		{ writeBuffer ( "off", ch ); }
-
-		if ( ch->invis_level ) {
-			sprintf ( buf, "  Invisible: level %d", ch->invis_level );
-			writeBuffer ( buf, ch );
-		}
-
-		if ( ch->incog_level ) {
-			snprintf ( buf, sizeof ( buf ), "  Incognito: level %d", ch->incog_level );
-			writeBuffer ( buf, ch );
-		}
-		writeBuffer ( "\n\r", ch );
-	}
-
-	if ( ch->level >= 15 ) {
-		sprintf ( buf, "Hitroll: %d  Damroll: %d.\n\r",
-				  GET_HITROLL ( ch ), GET_DAMROLL ( ch ) );
-		writeBuffer ( buf, ch );
-	}
-
-	if ( ch->level >= 10 ) {
-		sprintf ( buf, "Alignment: %d.  ", ch->alignment );
-		writeBuffer ( buf, ch );
-	}
-
-	writeBuffer ( "You are ", ch );
-	if ( ch->alignment >  900 ) { writeBuffer ( "angelic.\n\r", ch ); }
-	else if ( ch->alignment >  700 ) { writeBuffer ( "saintly.\n\r", ch ); }
-	else if ( ch->alignment >  350 ) { writeBuffer ( "good.\n\r",    ch ); }
-	else if ( ch->alignment >  100 ) { writeBuffer ( "kind.\n\r",    ch ); }
-	else if ( ch->alignment > -100 ) { writeBuffer ( "neutral.\n\r", ch ); }
-	else if ( ch->alignment > -350 ) { writeBuffer ( "mean.\n\r",    ch ); }
-	else if ( ch->alignment > -700 ) { writeBuffer ( "evil.\n\r",    ch ); }
-	else if ( ch->alignment > -900 ) { writeBuffer ( "demonic.\n\r", ch ); }
-	else                             { writeBuffer ( "satanic.\n\r", ch ); }
-
+	// -- this will be removed completely and entirely re-done to be its own unique
+	// -- and well thought out command, full of details and vital data.
 	if ( IS_SET ( ch->comm, COMM_SHOW_AFFECTS ) )
 	{ cmd_function ( ch, &cmd_affects, "" ); }
 }
