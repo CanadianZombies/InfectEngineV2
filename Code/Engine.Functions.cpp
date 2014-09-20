@@ -852,7 +852,7 @@ int get_curr_stat ( Creature *ch, int stat )
 {
 	int max;
 
-	if ( IS_NPC ( ch ) || ch->level > LEVEL_IMMORTAL )
+	if ( IS_NPC ( ch ) )
 	{ max = 25; }
 
 	else {
@@ -1138,7 +1138,7 @@ void affect_modify ( Creature *ch, Affect *paf, bool fAdd )
 			act ( "You drop $p.", ch, wield, NULL, TO_CHAR );
 			act ( "$n drops $p.", ch, wield, NULL, TO_ROOM );
 			obj_from_char ( wield );
-			obj_to_room ( wield, ch->in_room );
+			obj_to_room ( wield, IN_ROOM ( ch ) );
 			depth--;
 		}
 	}
@@ -1334,8 +1334,8 @@ void affect_remove_obj ( Item *obj, Affect *paf )
 		return;
 	}
 
-	if ( obj->carried_by != NULL && obj->wear_loc != -1 )
-	{ affect_modify ( obj->carried_by, paf, FALSE ); }
+	if ( CARRIED_BY ( obj ) != NULL && obj->wear_loc != -1 )
+	{ affect_modify ( CARRIED_BY ( obj ), paf, FALSE ); }
 
 	where = paf->where;
 	vector = paf->bitvector;
@@ -1372,8 +1372,8 @@ void affect_remove_obj ( Item *obj, Affect *paf )
 
 	recycle_affect ( paf );
 
-	if ( obj->carried_by != NULL && obj->wear_loc != -1 )
-	{ affect_check ( obj->carried_by, where, vector ); }
+	if ( CARRIED_BY ( obj ) != NULL && obj->wear_loc != -1 )
+	{ affect_check ( CARRIED_BY ( obj ), where, vector ); }
 	return;
 }
 
@@ -1453,26 +1453,26 @@ void char_from_room ( Creature *ch )
 {
 	Item *obj;
 
-	if ( ch->in_room == NULL ) {
+	if ( IN_ROOM ( ch ) == NULL ) {
 		log_hd ( LOG_ERROR, "Char_from_room: NULL." );
 		return;
 	}
 
 	if ( !IS_NPC ( ch ) )
-	{ --ch->in_room->area->nplayer; }
+	{ --IN_ROOM ( ch )->area->nplayer; }
 
 	if ( ( obj = get_eq_char ( ch, WEAR_LIGHT ) ) != NULL
 			&&   obj->item_type == ITEM_LIGHT
 			&&   obj->value[2] != 0
-			&&   ch->in_room->light > 0 )
-	{ --ch->in_room->light; }
+			&&   IN_ROOM ( ch )->light > 0 )
+	{ --IN_ROOM ( ch )->light; }
 
-	if ( ch == ch->in_room->people ) {
-		ch->in_room->people = ch->next_in_room;
+	if ( ch == IN_ROOM ( ch )->people ) {
+		IN_ROOM ( ch )->people = ch->next_in_room;
 	} else {
 		Creature *prev;
 
-		for ( prev = ch->in_room->people; prev; prev = prev->next_in_room ) {
+		for ( prev = IN_ROOM ( ch )->people; prev; prev = prev->next_in_room ) {
 			if ( prev->next_in_room == ch ) {
 				prev->next_in_room = ch->next_in_room;
 				break;
@@ -1483,7 +1483,7 @@ void char_from_room ( Creature *ch )
 		{ log_hd ( LOG_ERROR, "Char_from_room: ch not found." ); }
 	}
 
-	ch->in_room      = NULL;
+	IN_ROOM ( ch )      = NULL;
 	ch->next_in_room = NULL;
 	ch->on 	     = NULL;  /* sanity check! */
 	return;
@@ -1509,22 +1509,22 @@ void char_to_room ( Creature *ch, RoomData *pRoomIndex )
 		return;
 	}
 
-	ch->in_room		= pRoomIndex;
+	IN_ROOM ( ch )		= pRoomIndex;
 	ch->next_in_room	= pRoomIndex->people;
 	pRoomIndex->people	= ch;
 
 	if ( !IS_NPC ( ch ) ) {
-		if ( ch->in_room->area->empty ) {
-			ch->in_room->area->empty = FALSE;
-			ch->in_room->area->age = 0;
+		if ( IN_ROOM ( ch )->area->empty ) {
+			IN_ROOM ( ch )->area->empty = FALSE;
+			IN_ROOM ( ch )->area->age = 0;
 		}
-		++ch->in_room->area->nplayer;
+		++IN_ROOM ( ch )->area->nplayer;
 	}
 
 	if ( ( obj = get_eq_char ( ch, WEAR_LIGHT ) ) != NULL
 			&&   obj->item_type == ITEM_LIGHT
 			&&   obj->value[2] != 0 )
-	{ ++ch->in_room->light; }
+	{ ++IN_ROOM ( ch )->light; }
 
 	if ( IS_AFFECTED ( ch, AFF_PLAGUE ) ) {
 		Affect *af, plague;
@@ -1551,7 +1551,7 @@ void char_to_room ( Creature *ch, RoomData *pRoomIndex )
 		plague.modifier 	= -5;
 		plague.bitvector 	= AFF_PLAGUE;
 
-		for ( vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room ) {
+		for ( vch = IN_ROOM ( ch )->people; vch != NULL; vch = vch->next_in_room ) {
 			if ( !saves_spell ( plague.level - 2, vch, DAM_DISEASE )
 					&&  !IsStaff ( vch ) &&
 					!IS_AFFECTED ( vch, AFF_PLAGUE ) && Math::instance().bits ( 6 ) == 0 ) {
@@ -1575,9 +1575,9 @@ void obj_to_char ( Item *obj, Creature *ch )
 {
 	obj->next_content	 = ch->carrying;
 	ch->carrying	 = obj;
-	obj->carried_by	 = ch;
+	CARRIED_BY ( obj )	 = ch;
 	obj->in_room	 = NULL;
-	obj->in_obj		 = NULL;
+	IN_OBJ ( obj )		 = NULL;
 	ch->carry_number	+= get_obj_number ( obj );
 	ch->carry_weight	+= get_obj_weight ( obj );
 }
@@ -1591,7 +1591,7 @@ void obj_from_char ( Item *obj )
 {
 	Creature *ch;
 
-	if ( ( ch = obj->carried_by ) == NULL ) {
+	if ( ( ch = CARRIED_BY ( obj ) ) == NULL ) {
 		log_hd ( LOG_ERROR, "Obj_from_char: null ch." );
 		return;
 	}
@@ -1615,7 +1615,7 @@ void obj_from_char ( Item *obj )
 		{ log_hd ( LOG_ERROR, "Obj_from_char: obj not in list." ); }
 	}
 
-	obj->carried_by	 = NULL;
+	CARRIED_BY ( obj )	 = NULL;
 	obj->next_content	 = NULL;
 	ch->carry_number	-= get_obj_number ( obj );
 	ch->carry_weight	-= get_obj_weight ( obj );
@@ -1710,7 +1710,7 @@ void equip_char ( Creature *ch, Item *obj, int iWear )
 		act ( "You are zapped by $p and drop it.", ch, obj, NULL, TO_CHAR );
 		act ( "$n is zapped by $p and drops it.",  ch, obj, NULL, TO_ROOM );
 		obj_from_char ( obj );
-		obj_to_room ( obj, ch->in_room );
+		obj_to_room ( obj, IN_ROOM ( ch ) );
 		return;
 	}
 
@@ -1730,8 +1730,8 @@ void equip_char ( Creature *ch, Item *obj, int iWear )
 
 	if ( obj->item_type == ITEM_LIGHT
 			&&   obj->value[2] != 0
-			&&   ch->in_room != NULL )
-	{ ++ch->in_room->light; }
+			&&   IN_ROOM ( ch ) != NULL )
+	{ ++IN_ROOM ( ch )->light; }
 
 	return;
 }
@@ -1797,9 +1797,9 @@ void unequip_char ( Creature *ch, Item *obj )
 
 	if ( obj->item_type == ITEM_LIGHT
 			&&   obj->value[2] != 0
-			&&   ch->in_room != NULL
-			&&   ch->in_room->light > 0 )
-	{ --ch->in_room->light; }
+			&&   IN_ROOM ( ch ) != NULL
+			&&   IN_ROOM ( ch )->light > 0 )
+	{ --IN_ROOM ( ch )->light; }
 
 	return;
 }
@@ -1875,8 +1875,8 @@ void obj_to_room ( Item *obj, RoomData *pRoomIndex )
 	obj->next_content		= pRoomIndex->contents;
 	pRoomIndex->contents	= obj;
 	obj->in_room		= pRoomIndex;
-	obj->carried_by		= NULL;
-	obj->in_obj			= NULL;
+	CARRIED_BY ( obj )		= NULL;
+	IN_OBJ ( obj )			= NULL;
 	return;
 }
 
@@ -1889,9 +1889,9 @@ void obj_to_obj ( Item *obj, Item *obj_to )
 {
 	obj->next_content		= obj_to->contains;
 	obj_to->contains		= obj;
-	obj->in_obj			= obj_to;
+	IN_OBJ ( obj )			= obj_to;
 	obj->in_room		= NULL;
-	obj->carried_by		= NULL;
+	CARRIED_BY ( obj )		= NULL;
 	if ( obj_to->pIndexData->vnum == OBJ_VNUM_PIT )
 	{ obj->cost = 0; }
 
@@ -1915,7 +1915,7 @@ void obj_from_obj ( Item *obj )
 {
 	Item *obj_from;
 
-	if ( ( obj_from = obj->in_obj ) == NULL ) {
+	if ( ( obj_from = IN_OBJ ( obj ) ) == NULL ) {
 		log_hd ( LOG_ERROR, "Obj_from_obj: null obj_from." );
 		return;
 	}
@@ -1939,7 +1939,7 @@ void obj_from_obj ( Item *obj )
 	}
 
 	obj->next_content = NULL;
-	obj->in_obj       = NULL;
+	IN_OBJ ( obj )       = NULL;
 
 	for ( ; obj_from != NULL; obj_from = obj_from->in_obj ) {
 		if ( obj_from->carried_by != NULL ) {
@@ -1964,9 +1964,9 @@ void extract_obj ( Item *obj )
 
 	if ( obj->in_room != NULL )
 	{ obj_from_room ( obj ); }
-	else if ( obj->carried_by != NULL )
+	else if ( CARRIED_BY ( obj ) != NULL )
 	{ obj_from_char ( obj ); }
-	else if ( obj->in_obj != NULL )
+	else if ( IN_OBJ ( obj ) != NULL )
 	{ obj_from_obj ( obj ); }
 
 	for ( obj_content = obj->contains; obj_content; obj_content = obj_next ) {
@@ -2009,7 +2009,7 @@ void extract_char ( Creature *ch, bool fPull )
 	Item *obj_next;
 
 	/* doesn't seem to be necessary
-	if ( ch->in_room == NULL )
+	if ( IN_ROOM(ch) == NULL )
 	{
 	log_hd(LOG_ERROR, "Extract_char: NULL." );
 	return;
@@ -2030,7 +2030,7 @@ void extract_char ( Creature *ch, bool fPull )
 		extract_obj ( obj );
 	}
 
-	if ( ch->in_room != NULL )
+	if ( IN_ROOM ( ch ) != NULL )
 	{ char_from_room ( ch ); }
 
 	/* Death room is set in the clan tabe now */
@@ -2094,7 +2094,7 @@ Creature *get_char_room ( Creature *ch, const char *argument )
 	count  = 0;
 	if ( !str_cmp ( arg, "self" ) )
 	{ return ch; }
-	for ( rch = ch->in_room->people; rch != NULL; rch = rch->next_in_room ) {
+	for ( rch = IN_ROOM ( ch )->people; rch != NULL; rch = rch->next_in_room ) {
 		if ( !can_see ( ch, rch ) || !is_name ( arg, rch->name ) )
 		{ continue; }
 		if ( ++count == number )
@@ -2123,7 +2123,7 @@ Creature *get_char_world ( Creature *ch, const char *argument )
 	number = number_argument ( argument, arg );
 	count  = 0;
 	for ( wch = char_list; wch != NULL ; wch = wch->next ) {
-		if ( wch->in_room == NULL || !can_see ( ch, wch )
+		if ( IN_ROOM ( wch ) == NULL || !can_see ( ch, wch )
 				||   !is_name ( arg, wch->name ) )
 		{ continue; }
 		if ( ++count == number )
@@ -2235,7 +2235,7 @@ Item *get_obj_here ( Creature *ch, const char *argument )
 {
 	Item *obj;
 
-	obj = get_obj_list ( ch, argument, ch->in_room->contents );
+	obj = get_obj_list ( ch, argument, IN_ROOM ( ch )->contents );
 	if ( obj != NULL )
 	{ return obj; }
 
@@ -2498,7 +2498,7 @@ bool can_see ( Creature *ch, Creature *victim )
 	{ return FALSE; }
 
 
-	if ( get_trust ( ch ) < victim->incog_level && ch->in_room != victim->in_room )
+	if ( get_trust ( ch ) < victim->incog_level && IN_ROOM ( ch ) != IN_ROOM ( victim ) )
 	{ return FALSE; }
 
 	if ( ( !IS_NPC ( ch ) && IS_SET ( ch->act, PLR_HOLYLIGHT ) )
@@ -2508,7 +2508,7 @@ bool can_see ( Creature *ch, Creature *victim )
 	if ( IS_AFFECTED ( ch, AFF_BLIND ) )
 	{ return FALSE; }
 
-	if ( room_is_dark ( ch->in_room ) && !IS_AFFECTED ( ch, AFF_INFRARED ) )
+	if ( room_is_dark ( IN_ROOM ( ch ) ) && !IS_AFFECTED ( ch, AFF_INFRARED ) )
 	{ return FALSE; }
 
 	if ( IS_AFFECTED ( victim, AFF_INVISIBLE )
@@ -2518,7 +2518,7 @@ bool can_see ( Creature *ch, Creature *victim )
 	/* sneaking */
 	if ( IS_AFFECTED ( victim, AFF_SNEAK )
 			&&   !IS_AFFECTED ( ch, AFF_DETECT_HIDDEN )
-			&&   victim->fighting == NULL ) {
+			&&   FIGHTING ( victim ) == NULL ) {
 		int chance;
 		chance = get_skill ( victim, gsn_sneak );
 		chance += get_curr_stat ( victim, STAT_DEX ) * 3 / 2;
@@ -2531,7 +2531,7 @@ bool can_see ( Creature *ch, Creature *victim )
 
 	if ( IS_AFFECTED ( victim, AFF_HIDE )
 			&&   !IS_AFFECTED ( ch, AFF_DETECT_HIDDEN )
-			&&   victim->fighting == NULL )
+			&&   FIGHTING ( victim ) == NULL )
 	{ return FALSE; }
 
 	return TRUE;
@@ -2563,7 +2563,7 @@ bool can_see_obj ( Creature *ch, Item *obj )
 	if ( IS_OBJ_STAT ( obj, ITEM_GLOW ) )
 	{ return TRUE; }
 
-	if ( room_is_dark ( ch->in_room ) && !IS_AFFECTED ( ch, AFF_DARK_VISION ) )
+	if ( room_is_dark ( IN_ROOM ( ch ) ) && !IS_AFFECTED ( ch, AFF_DARK_VISION ) )
 	{ return FALSE; }
 
 	return TRUE;

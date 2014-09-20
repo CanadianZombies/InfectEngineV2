@@ -817,7 +817,7 @@ bool process_output ( Socket *d, bool fPrompt )
 		ch = d->character;
 
 		/* battle prompt */
-		if ( ( victim = ch->fighting ) != NULL && can_see ( ch, victim ) ) {
+		if ( ( victim = FIGHTING ( ch ) ) != NULL && can_see ( ch, victim ) ) {
 			int percent;
 			char wound[100];
 			char buf[MAX_STRING_LENGTH];
@@ -939,7 +939,7 @@ void bust_a_prompt ( Creature *ch )
 				found = FALSE;
 				doors[0] = '\0';
 				for ( door = 0; door < 6; door++ ) {
-					if ( ( pexit = ch->in_room->exit[door] ) != NULL
+					if ( ( pexit = IN_ROOM ( ch )->exit[door] ) != NULL
 							&&  pexit ->u1.to_room != NULL
 							&&  ( can_see_room ( ch, pexit->u1.to_room )
 								  ||   ( IS_AFFECTED ( ch, AFF_INFRARED )
@@ -1008,25 +1008,25 @@ void bust_a_prompt ( Creature *ch )
 				i = buf2;
 				break;
 			case 'r' :
-				if ( ch->in_room != NULL )
+				if ( IN_ROOM ( ch ) != NULL )
 					sprintf ( buf2, "%s",
 							  ( ( !IS_NPC ( ch ) && IS_SET ( ch->act, PLR_HOLYLIGHT ) ) ||
-								( !IS_AFFECTED ( ch, AFF_BLIND ) && !room_is_dark ( ch->in_room ) ) )
-							  ? ch->in_room->name : "darkness" );
+								( !IS_AFFECTED ( ch, AFF_BLIND ) && !room_is_dark ( IN_ROOM ( ch ) ) ) )
+							  ? IN_ROOM ( ch )->name : "darkness" );
 				else
 				{ sprintf ( buf2, " " ); }
 				i = buf2;
 				break;
 			case 'R' :
-				if ( IsStaff ( ch ) && ch->in_room != NULL )
-				{ sprintf ( buf2, "%d", ch->in_room->vnum ); }
+				if ( IsStaff ( ch ) && IN_ROOM ( ch ) != NULL )
+				{ sprintf ( buf2, "%d", IN_ROOM ( ch )->vnum ); }
 				else
 				{ sprintf ( buf2, " " ); }
 				i = buf2;
 				break;
 			case 'z' :
-				if ( IsStaff ( ch ) && ch->in_room != NULL )
-				{ sprintf ( buf2, "%s", ch->in_room->area->name ); }
+				if ( IsStaff ( ch ) && IN_ROOM ( ch ) != NULL )
+				{ sprintf ( buf2, "%s", IN_ROOM ( ch )->area->name ); }
 				else
 				{ sprintf ( buf2, " " ); }
 				i = buf2;
@@ -1709,8 +1709,8 @@ void nanny ( Socket *d, char *argument )
 				// -- lets set up our character.
 				cmd_function ( ch, &cmd_config, "" );
 				return;
-			} else if ( ch->in_room != NULL ) {
-				char_to_room ( ch, ch->in_room );
+			} else if ( IN_ROOM ( ch ) != NULL ) {
+				char_to_room ( ch, IN_ROOM ( ch ) );
 			} else if ( IsStaff ( ch ) ) {
 				char_to_room ( ch, get_room_index ( ROOM_VNUM_CHAT ) );
 			} else {
@@ -1723,7 +1723,7 @@ void nanny ( Socket *d, char *argument )
 			wiznet ( "$N has left real life behind.", ch, NULL, WIZ_LOGINS, WIZ_SITES, get_trust ( ch ) );
 
 			if ( ch->pet != NULL ) {
-				char_to_room ( ch->pet, ch->in_room );
+				char_to_room ( ch->pet, IN_ROOM ( ch ) );
 				act ( "$n has entered the game.", ch->pet, NULL, NULL, TO_ROOM );
 			}
 
@@ -1913,7 +1913,7 @@ void stop_idling ( Creature *ch )
 			||   ch->desc == NULL
 			||   ch->desc->connected != CON_PLAYING
 			||   ch->was_in_room == NULL
-			||   ch->in_room != get_room_index ( ROOM_VNUM_LIMBO ) )
+			||   IN_ROOM ( ch ) != get_room_index ( ROOM_VNUM_LIMBO ) )
 	{ return; }
 
 	ch->timer = 0;
@@ -2038,20 +2038,20 @@ void act_new ( const char *format, Creature *ch, const void *arg1,
 	{ return; }
 
 	/* discard null rooms and chars */
-	if ( ch == NULL || ch->in_room == NULL )
+	if ( ch == NULL || IN_ROOM ( ch ) == NULL )
 	{ return; }
 
-	to = ch->in_room->people;
+	to = IN_ROOM ( ch )->people;
 	if ( type == TO_VICT ) {
 		if ( vch == NULL ) {
 			log_hd ( LOG_ERROR, "Act: null vch with TO_VICT." );
 			return;
 		}
 
-		if ( vch->in_room == NULL )
+		if ( IN_ROOM ( vch ) == NULL )
 		{ return; }
 
-		to = vch->in_room->people;
+		to = IN_ROOM ( vch )->people;
 	}
 
 	for ( ; to != NULL; to = to->next_in_room ) {

@@ -291,7 +291,7 @@ int get_order ( Creature *ch )
 
 	if ( !IS_NPC ( ch ) )
 	{ return 0; }
-	for ( i = 0, vch = ch->in_room->people; vch; vch = vch->next_in_room ) {
+	for ( i = 0, vch = IN_ROOM ( ch )->people; vch; vch = vch->next_in_room ) {
 		if ( vch == ch )
 		{ return i; }
 		if ( IS_NPC ( vch )
@@ -324,7 +324,7 @@ bool has_item ( Creature *ch, int vnum, int item_type, bool fWear )
 bool get_mob_vnum_room ( Creature *ch, int vnum )
 {
 	Creature *mob;
-	for ( mob = ch->in_room->people; mob; mob = mob->next_in_room )
+	for ( mob = IN_ROOM ( ch )->people; mob; mob = mob->next_in_room )
 		if ( IS_NPC ( mob ) && mob->pIndexData->vnum == vnum )
 		{ return TRUE; }
 	return FALSE;
@@ -336,7 +336,7 @@ bool get_mob_vnum_room ( Creature *ch, int vnum )
 bool get_obj_vnum_room ( Creature *ch, int vnum )
 {
 	Item *obj;
-	for ( obj = ch->in_room->contents; obj; obj = obj->next_content )
+	for ( obj = IN_ROOM ( ch )->contents; obj; obj = obj->next_content )
 		if ( obj->pIndexData->vnum == vnum )
 		{ return TRUE; }
 	return FALSE;
@@ -1131,7 +1131,7 @@ bool mp_exit_trigger ( Creature *ch, int dir )
 	Creature *mob;
 	MPROG_LIST   *prg;
 
-	for ( mob = ch->in_room->people; mob != NULL; mob = mob->next_in_room ) {
+	for ( mob = IN_ROOM ( ch )->people; mob != NULL; mob = mob->next_in_room ) {
 		if ( IS_NPC ( mob )
 				&&   ( HAS_TRIGGER ( mob, TRIG_EXIT ) || HAS_TRIGGER ( mob, TRIG_EXALL ) ) ) {
 			for ( prg = mob->pIndexData->mprogs; prg; prg = prg->next ) {
@@ -1196,7 +1196,7 @@ void mp_greet_trigger ( Creature *ch )
 {
 	Creature *mob;
 
-	for ( mob = ch->in_room->people; mob != NULL; mob = mob->next_in_room ) {
+	for ( mob = IN_ROOM ( ch )->people; mob != NULL; mob = mob->next_in_room ) {
 		if ( IS_NPC ( mob )
 				&& ( HAS_TRIGGER ( mob, TRIG_GREET ) || HAS_TRIGGER ( mob, TRIG_GRALL ) ) ) {
 			/*

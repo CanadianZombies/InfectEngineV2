@@ -1017,7 +1017,7 @@ DefineCommand ( cmd_asave )
 				pArea = ( Zone * ) ch->desc->pEdit;
 				break;
 			case ED_ROOM:
-				pArea = ch->in_room->area;
+				pArea = IN_ROOM ( ch )->area;
 				break;
 			case ED_OBJECT:
 				pArea = ( ( ItemData * ) ch->desc->pEdit )->area;
@@ -1030,7 +1030,7 @@ DefineCommand ( cmd_asave )
 				save_other_helps ( ch );
 				return;
 			default:
-				pArea = ch->in_room->area;
+				pArea = IN_ROOM ( ch )->area;
 				break;
 		}
 

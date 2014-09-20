@@ -2926,7 +2926,7 @@ void append_file ( Creature *ch, const char *file, const char *str )
 		writeBuffer ( "Could not open the file!\n\r", ch );
 	} else {
 		fprintf ( fp, "[%5d] %s: %s\n",
-				  ch->in_room ? ch->in_room->vnum : 0, ch->name, str );
+				  IN_ROOM ( ch ) ? IN_ROOM ( ch )->vnum : 0, ch->name, str );
 		fclose ( fp );
 	}
 

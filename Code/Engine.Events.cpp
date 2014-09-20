@@ -453,7 +453,7 @@ void ExpEvent::Execute ( void )
 		if ( !ch )	{ SUICIDE; }				// -- the impossible has happened
 		if ( IS_NPC ( ch ) ) { continue; }				// -- NPC's do not gain
 		if ( ch->level >= MAX_LEVEL ) { continue; }		// -- Max Level does not gain
-		if ( ch->fighting ) { continue; }			// -- do not gain while in combat.
+		if ( FIGHTING ( ch ) ) { continue; }			// -- do not gain while in combat.
 
 		int totalGain = 0;
 		if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 7 ) ) {

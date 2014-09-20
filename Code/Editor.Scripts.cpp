@@ -238,7 +238,7 @@ MPEDIT ( mpedit_list )
 	buffer = new_buf();
 
 	for ( mprg = mprog_list; mprg != NULL; mprg = mprg->next )
-		if ( fAll || ENTRE ( ch->in_room->area->min_vnum, mprg->vnum, ch->in_room->area->max_vnum ) ) {
+		if ( fAll || ENTRE ( IN_ROOM ( ch )->area->min_vnum, mprg->vnum, IN_ROOM ( ch )->area->max_vnum ) ) {
 			ad = get_vnum_area ( mprg->vnum );
 
 			if ( ad == NULL )

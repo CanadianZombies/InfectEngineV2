@@ -122,12 +122,12 @@ bool spec_troll_member ( Creature *ch )
 	int count = 0;
 	const char *message;
 
-	if ( !IS_AWAKE ( ch ) || IS_AFFECTED ( ch, AFF_CALM ) || ch->in_room == NULL
-			||  IS_AFFECTED ( ch, AFF_CHARM ) || ch->fighting != NULL )
+	if ( !IS_AWAKE ( ch ) || IS_AFFECTED ( ch, AFF_CALM ) || IN_ROOM ( ch ) == NULL
+			||  IS_AFFECTED ( ch, AFF_CHARM ) || FIGHTING ( ch ) != NULL )
 	{ return FALSE; }
 
 	/* find an ogre to beat up */
-	for ( vch = ch->in_room->people;  vch != NULL;  vch = vch->next_in_room ) {
+	for ( vch = IN_ROOM ( ch )->people;  vch != NULL;  vch = vch->next_in_room ) {
 		if ( !IS_NPC ( vch ) || ch == vch )
 		{ continue; }
 
@@ -187,12 +187,12 @@ bool spec_ogre_member ( Creature *ch )
 	int count = 0;
 	const char *message;
 
-	if ( !IS_AWAKE ( ch ) || IS_AFFECTED ( ch, AFF_CALM ) || ch->in_room == NULL
-			||  IS_AFFECTED ( ch, AFF_CHARM ) || ch->fighting != NULL )
+	if ( !IS_AWAKE ( ch ) || IS_AFFECTED ( ch, AFF_CALM ) || IN_ROOM ( ch ) == NULL
+			||  IS_AFFECTED ( ch, AFF_CHARM ) || FIGHTING ( ch ) != NULL )
 	{ return FALSE; }
 
 	/* find an troll to beat up */
-	for ( vch = ch->in_room->people;  vch != NULL;  vch = vch->next_in_room ) {
+	for ( vch = IN_ROOM ( ch )->people;  vch != NULL;  vch = vch->next_in_room ) {
 		if ( !IS_NPC ( vch ) || ch == vch )
 		{ continue; }
 
@@ -253,19 +253,19 @@ bool spec_patrolman ( Creature *ch )
 	const char *message;
 	int count = 0;
 
-	if ( !IS_AWAKE ( ch ) || IS_AFFECTED ( ch, AFF_CALM ) || ch->in_room == NULL
-			||  IS_AFFECTED ( ch, AFF_CHARM ) || ch->fighting != NULL )
+	if ( !IS_AWAKE ( ch ) || IS_AFFECTED ( ch, AFF_CALM ) || IN_ROOM ( ch ) == NULL
+			||  IS_AFFECTED ( ch, AFF_CHARM ) || FIGHTING ( ch ) != NULL )
 	{ return FALSE; }
 
 	/* look for a fight in the room */
-	for ( vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room ) {
+	for ( vch = IN_ROOM ( ch )->people; vch != NULL; vch = vch->next_in_room ) {
 		if ( vch == ch )
 		{ continue; }
 
-		if ( vch->fighting != NULL ) { /* break it up! */
+		if ( FIGHTING ( vch ) != NULL ) { /* break it up! */
 			if ( Math::instance().range ( 0, count ) == 0 )
-				victim = ( vch->level > vch->fighting->level )
-						 ? vch : vch->fighting;
+				victim = ( vch->level > FIGHTING ( vch )->level )
+						 ? vch : FIGHTING ( vch );
 			count++;
 		}
 	}
@@ -281,11 +281,11 @@ bool spec_patrolman ( Creature *ch )
 		act ( "$n blows on $p, ***WHEEEEEEEEEEEET***", ch, obj, NULL, TO_ROOM );
 
 		for ( vch = char_list; vch != NULL; vch = vch->next ) {
-			if ( vch->in_room == NULL )
+			if ( IN_ROOM ( vch ) == NULL )
 			{ continue; }
 
-			if ( vch->in_room != ch->in_room
-					&&  vch->in_room->area == ch->in_room->area )
+			if ( IN_ROOM ( vch ) != IN_ROOM ( ch )
+					&&  IN_ROOM ( vch )->area == IN_ROOM ( ch )->area )
 			{ writeBuffer ( "You hear a shrill whistling sound.\n\r", vch ); }
 		}
 	}
@@ -339,7 +339,7 @@ bool spec_nasty ( Creature *ch )
 	}
 
 	if ( ch->position != POS_FIGHTING ) {
-		for ( victim = ch->in_room->people; victim != NULL; victim = v_next ) {
+		for ( victim = IN_ROOM ( ch )->people; victim != NULL; victim = v_next ) {
 			v_next = victim->next_in_room;
 			if ( !IS_NPC ( victim )
 					&& ( victim->level > ch->level )
@@ -357,7 +357,7 @@ bool spec_nasty ( Creature *ch )
 	}
 
 	/* okay, we must be fighting.... steal some coins and flee */
-	if ( ( victim = ch->fighting ) == NULL )
+	if ( ( victim = FIGHTING ( ch ) ) == NULL )
 	{ return FALSE; }   /* let's be paranoid.... */
 
 	switch ( Math::instance().bits ( 2 ) ) {
@@ -394,9 +394,9 @@ bool dragon ( Creature *ch, const char *spell_name )
 	if ( ch->position != POS_FIGHTING )
 	{ return FALSE; }
 
-	for ( victim = ch->in_room->people; victim != NULL; victim = v_next ) {
+	for ( victim = IN_ROOM ( ch )->people; victim != NULL; victim = v_next ) {
 		v_next = victim->next_in_room;
-		if ( victim->fighting == ch && Math::instance().bits ( 3 ) == 0 )
+		if ( FIGHTING ( victim ) == ch && Math::instance().bits ( 3 ) == 0 )
 		{ break; }
 	}
 
@@ -491,7 +491,7 @@ bool spec_cast_adept ( Creature *ch )
 	if ( !IS_AWAKE ( ch ) )
 	{ return FALSE; }
 
-	for ( victim = ch->in_room->people; victim != NULL; victim = v_next ) {
+	for ( victim = IN_ROOM ( ch )->people; victim != NULL; victim = v_next ) {
 		v_next = victim->next_in_room;
 		if ( victim != ch && can_see ( ch, victim ) && Math::instance().bits ( 1 ) == 0
 				&& !IS_NPC ( victim ) && victim->level < 11 )
@@ -556,9 +556,9 @@ bool spec_cast_cleric ( Creature *ch )
 	if ( ch->position != POS_FIGHTING )
 	{ return FALSE; }
 
-	for ( victim = ch->in_room->people; victim != NULL; victim = v_next ) {
+	for ( victim = IN_ROOM ( ch )->people; victim != NULL; victim = v_next ) {
 		v_next = victim->next_in_room;
-		if ( victim->fighting == ch && Math::instance().bits ( 2 ) == 0 )
+		if ( FIGHTING ( victim ) == ch && Math::instance().bits ( 2 ) == 0 )
 		{ break; }
 	}
 
@@ -637,9 +637,9 @@ bool spec_cast_judge ( Creature *ch )
 	if ( ch->position != POS_FIGHTING )
 	{ return FALSE; }
 
-	for ( victim = ch->in_room->people; victim != NULL; victim = v_next ) {
+	for ( victim = IN_ROOM ( ch )->people; victim != NULL; victim = v_next ) {
 		v_next = victim->next_in_room;
-		if ( victim->fighting == ch && Math::instance().bits ( 2 ) == 0 )
+		if ( FIGHTING ( victim ) == ch && Math::instance().bits ( 2 ) == 0 )
 		{ break; }
 	}
 
@@ -665,9 +665,9 @@ bool spec_cast_mage ( Creature *ch )
 	if ( ch->position != POS_FIGHTING )
 	{ return FALSE; }
 
-	for ( victim = ch->in_room->people; victim != NULL; victim = v_next ) {
+	for ( victim = IN_ROOM ( ch )->people; victim != NULL; victim = v_next ) {
 		v_next = victim->next_in_room;
-		if ( victim->fighting == ch && Math::instance().bits ( 2 ) == 0 )
+		if ( FIGHTING ( victim ) == ch && Math::instance().bits ( 2 ) == 0 )
 		{ break; }
 	}
 
@@ -744,9 +744,9 @@ bool spec_cast_undead ( Creature *ch )
 	if ( ch->position != POS_FIGHTING )
 	{ return FALSE; }
 
-	for ( victim = ch->in_room->people; victim != NULL; victim = v_next ) {
+	for ( victim = IN_ROOM ( ch )->people; victim != NULL; victim = v_next ) {
 		v_next = victim->next_in_room;
-		if ( victim->fighting == ch && Math::instance().bits ( 2 ) == 0 )
+		if ( FIGHTING ( victim ) == ch && Math::instance().bits ( 2 ) == 0 )
 		{ break; }
 	}
 
@@ -817,11 +817,11 @@ bool spec_executioner ( Creature *ch )
 	Creature *v_next;
 	const char *crime;
 
-	if ( !IS_AWAKE ( ch ) || ch->fighting != NULL )
+	if ( !IS_AWAKE ( ch ) || FIGHTING ( ch ) != NULL )
 	{ return FALSE; }
 
 	crime = "";
-	for ( victim = ch->in_room->people; victim != NULL; victim = v_next ) {
+	for ( victim = IN_ROOM ( ch )->people; victim != NULL; victim = v_next ) {
 		v_next = victim->next_in_room;
 
 		if ( !IS_NPC ( victim ) && IS_SET ( victim->act, PLR_KILLER )
@@ -856,7 +856,7 @@ bool spec_fido ( Creature *ch )
 	if ( !IS_AWAKE ( ch ) )
 	{ return FALSE; }
 
-	for ( corpse = ch->in_room->contents; corpse != NULL; corpse = c_next ) {
+	for ( corpse = IN_ROOM ( ch )->contents; corpse != NULL; corpse = c_next ) {
 		c_next = corpse->next_content;
 		if ( corpse->item_type != ITEM_CORPSE_NPC )
 		{ continue; }
@@ -865,7 +865,7 @@ bool spec_fido ( Creature *ch )
 		for ( obj = corpse->contains; obj; obj = obj_next ) {
 			obj_next = obj->next_content;
 			obj_from_obj ( obj );
-			obj_to_room ( obj, ch->in_room );
+			obj_to_room ( obj, IN_ROOM ( ch ) );
 		}
 		extract_obj ( corpse );
 		return TRUE;
@@ -885,14 +885,14 @@ bool spec_guard ( Creature *ch )
 	const char *crime;
 	int max_evil;
 
-	if ( !IS_AWAKE ( ch ) || ch->fighting != NULL )
+	if ( !IS_AWAKE ( ch ) || FIGHTING ( ch ) != NULL )
 	{ return FALSE; }
 
 	max_evil = 300;
 	ech      = NULL;
 	crime    = "";
 
-	for ( victim = ch->in_room->people; victim != NULL; victim = v_next ) {
+	for ( victim = IN_ROOM ( ch )->people; victim != NULL; victim = v_next ) {
 		v_next = victim->next_in_room;
 
 		if ( !IS_NPC ( victim ) && IS_SET ( victim->act, PLR_KILLER )
@@ -903,8 +903,8 @@ bool spec_guard ( Creature *ch )
 				&&   can_see ( ch, victim ) )
 		{ crime = "THIEF"; break; }
 
-		if ( victim->fighting != NULL
-				&&   victim->fighting != ch
+		if ( FIGHTING ( victim ) != NULL
+				&&   FIGHTING ( victim ) != ch
 				&&   victim->alignment < max_evil ) {
 			max_evil = victim->alignment;
 			ech      = victim;
@@ -940,7 +940,7 @@ bool spec_janitor ( Creature *ch )
 	if ( !IS_AWAKE ( ch ) )
 	{ return FALSE; }
 
-	for ( trash = ch->in_room->contents; trash != NULL; trash = trash_next ) {
+	for ( trash = IN_ROOM ( ch )->contents; trash != NULL; trash = trash_next ) {
 		trash_next = trash->next_content;
 		if ( !IS_SET ( trash->wear_flags, ITEM_TAKE ) || !can_loot ( ch, trash ) )
 		{ continue; }
@@ -965,7 +965,7 @@ bool spec_poison ( Creature *ch )
 	Creature *victim;
 
 	if ( ch->position != POS_FIGHTING
-			|| ( victim = ch->fighting ) == NULL
+			|| ( victim = FIGHTING ( ch ) ) == NULL
 			||   Math::instance().percent( ) > 2 * ch->level )
 	{ return FALSE; }
 
@@ -987,7 +987,7 @@ bool spec_thief ( Creature *ch )
 	if ( ch->position != POS_STANDING )
 	{ return FALSE; }
 
-	for ( victim = ch->in_room->people; victim != NULL; victim = v_next ) {
+	for ( victim = IN_ROOM ( ch )->people; victim != NULL; victim = v_next ) {
 		v_next = victim->next_in_room;
 
 		if ( IS_NPC ( victim )

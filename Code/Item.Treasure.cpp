@@ -360,6 +360,6 @@ void make_treasure_chest ( Creature *ch, Creature *victim, int level )
 	}
 	act ( "$N carried $t, which falls to the ground.", ch, capitalize ( box->short_descr ), victim, TO_ROOM );
 	act ( "$N carried $t, which falls to the ground.", ch, capitalize ( box->short_descr ), victim, TO_CHAR );
-	obj_to_room ( box, ch->in_room );
+	obj_to_room ( box, IN_ROOM ( ch ) );
 	return;
 }

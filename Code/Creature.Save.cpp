@@ -135,7 +135,7 @@ void save_char_obj ( Creature *ch )
 		if ( ch->carrying != NULL )
 		{ fwrite_obj ( ch, ch->carrying, fp, 0 ); }
 		/* save the pets */
-		if ( ch->pet != NULL && ch->pet->in_room == ch->in_room )
+		if ( ch->pet != NULL && ch->pet->in_room == IN_ROOM ( ch ) )
 		{ fwrite_pet ( ch->pet, fp ); }
 		fprintf ( fp, "#END\n" );
 	}
@@ -185,10 +185,10 @@ void fwrite_char ( Creature *ch, FILE *fp )
 			  ch->pcdata->last_news, ch->pcdata->last_changes	);
 	fprintf ( fp, "Scro %d\n", 	ch->lines		);
 	fprintf ( fp, "Room %d\n",
-			  (  ch->in_room == get_room_index ( ROOM_VNUM_LIMBO )
+			  (  IN_ROOM ( ch ) == get_room_index ( ROOM_VNUM_LIMBO )
 				 && ch->was_in_room != NULL )
 			  ? ch->was_in_room->vnum
-			  : ch->in_room == NULL ? 3001 : ch->in_room->vnum );
+			  : IN_ROOM ( ch ) == NULL ? 3001 : IN_ROOM ( ch )->vnum );
 
 	fprintf ( fp, "HMV  %d %d %d %d %d %d\n",
 			  ch->hit, ch->max_hit, ch->mana, ch->max_mana, ch->move, ch->max_move );
@@ -951,9 +951,9 @@ void fread_char ( Creature *ch, FILE *fp )
 					  race_lookup ( fread_string ( fp ) ) );
 
 				if ( !str_cmp ( word, "Room" ) ) {
-					ch->in_room = get_room_index ( fread_number ( fp ) );
-					if ( ch->in_room == NULL )
-					{ ch->in_room = get_room_index ( ROOM_VNUM_LIMBO ); }
+					IN_ROOM ( ch ) = get_room_index ( fread_number ( fp ) );
+					if ( IN_ROOM ( ch ) == NULL )
+					{ IN_ROOM ( ch ) = get_room_index ( ROOM_VNUM_LIMBO ); }
 					fMatch = TRUE;
 					break;
 				}

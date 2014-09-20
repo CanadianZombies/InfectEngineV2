@@ -132,7 +132,7 @@ int hit_gain ( Creature *ch )
 	int gain;
 	int number;
 
-	if ( ch->in_room == NULL )
+	if ( IN_ROOM ( ch ) == NULL )
 	{ return 0; }
 
 	if ( IS_NPC ( ch ) ) {
@@ -187,7 +187,7 @@ int hit_gain ( Creature *ch )
 
 	}
 
-	gain = gain * ch->in_room->heal_rate / 100;
+	gain = gain * IN_ROOM ( ch )->heal_rate / 100;
 
 	if ( ch->on != NULL && ch->on->item_type == ITEM_FURNITURE )
 	{ gain = gain * ch->on->value[3] / 100; }
@@ -211,7 +211,7 @@ int mana_gain ( Creature *ch )
 	int gain;
 	int number;
 
-	if ( ch->in_room == NULL )
+	if ( IN_ROOM ( ch ) == NULL )
 	{ return 0; }
 
 	if ( IS_NPC ( ch ) ) {
@@ -263,7 +263,7 @@ int mana_gain ( Creature *ch )
 
 	}
 
-	gain = gain * ch->in_room->mana_rate / 100;
+	gain = gain * IN_ROOM ( ch )->mana_rate / 100;
 
 	if ( ch->on != NULL && ch->on->item_type == ITEM_FURNITURE )
 	{ gain = gain * ch->on->value[4] / 100; }
@@ -286,7 +286,7 @@ int move_gain ( Creature *ch )
 {
 	int gain;
 
-	if ( ch->in_room == NULL )
+	if ( IN_ROOM ( ch ) == NULL )
 	{ return 0; }
 
 	if ( IS_NPC ( ch ) ) {
@@ -310,7 +310,7 @@ int move_gain ( Creature *ch )
 		{ gain /= 2; }
 	}
 
-	gain = gain * ch->in_room->heal_rate / 100;
+	gain = gain * IN_ROOM ( ch )->heal_rate / 100;
 
 	if ( ch->on != NULL && ch->on->item_type == ITEM_FURNITURE )
 	{ gain = gain * ch->on->value[3] / 100; }
@@ -379,10 +379,10 @@ void mobile_update ( void )
 	for ( ch = char_list; ch != NULL; ch = ch_next ) {
 		ch_next = ch->next;
 
-		if ( !IS_NPC ( ch ) || ch->in_room == NULL || IS_AFFECTED ( ch, AFF_CHARM ) )
+		if ( !IS_NPC ( ch ) || IN_ROOM ( ch ) == NULL || IS_AFFECTED ( ch, AFF_CHARM ) )
 		{ continue; }
 
-		if ( ch->in_room->area->empty && !IS_SET ( ch->act, ACT_UPDATE_ALWAYS ) )
+		if ( IN_ROOM ( ch )->area->empty && !IS_SET ( ch->act, ACT_UPDATE_ALWAYS ) )
 		{ continue; }
 
 		/* Examine call for special procedure */
@@ -468,7 +468,7 @@ void mobile_update ( void )
 
 		/* Scavenge */
 		if ( IS_SET ( ch->act, ACT_SCAVENGER )
-				&&   ch->in_room->contents != NULL
+				&&   IN_ROOM ( ch )->contents != NULL
 				&&   Math::instance().bits ( 6 ) == 0 ) {
 			Item *obj;
 			Item *obj_best;
@@ -476,7 +476,7 @@ void mobile_update ( void )
 
 			max         = 1;
 			obj_best    = 0;
-			for ( obj = ch->in_room->contents; obj; obj = obj->next_content ) {
+			for ( obj = IN_ROOM ( ch )->contents; obj; obj = obj->next_content ) {
 				if ( CAN_WEAR ( obj, ITEM_TAKE ) && can_loot ( ch, obj )
 						&& obj->cost > max  && obj->cost > 0 ) {
 					obj_best    = obj;
@@ -495,12 +495,12 @@ void mobile_update ( void )
 		if ( !IS_SET ( ch->act, ACT_SENTINEL )
 				&& Math::instance().bits ( 3 ) == 0
 				&& ( door = Math::instance().bits ( 5 ) ) <= 5
-				&& ( pexit = ch->in_room->exit[door] ) != NULL
+				&& ( pexit = IN_ROOM ( ch )->exit[door] ) != NULL
 				&&   pexit->u1.to_room != NULL
 				&&   !IS_SET ( pexit->exit_info, EX_CLOSED )
 				&&   !IS_SET ( pexit->u1.to_room->room_flags, ROOM_NO_MOB )
 				&& ( !IS_SET ( ch->act, ACT_STAY_AREA )
-					 ||   pexit->u1.to_room->area == ch->in_room->area )
+					 ||   pexit->u1.to_room->area == IN_ROOM ( ch )->area )
 				&& ( !IS_SET ( ch->act, ACT_OUTDOORS )
 					 ||   !IS_SET ( pexit->u1.to_room->room_flags, ROOM_INDOORS ) )
 				&& ( !IS_SET ( ch->act, ACT_INDOORS )
@@ -674,8 +674,8 @@ void char_update ( void )
 
 		if ( ch->position >= POS_STUNNED ) {
 			/* check to see if we need to go home */
-			if ( IS_NPC ( ch ) && ch->zone != NULL && ch->zone != ch->in_room->area
-					&& ch->desc == NULL &&  ch->fighting == NULL
+			if ( IS_NPC ( ch ) && ch->zone != NULL && ch->zone != IN_ROOM ( ch )->area
+					&& ch->desc == NULL &&  FIGHTING ( ch ) == NULL
 					&& !IS_AFFECTED ( ch, AFF_CHARM ) && Math::instance().percent() < 5 ) {
 				act ( "$n has wandered home.", ch, NULL, NULL, TO_ROOM );
 				log_hd ( LOG_DEBUG, Format ( "NPC: %s added to extraction queue, (away from home too long)", ch->name ) );
@@ -708,13 +708,13 @@ void char_update ( void )
 			if ( ( obj = get_eq_char ( ch, WEAR_LIGHT ) ) != NULL
 					&&   obj->item_type == ITEM_LIGHT
 					&&   obj->value[2] > 0 ) {
-				if ( --obj->value[2] == 0 && ch->in_room != NULL ) {
-					--ch->in_room->light;
+				if ( --obj->value[2] == 0 && IN_ROOM ( ch ) != NULL ) {
+					--IN_ROOM ( ch )->light;
 					act ( "$p goes out.", ch, obj, NULL, TO_ROOM );
 					act ( "$p flickers and goes out.", ch, obj, NULL, TO_CHAR );
 					log_hd ( LOG_DEBUG, Format ( "ITEM: %s has flickered out into object extraction queue.", obj->name ) );
 					extract_obj ( obj );
-				} else if ( obj->value[2] <= 5 && ch->in_room != NULL )
+				} else if ( obj->value[2] <= 5 && IN_ROOM ( ch ) != NULL )
 				{ act ( "$p flickers.", ch, obj, NULL, TO_CHAR ); }
 			}
 
@@ -722,9 +722,9 @@ void char_update ( void )
 			{ ch->timer = 0; }
 
 			if ( ++ch->timer >= 12 ) {
-				if ( ch->was_in_room == NULL && ch->in_room != NULL ) {
-					ch->was_in_room = ch->in_room;
-					if ( ch->fighting != NULL )
+				if ( ch->was_in_room == NULL && IN_ROOM ( ch ) != NULL ) {
+					ch->was_in_room = IN_ROOM ( ch );
+					if ( FIGHTING ( ch ) != NULL )
 					{ stop_fighting ( ch, TRUE ); }
 					act ( "$n crumbles into dust.",
 						  ch, NULL, NULL, TO_ROOM );
@@ -776,7 +776,7 @@ void char_update ( void )
 			Creature *vch;
 			int dam;
 
-			if ( ch->in_room == NULL )
+			if ( IN_ROOM ( ch ) == NULL )
 			{ continue; }
 
 			act ( "$n writhes in agony as plague sores erupt from $s skin.", ch, NULL, NULL, TO_ROOM );
@@ -802,7 +802,7 @@ void char_update ( void )
 			plague.modifier 	= -5;
 			plague.bitvector 	= AFF_PLAGUE;
 
-			for ( vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room ) {
+			for ( vch = IN_ROOM ( ch )->people; vch != NULL; vch = vch->next_in_room ) {
 				if ( !saves_spell ( plague.level - 2, vch, DAM_DISEASE )
 						&&  !IsStaff ( vch )
 						&&  !IS_AFFECTED ( vch, AFF_PLAGUE ) && Math::instance().bits ( 4 ) == 0 ) {
@@ -896,8 +896,8 @@ void obj_update ( void )
 						||   paf_next->type != paf->type
 						||   paf_next->duration > 0 ) {
 					if ( paf->type > 0 && skill_table[paf->type].msg_obj ) {
-						if ( obj->carried_by != NULL ) {
-							rch = obj->carried_by;
+						if ( CARRIED_BY ( obj ) != NULL ) {
+							rch = CARRIED_BY ( obj );
 							act ( skill_table[paf->type].msg_obj,
 								  rch, obj, NULL, TO_CHAR );
 						}
@@ -952,20 +952,20 @@ void obj_update ( void )
 				break;
 		}
 
-		if ( obj->carried_by != NULL ) {
-			if ( IS_NPC ( obj->carried_by )
-					&&  obj->carried_by->pIndexData->pShop != NULL )
-			{ obj->carried_by->silver += obj->cost / 5; }
+		if ( CARRIED_BY ( obj ) != NULL ) {
+			if ( IS_NPC ( CARRIED_BY ( obj ) )
+					&&  CARRIED_BY ( obj )->pIndexData->pShop != NULL )
+			{ CARRIED_BY ( obj )->silver += obj->cost / 5; }
 			else {
 
-				act ( message, obj->carried_by, obj, NULL, TO_CHAR );
+				act ( message, CARRIED_BY ( obj ), obj, NULL, TO_CHAR );
 				if ( obj->wear_loc == WEAR_FLOAT )
-				{ act ( message, obj->carried_by, obj, NULL, TO_ROOM ); }
+				{ act ( message, CARRIED_BY ( obj ), obj, NULL, TO_ROOM ); }
 			}
 		} else if ( obj->in_room != NULL
 					&&      ( rch = obj->in_room->people ) != NULL ) {
-			if ( ! ( obj->in_obj && obj->in_obj->pIndexData->vnum == OBJ_VNUM_PIT
-					 && !CAN_WEAR ( obj->in_obj, ITEM_TAKE ) ) ) {
+			if ( ! ( IN_OBJ ( obj ) && IN_OBJ ( obj )->pIndexData->vnum == OBJ_VNUM_PIT
+					 && !CAN_WEAR ( IN_OBJ ( obj ), ITEM_TAKE ) ) ) {
 				act ( message, rch, obj, NULL, TO_ROOM );
 				act ( message, rch, obj, NULL, TO_CHAR );
 			}
@@ -980,17 +980,17 @@ void obj_update ( void )
 				next_obj = t_obj->next_content;
 				obj_from_obj ( t_obj );
 
-				if ( obj->in_obj ) /* in another object */
-				{ obj_to_obj ( t_obj, obj->in_obj ); }
+				if ( IN_OBJ ( obj ) ) /* in another object */
+				{ obj_to_obj ( t_obj, IN_OBJ ( obj ) ); }
 
-				else if ( obj->carried_by ) { /* carried */
+				else if ( CARRIED_BY ( obj ) ) { /* carried */
 					if ( obj->wear_loc == WEAR_FLOAT ) {
-						if ( obj->carried_by->in_room == NULL )
+						if ( CARRIED_BY ( obj )->in_room == NULL )
 						{ extract_obj ( t_obj ); }
 						else
-						{ obj_to_room ( t_obj, obj->carried_by->in_room ); }
+						{ obj_to_room ( t_obj, CARRIED_BY ( obj )->in_room ); }
 					} else
-					{ obj_to_char ( t_obj, obj->carried_by ); }
+					{ obj_to_char ( t_obj, CARRIED_BY ( obj ) ); }
 				} else if ( obj->in_room == NULL ) /* destroy it */
 				{ extract_obj ( t_obj ); }
 
@@ -1033,20 +1033,20 @@ void aggr_update ( void )
 		wch_next = wch->next;
 		if ( IS_NPC ( wch )
 				||   wch->level >= LEVEL_IMMORTAL
-				||   wch->in_room == NULL
-				||   wch->in_room->area->empty )
+				||   IN_ROOM ( wch ) == NULL
+				||   IN_ROOM ( wch )->area->empty )
 		{ continue; }
 
-		for ( ch = wch->in_room->people; ch != NULL; ch = ch_next ) {
+		for ( ch = IN_ROOM ( wch )->people; ch != NULL; ch = ch_next ) {
 			int count;
 
 			ch_next	= ch->next_in_room;
 
 			if ( !IS_NPC ( ch )
 					||   !IS_SET ( ch->act, ACT_AGGRESSIVE )
-					||   IS_SET ( ch->in_room->room_flags, ROOM_SAFE )
+					||   IS_SET ( IN_ROOM ( ch )->room_flags, ROOM_SAFE )
 					||   IS_AFFECTED ( ch, AFF_CALM )
-					||   ch->fighting != NULL
+					||   FIGHTING ( ch ) != NULL
 					||   IS_AFFECTED ( ch, AFF_CHARM )
 					||   !IS_AWAKE ( ch )
 					||   ( IS_SET ( ch->act, ACT_WIMPY ) && IS_AWAKE ( wch ) )
@@ -1061,7 +1061,7 @@ void aggr_update ( void )
 			 */
 			count	= 0;
 			victim	= NULL;
-			for ( vch = wch->in_room->people; vch != NULL; vch = vch_next ) {
+			for ( vch = IN_ROOM ( wch )->people; vch != NULL; vch = vch_next ) {
 				vch_next = vch->next_in_room;
 
 				if ( !IS_NPC ( vch )

@@ -98,9 +98,9 @@ void song_update ( void )
 		/* find which room to play in */
 
 		if ( ( room = obj->in_room ) == NULL ) {
-			if ( obj->carried_by == NULL )
+			if ( CARRIED_BY ( obj ) == NULL )
 			{ continue; }
-			else if ( ( room = obj->carried_by->in_room ) == NULL )
+			else if ( ( room = CARRIED_BY ( obj )->in_room ) == NULL )
 			{ continue; }
 		}
 
@@ -198,7 +198,7 @@ DefineCommand ( cmd_play )
 
 	str = ChopC ( argument, arg );
 
-	for ( juke = ch->in_room->contents; juke != NULL; juke = juke->next_content )
+	for ( juke = IN_ROOM ( ch )->contents; juke != NULL; juke = juke->next_content )
 		if ( juke->item_type == ITEM_JUKEBOX && can_see_obj ( ch, juke ) )
 		{ break; }
 

@@ -57,13 +57,13 @@ void spell_portal ( int sn, int level, Creature *ch, void *vo, int target )
 
 	if ( ( victim = get_char_world ( ch, target_name ) ) == NULL
 			||   victim == ch
-			||   victim->in_room == NULL
-			||   !can_see_room ( ch, victim->in_room )
-			||   IS_SET ( victim->in_room->room_flags, ROOM_SAFE )
-			||   IS_SET ( victim->in_room->room_flags, ROOM_PRIVATE )
-			||   IS_SET ( victim->in_room->room_flags, ROOM_SOLITARY )
-			||   IS_SET ( victim->in_room->room_flags, ROOM_NO_RECALL )
-			||   IS_SET ( ch->in_room->room_flags, ROOM_NO_RECALL )
+			||   IN_ROOM ( victim ) == NULL
+			||   !can_see_room ( ch, IN_ROOM ( victim ) )
+			||   IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_SAFE )
+			||   IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_PRIVATE )
+			||   IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_SOLITARY )
+			||   IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_NO_RECALL )
+			||   IS_SET ( IN_ROOM ( ch )->room_flags, ROOM_NO_RECALL )
 			||   victim->level >= level + 3
 			||   ( !IS_NPC ( victim ) && victim->level >= LEVEL_HERO ) /* NOT trust */
 			||   ( IS_NPC ( victim ) && IS_SET ( victim->imm_flags, IMM_SUMMON ) )
@@ -88,9 +88,9 @@ void spell_portal ( int sn, int level, Creature *ch, void *vo, int target )
 
 	portal = create_object ( get_obj_index ( OBJ_VNUM_PORTAL ), 0 );
 	portal->timer = 2 + level / 25;
-	portal->value[3] = victim->in_room->vnum;
+	portal->value[3] = IN_ROOM ( victim )->vnum;
 
-	obj_to_room ( portal, ch->in_room );
+	obj_to_room ( portal, IN_ROOM ( ch ) );
 
 	act ( "$p rises up from the ground.", ch, portal, NULL, TO_ROOM );
 	act ( "$p rises up before you.", ch, portal, NULL, TO_CHAR );
@@ -102,11 +102,11 @@ void spell_nexus ( int sn, int level, Creature *ch, void *vo, int target )
 	Item *portal, *stone;
 	RoomData *to_room, *from_room;
 
-	from_room = ch->in_room;
+	from_room = IN_ROOM ( ch );
 
 	if ( ( victim = get_char_world ( ch, target_name ) ) == NULL
 			||   victim == ch
-			||   ( to_room = victim->in_room ) == NULL
+			||   ( to_room = IN_ROOM ( victim ) ) == NULL
 			||   !can_see_room ( ch, to_room ) || !can_see_room ( ch, from_room )
 			||   IS_SET ( to_room->room_flags, ROOM_SAFE )
 			||	 IS_SET ( from_room->room_flags, ROOM_SAFE )

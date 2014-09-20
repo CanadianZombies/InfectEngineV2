@@ -149,7 +149,7 @@ HEDIT ( hedit_new )
 	argument = ChopC ( argument, arg );
 
 	if ( ! ( had = had_lookup ( arg ) ) ) {
-		had = ch->in_room->area->helps;
+		had = IN_ROOM ( ch )->area->helps;
 		argument = fullarg;
 	}
 
@@ -160,15 +160,15 @@ HEDIT ( hedit_new )
 
 	if ( !had ) { /* the area currently has no helps */
 		had		= new_had();
-		had->filename	= assign_string ( ch->in_room->area->file_name );
-		had->area	= ch->in_room->area;
+		had->filename	= assign_string ( IN_ROOM ( ch )->area->file_name );
+		had->area	= IN_ROOM ( ch )->area;
 		had->first	= NULL;
 		had->last	= NULL;
 		had->changed	= TRUE;
 		had->next	= had_list;
 		had_list	= had;
-		ch->in_room->area->helps = had;
-		SET_BIT ( ch->in_room->area->area_flags, AREA_CHANGED );
+		IN_ROOM ( ch )->area->helps = had;
+		SET_BIT ( IN_ROOM ( ch )->area->area_flags, AREA_CHANGED );
 	}
 
 	help		= new_help();
@@ -368,14 +368,14 @@ HEDIT ( hedit_list )
 	}
 
 	if ( !str_cmp ( argument, "area" ) ) {
-		if ( ch->in_room->area->helps == NULL ) {
+		if ( IN_ROOM ( ch )->area->helps == NULL ) {
 			writeBuffer ( "There are no helps in this area.\n\r", ch );
 			return FALSE;
 		}
 
 		buffer = new_buf();
 
-		for ( pHelp = ch->in_room->area->helps->first; pHelp; pHelp = pHelp->next_area ) {
+		for ( pHelp = IN_ROOM ( ch )->area->helps->first; pHelp; pHelp = pHelp->next_area ) {
 			sprintf ( buf, "%3d. %-14.14s%s", cnt, pHelp->keyword,
 					  cnt % 4 == 3 ? "\n\r" : " " );
 			add_buf ( buffer, buf );

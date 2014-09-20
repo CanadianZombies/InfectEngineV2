@@ -1076,14 +1076,176 @@ void set_name ( Item *obj, const char* wear_slot )
 	char buf[MSL];
 
 	PURGE_DATA ( obj->name );
-	if ( obj->item_type == ITEM_WEAPON )
-	{ sprintf ( buf, "%s", wear_slot ); }
-	else {
+	if ( obj->item_type == ITEM_WEAPON ) {
+		int chance = Math::instance().percent();
+		if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
+			char mat_short[128];
+			/* we now have a material, assign a color type corresponding to the material */
+			if ( IS_SET ( obj->material_flags, MAT_IRON ) ) {
+				mat_short[0] = '\0';
+				if ( chance <= 15 )	     { strcat ( mat_short, "cold-gray" ); }
+				else if ( chance <= 35 ) { strcat ( mat_short, "hard-gray" ); }
+				else if ( chance <= 55 ) { strcat ( mat_short, "dull-gray" ); }
+				else if ( chance <= 75 ) { strcat ( mat_short, "bright-gray" ); }
+				else if ( chance <= 85 ) { strcat ( mat_short, "misty-gray" ); }
+				else { strcat ( mat_short, "gray-white" ); }
+			} else if ( IS_SET ( obj->material_flags, MAT_STEEL ) ) {
+				mat_short[0] = '\0';
+				if ( chance <= 15 )	     { strcat ( mat_short, "cold-gray" ); }
+				else if ( chance <= 35 ) { strcat ( mat_short, "hard-gray" ); }
+				else if ( chance <= 55 ) { strcat ( mat_short, "dull-gray" ); }
+				else if ( chance <= 75 ) { strcat ( mat_short, "bright-gray" ); }
+				else if ( chance <= 85 ) { strcat ( mat_short, "misty-gray" ); }
+				else { strcat ( mat_short, "gray-white" ); }
+			} else if ( IS_SET ( obj->material_flags, MAT_WOOD ) ) {
+				mat_short[0] = '\0';
+				if ( chance <= 15 )	     { strcat ( mat_short, "light-brown" ); }
+				else if ( chance <= 35 ) { strcat ( mat_short, "dark-brown" ); }
+				else if ( chance <= 55 ) { strcat ( mat_short, "nearly black" ); }
+				else if ( chance <= 75 ) { strcat ( mat_short, "reddish-brown" ); }
+				else if ( chance <= 85 ) { strcat ( mat_short, "dark red" ); }
+				else { strcat ( mat_short, "dark brown" ); }
+			} else if ( IS_SET ( obj->material_flags, MAT_BONE ) ) {
+				mat_short[0] = '\0';
+				if ( chance <= 25 )	     { strcat ( mat_short, "dark-gray" ); }
+				else if ( chance <= 50 ) { strcat ( mat_short, "pale white" ); }
+				else if ( chance <= 75 ) { strcat ( mat_short, "bleached white" ); }
+				else { strcat ( mat_short, "gray-white" ); }
+			} else if ( IS_SET ( obj->material_flags, MAT_ADAMANTANIUM ) ) {
+				mat_short[0] = '\0';
+				if ( chance <= 15 )	     { strcat ( mat_short, "cold-gray" ); }
+				else if ( chance <= 25 ) { strcat ( mat_short, "cobalt-gray" ); }
+				else if ( chance <= 35 ) { strcat ( mat_short, "hard-gray" ); }
+				else if ( chance <= 55 ) { strcat ( mat_short, "blue-gray" ); }
+				else if ( chance <= 75 ) { strcat ( mat_short, "bright-gray" ); }
+				else if ( chance <= 85 ) { strcat ( mat_short, "silvery-gray" ); }
+				else { strcat ( mat_short, "gray-white" ); }
+			} else if ( IS_SET ( obj->material_flags, MAT_FOOD ) ) {
+				mat_short[0] = '\0';
+				strcat ( mat_short, "plain" );
+			} else if ( IS_SET ( obj->material_flags, MAT_LEATHER ) ) {
+				mat_short[0] = '\0';
+				if ( chance <= 15 )	     { strcat ( mat_short, "pale brown" ); }
+				else if ( chance <= 35 ) { strcat ( mat_short, "light brown" ); }
+				else if ( chance <= 55 ) { strcat ( mat_short, "dark brown" ); }
+				else if ( chance <= 75 ) { strcat ( mat_short, "brownish-gray" ); }
+				else if ( chance <= 85 ) { strcat ( mat_short, "reddish-brown" ); }
+				else { strcat ( mat_short, "gray-white" ); }
+			} else if ( IS_SET ( obj->material_flags, MAT_BRONZE ) ) {
+				mat_short[0] = '\0';
+				strcat ( mat_short, "plain" );
+			} else if ( IS_SET ( obj->material_flags, MAT_DRAGONSCALE ) ) {
+				mat_short[0] = '\0';
+				if ( chance <= 15 )	     { strcat ( mat_short, "pale brown" ); }
+				else if ( chance <= 35 ) { strcat ( mat_short, "light brown" ); }
+				else if ( chance <= 55 ) { strcat ( mat_short, "dark brown" ); }
+				else if ( chance <= 75 ) { strcat ( mat_short, "brownish-gray" ); }
+				else if ( chance <= 85 ) { strcat ( mat_short, "reddish-brown" ); }
+				else { strcat ( mat_short, "gray-white" ); }
+			} else {
+				mat_short[0] = '\0';
+				if ( chance <= 15 )	     { strcat ( mat_short, "cold-gray" ); }
+				else if ( chance <= 35 ) { strcat ( mat_short, "hard-gray" ); }
+				else if ( chance <= 55 ) { strcat ( mat_short, "dull-gray" ); }
+				else if ( chance <= 75 ) { strcat ( mat_short, "bright-gray" ); }
+				else if ( chance <= 85 ) { strcat ( mat_short, "misty-gray" ); }
+				else { strcat ( mat_short, "gray-white" ); }
+			}
+			sprintf ( buf, "%s %s", mat_short, wear_slot );
+		} else {
+			sprintf ( buf, "%s", wear_slot );
+		}
+	} else {
+		char mat_short[128];
+
+		int chance = Math::instance().percent();
+		if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
+			/* we now have a material, assign a color type corresponding to the material */
+			if ( IS_SET ( obj->material_flags, MAT_IRON ) ) {
+				mat_short[0] = '\0';
+				if ( chance <= 15 )	     { strcat ( mat_short, "cold-gray" ); }
+				else if ( chance <= 35 ) { strcat ( mat_short, "hard-gray" ); }
+				else if ( chance <= 55 ) { strcat ( mat_short, "dull-gray" ); }
+				else if ( chance <= 75 ) { strcat ( mat_short, "bright-gray" ); }
+				else if ( chance <= 85 ) { strcat ( mat_short, "misty-gray" ); }
+				else { strcat ( mat_short, "gray-white" ); }
+			} else if ( IS_SET ( obj->material_flags, MAT_STEEL ) ) {
+				mat_short[0] = '\0';
+				if ( chance <= 15 )	     { strcat ( mat_short, "cold-gray" ); }
+				else if ( chance <= 35 ) { strcat ( mat_short, "hard-gray" ); }
+				else if ( chance <= 55 ) { strcat ( mat_short, "dull-gray" ); }
+				else if ( chance <= 75 ) { strcat ( mat_short, "bright-gray" ); }
+				else if ( chance <= 85 ) { strcat ( mat_short, "misty-gray" ); }
+				else { strcat ( mat_short, "gray-white" ); }
+			} else if ( IS_SET ( obj->material_flags, MAT_WOOD ) ) {
+				mat_short[0] = '\0';
+				if ( chance <= 15 )	     { strcat ( mat_short, "light-brown" ); }
+				else if ( chance <= 35 ) { strcat ( mat_short, "dark-brown" ); }
+				else if ( chance <= 55 ) { strcat ( mat_short, "nearly black" ); }
+				else if ( chance <= 75 ) { strcat ( mat_short, "reddish-brown" ); }
+				else if ( chance <= 85 ) { strcat ( mat_short, "dark red" ); }
+				else { strcat ( mat_short, "dark brown" ); }
+			} else if ( IS_SET ( obj->material_flags, MAT_BONE ) ) {
+				mat_short[0] = '\0';
+				if ( chance <= 25 )	     { strcat ( mat_short, "dark-gray" ); }
+				else if ( chance <= 50 ) { strcat ( mat_short, "pale white" ); }
+				else if ( chance <= 75 ) { strcat ( mat_short, "bleached white" ); }
+				else { strcat ( mat_short, "gray-white" ); }
+			} else if ( IS_SET ( obj->material_flags, MAT_ADAMANTANIUM ) ) {
+				mat_short[0] = '\0';
+				if ( chance <= 15 )	     { strcat ( mat_short, "cold-gray" ); }
+				else if ( chance <= 25 ) { strcat ( mat_short, "cobalt-gray" ); }
+				else if ( chance <= 35 ) { strcat ( mat_short, "hard-gray" ); }
+				else if ( chance <= 55 ) { strcat ( mat_short, "blue-gray" ); }
+				else if ( chance <= 75 ) { strcat ( mat_short, "bright-gray" ); }
+				else if ( chance <= 85 ) { strcat ( mat_short, "silvery-gray" ); }
+				else { strcat ( mat_short, "gray-white" ); }
+			} else if ( IS_SET ( obj->material_flags, MAT_FOOD ) ) {
+				mat_short[0] = '\0';
+				strcat ( mat_short, "plain" );
+			} else if ( IS_SET ( obj->material_flags, MAT_LEATHER ) ) {
+				mat_short[0] = '\0';
+				if ( chance <= 15 )	     { strcat ( mat_short, "pale brown" ); }
+				else if ( chance <= 35 ) { strcat ( mat_short, "light brown" ); }
+				else if ( chance <= 55 ) { strcat ( mat_short, "dark brown" ); }
+				else if ( chance <= 75 ) { strcat ( mat_short, "brownish-gray" ); }
+				else if ( chance <= 85 ) { strcat ( mat_short, "reddish-brown" ); }
+				else { strcat ( mat_short, "gray-white" ); }
+			} else if ( IS_SET ( obj->material_flags, MAT_BRONZE ) ) {
+				mat_short[0] = '\0';
+				strcat ( mat_short, "plain" );
+			} else if ( IS_SET ( obj->material_flags, MAT_DRAGONSCALE ) ) {
+				mat_short[0] = '\0';
+				if ( chance <= 15 )	     { strcat ( mat_short, "pale brown" ); }
+				else if ( chance <= 35 ) { strcat ( mat_short, "light brown" ); }
+				else if ( chance <= 55 ) { strcat ( mat_short, "dark brown" ); }
+				else if ( chance <= 75 ) { strcat ( mat_short, "brownish-gray" ); }
+				else if ( chance <= 85 ) { strcat ( mat_short, "reddish-brown" ); }
+				else { strcat ( mat_short, "gray-white" ); }
+			} else {
+				mat_short[0] = '\0';
+				if ( chance <= 15 )	     { strcat ( mat_short, "cold-gray" ); }
+				else if ( chance <= 35 ) { strcat ( mat_short, "hard-gray" ); }
+				else if ( chance <= 55 ) { strcat ( mat_short, "dull-gray" ); }
+				else if ( chance <= 75 ) { strcat ( mat_short, "bright-gray" ); }
+				else if ( chance <= 85 ) { strcat ( mat_short, "misty-gray" ); }
+				else { strcat ( mat_short, "gray-white" ); }
+			}
+		}
 		// -- we dont' want 'none' in our naming convention.
-		if ( SameString ( flag_string ( material_flags, obj->material_flags ), "none" ) )
-		{ sprintf ( buf, "%s", wear_slot ); }
-		else
-		{ sprintf ( buf, "%s %s", flag_string ( material_flags, obj->material_flags ), wear_slot ); }
+		if ( SameString ( flag_string ( material_flags, obj->material_flags ), "none" ) ) {
+			if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 4 ) && mat_short[0] != '\0' ) {
+				sprintf ( buf, "%s %s", mat_short, wear_slot );
+			} else {
+				sprintf ( buf, "%s", wear_slot );
+			}
+		} else {
+			if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 5 ) && mat_short[0] != '\0'  ) {
+				sprintf ( buf, "%s %s %s", mat_short, flag_string ( material_flags, obj->material_flags ), wear_slot );
+			} else {
+				sprintf ( buf, "%s %s", flag_string ( material_flags, obj->material_flags ), wear_slot );
+			}
+		}
 	}
 
 	obj->name = assign_string ( buf );

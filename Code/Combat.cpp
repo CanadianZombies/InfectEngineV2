@@ -154,15 +154,15 @@ void violence_update ( void )
 	for ( ch = char_list; ch != NULL; ch = ch_next ) {
 		ch_next	= ch->next;
 
-		if ( ( victim = ch->fighting ) == NULL || ch->in_room == NULL )
+		if ( ( victim = FIGHTING ( ch ) ) == NULL || IN_ROOM ( ch ) == NULL )
 		{ continue; }
 
-		if ( IS_AWAKE ( ch ) && ch->in_room == victim->in_room )
+		if ( IS_AWAKE ( ch ) && IN_ROOM ( ch ) == IN_ROOM ( victim ) )
 		{ multi_hit ( ch, victim, TYPE_UNDEFINED ); }
 		else
 		{ stop_fighting ( ch, FALSE ); }
 
-		if ( ( victim = ch->fighting ) == NULL )
+		if ( ( victim = FIGHTING ( ch ) ) == NULL )
 		{ continue; }
 
 		/*
@@ -186,10 +186,10 @@ void check_assist ( Creature *ch, Creature *victim )
 {
 	Creature *rch, *rch_next;
 
-	for ( rch = ch->in_room->people; rch != NULL; rch = rch_next ) {
+	for ( rch = IN_ROOM ( ch )->people; rch != NULL; rch = rch_next ) {
 		rch_next = rch->next_in_room;
 
-		if ( IS_AWAKE ( rch ) && rch->fighting == NULL ) {
+		if ( IS_AWAKE ( rch ) && FIGHTING ( rch ) == NULL ) {
 
 			/* quick check for ASSIST_PLAYER */
 			if ( !IS_NPC ( ch ) && IS_NPC ( rch )
@@ -235,7 +235,7 @@ void check_assist ( Creature *ch, Creature *victim )
 
 					target = NULL;
 					number = 0;
-					for ( vch = ch->in_room->people; vch; vch = vch->next ) {
+					for ( vch = IN_ROOM ( ch )->people; vch; vch = vch->next ) {
 						if ( can_see ( rch, vch )
 								&&  is_same_group ( vch, victim )
 								&&  Math::instance().range ( 0, number ) == 0 ) {
@@ -282,7 +282,7 @@ void multi_hit ( Creature *ch, Creature *victim, int dt )
 
 	one_hit ( ch, victim, dt );
 
-	if ( ch->fighting != victim )
+	if ( FIGHTING ( ch ) != victim )
 	{ return; }
 
 	// -- dazing has some lasting effects.
@@ -296,7 +296,7 @@ void multi_hit ( Creature *ch, Creature *victim, int dt )
 	if ( IS_AFFECTED ( ch, AFF_HASTE ) )
 	{ one_hit ( ch, victim, dt ); }
 
-	if ( ch->fighting != victim || dt == gsn_backstab )
+	if ( FIGHTING ( ch ) != victim || dt == gsn_backstab )
 	{ return; }
 
 	chance = get_skill ( ch, gsn_second_attack ) / 2;
@@ -307,7 +307,7 @@ void multi_hit ( Creature *ch, Creature *victim, int dt )
 	if ( Math::instance().percent( ) < chance ) {
 		one_hit ( ch, victim, dt );
 		check_improve ( ch, gsn_second_attack, TRUE, 5 );
-		if ( ch->fighting != victim )
+		if ( FIGHTING ( ch ) != victim )
 		{ return; }
 	}
 
@@ -319,7 +319,7 @@ void multi_hit ( Creature *ch, Creature *victim, int dt )
 	if ( Math::instance().percent( ) < chance ) {
 		one_hit ( ch, victim, dt );
 		check_improve ( ch, gsn_third_attack, TRUE, 6 );
-		if ( ch->fighting != victim )
+		if ( FIGHTING ( ch ) != victim )
 		{ return; }
 	}
 
@@ -334,15 +334,15 @@ void mob_hit ( Creature *ch, Creature *victim, int dt )
 
 	one_hit ( ch, victim, dt );
 
-	if ( ch->fighting != victim )
+	if ( FIGHTING ( ch ) != victim )
 	{ return; }
 
 	/* Area attack -- BALLS nasty! */
 
 	if ( IS_SET ( ch->off_flags, OFF_AREA_ATTACK ) ) {
-		for ( vch = ch->in_room->people; vch != NULL; vch = vch_next ) {
+		for ( vch = IN_ROOM ( ch )->people; vch != NULL; vch = vch_next ) {
 			vch_next = vch->next;
-			if ( ( vch != victim && vch->fighting == ch ) )
+			if ( ( vch != victim && FIGHTING ( vch ) == ch ) )
 			{ one_hit ( ch, vch, dt ); }
 		}
 	}
@@ -351,7 +351,7 @@ void mob_hit ( Creature *ch, Creature *victim, int dt )
 			||  ( IS_SET ( ch->off_flags, OFF_FAST ) && !IS_AFFECTED ( ch, AFF_SLOW ) ) )
 	{ one_hit ( ch, victim, dt ); }
 
-	if ( ch->fighting != victim || dt == gsn_backstab )
+	if ( FIGHTING ( ch ) != victim || dt == gsn_backstab )
 	{ return; }
 
 	chance = get_skill ( ch, gsn_second_attack ) / 2;
@@ -361,7 +361,7 @@ void mob_hit ( Creature *ch, Creature *victim, int dt )
 
 	if ( Math::instance().percent() < chance ) {
 		one_hit ( ch, victim, dt );
-		if ( ch->fighting != victim )
+		if ( FIGHTING ( ch ) != victim )
 		{ return; }
 	}
 
@@ -372,7 +372,7 @@ void mob_hit ( Creature *ch, Creature *victim, int dt )
 
 	if ( Math::instance().percent() < chance ) {
 		one_hit ( ch, victim, dt );
-		if ( ch->fighting != victim )
+		if ( FIGHTING ( ch ) != victim )
 		{ return; }
 	}
 
@@ -476,7 +476,7 @@ void one_hit ( Creature *ch, Creature *victim, int dt )
 	 * Can't beat a dead char!
 	 * Guard against weird room-leavings.
 	 */
-	if ( victim->position == POS_DEAD || ch->in_room != victim->in_room )
+	if ( victim->position == POS_DEAD || IN_ROOM ( ch ) != IN_ROOM ( victim ) )
 	{ return; }
 
 	/*
@@ -653,7 +653,7 @@ void one_hit ( Creature *ch, Creature *victim, int dt )
 	if ( result && wield != NULL ) {
 		int dam;
 
-		if ( ch->fighting == victim && IS_WEAPON_STAT ( wield, WEAPON_POISON ) ) {
+		if ( FIGHTING ( ch ) == victim && IS_WEAPON_STAT ( wield, WEAPON_POISON ) ) {
 			int level;
 			Affect *poison, af;
 
@@ -689,7 +689,7 @@ void one_hit ( Creature *ch, Creature *victim, int dt )
 		}
 
 
-		if ( ch->fighting == victim && IS_WEAPON_STAT ( wield, WEAPON_VAMPIRIC ) ) {
+		if ( FIGHTING ( ch ) == victim && IS_WEAPON_STAT ( wield, WEAPON_VAMPIRIC ) ) {
 			dam = Math::instance().range ( 1, wield->level / 5 + 1 );
 			act ( "$p draws life from $n.", victim, wield, NULL, TO_ROOM );
 			act ( "You feel $p drawing your life away.",
@@ -699,7 +699,7 @@ void one_hit ( Creature *ch, Creature *victim, int dt )
 			ch->hit += dam / 2;
 		}
 
-		if ( ch->fighting == victim && IS_WEAPON_STAT ( wield, WEAPON_FLAMING ) ) {
+		if ( FIGHTING ( ch ) == victim && IS_WEAPON_STAT ( wield, WEAPON_FLAMING ) ) {
 			dam = Math::instance().range ( 1, wield->level / 4 + 1 );
 			act ( "$n is burned by $p.", victim, wield, NULL, TO_ROOM );
 			act ( "$p sears your flesh.", victim, wield, NULL, TO_CHAR );
@@ -707,7 +707,7 @@ void one_hit ( Creature *ch, Creature *victim, int dt )
 			damage ( ch, victim, dam, 0, DAM_FIRE, FALSE );
 		}
 
-		if ( ch->fighting == victim && IS_WEAPON_STAT ( wield, WEAPON_FROST ) ) {
+		if ( FIGHTING ( ch ) == victim && IS_WEAPON_STAT ( wield, WEAPON_FROST ) ) {
 			dam = Math::instance().range ( 1, wield->level / 6 + 2 );
 			act ( "$p freezes $n.", victim, wield, NULL, TO_ROOM );
 			act ( "The cold touch of $p surrounds you with ice.",
@@ -716,7 +716,7 @@ void one_hit ( Creature *ch, Creature *victim, int dt )
 			damage ( ch, victim, dam, 0, DAM_COLD, FALSE );
 		}
 
-		if ( ch->fighting == victim && IS_WEAPON_STAT ( wield, WEAPON_SHOCKING ) ) {
+		if ( FIGHTING ( ch ) == victim && IS_WEAPON_STAT ( wield, WEAPON_SHOCKING ) ) {
 			dam = Math::instance().range ( 1, wield->level / 5 + 2 );
 			act ( "$n is struck by lightning from $p.", victim, wield, NULL, TO_ROOM );
 			act ( "You are shocked by $p.", victim, wield, NULL, TO_CHAR );
@@ -780,7 +780,7 @@ bool new_damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type,
 		check_killer ( ch, victim );
 
 		if ( victim->position > POS_STUNNED ) {
-			if ( victim->fighting == NULL ) {
+			if ( FIGHTING ( victim ) == NULL ) {
 				set_fighting ( victim, ch );
 				if ( IS_NPC ( victim ) && HAS_TRIGGER ( victim, TRIG_KILL ) )
 				{ mp_percent_trigger ( victim, ch, NULL, NULL, TRIG_KILL ); }
@@ -790,7 +790,7 @@ bool new_damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type,
 		}
 
 		if ( victim->position > POS_STUNNED ) {
-			if ( ch->fighting == NULL )
+			if ( FIGHTING ( ch ) == NULL )
 			{ set_fighting ( ch, victim ); }
 		}
 
@@ -925,7 +925,7 @@ bool new_damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type,
 			log_hd ( LOG_BASIC | LOG_SECURITY, Format ( "%s killed by %s at %d",
 					 victim->name,
 					 ( IS_NPC ( ch ) ? ch->short_descr : ch->name ),
-					 ch->in_room->vnum ) );
+					 IN_ROOM ( ch )->vnum ) );
 
 			// -- how embarrassing!  Twitter knows!  Oh thats right, twitter knows all!
 			tweetStatement ( Format ( "%s%s has been %s by %s.", !IS_NPC ( ch ) ? "[PK]:" : "", victim->name, !IS_NPC ( ch ) ? "murdered" : "slain", !IS_NPC ( ch ) ? ch->name : ch->short_descr ) );
@@ -943,13 +943,13 @@ bool new_damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type,
 			wiznet ( Format ( "%s got toasted by %s at %s [room %d]",
 							  ( IS_NPC ( victim ) ? victim->short_descr : victim->name ),
 							  ( IS_NPC ( ch ) ? ch->short_descr : ch->name ),
-							  ch->in_room->name, ch->in_room->vnum ),
+							  IN_ROOM ( ch )->name, IN_ROOM ( ch )->vnum ),
 					 NULL, NULL, WIZ_MOBDEATHS, 0, 0 );
 		else
 			wiznet ( Format ( "%s got toasted by %s at %s [room %d]",
 							  ( IS_NPC ( victim ) ? victim->short_descr : victim->name ),
 							  ( IS_NPC ( ch ) ? ch->short_descr : ch->name ),
-							  ch->in_room->name, ch->in_room->vnum )
+							  IN_ROOM ( ch )->name, IN_ROOM ( ch )->vnum )
 					 , NULL, NULL, WIZ_DEATHS, 0, 0 );
 
 		/*
@@ -980,11 +980,11 @@ bool new_damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type,
 		/* RT new auto commands */
 
 		if ( !IS_NPC ( ch )
-				&&  ( corpse = get_obj_list ( ch, "corpse", ch->in_room->contents ) ) != NULL
+				&&  ( corpse = get_obj_list ( ch, "corpse", IN_ROOM ( ch )->contents ) ) != NULL
 				&&  corpse->item_type == ITEM_CORPSE_NPC && can_see_obj ( ch, corpse ) ) {
 			Item *coins;
 
-			corpse = get_obj_list ( ch, "corpse", ch->in_room->contents );
+			corpse = get_obj_list ( ch, "corpse", IN_ROOM ( ch )->contents );
 
 			if ( IS_SET ( ch->act, PLR_AUTOLOOT ) &&
 					corpse && corpse->contains ) { /* exists and not empty */
@@ -1032,7 +1032,7 @@ bool new_damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type,
 		if ( ( IS_SET ( victim->act, ACT_WIMPY ) && Math::instance().bits ( 2 ) == 0
 				&&   victim->hit < victim->max_hit / 5 )
 				||   ( IS_AFFECTED ( victim, AFF_CHARM ) && victim->master != NULL
-					   &&     victim->master->in_room != victim->in_room ) ) {
+					   &&     victim->master->in_room != IN_ROOM ( victim ) ) ) {
 			cmd_function ( victim, &cmd_flee, "" );
 		}
 	}
@@ -1050,10 +1050,10 @@ bool new_damage ( Creature *ch, Creature *victim, int dam, int dt, int dam_type,
 
 bool is_safe ( Creature *ch, Creature *victim )
 {
-	if ( victim->in_room == NULL || ch->in_room == NULL )
+	if ( IN_ROOM ( victim ) == NULL || IN_ROOM ( ch ) == NULL )
 	{ return TRUE; }
 
-	if ( victim->fighting == ch || victim == ch )
+	if ( FIGHTING ( victim ) == ch || victim == ch )
 	{ return FALSE; }
 
 	if ( IsStaff ( ch ) && ch->level > LEVEL_IMMORTAL )
@@ -1063,7 +1063,7 @@ bool is_safe ( Creature *ch, Creature *victim )
 	if ( IS_NPC ( victim ) ) {
 
 		/* safe room? */
-		if ( IS_SET ( victim->in_room->room_flags, ROOM_SAFE ) ) {
+		if ( IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_SAFE ) ) {
 			writeBuffer ( "Not in this room.\n\r", ch );
 			return TRUE;
 		}
@@ -1102,7 +1102,7 @@ bool is_safe ( Creature *ch, Creature *victim )
 		/* NPC doing the killing */
 		if ( IS_NPC ( ch ) ) {
 			/* safe room check */
-			if ( IS_SET ( victim->in_room->room_flags, ROOM_SAFE ) ) {
+			if ( IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_SAFE ) ) {
 				writeBuffer ( "Not in this room.\n\r", ch );
 				return TRUE;
 			}
@@ -1140,13 +1140,13 @@ bool is_safe ( Creature *ch, Creature *victim )
 
 bool is_safe_spell ( Creature *ch, Creature *victim, bool area )
 {
-	if ( victim->in_room == NULL || ch->in_room == NULL )
+	if ( IN_ROOM ( victim ) == NULL || IN_ROOM ( ch ) == NULL )
 	{ return TRUE; }
 
 	if ( victim == ch && area )
 	{ return TRUE; }
 
-	if ( victim->fighting == ch || victim == ch )
+	if ( FIGHTING ( victim ) == ch || victim == ch )
 	{ return FALSE; }
 
 	if ( IsStaff ( ch ) && ch->level > LEVEL_IMMORTAL && !area )
@@ -1155,7 +1155,7 @@ bool is_safe_spell ( Creature *ch, Creature *victim, bool area )
 	/* killing mobiles */
 	if ( IS_NPC ( victim ) ) {
 		/* safe room? */
-		if ( IS_SET ( victim->in_room->room_flags, ROOM_SAFE ) )
+		if ( IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_SAFE ) )
 		{ return TRUE; }
 
 		if ( victim->pIndexData->pShop != NULL )
@@ -1178,11 +1178,11 @@ bool is_safe_spell ( Creature *ch, Creature *victim, bool area )
 			{ return TRUE; }
 
 			/* legal kill? -- cannot hit mob fighting non-group member */
-			if ( victim->fighting != NULL && !is_same_group ( ch, victim->fighting ) )
+			if ( FIGHTING ( victim ) != NULL && !is_same_group ( ch, FIGHTING ( victim ) ) )
 			{ return TRUE; }
 		} else {
 			/* area effect spells do not hit other mobs */
-			if ( area && !is_same_group ( victim, ch->fighting ) )
+			if ( area && !is_same_group ( victim, FIGHTING ( ch ) ) )
 			{ return TRUE; }
 		}
 	}
@@ -1199,11 +1199,11 @@ bool is_safe_spell ( Creature *ch, Creature *victim, bool area )
 			{ return TRUE; }
 
 			/* safe room? */
-			if ( IS_SET ( victim->in_room->room_flags, ROOM_SAFE ) )
+			if ( IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_SAFE ) )
 			{ return TRUE; }
 
 			/* legal kill? -- mobs only hit players grouped with opponent*/
-			if ( ch->fighting != NULL && !is_same_group ( ch->fighting, victim ) )
+			if ( FIGHTING ( ch ) != NULL && !is_same_group ( FIGHTING ( ch ), victim ) )
 			{ return TRUE; }
 		}
 
@@ -1278,7 +1278,7 @@ void check_killer ( Creature *ch, Creature *victim )
 			||   ch->level >= LEVEL_IMMORTAL
 			||   !is_clan ( ch )
 			||   IS_SET ( ch->act, PLR_KILLER )
-			||	 ch->fighting  == victim )
+			||	 FIGHTING ( ch )  == victim )
 	{ return; }
 
 	writeBuffer ( "*** You are now a KILLER!! ***\n\r", ch );
@@ -1408,7 +1408,7 @@ void update_pos ( Creature *victim )
  */
 void set_fighting ( Creature *ch, Creature *victim )
 {
-	if ( ch->fighting != NULL ) {
+	if ( FIGHTING ( ch ) != NULL ) {
 		log_hd ( LOG_ERROR, "Set_fighting: already fighting" );
 		return;
 	}
@@ -1416,7 +1416,7 @@ void set_fighting ( Creature *ch, Creature *victim )
 	if ( IS_AFFECTED ( ch, AFF_SLEEP ) )
 	{ affect_strip ( ch, gsn_sleep ); }
 
-	ch->fighting = victim;
+	FIGHTING ( ch ) = victim;
 	ch->position = POS_FIGHTING;
 
 	return;
@@ -1432,8 +1432,8 @@ void stop_fighting ( Creature *ch, bool fBoth )
 	Creature *fch;
 
 	for ( fch = char_list; fch != NULL; fch = fch->next ) {
-		if ( fch == ch || ( fBoth && fch->fighting == ch ) ) {
-			fch->fighting	= NULL;
+		if ( fch == ch || ( fBoth && FIGHTING ( fch ) == ch ) ) {
+			FIGHTING ( fch )	= NULL;
 			fch->position	= IS_NPC ( fch ) ? fch->default_pos : POS_STANDING;
 			update_pos ( fch );
 		}
@@ -1523,7 +1523,7 @@ void make_corpse ( Creature *ch )
 					for ( in = obj->contains; in != NULL; in = in_next ) {
 						in_next = in->next_content;
 						obj_from_obj ( in );
-						obj_to_room ( in, ch->in_room );
+						obj_to_room ( in, IN_ROOM ( ch ) );
 					}
 				} else
 					act ( "$p evaporates.",
@@ -1531,13 +1531,13 @@ void make_corpse ( Creature *ch )
 				extract_obj ( obj );
 			} else {
 				act ( "$p falls to the floor.", ch, obj, NULL, TO_ROOM );
-				obj_to_room ( obj, ch->in_room );
+				obj_to_room ( obj, IN_ROOM ( ch ) );
 			}
 		} else
 		{ obj_to_obj ( obj, corpse ); }
 	}
 
-	obj_to_room ( corpse, ch->in_room );
+	obj_to_room ( corpse, IN_ROOM ( ch ) );
 	return;
 }
 
@@ -1630,7 +1630,7 @@ void death_cry ( Creature *ch )
 			{ obj->item_type = ITEM_TRASH; }
 		}
 
-		obj_to_room ( obj, ch->in_room );
+		obj_to_room ( obj, IN_ROOM ( ch ) );
 	}
 
 	if ( IS_NPC ( ch ) )
@@ -1638,18 +1638,18 @@ void death_cry ( Creature *ch )
 	else
 	{ msg = "You hear someone's death cry."; }
 
-	was_in_room = ch->in_room;
+	was_in_room = IN_ROOM ( ch );
 	for ( door = 0; door <= 5; door++ ) {
 		Exit *pexit;
 
 		if ( ( pexit = was_in_room->exit[door] ) != NULL
 				&&   pexit->u1.to_room != NULL
 				&&   pexit->u1.to_room != was_in_room ) {
-			ch->in_room = pexit->u1.to_room;
+			IN_ROOM ( ch ) = pexit->u1.to_room;
 			act ( msg, ch, NULL, NULL, TO_ROOM );
 		}
 	}
-	ch->in_room = was_in_room;
+	IN_ROOM ( ch ) = was_in_room;
 
 	return;
 }
@@ -1705,7 +1705,7 @@ void group_gain ( Creature *ch, Creature *victim )
 
 	members = 0;
 	group_levels = 0;
-	for ( gch = ch->in_room->people; gch != NULL; gch = gch->next_in_room ) {
+	for ( gch = IN_ROOM ( ch )->people; gch != NULL; gch = gch->next_in_room ) {
 		if ( is_same_group ( gch, ch ) ) {
 			members++;
 			group_levels += IS_NPC ( gch ) ? gch->level / 2 : gch->level;
@@ -1720,7 +1720,7 @@ void group_gain ( Creature *ch, Creature *victim )
 
 	lch = ( ch->leader != NULL ) ? ch->leader : ch;
 
-	for ( gch = ch->in_room->people; gch != NULL; gch = gch->next_in_room ) {
+	for ( gch = IN_ROOM ( ch )->people; gch != NULL; gch = gch->next_in_room ) {
 		Item *obj;
 		Item *obj_next;
 
@@ -1753,7 +1753,7 @@ void group_gain ( Creature *ch, Creature *victim )
 				act ( "You are zapped by $p.", ch, obj, NULL, TO_CHAR );
 				act ( "$n is zapped by $p.",   ch, obj, NULL, TO_ROOM );
 				obj_from_char ( obj );
-				obj_to_room ( obj, ch->in_room );
+				obj_to_room ( obj, IN_ROOM ( ch ) );
 			}
 		}
 	}
@@ -2084,7 +2084,7 @@ void disarm ( Creature *ch, Creature *victim )
 	if ( IS_OBJ_STAT ( obj, ITEM_NODROP ) || IS_OBJ_STAT ( obj, ITEM_INVENTORY ) )
 	{ obj_to_char ( obj, victim ); }
 	else {
-		obj_to_room ( obj, victim->in_room );
+		obj_to_room ( obj, IN_ROOM ( victim ) );
 		if ( IS_NPC ( victim ) && victim->wait == 0 && can_see_obj ( victim, obj ) )
 		{ get_obj ( victim, obj, NULL ); }
 	}
@@ -2190,7 +2190,7 @@ DefineCommand ( cmd_bash )
 	}
 
 	if ( arg[0] == '\0' ) {
-		victim = ch->fighting;
+		victim = FIGHTING ( ch );
 		if ( victim == NULL ) {
 			writeBuffer ( "But you aren't fighting anyone!\n\r", ch );
 			return;
@@ -2216,8 +2216,8 @@ DefineCommand ( cmd_bash )
 	{ return; }
 
 	if ( IS_NPC ( victim ) &&
-			victim->fighting != NULL &&
-			!is_same_group ( ch, victim->fighting ) ) {
+			FIGHTING ( victim ) != NULL &&
+			!is_same_group ( ch, FIGHTING ( victim ) ) ) {
 		writeBuffer ( "Kill stealing is not permitted.\n\r", ch );
 		return;
 	}
@@ -2310,7 +2310,7 @@ DefineCommand ( cmd_dirt )
 	}
 
 	if ( arg[0] == '\0' ) {
-		victim = ch->fighting;
+		victim = FIGHTING ( ch );
 		if ( victim == NULL ) {
 			writeBuffer ( "But you aren't in combat!\n\r", ch );
 			return;
@@ -2336,8 +2336,8 @@ DefineCommand ( cmd_dirt )
 	{ return; }
 
 	if ( IS_NPC ( victim ) &&
-			victim->fighting != NULL &&
-			!is_same_group ( ch, victim->fighting ) ) {
+			FIGHTING ( victim ) != NULL &&
+			!is_same_group ( ch, FIGHTING ( victim ) ) ) {
 		writeBuffer ( "Kill stealing is not permitted.\n\r", ch );
 		return;
 	}
@@ -2368,7 +2368,7 @@ DefineCommand ( cmd_dirt )
 
 	/* terrain */
 
-	switch ( ch->in_room->sector_type ) {
+	switch ( IN_ROOM ( ch )->sector_type ) {
 		case ( SECT_INSIDE ) :
 			chance -= 20;
 			break;
@@ -2449,7 +2449,7 @@ DefineCommand ( cmd_trip )
 
 
 	if ( arg[0] == '\0' ) {
-		victim = ch->fighting;
+		victim = FIGHTING ( ch );
 		if ( victim == NULL ) {
 			writeBuffer ( "But you aren't fighting anyone!\n\r", ch );
 			return;
@@ -2465,8 +2465,8 @@ DefineCommand ( cmd_trip )
 	{ return; }
 
 	if ( IS_NPC ( victim ) &&
-			victim->fighting != NULL &&
-			!is_same_group ( ch, victim->fighting ) ) {
+			FIGHTING ( victim ) != NULL &&
+			!is_same_group ( ch, FIGHTING ( victim ) ) ) {
 		writeBuffer ( "Kill stealing is not permitted.\n\r", ch );
 		return;
 	}
@@ -2571,8 +2571,8 @@ DefineCommand ( cmd_kill )
 	if ( is_safe ( ch, victim ) )
 	{ return; }
 
-	if ( victim->fighting != NULL &&
-			!is_same_group ( ch, victim->fighting ) ) {
+	if ( FIGHTING ( victim ) != NULL &&
+			!is_same_group ( ch, FIGHTING ( victim ) ) ) {
 		writeBuffer ( "Kill stealing is not permitted.\n\r", ch );
 		return;
 	}
@@ -2629,8 +2629,8 @@ DefineCommand ( cmd_murder )
 	{ return; }
 
 	if ( IS_NPC ( victim ) &&
-			victim->fighting != NULL &&
-			!is_same_group ( ch, victim->fighting ) ) {
+			FIGHTING ( victim ) != NULL &&
+			!is_same_group ( ch, FIGHTING ( victim ) ) ) {
 		writeBuffer ( "Kill stealing is not permitted.\n\r", ch );
 		return;
 	}
@@ -2671,7 +2671,7 @@ DefineCommand ( cmd_backstab )
 		return;
 	}
 
-	if ( ch->fighting != NULL ) {
+	if ( FIGHTING ( ch ) != NULL ) {
 		writeBuffer ( "You're facing the wrong end.\n\r", ch );
 		return;
 	}
@@ -2690,8 +2690,8 @@ DefineCommand ( cmd_backstab )
 	{ return; }
 
 	if ( IS_NPC ( victim ) &&
-			victim->fighting != NULL &&
-			!is_same_group ( ch, victim->fighting ) ) {
+			FIGHTING ( victim ) != NULL &&
+			!is_same_group ( ch, FIGHTING ( victim ) ) ) {
 		writeBuffer ( "Kill stealing is not permitted.\n\r", ch );
 		return;
 	}
@@ -2730,14 +2730,14 @@ DefineCommand ( cmd_flee )
 	Creature *victim;
 	int attempt;
 
-	if ( ( victim = ch->fighting ) == NULL ) {
+	if ( ( victim = FIGHTING ( ch ) ) == NULL ) {
 		if ( ch->position == POS_FIGHTING )
 		{ ch->position = POS_STANDING; }
 		writeBuffer ( "You aren't fighting anyone.\n\r", ch );
 		return;
 	}
 
-	was_in = ch->in_room;
+	was_in = IN_ROOM ( ch );
 	for ( attempt = 0; attempt < 6; attempt++ ) {
 		Exit *pexit;
 		int door;
@@ -2752,12 +2752,12 @@ DefineCommand ( cmd_flee )
 		{ continue; }
 
 		move_char ( ch, door, FALSE );
-		if ( ( now_in = ch->in_room ) == was_in )
+		if ( ( now_in = IN_ROOM ( ch ) ) == was_in )
 		{ continue; }
 
-		ch->in_room = was_in;
+		IN_ROOM ( ch ) = was_in;
 		act ( "$n has fled!", ch, NULL, NULL, TO_ROOM );
-		ch->in_room = now_in;
+		IN_ROOM ( ch ) = now_in;
 
 		if ( !IS_NPC ( ch ) ) {
 			writeBuffer ( "You flee from combat!\n\r", ch );
@@ -2807,12 +2807,12 @@ DefineCommand ( cmd_rescue )
 		return;
 	}
 
-	if ( ch->fighting == victim ) {
+	if ( FIGHTING ( ch ) == victim ) {
 		writeBuffer ( "Too late.\n\r", ch );
 		return;
 	}
 
-	if ( ( fch = victim->fighting ) == NULL ) {
+	if ( ( fch = FIGHTING ( victim ) ) == NULL ) {
 		writeBuffer ( "That person is not fighting right now.\n\r", ch );
 		return;
 	}
@@ -2859,7 +2859,7 @@ DefineCommand ( cmd_kick )
 	if ( IS_NPC ( ch ) && !IS_SET ( ch->off_flags, OFF_KICK ) )
 	{ return; }
 
-	if ( ( victim = ch->fighting ) == NULL ) {
+	if ( ( victim = FIGHTING ( ch ) ) == NULL ) {
 		writeBuffer ( "You aren't fighting anyone.\n\r", ch );
 		return;
 	}
@@ -2896,7 +2896,7 @@ DefineCommand ( cmd_disarm )
 		return;
 	}
 
-	if ( ( victim = ch->fighting ) == NULL ) {
+	if ( ( victim = FIGHTING ( ch ) ) == NULL ) {
 		writeBuffer ( "You aren't fighting anyone.\n\r", ch );
 		return;
 	}
@@ -2947,7 +2947,7 @@ DefineCommand ( cmd_disarm )
 DefineCommand ( cmd_surrender )
 {
 	Creature *mob;
-	if ( ( mob = ch->fighting ) == NULL ) {
+	if ( ( mob = FIGHTING ( ch ) ) == NULL ) {
 		writeBuffer ( "But you're not fighting!\n\r", ch );
 		return;
 	}

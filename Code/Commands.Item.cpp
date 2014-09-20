@@ -102,7 +102,7 @@ void get_obj ( Creature *ch, Item *obj, Item *container )
 		return;
 	}
 
-	if ( ( !obj->in_obj || obj->in_obj->carried_by != ch )
+	if ( ( !IN_OBJ ( obj ) || CARRIED_BY ( obj->in_obj ) != ch )
 			&&  ( get_carry_weight ( ch ) + get_obj_weight ( obj ) > can_carry_w ( ch ) ) ) {
 		act ( "$d: you can't carry that much weight.",
 			  ch, NULL, obj->name, TO_CHAR );
@@ -152,7 +152,7 @@ void get_obj ( Creature *ch, Item *obj, Item *container )
 		if ( IS_SET ( ch->act, PLR_AUTOSPLIT ) ) {
 			/* AUTOSPLIT code */
 			members = 0;
-			for ( gch = ch->in_room->people; gch != NULL; gch = gch->next_in_room ) {
+			for ( gch = IN_ROOM ( ch )->people; gch != NULL; gch = gch->next_in_room ) {
 				if ( !IS_AFFECTED ( gch, AFF_CHARM ) && is_same_group ( gch, ch ) )
 				{ members++; }
 			}
@@ -197,7 +197,7 @@ DefineCommand ( cmd_get )
 	if ( arg2[0] == '\0' ) {
 		if ( str_cmp ( arg1, "all" ) && str_prefix ( "all.", arg1 ) ) {
 			/* 'get obj' */
-			obj = get_obj_list ( ch, arg1, ch->in_room->contents );
+			obj = get_obj_list ( ch, arg1, IN_ROOM ( ch )->contents );
 			if ( obj == NULL ) {
 				act ( "I see no $T here.", ch, NULL, arg1, TO_CHAR );
 				return;
@@ -207,7 +207,7 @@ DefineCommand ( cmd_get )
 		} else {
 			/* 'get all' or 'get all.obj' */
 			found = FALSE;
-			for ( obj = ch->in_room->contents; obj != NULL; obj = obj_next ) {
+			for ( obj = IN_ROOM ( ch )->contents; obj != NULL; obj = obj_next ) {
 				obj_next = obj->next_content;
 				if ( ( arg1[3] == '\0' || is_name ( &arg1[4], obj->name ) )
 						&&   can_see_obj ( ch, obj ) ) {
@@ -488,7 +488,7 @@ DefineCommand ( cmd_drop )
 			gold = amount;
 		}
 
-		for ( obj = ch->in_room->contents; obj != NULL; obj = obj_next ) {
+		for ( obj = IN_ROOM ( ch )->contents; obj != NULL; obj = obj_next ) {
 			obj_next = obj->next_content;
 
 			switch ( obj->pIndexData->vnum ) {
@@ -520,7 +520,7 @@ DefineCommand ( cmd_drop )
 			}
 		}
 
-		obj_to_room ( create_money ( gold, silver ), ch->in_room );
+		obj_to_room ( create_money ( gold, silver ), IN_ROOM ( ch ) );
 		act ( "$n drops some coins.", ch, NULL, NULL, TO_ROOM );
 		writeBuffer ( "OK.\n\r", ch );
 		return;
@@ -539,7 +539,7 @@ DefineCommand ( cmd_drop )
 		}
 
 		obj_from_char ( obj );
-		obj_to_room ( obj, ch->in_room );
+		obj_to_room ( obj, IN_ROOM ( ch ) );
 		act ( "$n drops $p.", ch, obj, NULL, TO_ROOM );
 		act ( "You drop $p.", ch, obj, NULL, TO_CHAR );
 		if ( IS_OBJ_STAT ( obj, ITEM_MELT_DROP ) ) {
@@ -559,7 +559,7 @@ DefineCommand ( cmd_drop )
 					&&   can_drop_obj ( ch, obj ) ) {
 				found = TRUE;
 				obj_from_char ( obj );
-				obj_to_room ( obj, ch->in_room );
+				obj_to_room ( obj, IN_ROOM ( ch ) );
 				act ( "$n drops $p.", ch, obj, NULL, TO_ROOM );
 				act ( "You drop $p.", ch, obj, NULL, TO_CHAR );
 				if ( IS_OBJ_STAT ( obj, ITEM_MELT_DROP ) ) {
@@ -870,7 +870,7 @@ DefineCommand ( cmd_fill )
 	}
 
 	found = FALSE;
-	for ( fountain = ch->in_room->contents; fountain != NULL;
+	for ( fountain = IN_ROOM ( ch )->contents; fountain != NULL;
 			fountain = fountain->next_content ) {
 		if ( fountain->item_type == ITEM_FOUNTAIN ) {
 			found = TRUE;
@@ -1030,7 +1030,7 @@ DefineCommand ( cmd_drink )
 	ChopC ( argument, arg );
 
 	if ( arg[0] == '\0' ) {
-		for ( obj = ch->in_room->contents; obj; obj = obj->next_content ) {
+		for ( obj = IN_ROOM ( ch )->contents; obj; obj = obj->next_content ) {
 			if ( obj->item_type == ITEM_FOUNTAIN )
 			{ break; }
 		}
@@ -1611,7 +1611,7 @@ DefineCommand ( cmd_sacrifice )
 		return;
 	}
 
-	obj = get_obj_list ( ch, arg, ch->in_room->contents );
+	obj = get_obj_list ( ch, arg, IN_ROOM ( ch )->contents );
 	if ( obj == NULL ) {
 		writeBuffer ( "You can't find it.\n\r", ch );
 		return;
@@ -1659,7 +1659,7 @@ DefineCommand ( cmd_sacrifice )
 	if ( IS_SET ( ch->act, PLR_AUTOSPLIT ) ) {
 		/* AUTOSPLIT code */
 		members = 0;
-		for ( gch = ch->in_room->people; gch != NULL; gch = gch->next_in_room ) {
+		for ( gch = IN_ROOM ( ch )->people; gch != NULL; gch = gch->next_in_room ) {
 			if ( is_same_group ( gch, ch ) )
 			{ members++; }
 		}
@@ -1810,7 +1810,7 @@ DefineCommand ( cmd_brandish )
 			check_improve ( ch, gsn_staves, FALSE, 2 );
 		}
 
-		else for ( vch = ch->in_room->people; vch; vch = vch_next ) {
+		else for ( vch = IN_ROOM ( ch )->people; vch; vch = vch_next ) {
 				vch_next	= vch->next_in_room;
 
 				switch ( skill_table[sn].target ) {
@@ -1861,7 +1861,7 @@ DefineCommand ( cmd_zap )
 	Item *obj;
 
 	ChopC ( argument, arg );
-	if ( arg[0] == '\0' && ch->fighting == NULL ) {
+	if ( arg[0] == '\0' && FIGHTING ( ch ) == NULL ) {
 		writeBuffer ( "Zap whom or what?\n\r", ch );
 		return;
 	}
@@ -1878,8 +1878,8 @@ DefineCommand ( cmd_zap )
 
 	obj = NULL;
 	if ( arg[0] == '\0' ) {
-		if ( ch->fighting != NULL ) {
-			victim = ch->fighting;
+		if ( FIGHTING ( ch ) != NULL ) {
+			victim = FIGHTING ( ch );
 		} else {
 			writeBuffer ( "Zap whom or what?\n\r", ch );
 			return;
@@ -2093,7 +2093,7 @@ Creature *find_keeper ( Creature *ch )
 	SHOP_DATA *pShop;
 
 	pShop = NULL;
-	for ( keeper = ch->in_room->people; keeper; keeper = keeper->next_in_room ) {
+	for ( keeper = IN_ROOM ( ch )->people; keeper; keeper = keeper->next_in_room ) {
 		if ( IS_NPC ( keeper ) && ( pShop = keeper->pIndexData->pShop ) != NULL )
 		{ break; }
 	}
@@ -2175,9 +2175,9 @@ void obj_to_keeper ( Item *obj, Creature *ch )
 		t_obj->next_content = obj;
 	}
 
-	obj->carried_by      = ch;
+	CARRIED_BY ( obj )      = ch;
 	obj->in_room         = NULL;
-	obj->in_obj          = NULL;
+	IN_OBJ ( obj )          = NULL;
 	ch->carry_number    += get_obj_number ( obj );
 	ch->carry_weight    += get_obj_weight ( obj );
 }
@@ -2266,7 +2266,7 @@ DefineCommand ( cmd_buy )
 		return;
 	}
 
-	if ( IS_SET ( ch->in_room->room_flags, ROOM_PET_SHOP ) ) {
+	if ( IS_SET ( IN_ROOM ( ch )->room_flags, ROOM_PET_SHOP ) ) {
 		char arg[MAX_INPUT_LENGTH];
 		char buf[MAX_STRING_LENGTH];
 		Creature *pet;
@@ -2281,20 +2281,20 @@ DefineCommand ( cmd_buy )
 		argument = ChopC ( argument, arg );
 
 		/* hack to make new thalos pets work */
-		if ( ch->in_room->vnum == 9621 )
+		if ( IN_ROOM ( ch )->vnum == 9621 )
 		{ pRoomIndexNext = get_room_index ( 9706 ); }
 		else
-		{ pRoomIndexNext = get_room_index ( ch->in_room->vnum + 1 ); }
+		{ pRoomIndexNext = get_room_index ( IN_ROOM ( ch )->vnum + 1 ); }
 		if ( pRoomIndexNext == NULL ) {
-			log_hd ( LOG_ERROR, Format ( "cmd_buy: bad pet shop at vnum %d.", ch->in_room->vnum ) );
+			log_hd ( LOG_ERROR, Format ( "cmd_buy: bad pet shop at vnum %d.", IN_ROOM ( ch )->vnum ) );
 			writeBuffer ( "Sorry, you can't buy that here.\n\r", ch );
 			return;
 		}
 
-		in_room     = ch->in_room;
-		ch->in_room = pRoomIndexNext;
+		in_room     = IN_ROOM ( ch );
+		IN_ROOM ( ch ) = pRoomIndexNext;
 		pet         = get_char_room ( ch, arg );
-		ch->in_room = in_room;
+		IN_ROOM ( ch ) = in_room;
 
 		if ( pet == NULL || !IS_SET ( pet->act, ACT_PET ) ) {
 			writeBuffer ( "Sorry, you can't buy that here.\n\r", ch );
@@ -2347,7 +2347,7 @@ DefineCommand ( cmd_buy )
 		PURGE_DATA ( pet->description );
 		pet->description = assign_string ( buf );
 
-		char_to_room ( pet, ch->in_room );
+		char_to_room ( pet, IN_ROOM ( ch ) );
 		add_follower ( pet, ch );
 		pet->leader = ch;
 		ch->pet = pet;
@@ -2474,16 +2474,16 @@ DefineCommand ( cmd_list )
 {
 	char buf[MAX_STRING_LENGTH];
 
-	if ( IS_SET ( ch->in_room->room_flags, ROOM_PET_SHOP ) ) {
+	if ( IS_SET ( IN_ROOM ( ch )->room_flags, ROOM_PET_SHOP ) ) {
 		RoomData *pRoomIndexNext;
 		Creature *pet;
 		bool found;
 
 		/* hack to make new thalos pets work */
-		{ pRoomIndexNext = get_room_index ( ch->in_room->vnum + 1 ); }
+		{ pRoomIndexNext = get_room_index ( IN_ROOM ( ch )->vnum + 1 ); }
 
 		if ( pRoomIndexNext == NULL ) {
-			log_hd ( LOG_ERROR, Format ( "cmd_list: bad pet shop at vnum %d.", ch->in_room->vnum ) );
+			log_hd ( LOG_ERROR, Format ( "cmd_list: bad pet shop at vnum %d.", IN_ROOM ( ch )->vnum ) );
 			writeBuffer ( "You can't do that here.\n\r", ch );
 			return;
 		}
@@ -2545,7 +2545,65 @@ DefineCommand ( cmd_list )
 		};
 
 		for ( t = 0; item_table[t].name != NULL; t++ ) {
-			for ( flag = 0; n_table[flag].name != NULL; flag++ ) {
+			if ( item_table[t].type == ITEM_WEAPON || item_table[t].type == ITEM_ARMOR ) {
+				for ( flag = 0; n_table[flag].name != NULL; flag++ ) {
+					bool item_found = false;
+					for ( char_level = 'a'; char_level <= 'z'; char_level++ ) {
+						for ( size = 0; size <= SIZE_MAGIC; size++ ) {
+							for ( obj = keeper->carrying; obj; obj = obj->next_content ) {
+								if ( obj->wear_loc == WEAR_NONE
+										&&   can_see_obj ( ch, obj )
+										&&   ( cost = get_cost ( keeper, obj, TRUE ) ) > 0
+										&&   obj->name[0] == char_level
+										&&   obj->item_type == item_table[t].type
+										&&   obj->requirements[SIZ_REQ] == size
+										&&   IS_SET ( obj->wear_flags, n_table[flag].flag )
+										&&   ( arg[0] == '\0' ||  is_name ( arg, obj->name ) ) ) {
+
+									if ( !found ) {
+										found = TRUE;
+										writeBuffer ( "Type:   [Lv Price Qty]  [ str dex int wis con   size ] Item\r\n", ch );
+										writeBuffer ( "                        [        REQUIREMENTS        ]\r\n", ch );
+									}
+
+									if ( !item_found ) {
+										item_found = true;
+										writeBuffer ( Format ( "Type: \a[F313]%s : %s\an\r\n", item_table[t].name, n_table[flag].name ), ch );
+									}
+
+									if ( IS_OBJ_STAT ( obj, ITEM_INVENTORY ) )
+										snprintf ( buf, sizeof ( buf ), "\t[%2d %5d -- ]  [ %3d %3d %3d %3d %3d %7s] %s\r\n",
+												   obj->level, cost,
+												   obj->requirements[STR_REQ], obj->requirements[DEX_REQ], obj->requirements[INT_REQ],
+												   obj->requirements[WIS_REQ], obj->requirements[CON_REQ], size_table[ ( int ) obj->requirements[SIZ_REQ]].name,
+												   obj->short_descr );
+									else {
+										count = 1;
+
+										while ( obj->next_content != NULL
+												&& obj->pIndexData == obj->next_content->pIndexData
+												&& !str_cmp ( obj->short_descr, obj->next_content->short_descr ) ) {
+											obj = obj->next_content;
+											count++;
+										}
+										int size = obj->requirements[SIZ_REQ];
+										if ( size < 0 || size > SIZE_MAGIC ) {
+											log_hd ( LOG_ERROR, Format ( "Item with broken size: %s | %d", obj->name ? obj->name : "{No Name}", size ) );
+										}
+										snprintf ( buf, sizeof ( buf ), "\t[%2d %5d %2d ]  [ %3d %3d %3d %3d %3d %7s] %s\n\r",
+												   obj->level, cost, count,
+												   obj->requirements[STR_REQ], obj->requirements[DEX_REQ], obj->requirements[INT_REQ],
+												   obj->requirements[WIS_REQ], obj->requirements[CON_REQ], size_table[size].name ? size_table[size].name : "Unknown",
+												   obj->short_descr );
+									}
+									writeBuffer ( buf, ch );
+								} // -- is_name block
+							} // -- size block
+						} // -- n_table block
+					} // -- carrying loop
+				} // -- char_level loop
+			} // -- end weapon/armor if
+			else {
 				bool item_found = false;
 				for ( char_level = 'a'; char_level <= 'z'; char_level++ ) {
 					for ( size = 0; size <= SIZE_MAGIC; size++ ) {
@@ -2556,7 +2614,6 @@ DefineCommand ( cmd_list )
 									&&   obj->name[0] == char_level
 									&&   obj->item_type == item_table[t].type
 									&&   obj->requirements[SIZ_REQ] == size
-									&&   IS_SET ( obj->wear_flags, n_table[flag].flag )
 									&&   ( arg[0] == '\0' ||  is_name ( arg, obj->name ) ) ) {
 
 								if ( !found ) {
@@ -2567,7 +2624,7 @@ DefineCommand ( cmd_list )
 
 								if ( !item_found ) {
 									item_found = true;
-									writeBuffer ( Format ( "Type: \a[F313]%s : %s\an\r\n", item_table[t].name, n_table[flag].name ), ch );
+									writeBuffer ( Format ( "Type: \a[F313]%s\an\r\n", item_table[t].name  ), ch );
 								}
 
 								if ( IS_OBJ_STAT ( obj, ITEM_INVENTORY ) )
@@ -2598,9 +2655,9 @@ DefineCommand ( cmd_list )
 								writeBuffer ( buf, ch );
 							} // -- is_name block
 						} // -- size block
-					} // -- n_table block
-				} // -- carrying loop
-			} // -- char_level loop
+					}
+				}
+			}
 		} // -- end item_type loop
 		if ( !found )
 		{ writeBuffer ( "You can't buy anything here.\n\r", ch ); }

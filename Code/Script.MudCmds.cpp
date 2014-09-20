@@ -284,13 +284,13 @@ DefineCommand ( cmd_mpzecho )
 		return;
 	}
 
-	if ( ch->in_room == NULL )
+	if ( IN_ROOM ( ch ) == NULL )
 	{ return; }
 
 	for ( d = socket_list; d; d = d->next ) {
 		if ( d->connected == CON_PLAYING
 				&&   d->character->in_room != NULL
-				&&   d->character->in_room->area == ch->in_room->area ) {
+				&&   d->character->in_room->area == IN_ROOM ( ch )->area ) {
 			if ( IsStaff ( d->character ) )
 			{ writeBuffer ( "Mob echo> ", d->character ); }
 			writeBuffer ( argument, d->character );
@@ -313,20 +313,20 @@ DefineCommand ( cmd_mpasound )
 	if ( argument[0] == '\0' )
 	{ return; }
 
-	was_in_room = ch->in_room;
+	was_in_room = IN_ROOM ( ch );
 	for ( door = 0; door < 6; door++ ) {
 		Exit       *pexit;
 
 		if ( ( pexit = was_in_room->exit[door] ) != NULL
 				&&   pexit->u1.to_room != NULL
 				&&   pexit->u1.to_room != was_in_room ) {
-			ch->in_room = pexit->u1.to_room;
+			IN_ROOM ( ch ) = pexit->u1.to_room;
 			MOBtrigger  = FALSE;
 			act ( argument, ch, NULL, NULL, TO_ROOM );
 			MOBtrigger  = TRUE;
 		}
 	}
-	ch->in_room = was_in_room;
+	IN_ROOM ( ch ) = was_in_room;
 	return;
 
 }
@@ -380,10 +380,10 @@ DefineCommand ( cmd_mpassist )
 	if ( ( victim = get_char_room ( ch, arg ) ) == NULL )
 	{ return; }
 
-	if ( victim == ch || ch->fighting != NULL || victim->fighting == NULL )
+	if ( victim == ch || FIGHTING ( ch ) != NULL || FIGHTING ( victim ) == NULL )
 	{ return; }
 
-	multi_hit ( ch, victim->fighting, TYPE_UNDEFINED );
+	multi_hit ( ch, FIGHTING ( victim ), TYPE_UNDEFINED );
 	return;
 }
 
@@ -499,7 +499,7 @@ DefineCommand ( cmd_mpmload )
 
 	ChopC ( argument, arg );
 
-	if ( ch->in_room == NULL || arg[0] == '\0' || !is_number ( arg ) )
+	if ( IN_ROOM ( ch ) == NULL || arg[0] == '\0' || !is_number ( arg ) )
 	{ return; }
 
 	vnum = atoi ( arg );
@@ -509,7 +509,7 @@ DefineCommand ( cmd_mpmload )
 		return;
 	}
 	victim = create_mobile ( pMobIndex );
-	char_to_room ( victim, ch->in_room );
+	char_to_room ( victim, IN_ROOM ( ch ) );
 	return;
 }
 
@@ -580,7 +580,7 @@ DefineCommand ( cmd_mpoload )
 		if ( fWear )
 		{ wear_obj ( ch, obj, TRUE ); }
 	} else {
-		obj_to_room ( obj, ch->in_room );
+		obj_to_room ( obj, IN_ROOM ( ch ) );
 	}
 
 	return;
@@ -606,14 +606,14 @@ DefineCommand ( cmd_mppurge )
 		Creature *vnext;
 		Item  *obj_next;
 
-		for ( victim = ch->in_room->people; victim != NULL; victim = vnext ) {
+		for ( victim = IN_ROOM ( ch )->people; victim != NULL; victim = vnext ) {
 			vnext = victim->next_in_room;
 			if ( IS_NPC ( victim ) && victim != ch
 					&&   !IS_SET ( victim->act, ACT_NOPURGE ) )
 			{ extract_char ( victim, TRUE ); }
 		}
 
-		for ( obj = ch->in_room->contents; obj != NULL; obj = obj_next ) {
+		for ( obj = IN_ROOM ( ch )->contents; obj != NULL; obj = obj_next ) {
 			obj_next = obj->next_content;
 			if ( !IS_SET ( obj->extra_flags, ITEM_NOPURGE ) )
 			{ extract_obj ( obj ); }
@@ -665,7 +665,7 @@ DefineCommand ( cmd_mpgoto )
 		return;
 	}
 
-	if ( ch->fighting != NULL )
+	if ( FIGHTING ( ch ) != NULL )
 	{ stop_fighting ( ch, TRUE ); }
 
 	char_from_room ( ch );
@@ -701,7 +701,7 @@ DefineCommand ( cmd_mpat )
 		return;
 	}
 
-	original = ch->in_room;
+	original = IN_ROOM ( ch );
 	on = ch->on;
 	char_from_room ( ch );
 	char_to_room ( ch, location );
@@ -748,7 +748,7 @@ DefineCommand ( cmd_mptransfer )
 	if ( !str_cmp ( arg1, "all" ) ) {
 		Creature *victim_next;
 
-		for ( victim = ch->in_room->people; victim != NULL; victim = victim_next ) {
+		for ( victim = IN_ROOM ( ch )->people; victim != NULL; victim = victim_next ) {
 			victim_next = victim->next_in_room;
 			if ( !IS_NPC ( victim ) ) {
 				cmd_function ( ch, &cmd_mptransfer, Format ( "%s %s", victim->name, arg2 ) );
@@ -761,7 +761,7 @@ DefineCommand ( cmd_mptransfer )
 	 * Thanks to Grodyn for the optional location parameter.
 	 */
 	if ( arg2[0] == '\0' ) {
-		location = ch->in_room;
+		location = IN_ROOM ( ch );
 	} else {
 		if ( ( location = find_location ( ch, arg2 ) ) == NULL ) {
 			log_hd ( LOG_ERROR, Format ( "Mptransfer - No such location from vnum %d.",
@@ -776,10 +776,10 @@ DefineCommand ( cmd_mptransfer )
 	if ( ( victim = get_char_world ( ch, arg1 ) ) == NULL )
 	{ return; }
 
-	if ( victim->in_room == NULL )
+	if ( IN_ROOM ( victim ) == NULL )
 	{ return; }
 
-	if ( victim->fighting != NULL )
+	if ( FIGHTING ( victim ) != NULL )
 	{ stop_fighting ( victim, TRUE ); }
 	char_from_room ( victim );
 	char_to_room ( victim, location );
@@ -812,7 +812,7 @@ DefineCommand ( cmd_mpgtransfer )
 	if ( ( who = get_char_room ( ch, arg1 ) ) == NULL )
 	{ return; }
 
-	for ( victim = ch->in_room->people; victim; victim = victim_next ) {
+	for ( victim = IN_ROOM ( ch )->people; victim; victim = victim_next ) {
 		victim_next = victim->next_in_room;
 		if ( is_same_group ( who, victim ) ) {
 			sprintf ( buf, "%s %s", victim->name, arg2 );
@@ -847,7 +847,7 @@ DefineCommand ( cmd_mpforce )
 		for ( vch = char_list; vch != NULL; vch = vch_next ) {
 			vch_next = vch->next;
 
-			if ( vch->in_room == ch->in_room
+			if ( IN_ROOM ( vch ) == IN_ROOM ( ch )
 					&& get_trust ( vch ) < get_trust ( ch )
 					&& can_see ( ch, vch ) ) {
 				interpret ( vch, argument );
@@ -892,7 +892,7 @@ DefineCommand ( cmd_mpgforce )
 	if ( victim == ch )
 	{ return; }
 
-	for ( vch = victim->in_room->people; vch != NULL; vch = vch_next ) {
+	for ( vch = IN_ROOM ( victim )->people; vch != NULL; vch = vch_next ) {
 		vch_next = vch->next_in_room;
 
 		if ( is_same_group ( victim, vch ) ) {
@@ -932,7 +932,7 @@ DefineCommand ( cmd_mpvforce )
 	for ( victim = char_list; victim; victim = victim_next ) {
 		victim_next = victim->next;
 		if ( IS_NPC ( victim ) && victim->pIndexData->vnum == vnum
-				&&   ch != victim && victim->fighting == NULL )
+				&&   ch != victim && FIGHTING ( victim ) == NULL )
 		{ interpret ( victim, argument ); }
 	}
 	return;
@@ -1054,7 +1054,7 @@ DefineCommand ( cmd_mpdamage )
 	if ( target[0] != '\0' )
 	{ fKill = TRUE; }
 	if ( fAll ) {
-		for ( victim = ch->in_room->people; victim; victim = victim_next ) {
+		for ( victim = IN_ROOM ( ch )->people; victim; victim = victim_next ) {
 			victim_next = victim->next_in_room;
 			if ( victim != ch )
 				damage ( victim, victim,
@@ -1181,10 +1181,10 @@ DefineCommand ( cmd_mpflee )
 	Exit *pexit;
 	int door, attempt;
 
-	if ( ch->fighting != NULL )
+	if ( FIGHTING ( ch ) != NULL )
 	{ return; }
 
-	if ( ( was_in = ch->in_room ) == NULL )
+	if ( ( was_in = IN_ROOM ( ch ) ) == NULL )
 	{ return; }
 
 	for ( attempt = 0; attempt < 6; attempt++ ) {
@@ -1197,7 +1197,7 @@ DefineCommand ( cmd_mpflee )
 		{ continue; }
 
 		move_char ( ch, door, FALSE );
-		if ( ch->in_room != was_in )
+		if ( IN_ROOM ( ch ) != was_in )
 		{ return; }
 	}
 }
@@ -1229,7 +1229,7 @@ DefineCommand ( cmd_mpotransfer )
 	}
 	if ( ( obj = get_obj_here ( ch, arg ) ) == NULL )
 	{ return; }
-	if ( obj->carried_by == NULL )
+	if ( CARRIED_BY ( obj ) == NULL )
 	{ obj_from_room ( obj ); }
 	else {
 		if ( obj->wear_loc != WEAR_NONE )

@@ -79,7 +79,7 @@ void move_char ( Creature *ch, int door, bool follow )
 	if ( !IS_NPC ( ch ) && mp_exit_trigger ( ch, door ) )
 	{ return; }
 
-	in_room = ch->in_room;
+	in_room = IN_ROOM ( ch );
 	if ( ( pexit   = in_room->exit[door] ) == NULL
 			||   ( to_room = pexit->u1.to_room   ) == NULL
 			||	 !can_see_room ( ch, pexit->u1.to_room ) ) {
@@ -200,7 +200,7 @@ void move_char ( Creature *ch, int door, bool follow )
 		if ( fch->master == ch && fch->position == POS_STANDING
 				&&   can_see_room ( fch, to_room ) ) {
 
-			if ( IS_SET ( ch->in_room->room_flags, ROOM_LAW )
+			if ( IS_SET ( IN_ROOM ( ch )->room_flags, ROOM_LAW )
 					&&  ( IS_NPC ( fch ) && IS_SET ( fch->act, ACT_AGGRESSIVE ) ) ) {
 				act ( "You can't bring $N into the city.",
 					  ch, NULL, fch, TO_CHAR );
@@ -281,7 +281,7 @@ int find_door ( Creature *ch, char *arg )
 	else if ( !str_cmp ( arg, "d" ) || !str_cmp ( arg, "down"  ) ) { door = 5; }
 	else {
 		for ( door = 0; door <= 5; door++ ) {
-			if ( ( pexit = ch->in_room->exit[door] ) != NULL
+			if ( ( pexit = IN_ROOM ( ch )->exit[door] ) != NULL
 					&&   IS_SET ( pexit->exit_info, EX_ISDOOR )
 					&&   pexit->keyword != NULL
 					&&   is_name ( arg, pexit->keyword ) )
@@ -291,7 +291,7 @@ int find_door ( Creature *ch, char *arg )
 		return -1;
 	}
 
-	if ( ( pexit = ch->in_room->exit[door] ) == NULL ) {
+	if ( ( pexit = IN_ROOM ( ch )->exit[door] ) == NULL ) {
 		act ( "I see no door $T here.", ch, NULL, arg, TO_CHAR );
 		return -1;
 	}
@@ -442,7 +442,7 @@ DefineCommand ( cmd_open )
 		Exit *pexit;
 		Exit *pexit_rev;
 
-		pexit = ch->in_room->exit[door];
+		pexit = IN_ROOM ( ch )->exit[door];
 		if ( !IS_SET ( pexit->exit_info, EX_CLOSED ) )
 		{ writeBuffer ( "It's already open.\n\r",      ch ); return; }
 		if (  IS_SET ( pexit->exit_info, EX_LOCKED ) )
@@ -455,7 +455,7 @@ DefineCommand ( cmd_open )
 		/* open the other side */
 		if ( ( to_room   = pexit->u1.to_room            ) != NULL
 				&&   ( pexit_rev = to_room->exit[rev_dir[door]] ) != NULL
-				&&   pexit_rev->u1.to_room == ch->in_room ) {
+				&&   pexit_rev->u1.to_room == IN_ROOM ( ch ) ) {
 			Creature *rch;
 
 			REMOVE_BIT ( pexit_rev->exit_info, EX_CLOSED );
@@ -525,7 +525,7 @@ DefineCommand ( cmd_close )
 		Exit *pexit;
 		Exit *pexit_rev;
 
-		pexit	= ch->in_room->exit[door];
+		pexit	= IN_ROOM ( ch )->exit[door];
 		if ( IS_SET ( pexit->exit_info, EX_CLOSED ) )
 		{ writeBuffer ( "It's already closed.\n\r",    ch ); return; }
 
@@ -536,7 +536,7 @@ DefineCommand ( cmd_close )
 		/* close the other side */
 		if ( ( to_room   = pexit->u1.to_room            ) != NULL
 				&&   ( pexit_rev = to_room->exit[rev_dir[door]] ) != 0
-				&&   pexit_rev->u1.to_room == ch->in_room ) {
+				&&   pexit_rev->u1.to_room == IN_ROOM ( ch ) ) {
 			Creature *rch;
 
 			SET_BIT ( pexit_rev->exit_info, EX_CLOSED );
@@ -635,7 +635,7 @@ DefineCommand ( cmd_lock )
 		Exit *pexit;
 		Exit *pexit_rev;
 
-		pexit	= ch->in_room->exit[door];
+		pexit	= IN_ROOM ( ch )->exit[door];
 		if ( !IS_SET ( pexit->exit_info, EX_CLOSED ) )
 		{ writeBuffer ( "It's not closed.\n\r",        ch ); return; }
 		if ( pexit->key < 0 )
@@ -652,7 +652,7 @@ DefineCommand ( cmd_lock )
 		/* lock the other side */
 		if ( ( to_room   = pexit->u1.to_room            ) != NULL
 				&&   ( pexit_rev = to_room->exit[rev_dir[door]] ) != 0
-				&&   pexit_rev->u1.to_room == ch->in_room ) {
+				&&   pexit_rev->u1.to_room == IN_ROOM ( ch ) ) {
 			SET_BIT ( pexit_rev->exit_info, EX_LOCKED );
 		}
 	}
@@ -738,7 +738,7 @@ DefineCommand ( cmd_unlock )
 		Exit *pexit;
 		Exit *pexit_rev;
 
-		pexit = ch->in_room->exit[door];
+		pexit = IN_ROOM ( ch )->exit[door];
 		if ( !IS_SET ( pexit->exit_info, EX_CLOSED ) )
 		{ writeBuffer ( "It's not closed.\n\r",        ch ); return; }
 		if ( pexit->key < 0 )
@@ -755,7 +755,7 @@ DefineCommand ( cmd_unlock )
 		/* unlock the other side */
 		if ( ( to_room   = pexit->u1.to_room            ) != NULL
 				&&   ( pexit_rev = to_room->exit[rev_dir[door]] ) != NULL
-				&&   pexit_rev->u1.to_room == ch->in_room ) {
+				&&   pexit_rev->u1.to_room == IN_ROOM ( ch ) ) {
 			REMOVE_BIT ( pexit_rev->exit_info, EX_LOCKED );
 		}
 	}
@@ -980,9 +980,9 @@ DefineCommand ( cmd_search )
 
 		if ( arg[0] == '\0' ) {
 			act ( "$n searches around the area for a moment.", ch, NULL, NULL, TO_ROOM );
-			for ( vch = ch->in_room->people; vch != NULL; vch = vch->next ) {
+			for ( vch = IN_ROOM ( ch )->people; vch != NULL; vch = vch->next ) {
 				/* hunt up some hiders */
-				if ( vch->in_room != ch->in_room )
+				if ( IN_ROOM ( vch ) != IN_ROOM ( ch ) )
 				{ continue; }
 				if ( vch == ch )
 				{ continue; }
@@ -1032,7 +1032,7 @@ DefineCommand ( cmd_search )
 				}
 			}
 			/* AWW uses hidden portals. Remove this loop if not needed. */
-			for ( obj = ch->in_room->contents; obj; obj = obj->next_content ) {
+			for ( obj = IN_ROOM ( ch )->contents; obj; obj = obj->next_content ) {
 				if ( obj->item_type == ITEM_PORTAL ) {
 					writeBuffer ( Format ( "You see %s.\n\r", obj->short_descr ), ch );
 					found = TRUE;
@@ -1059,9 +1059,9 @@ DefineCommand ( cmd_search )
 	}
 
 	if ( arg[0] == '\0' ) {
-		for ( vch = ch->in_room->people; vch != NULL; vch = vch->next ) {
+		for ( vch = IN_ROOM ( ch )->people; vch != NULL; vch = vch->next ) {
 			/* hunt up some hiders */
-			if ( vch->in_room != ch->in_room )
+			if ( IN_ROOM ( vch ) != IN_ROOM ( ch ) )
 			{ continue; }
 			if ( vch == ch )
 			{ continue; }
@@ -1107,7 +1107,7 @@ DefineCommand ( cmd_search )
 			}
 		}
 		/* AWW uses hidden portals. Remove this loop if not needed. */
-		for ( obj = ch->in_room->contents; obj; obj = obj->next_content ) {
+		for ( obj = IN_ROOM ( ch )->contents; obj; obj = obj->next_content ) {
 			if ( obj->item_type == ITEM_PORTAL ) {
 				writeBuffer ( Format ( "You see %s.\n\r", obj->short_descr ), ch );
 				found = TRUE;
@@ -1178,7 +1178,7 @@ DefineCommand ( cmd_pick )
 	WAIT_STATE ( ch, skill_table[gsn_pick_lock].beats );
 
 	/* look for guards */
-	for ( gch = ch->in_room->people; gch; gch = gch->next_in_room ) {
+	for ( gch = IN_ROOM ( ch )->people; gch; gch = gch->next_in_room ) {
 		if ( IS_NPC ( gch ) && IS_AWAKE ( gch ) && ch->level + 5 < gch->level ) {
 			act ( "$N is standing too close to the lock.",
 				  ch, NULL, gch, TO_CHAR );
@@ -1347,7 +1347,7 @@ DefineCommand ( cmd_pick )
 		Exit *pexit;
 		Exit *pexit_rev;
 
-		pexit = ch->in_room->exit[door];
+		pexit = IN_ROOM ( ch )->exit[door];
 		if ( !IS_SET ( pexit->exit_info, EX_CLOSED ) && !IsStaff ( ch ) )
 		{ writeBuffer ( "It's not closed.\n\r",        ch ); return; }
 		if ( pexit->key < 0 && !IsStaff ( ch ) )
@@ -1365,7 +1365,7 @@ DefineCommand ( cmd_pick )
 		/* pick the other side */
 		if ( ( to_room   = pexit->u1.to_room            ) != NULL
 				&&   ( pexit_rev = to_room->exit[rev_dir[door]] ) != NULL
-				&&   pexit_rev->u1.to_room == ch->in_room ) {
+				&&   pexit_rev->u1.to_room == IN_ROOM ( ch ) ) {
 			REMOVE_BIT ( pexit_rev->exit_info, EX_LOCKED );
 		}
 	}
@@ -1382,7 +1382,7 @@ DefineCommand ( cmd_stand )
 			writeBuffer ( "Maybe you should finish fighting first?\n\r", ch );
 			return;
 		}
-		obj = get_obj_list ( ch, argument, ch->in_room->contents );
+		obj = get_obj_list ( ch, argument, IN_ROOM ( ch )->contents );
 		if ( obj == NULL ) {
 			writeBuffer ( "You don't see that here.\n\r", ch );
 			return;
@@ -1467,7 +1467,7 @@ DefineCommand ( cmd_rest )
 
 	/* okay, now that we know we can rest, find an object to rest on */
 	if ( argument[0] != '\0' ) {
-		obj = get_obj_list ( ch, argument, ch->in_room->contents );
+		obj = get_obj_list ( ch, argument, IN_ROOM ( ch )->contents );
 		if ( obj == NULL ) {
 			writeBuffer ( "You don't see that here.\n\r", ch );
 			return;
@@ -1571,7 +1571,7 @@ DefineCommand ( cmd_sit )
 
 	/* okay, now that we know we can sit, find an object to sit on */
 	if ( argument[0] != '\0' ) {
-		obj = get_obj_list ( ch, argument, ch->in_room->contents );
+		obj = get_obj_list ( ch, argument, IN_ROOM ( ch )->contents );
 		if ( obj == NULL ) {
 			writeBuffer ( "You don't see that here.\n\r", ch );
 			return;
@@ -1674,7 +1674,7 @@ DefineCommand ( cmd_sleep )
 				if ( argument[0] == '\0' )
 				{ obj = ch->on; }
 				else
-				{ obj = get_obj_list ( ch, argument,  ch->in_room->contents ); }
+				{ obj = get_obj_list ( ch, argument,  IN_ROOM ( ch )->contents ); }
 
 				if ( obj == NULL ) {
 					writeBuffer ( "You don't see that here.\n\r", ch );
@@ -1818,16 +1818,16 @@ DefineCommand ( cmd_recall )
 		return;
 	}
 
-	if ( ch->in_room == location )
+	if ( IN_ROOM ( ch ) == location )
 	{ return; }
 
-	if ( IS_SET ( ch->in_room->room_flags, ROOM_NO_RECALL )
+	if ( IS_SET ( IN_ROOM ( ch )->room_flags, ROOM_NO_RECALL )
 			||   IS_AFFECTED ( ch, AFF_CURSE ) ) {
 		writeBuffer ( "Mota has forsaken you.\n\r", ch );
 		return;
 	}
 
-	if ( ( victim = ch->fighting ) != NULL ) {
+	if ( ( victim = FIGHTING ( ch ) ) != NULL ) {
 		int lose, skill;
 
 		skill = get_skill ( ch, gsn_recall );
@@ -1876,7 +1876,7 @@ DefineCommand ( cmd_train )
 	/*
 	 * Check for trainer.
 	 */
-	for ( mob = ch->in_room->people; mob; mob = mob->next_in_room ) {
+	for ( mob = IN_ROOM ( ch )->people; mob; mob = mob->next_in_room ) {
 		if ( IS_NPC ( mob ) && IS_SET ( mob->act, ACT_TRAIN ) )
 		{ break; }
 	}

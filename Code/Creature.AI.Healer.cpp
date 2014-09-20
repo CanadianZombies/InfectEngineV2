@@ -46,7 +46,7 @@ DefineCommand ( cmd_heal )
 	const char *words;
 
 	/* check for healer */
-	for ( mob = ch->in_room->people; mob; mob = mob->next_in_room ) {
+	for ( mob = IN_ROOM ( ch )->people; mob; mob = mob->next_in_room ) {
 		if ( IS_NPC ( mob ) && IS_SET ( mob->act, ACT_IS_HEALER ) )
 		{ break; }
 	}

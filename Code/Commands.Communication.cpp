@@ -639,7 +639,7 @@ DefineCommand ( cmd_say )
 
 	if ( !IS_NPC ( ch ) ) {
 		Creature *mob, *mob_next;
-		for ( mob = ch->in_room->people; mob != NULL; mob = mob_next ) {
+		for ( mob = IN_ROOM ( ch )->people; mob != NULL; mob = mob_next ) {
 			mob_next = mob->next_in_room;
 			if ( IS_NPC ( mob ) && HAS_TRIGGER ( mob, TRIG_SPEECH )
 					&&   mob->position == mob->pIndexData->default_pos )
@@ -722,7 +722,7 @@ DefineCommand ( cmd_tell )
 	 * -- Furey
 	 */
 	if ( ( victim = get_char_world ( ch, arg ) ) == NULL
-			|| ( IS_NPC ( victim ) && victim->in_room != ch->in_room ) ) {
+			|| ( IS_NPC ( victim ) && IN_ROOM ( victim ) != IN_ROOM ( ch ) ) ) {
 		writeBuffer ( "They aren't here.\n\r", ch );
 		return;
 	}
@@ -853,7 +853,7 @@ DefineCommand ( cmd_yell )
 		if ( d->connected == CON_PLAYING
 				&&   d->character != ch
 				&&   d->character->in_room != NULL
-				&&   d->character->in_room->area == ch->in_room->area
+				&&   d->character->in_room->area == IN_ROOM ( ch )->area
 				&&   !IS_SET ( d->character->comm, COMM_QUIET ) ) {
 			act ( "$n yells '$t'", ch, argument, d->character, TO_VICT );
 		}
@@ -901,7 +901,7 @@ DefineCommand ( cmd_pmote )
 
 	act ( "$n $t", ch, argument, NULL, TO_CHAR );
 
-	for ( vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room ) {
+	for ( vch = IN_ROOM ( ch )->people; vch != NULL; vch = vch->next_in_room ) {
 		if ( vch->desc == NULL || vch == ch )
 		{ continue; }
 
@@ -1402,7 +1402,7 @@ void stop_follower ( Creature *ch )
 		affect_strip ( ch, gsn_charm_person );
 	}
 
-	if ( can_see ( ch->master, ch ) && ch->in_room != NULL ) {
+	if ( can_see ( ch->master, ch ) && IN_ROOM ( ch ) != NULL ) {
 		act ( "$n stops following you.",     ch, NULL, ch->master, TO_VICT    );
 		act ( "You stop following $N.",      ch, NULL, ch->master, TO_CHAR    );
 	}
@@ -1505,7 +1505,7 @@ DefineCommand ( cmd_order )
 	}
 
 	found = FALSE;
-	for ( och = ch->in_room->people; och != NULL; och = och_next ) {
+	for ( och = IN_ROOM ( ch )->people; och != NULL; och = och_next ) {
 		och_next = och->next_in_room;
 
 		if ( IS_AFFECTED ( och, AFF_CHARM )
@@ -1643,7 +1643,7 @@ DefineCommand ( cmd_split )
 	}
 
 	members = 0;
-	for ( gch = ch->in_room->people; gch != NULL; gch = gch->next_in_room ) {
+	for ( gch = IN_ROOM ( ch )->people; gch != NULL; gch = gch->next_in_room ) {
 		if ( is_same_group ( gch, ch ) && !IS_AFFECTED ( gch, AFF_CHARM ) )
 		{ members++; }
 	}
@@ -1695,7 +1695,7 @@ DefineCommand ( cmd_split )
 				   amount_silver, amount_gold, share_silver, share_gold );
 	}
 
-	for ( gch = ch->in_room->people; gch != NULL; gch = gch->next_in_room ) {
+	for ( gch = IN_ROOM ( ch )->people; gch != NULL; gch = gch->next_in_room ) {
 		if ( gch != ch && is_same_group ( gch, ch ) && !IS_AFFECTED ( gch, AFF_CHARM ) ) {
 			act ( buf, ch, NULL, gch, TO_VICT );
 			gch->gold += share_gold;

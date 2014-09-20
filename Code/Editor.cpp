@@ -123,7 +123,7 @@ char *olc_ed_vnum ( Creature *ch )
 			sprintf ( buf, "%d", pArea ? pArea->vnum : 0 );
 			break;
 		case ED_ROOM:
-			pRoom = ch->in_room;
+			pRoom = IN_ROOM ( ch );
 			sprintf ( buf, "%d", pRoom ? pRoom->vnum : 0 );
 			break;
 		case ED_OBJECT:
@@ -677,7 +677,7 @@ DefineCommand ( cmd_aedit )
 	if ( IS_NPC ( ch ) )
 	{ return; }
 
-	pArea	= ch->in_room->area;
+	pArea	= IN_ROOM ( ch )->area;
 
 	argument	= ChopC ( argument, arg );
 
@@ -721,7 +721,7 @@ DefineCommand ( cmd_redit )
 
 	argument = ChopC ( argument, arg1 );
 
-	pRoom = ch->in_room;
+	pRoom = IN_ROOM ( ch );
 
 	if ( !str_cmp ( arg1, "reset" ) ) {	/* redit reset */
 		if ( !IS_BUILDER ( ch, pRoom->area ) ) {
@@ -1161,7 +1161,7 @@ DefineCommand ( cmd_resets )
 	argument = ChopC ( argument, arg6 );
 	argument = ChopC ( argument, arg7 );
 
-	if ( !IS_BUILDER ( ch, ch->in_room->area ) ) {
+	if ( !IS_BUILDER ( ch, IN_ROOM ( ch )->area ) ) {
 		writeBuffer ( "Resets: Invalid security for editing this area.\n\r",
 					  ch );
 		return;
@@ -1172,7 +1172,7 @@ DefineCommand ( cmd_resets )
 	 * -------------------------------
 	 */
 	if ( arg1[0] == '\0' ) {
-		if ( ch->in_room->reset_first ) {
+		if ( IN_ROOM ( ch )->reset_first ) {
 			writeBuffer (
 				"Resets: M = mobile, R = room, O = object, "
 				"P = pet, S = shopkeeper\n\r", ch );
@@ -1187,7 +1187,7 @@ DefineCommand ( cmd_resets )
 	 * ------------------------------------------
 	 */
 	if ( is_number ( arg1 ) ) {
-		RoomData *pRoom = ch->in_room;
+		RoomData *pRoom = IN_ROOM ( ch );
 
 		/*
 		 * Delete a reset.
@@ -1196,7 +1196,7 @@ DefineCommand ( cmd_resets )
 		if ( !str_cmp ( arg2, "delete" ) ) {
 			int insert_loc = atoi ( arg1 );
 
-			if ( !ch->in_room->reset_first ) {
+			if ( !IN_ROOM ( ch )->reset_first ) {
 				writeBuffer ( "No resets in this area.\n\r", ch );
 				return;
 			}
@@ -1255,7 +1255,7 @@ DefineCommand ( cmd_resets )
 					pReset->command = 'M';
 					pReset->arg1    = atoi ( arg3 );
 					pReset->arg2    = is_number ( arg4 ) ? atoi ( arg4 ) : 1; /* Max # */
-					pReset->arg3    = ch->in_room->vnum;
+					pReset->arg3    = IN_ROOM ( ch )->vnum;
 					pReset->arg4	= is_number ( arg5 ) ? atoi ( arg5 ) : 1; /* Min # */
 				} else
 					/*
@@ -1294,7 +1294,7 @@ DefineCommand ( cmd_resets )
 								}
 								pReset->command  = 'O';
 								pReset->arg2     = 0;
-								pReset->arg3     = ch->in_room->vnum;
+								pReset->arg3     = IN_ROOM ( ch )->vnum;
 								pReset->arg4     = 0;
 							} else
 								/*
@@ -1318,8 +1318,8 @@ DefineCommand ( cmd_resets )
 								{ pReset->command = 'E'; }
 							}
 					}
-				add_reset ( ch->in_room, pReset, atoi ( arg1 ) );
-				SET_BIT ( ch->in_room->area->area_flags, AREA_CHANGED );
+				add_reset ( IN_ROOM ( ch ), pReset, atoi ( arg1 ) );
+				SET_BIT ( IN_ROOM ( ch )->area->area_flags, AREA_CHANGED );
 				writeBuffer ( "Reset added.\n\r", ch );
 			} else if ( !str_cmp ( arg2, "random" ) && is_number ( arg3 ) ) {
 				if ( atoi ( arg3 ) < 1 || atoi ( arg3 ) > 6 ) {
@@ -1328,10 +1328,10 @@ DefineCommand ( cmd_resets )
 				}
 				pReset = new_reset_data ();
 				pReset->command = 'R';
-				pReset->arg1 = ch->in_room->vnum;
+				pReset->arg1 = IN_ROOM ( ch )->vnum;
 				pReset->arg2 = atoi ( arg3 );
-				add_reset ( ch->in_room, pReset, atoi ( arg1 ) );
-				SET_BIT ( ch->in_room->area->area_flags, AREA_CHANGED );
+				add_reset ( IN_ROOM ( ch ), pReset, atoi ( arg1 ) );
+				SET_BIT ( IN_ROOM ( ch )->area->area_flags, AREA_CHANGED );
 				writeBuffer ( "Random exits reset added.\n\r", ch );
 			} else {
 				writeBuffer ( "Syntax: RESET <number> OBJ <vnum> <wear_loc>\n\r", ch );

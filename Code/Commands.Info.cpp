@@ -342,12 +342,12 @@ void show_char_to_char_0 ( Creature *victim, Creature *ch )
 			break;
 		case POS_FIGHTING:
 			strcat ( buf, " is here, fighting " );
-			if ( victim->fighting == NULL )
+			if ( FIGHTING ( victim ) == NULL )
 			{ strcat ( buf, "thin air??" ); }
-			else if ( victim->fighting == ch )
+			else if ( FIGHTING ( victim ) == ch )
 			{ strcat ( buf, "YOU!" ); }
-			else if ( victim->in_room == victim->fighting->in_room ) {
-				strcat ( buf, PERS ( victim->fighting, ch ) );
+			else if ( IN_ROOM ( victim ) == FIGHTING ( victim )->in_room ) {
+				strcat ( buf, PERS ( FIGHTING ( victim ), ch ) );
 				strcat ( buf, "." );
 			} else
 			{ strcat ( buf, "someone who left??" ); }
@@ -453,7 +453,7 @@ void show_char_to_char ( Creature *list, Creature *ch )
 
 		if ( can_see ( ch, rch ) ) {
 			show_char_to_char_0 ( rch, ch );
-		} else if ( room_is_dark ( ch->in_room )
+		} else if ( room_is_dark ( IN_ROOM ( ch ) )
 					&&        IS_AFFECTED ( rch, AFF_INFRARED ) ) {
 			writeBuffer ( "You see glowing red eyes watching YOU!\n\r", ch );
 		}
@@ -799,9 +799,9 @@ DefineCommand ( cmd_look )
 
 	if ( !IS_NPC ( ch )
 			&&   !IS_SET ( ch->act, PLR_HOLYLIGHT )
-			&&   room_is_dark ( ch->in_room ) ) {
+			&&   room_is_dark ( IN_ROOM ( ch ) ) ) {
 		writeBuffer ( "It is pitch black ... \n\r", ch );
-		show_char_to_char ( ch->in_room->people, ch );
+		show_char_to_char ( IN_ROOM ( ch )->people, ch );
 		return;
 	}
 
@@ -812,11 +812,11 @@ DefineCommand ( cmd_look )
 
 	if ( arg1[0] == '\0' || !str_cmp ( arg1, "auto" ) ) {
 		/* 'look' or 'look auto' */
-		writeBuffer ( Format ( "\a[F303][\a[F453]%s\a[F303]]\an", ch->in_room->name ), ch );
+		writeBuffer ( Format ( "\a[F303][\a[F453]%s\a[F303]]\an", IN_ROOM ( ch )->name ), ch );
 
 		if ( ( IsStaff ( ch ) && ( IS_NPC ( ch ) || IS_SET ( ch->act, PLR_HOLYLIGHT ) ) )
-				||   IS_BUILDER ( ch, ch->in_room->area ) ) {
-			writeBuffer ( Format ( "\ac{\aBRV: \aW%d\ac}\an", ch->in_room->vnum ), ch );
+				||   IS_BUILDER ( ch, IN_ROOM ( ch )->area ) ) {
+			writeBuffer ( Format ( "\ac{\aBRV: \aW%d\ac}\an", IN_ROOM ( ch )->vnum ), ch );
 		}
 
 		writeBuffer ( "\n\r", ch );
@@ -824,7 +824,7 @@ DefineCommand ( cmd_look )
 		if ( arg1[0] == '\0'
 				|| ( !IS_NPC ( ch ) && !IS_SET ( ch->comm, COMM_BRIEF ) ) ) {
 			writeBuffer ( "  ", ch );
-			writeBuffer ( Format ( "\ag%s\an", ch->in_room->description ? ch->in_room->description : "No Room Description, please report to Omega" ), ch );
+			writeBuffer ( Format ( "\ag%s\an", IN_ROOM ( ch )->description ? IN_ROOM ( ch )->description : "No Room Description, please report to Omega" ), ch );
 		}
 
 		if ( !IS_NPC ( ch ) && IS_SET ( ch->act, PLR_AUTOEXIT ) ) {
@@ -832,8 +832,8 @@ DefineCommand ( cmd_look )
 			cmd_function ( ch, &cmd_exits, "auto" );
 		}
 
-		show_list_to_char ( ch->in_room->contents, ch, FALSE, FALSE );
-		show_char_to_char ( ch->in_room->people,   ch );
+		show_list_to_char ( IN_ROOM ( ch )->contents, ch, FALSE, FALSE );
+		show_char_to_char ( IN_ROOM ( ch )->people,   ch );
 		return;
 	}
 
@@ -938,7 +938,7 @@ DefineCommand ( cmd_look )
 		}
 	}
 
-	for ( obj = ch->in_room->contents; obj != NULL; obj = obj->next_content ) {
+	for ( obj = IN_ROOM ( ch )->contents; obj != NULL; obj = obj->next_content ) {
 		if ( can_see_obj ( ch, obj ) ) {
 			pdesc = get_extra_descr ( arg3, obj->extra_descr );
 			if ( pdesc != NULL ) {
@@ -966,7 +966,7 @@ DefineCommand ( cmd_look )
 		}
 	}
 
-	pdesc = get_extra_descr ( arg3, ch->in_room->extra_descr );
+	pdesc = get_extra_descr ( arg3, IN_ROOM ( ch )->extra_descr );
 	if ( pdesc != NULL ) {
 		if ( ++count == number ) {
 			writeBuffer ( pdesc, ch );
@@ -996,7 +996,7 @@ DefineCommand ( cmd_look )
 	}
 
 	/* 'look direction' */
-	if ( ( pexit = ch->in_room->exit[door] ) == NULL ) {
+	if ( ( pexit = IN_ROOM ( ch )->exit[door] ) == NULL ) {
 		writeBuffer ( "Nothing special there.\n\r", ch );
 		return;
 	}
@@ -1105,13 +1105,13 @@ DefineCommand ( cmd_exits )
 	if ( fAuto )
 	{ snprintf ( buf, sizeof ( buf ), "[Exits:" ); }
 	else if ( IsStaff ( ch ) )
-	{ snprintf ( buf, sizeof ( buf ), "Obvious exits from room %d:\n\r", ch->in_room->vnum ); }
+	{ snprintf ( buf, sizeof ( buf ), "Obvious exits from room %d:\n\r", IN_ROOM ( ch )->vnum ); }
 	else
 	{ snprintf ( buf, sizeof ( buf ), "Obvious exits:\n\r" ); }
 
 	found = FALSE;
 	for ( door = 0; door <= 5; door++ ) {
-		if ( ( pexit = ch->in_room->exit[door] ) != NULL
+		if ( ( pexit = IN_ROOM ( ch )->exit[door] ) != NULL
 				&&   pexit->u1.to_room != NULL
 				&&   can_see_room ( ch, pexit->u1.to_room )
 				&&   !IS_SET ( pexit->exit_info, EX_CLOSED ) ) {
@@ -1161,73 +1161,61 @@ DefineCommand ( cmd_worth )
 
 	return;
 }
-char *outputStat(Creature *ch, int lstat) {
-	std::string output("");
-	int statcount = 0;
-	if (get_curr_stat(ch,lstat)<=0)
-	{
-		output.append("\t[U9675/O]");
-		statcount=1;
-		while (statcount < 25)
-		{
-			output.append( "\t[U9675/O]");
-			statcount++;
-		}
+char *outputStat ( Creature *ch, int lstat )
+{
+	std::string output ( "" );
+	int statcount = 1;
+
+	int top_stat = get_curr_stat ( ch, lstat );
+	while ( statcount <= 25 ) {
+		if ( statcount <= top_stat )
+		{ output.append ( "\a[U9675/*]" ); }
+		else
+		{ output.append ( "\a[U9679/-]" ); }
+		statcount++;
 	}
-	else
-	{
-		while (statcount < get_curr_stat(ch,lstat))
-		{
-			output.append( "\t[U9679/*]");
-			statcount++;
-		}
-		while (statcount < 25)
-		{
-			output.append("\t[U9675/O]");
-			statcount++;
-		}
-	}
+
 	// -- return a char * instead of a const char *.
-	return (char *)output.c_str();
+	return ( char * ) output.c_str();
 }
 DefineCommand ( cmd_score )
 {
-	int statcount = 0;
 	int align = ch->alignment;
 
-	if(IS_NPC(ch)) {
-		writeBuffer("NPC's cannot see their sheet!\r\n", ch);
+	if ( IS_NPC ( ch ) ) {
+		writeBuffer ( "NPC's cannot see their sheet!\r\n", ch );
 		return;
 	}
 
 	// -- align colour will change the colour of various variables later on.
 	char alignColour[10] = {'\0'};
-	snprintf(alignColour, sizeof(alignColour), "%s", align > 0 ? "\aW" : "\ar");
+	snprintf ( alignColour, sizeof ( alignColour ), "%s", align > 0 ? "\a[F154]" : "\a[F200]" );
 
-	writeBuffer(Format("                                         _______________"), ch);
-        writeBuffer(Format("  %8s %8s %8s                           /%-15s\\\r\n", 
-									ch->pcdata->condition[COND_DRUNK]   > 10 ? "Drunk" : "",
-									ch->pcdata->condition[COND_THIRST] ==  0 ? "Thirsty" : "",
-									ch->pcdata->condition[COND_HUNGER]   ==  0 ? "Hungry" : "",
-									ch->name),ch);
-	writeBuffer(Format("+--------------------------------------+ %-15s|"," "), ch);
-	writeBuffer(Format("+--------------------------------< About >--------------+\r\n"),ch );
-	writeBuffer(Format("|Age:       %3dyr                   Level:    %2d       |\r\n", get_age(ch), ch->level), ch); 
-	writeBuffer(Format("|Hours:     %5d                     Exp:      %5d       |\r\n", ( ch->played + ( int ) ( current_time - ch->logon ) ) / 3600, ch->exp), ch);
-	writeBuffer(Format("|Race:      %10s                    TNL:      %5d       |\r\n", race_table[ch->race].name, ((ch->level*200)-ch->exp) ), ch );
-	writeBuffer(Format("|Archetype: %10s                    Coward:   %5d       |\r\n", archetype_table[ch->archetype].name, ch->wimpy), ch);
-	writeBuffer(Format("|Gender:    %10s                    Position: %10s      |\r\n", ch->sex == 0 ? "sexless" : ch->sex == 1 ? "male" : "female",position_table[ch->position].name), ch);
-	writeBuffer(Format("+--------------------------------<Statistics>-----------+\r\n"),ch );
-	writeBuffer(Format("|Rating: Pierce: %5d Crush:  %5d    Health: %4d/%4d     |\r\n", GET_AC(ch, AC_PIERCE), GET_AC(ch, AC_BASH), ch->hit, ch->max_hit), ch); 
-	writeBuffer(Format("|        Slash:  %5d Unique: %5d    Breath: %4d/%4d     |\r\n", GET_AC(ch, AC_SLASH ), GET_AC(ch, AC_EXOTIC ), ch->move, ch->max_move), ch);
-	writeBuffer(Format("|        To Hit: %5d To Dam: %5d    Magic:  %4d/%4d     |\r\n", GET_HITROLL(ch), GET_DAMROLL(ch), ch->mana, ch->max_mana), ch);
-	writeBuffer(Format("+--------------------------------<Attributes>-----------+\r\n"), ch);
-	writeBuffer(Format("|STR: %10s DEX: %10s\r\n", outputStat(ch, STAT_STR), outputStat(ch, STAT_DEX)), ch);
-	writeBuffer(Format("|INT: %10s WIS: %10s\r\n", outputStat(ch, STAT_INT), outputStat(ch, STAT_WIS)), ch);
-	writeBuffer(Format("|CON: %10s\r\n");
-	writeBuffer(Format("+--------------------------------<Loot>-----------------+\r\n"),ch );
-	writeBuffer(Format("|Gold: %5d Silver: %5d  Carrying: %5d Items, Weighing %dlbs \r\n", ch->gold, ch->silver, ch->carry_number, get_carry_weight(ch)/10), ch);
-	writeBuffer(Format("+--------------------------------<==========>-----------+\r\n"),ch );
+	writeBuffer ( Format ( "                                         %s_______________\r\n", alignColour ), ch );
+	writeBuffer ( Format ( "  \aC%8s %8s %8s            \a[F232]/\aY%-15s\a[F232]\\\r\n",
+						   ch->pcdata->condition[COND_DRUNK]   > 10 ? "Drunk" : "",
+						   ch->pcdata->condition[COND_THIRST] ==  0 ? "Thirsty" : "",
+						   ch->pcdata->condition[COND_HUNGER]   ==  0 ? "Hungry" : "",
+						   ch->name ), ch );
+	writeBuffer ( Format ( "\a[F111]+%s--------------------------------------\a[F111]+ %-15s|\r\n", alignColour, " " ), ch );
+	writeBuffer ( Format ( "\a[F111]+%s--------------------------------\a[F043]< \a[F210]About \a[F043]>%s--------------\a[F111]+\r\n", alignColour, alignColour ), ch );
+	writeBuffer ( Format ( "\a[F232]|\aWAge:               \a[F332]%-3dyrs   \aWLevel:       \a[F332]%2d            \a[F232]|\r\n", get_age ( ch ), ch->level ), ch );
+	writeBuffer ( Format ( "\a[F232]|\aWHours:           \a[F332]%-5d      \aWExp:      \a[F332]%5d            \a[F232]|\r\n", ( ch->played + ( int ) ( current_time - ch->logon ) ) / 3600, ch->exp ), ch );
+	writeBuffer ( Format ( "\a[F232]|\aWRace:      \a[F332]%10s       \aWTNL:      \a[F332]%5d            \a[F232]|\r\n", race_table[ch->race].name, ( ( ch->level * 200 ) - ch->exp ) ), ch );
+	writeBuffer ( Format ( "\a[F232]|\aWArchetype: \a[F332]%10s       \aWCoward:   \a[F332]%5d            \a[F232]|\r\n", archetype_table[ch->archetype].name, ch->wimpy ), ch );
+	writeBuffer ( Format ( "\a[F232]|\aWGender:    \a[F332]%10s       \aWPosition: \a[F332]%10s       \a[F232]|\r\n", ch->sex == 0 ? "sexless" : ch->sex == 1 ? "male" : "female", position_table[ch->position].name ), ch );
+	writeBuffer ( Format ( "\a[F111]+%s--------------------------------\a[F043]<\a[F210]Statistics\a[F043]>%s-----------\a[F111]+\r\n", alignColour, alignColour ), ch );
+	writeBuffer ( Format ( "\a[F232]|\aWRating: \aWPierce: \a[F332]%5d \aWCrush:  \a[F332]%5d \aWHealth:  \aR%4d/\aY%4d \a[F232]|\r\n", GET_AC ( ch, AC_PIERCE ), GET_AC ( ch, AC_BASH ), ch->hit, ch->max_hit ), ch );
+	writeBuffer ( Format ( "\a[F232]|        \aWSlash:  \a[F332]%5d \aWUnique: \a[F332]%5d \aWBreath:  \aR%4d/\aY%4d \a[F232]|\r\n", GET_AC ( ch, AC_SLASH ), GET_AC ( ch, AC_EXOTIC ), ch->move, ch->max_move ), ch );
+	writeBuffer ( Format ( "\a[F232]|        \aWTo Hit: \a[F332]%5d \aWTo Dam: \a[F332]%5d \aWMagic:   \aR%4d/\aY%4d \a[F232]|\r\n", GET_HITROLL ( ch ), GET_DAMROLL ( ch ), ch->mana, ch->max_mana ), ch );
+	writeBuffer ( Format ( "\a[F111]+%s--------------------------------\a[F043]<\a[F210]Attributes\a[F043]>%s-----------\a[F111]+\r\n", alignColour, alignColour ), ch );
+	writeBuffer ( Format ( "\a[F232]|\aWST\a[F330]%25s \aWDE\a[F330]%25s\a[F232]|\r\n", outputStat ( ch, STAT_STR ), outputStat ( ch, STAT_DEX ) ), ch );
+	writeBuffer ( Format ( "\a[F232]|\aWIN\a[F330]%25s \aWWI\a[F330]%25s\a[F232]|\r\n", outputStat ( ch, STAT_INT ), outputStat ( ch, STAT_WIS ) ), ch );
+	writeBuffer ( Format ( "\a[F232]|\aWCO\a[F330]%25s   %25s\a[F232]|\r\n", outputStat ( ch, STAT_CON ), "" ), ch );
+	writeBuffer ( Format ( "\a[F111]+%s--------------------------------\a[F043]<\a[F210]Loot\a[F043]>%s-----------------\a[F111]+\r\n", alignColour, alignColour ), ch );
+	writeBuffer ( Format ( "\a[F232]|\aWGold: \a[F332]%5d \aWSilver: \a[F332]%5d    \aWCarrying: \a[F332]%5d Items     \a[F232]|\r\n", ch->gold, ch->silver, ch->carry_number ), ch );
+	writeBuffer ( Format ( "\a[F232]|\aWWeighing: \a[F332]%5dlbs                                     \a[F232]|\r\n", get_carry_weight ( ch ) / 10 ), ch );
+	writeBuffer ( Format ( "\a[F111]+%s--------------------------------\a[F043]<\a[F210]==========\a[F043]>%s-----------\a[F111]+\r\n\an", alignColour, alignColour ), ch );
 
 
 	/*
@@ -1842,15 +1830,15 @@ DefineCommand ( cmd_where )
 			if ( d->connected == CON_PLAYING
 					&& ( victim = d->character ) != NULL
 					&&   !IS_NPC ( victim )
-					&&   victim->in_room != NULL
-					&&   !IS_SET ( victim->in_room->room_flags, ROOM_NOWHERE )
-					&&   ( is_room_owner ( ch, victim->in_room )
-						   ||    !room_is_private ( victim->in_room ) )
-					&&   victim->in_room->area == ch->in_room->area
+					&&   IN_ROOM ( victim ) != NULL
+					&&   !IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_NOWHERE )
+					&&   ( is_room_owner ( ch, IN_ROOM ( victim ) )
+						   ||    !room_is_private ( IN_ROOM ( victim ) ) )
+					&&   IN_ROOM ( victim )->area == IN_ROOM ( ch )->area
 					&&   can_see ( ch, victim ) ) {
 				found = TRUE;
 				sprintf ( buf, "%-28s %s\n\r",
-						  victim->name, victim->in_room->name );
+						  victim->name, IN_ROOM ( victim )->name );
 				writeBuffer ( buf, ch );
 			}
 		}
@@ -1859,15 +1847,15 @@ DefineCommand ( cmd_where )
 	} else {
 		found = FALSE;
 		for ( victim = char_list; victim != NULL; victim = victim->next ) {
-			if ( victim->in_room != NULL
-					&&   victim->in_room->area == ch->in_room->area
+			if ( IN_ROOM ( victim ) != NULL
+					&&   IN_ROOM ( victim )->area == IN_ROOM ( ch )->area
 					&&   !IS_AFFECTED ( victim, AFF_HIDE )
 					&&   !IS_AFFECTED ( victim, AFF_SNEAK )
 					&&   can_see ( ch, victim )
 					&&   is_name ( arg, victim->name ) ) {
 				found = TRUE;
 				sprintf ( buf, "%-28s %s\n\r",
-						  PERS ( victim, ch ), victim->in_room->name );
+						  PERS ( victim, ch ), IN_ROOM ( victim )->name );
 				writeBuffer ( buf, ch );
 				break;
 			}
@@ -2089,7 +2077,7 @@ DefineCommand ( cmd_practice )
 			return;
 		}
 
-		for ( mob = ch->in_room->people; mob != NULL; mob = mob->next_in_room ) {
+		for ( mob = IN_ROOM ( ch )->people; mob != NULL; mob = mob->next_in_room ) {
 			if ( IS_NPC ( mob ) && IS_SET ( mob->act, ACT_PRACTICE ) )
 			{ break; }
 		}
@@ -2279,7 +2267,7 @@ DefineCommand ( cmd_password )
 
 DefineCommand ( cmd_levelup )
 {
-	if ( !IS_SET ( ch->in_room->room_flags, ROOM_SAFE ) ) {
+	if ( !IS_SET ( IN_ROOM ( ch )->room_flags, ROOM_SAFE ) ) {
 		writeBuffer ( "You must be in a room that is safe to level up!\r\n", ch );
 		return;
 	}

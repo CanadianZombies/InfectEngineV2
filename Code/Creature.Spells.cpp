@@ -185,7 +185,7 @@ void say_spell ( Creature *ch, int sn )
 	sprintf ( buf2, "$n utters the words, '%s'.", buf );
 	sprintf ( buf,  "$n utters the words, '%s'.", skill_table[sn].name );
 
-	for ( rch = ch->in_room->people; rch; rch = rch->next_in_room ) {
+	for ( rch = IN_ROOM ( ch )->people; rch; rch = rch->next_in_room ) {
 		if ( rch != ch )
 			act ( ( !IS_NPC ( rch ) && ch->archetype == rch->archetype ) ? buf : buf2,
 				  ch, NULL, rch, TO_VICT );
@@ -342,7 +342,7 @@ DefineCommand ( cmd_cast )
 
 		case TAR_CHAR_OFFENSIVE:
 			if ( arg2[0] == '\0' ) {
-				if ( ( victim = ch->fighting ) == NULL ) {
+				if ( ( victim = FIGHTING ( ch ) ) == NULL ) {
 					writeBuffer ( "Cast the spell on whom?\n\r", ch );
 					return;
 				}
@@ -421,7 +421,7 @@ DefineCommand ( cmd_cast )
 
 		case TAR_OBJ_CHAR_OFF:
 			if ( arg2[0] == '\0' ) {
-				if ( ( victim = ch->fighting ) == NULL ) {
+				if ( ( victim = FIGHTING ( ch ) ) == NULL ) {
 					writeBuffer ( "Cast the spell on whom or what?\n\r", ch );
 					return;
 				}
@@ -504,9 +504,9 @@ DefineCommand ( cmd_cast )
 		Creature *vch;
 		Creature *vch_next;
 
-		for ( vch = ch->in_room->people; vch; vch = vch_next ) {
+		for ( vch = IN_ROOM ( ch )->people; vch; vch = vch_next ) {
 			vch_next = vch->next_in_room;
-			if ( victim == vch && victim->fighting == NULL ) {
+			if ( victim == vch && FIGHTING ( victim ) == NULL ) {
 				check_killer ( victim, ch );
 				multi_hit ( victim, ch, TYPE_UNDEFINED );
 				break;
@@ -546,7 +546,7 @@ void obj_cast_spell ( int sn, int level, Creature *ch, Creature *victim, Item *o
 
 		case TAR_CHAR_OFFENSIVE:
 			if ( victim == NULL )
-			{ victim = ch->fighting; }
+			{ victim = FIGHTING ( ch ); }
 			if ( victim == NULL ) {
 				writeBuffer ( "You can't do that.\n\r", ch );
 				return;
@@ -578,8 +578,8 @@ void obj_cast_spell ( int sn, int level, Creature *ch, Creature *victim, Item *o
 
 		case TAR_OBJ_CHAR_OFF:
 			if ( victim == NULL && obj == NULL ) {
-				if ( ch->fighting != NULL )
-				{ victim = ch->fighting; }
+				if ( FIGHTING ( ch ) != NULL )
+				{ victim = FIGHTING ( ch ); }
 				else {
 					writeBuffer ( "You can't do that.\n\r", ch );
 					return;
@@ -628,9 +628,9 @@ void obj_cast_spell ( int sn, int level, Creature *ch, Creature *victim, Item *o
 		Creature *vch;
 		Creature *vch_next;
 
-		for ( vch = ch->in_room->people; vch; vch = vch_next ) {
+		for ( vch = IN_ROOM ( ch )->people; vch; vch = vch_next ) {
 			vch_next = vch->next_in_room;
-			if ( victim == vch && victim->fighting == NULL ) {
+			if ( victim == vch && FIGHTING ( victim ) == NULL ) {
 				check_killer ( victim, ch );
 				multi_hit ( victim, ch, TYPE_UNDEFINED );
 				break;
@@ -839,16 +839,16 @@ void spell_call_lightning ( int sn, int level, Creature *ch, void *vo, int targe
 
 	for ( vch = char_list; vch != NULL; vch = vch_next ) {
 		vch_next	= vch->next;
-		if ( vch->in_room == NULL )
+		if ( IN_ROOM ( vch ) == NULL )
 		{ continue; }
-		if ( vch->in_room == ch->in_room ) {
+		if ( IN_ROOM ( vch ) == IN_ROOM ( ch ) ) {
 			if ( vch != ch && ( IS_NPC ( ch ) ? !IS_NPC ( vch ) : IS_NPC ( vch ) ) )
 				damage ( ch, vch, saves_spell ( level, vch, DAM_LIGHTNING )
 						 ? dam / 2 : dam, sn, DAM_LIGHTNING, TRUE );
 			continue;
 		}
 
-		if ( vch->in_room->area == ch->in_room->area
+		if ( IN_ROOM ( vch )->area == IN_ROOM ( ch )->area
 				&&   IS_OUTSIDE ( vch )
 				&&   IS_AWAKE ( vch ) )
 		{ writeBuffer ( "Lightning flashes in the sky.\n\r", vch ); }
@@ -869,7 +869,7 @@ void spell_calm ( int sn, int level, Creature *ch, void *vo, int target )
 	Affect af;
 
 	/* get sum of all mobile levels in the room */
-	for ( vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room ) {
+	for ( vch = IN_ROOM ( ch )->people; vch != NULL; vch = vch->next_in_room ) {
 		if ( vch->position == POS_FIGHTING ) {
 			count++;
 			if ( IS_NPC ( vch ) )
@@ -887,7 +887,7 @@ void spell_calm ( int sn, int level, Creature *ch, void *vo, int target )
 	{ mlevel = 0; }
 
 	if ( Math::instance().range ( 0, chance ) >= mlevel ) { /* hard to stop large fights */
-		for ( vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room ) {
+		for ( vch = IN_ROOM ( ch )->people; vch != NULL; vch = vch->next_in_room ) {
 			if ( IS_NPC ( vch ) && ( IS_SET ( vch->imm_flags, IMM_MAGIC ) ||
 									 IS_SET ( vch->act, ACT_UNDEAD ) ) )
 			{ return; }
@@ -898,7 +898,7 @@ void spell_calm ( int sn, int level, Creature *ch, void *vo, int target )
 
 			writeBuffer ( "A wave of calm passes over you.\n\r", vch );
 
-			if ( vch->fighting || vch->position == POS_FIGHTING )
+			if ( FIGHTING ( vch ) || vch->position == POS_FIGHTING )
 			{ stop_fighting ( vch, FALSE ); }
 
 
@@ -1117,7 +1117,7 @@ void spell_chain_lightning ( int sn, int level, Creature *ch, void *vo, int targ
 	/* new targets */
 	while ( level > 0 ) {
 		found = FALSE;
-		for ( tmp_vict = ch->in_room->people;
+		for ( tmp_vict = IN_ROOM ( ch )->people;
 				tmp_vict != NULL;
 				tmp_vict = next_vict ) {
 			next_vict = tmp_vict->next_in_room;
@@ -1212,7 +1212,7 @@ void spell_charm_person ( int sn, int level, Creature *ch, void *vo, int target 
 	{ return; }
 
 
-	if ( IS_SET ( victim->in_room->room_flags, ROOM_LAW ) ) {
+	if ( IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_LAW ) ) {
 		writeBuffer (
 			"The mayor does not allow charming in the city limits.\n\r", ch );
 		return;
@@ -1326,7 +1326,7 @@ void spell_continual_light ( int sn, int level, Creature *ch, void *vo, int targ
 	}
 
 	light = create_object ( get_obj_index ( OBJ_VNUM_LIGHT_BALL ), 0 );
-	obj_to_room ( light, ch->in_room );
+	obj_to_room ( light, IN_ROOM ( ch ) );
 	act ( "$n twiddles $s thumbs and $p appears.",   ch, light, NULL, TO_ROOM );
 	act ( "You twiddle your thumbs and $p appears.", ch, light, NULL, TO_CHAR );
 	return;
@@ -1356,7 +1356,7 @@ void spell_create_food ( int sn, int level, Creature *ch, void *vo, int target )
 	mushroom = create_object ( get_obj_index ( OBJ_VNUM_MUSHROOM ), 0 );
 	mushroom->value[0] = level / 2;
 	mushroom->value[1] = level;
-	obj_to_room ( mushroom, ch->in_room );
+	obj_to_room ( mushroom, IN_ROOM ( ch ) );
 	act ( "$p suddenly appears.", ch, mushroom, NULL, TO_ROOM );
 	act ( "$p suddenly appears.", ch, mushroom, NULL, TO_CHAR );
 	return;
@@ -1378,7 +1378,7 @@ void spell_create_spring ( int sn, int level, Creature *ch, void *vo, int target
 
 	spring = create_object ( get_obj_index ( OBJ_VNUM_SPRING ), 0 );
 	spring->timer = level;
-	obj_to_room ( spring, ch->in_room );
+	obj_to_room ( spring, IN_ROOM ( ch ) );
 	act ( "$p flows from the ground.", ch, spring, NULL, TO_ROOM );
 	act ( "$p flows from the ground.", ch, spring, NULL, TO_CHAR );
 	return;
@@ -2015,9 +2015,9 @@ void spell_earthquake ( int sn, int level, Creature *ch, void *vo, int target )
 
 	for ( vch = char_list; vch != NULL; vch = vch_next ) {
 		vch_next	= vch->next;
-		if ( vch->in_room == NULL )
+		if ( IN_ROOM ( vch ) == NULL )
 		{ continue; }
-		if ( vch->in_room == ch->in_room ) {
+		if ( IN_ROOM ( vch ) == IN_ROOM ( ch ) ) {
 			if ( vch != ch && !is_safe_spell ( ch, vch, TRUE ) ) {
 				if ( IS_AFFECTED ( vch, AFF_FLYING ) )
 				{ damage ( ch, vch, 0, sn, DAM_BASH, TRUE ); }
@@ -2027,7 +2027,7 @@ void spell_earthquake ( int sn, int level, Creature *ch, void *vo, int target )
 			continue;
 		}
 
-		if ( vch->in_room->area == ch->in_room->area )
+		if ( IN_ROOM ( vch )->area == IN_ROOM ( ch )->area )
 		{ writeBuffer ( "The earth trembles and shivers.\n\r", vch ); }
 	}
 
@@ -2518,7 +2518,7 @@ void spell_faerie_fog ( int sn, int level, Creature *ch, void *vo, int target )
 	act ( "$n conjures a cloud of purple smoke.", ch, NULL, NULL, TO_ROOM );
 	writeBuffer ( "You conjure a cloud of purple smoke.\n\r", ch );
 
-	for ( ich = ch->in_room->people; ich != NULL; ich = ich->next_in_room ) {
+	for ( ich = IN_ROOM ( ch )->people; ich != NULL; ich = ich->next_in_room ) {
 		if ( ich->invis_level > 0 )
 		{ continue; }
 
@@ -2648,13 +2648,13 @@ void spell_gate ( int sn, int level, Creature *ch, void *vo, int target )
 
 	if ( ( victim = get_char_world ( ch, target_name ) ) == NULL
 			||   victim == ch
-			||   victim->in_room == NULL
-			||   !can_see_room ( ch, victim->in_room )
-			||   IS_SET ( victim->in_room->room_flags, ROOM_SAFE )
-			||   IS_SET ( victim->in_room->room_flags, ROOM_PRIVATE )
-			||   IS_SET ( victim->in_room->room_flags, ROOM_SOLITARY )
-			||   IS_SET ( victim->in_room->room_flags, ROOM_NO_RECALL )
-			||   IS_SET ( ch->in_room->room_flags, ROOM_NO_RECALL )
+			||   IN_ROOM ( victim ) == NULL
+			||   !can_see_room ( ch, IN_ROOM ( victim ) )
+			||   IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_SAFE )
+			||   IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_PRIVATE )
+			||   IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_SOLITARY )
+			||   IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_NO_RECALL )
+			||   IS_SET ( IN_ROOM ( ch )->room_flags, ROOM_NO_RECALL )
 			||   victim->level >= level + 3
 			||   ( is_clan ( victim ) && !is_same_clan ( ch, victim ) )
 			||   ( !IS_NPC ( victim ) && victim->level >= LEVEL_HERO ) /* NOT trust */
@@ -2663,7 +2663,7 @@ void spell_gate ( int sn, int level, Creature *ch, void *vo, int target )
 		writeBuffer ( "You failed.\n\r", ch );
 		return;
 	}
-	if ( ch->pet != NULL && ch->in_room == ch->pet->in_room )
+	if ( ch->pet != NULL && IN_ROOM ( ch ) == ch->pet->in_room )
 	{ gate_pet = TRUE; }
 	else
 	{ gate_pet = FALSE; }
@@ -2671,7 +2671,7 @@ void spell_gate ( int sn, int level, Creature *ch, void *vo, int target )
 	act ( "$n steps through a gate and vanishes.", ch, NULL, NULL, TO_ROOM );
 	writeBuffer ( "You step through a gate and vanish.\n\r", ch );
 	char_from_room ( ch );
-	char_to_room ( ch, victim->in_room );
+	char_to_room ( ch, IN_ROOM ( victim ) );
 
 	act ( "$n has arrived through a gate.", ch, NULL, NULL, TO_ROOM );
 	cmd_function ( ch, &cmd_look, "auto" );
@@ -2680,7 +2680,7 @@ void spell_gate ( int sn, int level, Creature *ch, void *vo, int target )
 		act ( "$n steps through a gate and vanishes.", ch->pet, NULL, NULL, TO_ROOM );
 		writeBuffer ( "You step through a gate and vanish.\n\r", ch->pet );
 		char_from_room ( ch->pet );
-		char_to_room ( ch->pet, victim->in_room );
+		char_to_room ( ch->pet, IN_ROOM ( victim ) );
 		act ( "$n has arrived through a gate.", ch->pet, NULL, NULL, TO_ROOM );
 		cmd_function ( ch->pet, &cmd_look, "auto" );
 	}
@@ -2818,7 +2818,7 @@ void spell_heat_metal ( int sn, int level, Creature *ch, void *vo, int target )
 									  victim, obj_lose, NULL, TO_CHAR );
 								dam += ( Math::instance().range ( 1, obj_lose->level ) / 3 );
 								obj_from_char ( obj_lose );
-								obj_to_room ( obj_lose, victim->in_room );
+								obj_to_room ( obj_lose, IN_ROOM ( victim ) );
 								fail = FALSE;
 							} else { /* stuck on the body! ouch! */
 								act ( "Your skin is seared by $p!",
@@ -2835,7 +2835,7 @@ void spell_heat_metal ( int sn, int level, Creature *ch, void *vo, int target )
 									  victim, obj_lose, NULL, TO_CHAR );
 								dam += ( Math::instance().range ( 1, obj_lose->level ) / 6 );
 								obj_from_char ( obj_lose );
-								obj_to_room ( obj_lose, victim->in_room );
+								obj_to_room ( obj_lose, IN_ROOM ( victim ) );
 								fail = FALSE;
 							} else { /* cannot drop */
 								act ( "Your skin is seared by $p!",
@@ -2859,7 +2859,7 @@ void spell_heat_metal ( int sn, int level, Creature *ch, void *vo, int target )
 									victim );
 								dam += 1;
 								obj_from_char ( obj_lose );
-								obj_to_room ( obj_lose, victim->in_room );
+								obj_to_room ( obj_lose, IN_ROOM ( victim ) );
 								fail = FALSE;
 							} else { /* YOWCH! */
 								writeBuffer ( "Your weapon sears your flesh!\n\r",
@@ -2875,7 +2875,7 @@ void spell_heat_metal ( int sn, int level, Creature *ch, void *vo, int target )
 									  victim, obj_lose, NULL, TO_CHAR );
 								dam += ( Math::instance().range ( 1, obj_lose->level ) / 6 );
 								obj_from_char ( obj_lose );
-								obj_to_room ( obj_lose, victim->in_room );
+								obj_to_room ( obj_lose, IN_ROOM ( victim ) );
 								fail = FALSE;
 							} else { /* cannot drop */
 								act ( "Your skin is seared by $p!",
@@ -2914,7 +2914,7 @@ void spell_holy_word ( int sn, int level, Creature *ch, void *vo, int target )
 	act ( "$n utters a word of divine power!", ch, NULL, NULL, TO_ROOM );
 	writeBuffer ( "You utter a word of divine power.\n\r", ch );
 
-	for ( vch = ch->in_room->people; vch != NULL; vch = vch_next ) {
+	for ( vch = IN_ROOM ( ch )->people; vch != NULL; vch = vch_next ) {
 		vch_next = vch->next_in_room;
 
 		if ( ( IS_GOOD ( ch ) && IS_GOOD ( vch ) ) ||
@@ -3329,12 +3329,12 @@ void spell_locate_object ( int sn, int level, Creature *ch, void *vo, int target
 		found = TRUE;
 		number++;
 
-		for ( in_obj = obj; in_obj->in_obj != NULL; in_obj = in_obj->in_obj )
+		for ( in_obj = obj; IN_OBJ ( in_obj ) != NULL; in_obj = IN_OBJ ( in_obj ) )
 			;
 
-		if ( in_obj->carried_by != NULL && can_see ( ch, in_obj->carried_by ) ) {
+		if ( CARRIED_BY ( in_obj ) != NULL && can_see ( ch, CARRIED_BY ( in_obj ) ) ) {
 			sprintf ( buf, "one is carried by %s\n\r",
-					  PERS ( in_obj->carried_by, ch ) );
+					  PERS ( CARRIED_BY ( in_obj ), ch ) );
 		} else {
 			if ( IsStaff ( ch ) && in_obj->in_room != NULL )
 				sprintf ( buf, "one is in %s [Room %d]\n\r",
@@ -3394,7 +3394,7 @@ void spell_mass_healing ( int sn, int level, Creature *ch, void *vo, int target 
 	heal_num = skill_lookup ( "heal" );
 	refresh_num = skill_lookup ( "refresh" );
 
-	for ( gch = ch->in_room->people; gch != NULL; gch = gch->next_in_room ) {
+	for ( gch = IN_ROOM ( ch )->people; gch != NULL; gch = gch->next_in_room ) {
 		if ( ( IS_NPC ( ch ) && IS_NPC ( gch ) ) ||
 				( !IS_NPC ( ch ) && !IS_NPC ( gch ) ) ) {
 			spell_heal ( heal_num, level, ch, ( void * ) gch, TARGET_CHAR );
@@ -3409,7 +3409,7 @@ void spell_mass_invis ( int sn, int level, Creature *ch, void *vo, int target )
 	Affect af;
 	Creature *gch;
 
-	for ( gch = ch->in_room->people; gch != NULL; gch = gch->next_in_room ) {
+	for ( gch = IN_ROOM ( ch )->people; gch != NULL; gch = gch->next_in_room ) {
 		if ( !is_same_group ( gch, ch ) || IS_AFFECTED ( gch, AFF_INVISIBLE ) )
 		{ continue; }
 		act ( "$n slowly fades out of existence.", gch, NULL, NULL, TO_ROOM );
@@ -3997,16 +3997,16 @@ void spell_summon ( int sn, int level, Creature *ch, void *vo, int target )
 
 	if ( ( victim = get_char_world ( ch, target_name ) ) == NULL
 			||   victim == ch
-			||   victim->in_room == NULL
-			||   IS_SET ( ch->in_room->room_flags, ROOM_SAFE )
-			||   IS_SET ( victim->in_room->room_flags, ROOM_SAFE )
-			||   IS_SET ( victim->in_room->room_flags, ROOM_PRIVATE )
-			||   IS_SET ( victim->in_room->room_flags, ROOM_SOLITARY )
-			||   IS_SET ( victim->in_room->room_flags, ROOM_NO_RECALL )
+			||   IN_ROOM ( victim ) == NULL
+			||   IS_SET ( IN_ROOM ( ch )->room_flags, ROOM_SAFE )
+			||   IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_SAFE )
+			||   IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_PRIVATE )
+			||   IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_SOLITARY )
+			||   IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_NO_RECALL )
 			||   ( IS_NPC ( victim ) && IS_SET ( victim->act, ACT_AGGRESSIVE ) )
 			||   victim->level >= level + 3
 			||   ( !IS_NPC ( victim ) && victim->level >= LEVEL_IMMORTAL )
-			||   victim->fighting != NULL
+			||   FIGHTING ( victim ) != NULL
 			||   ( IS_NPC ( victim ) && IS_SET ( victim->imm_flags, IMM_SUMMON ) )
 			||	 ( IS_NPC ( victim ) && victim->pIndexData->pShop != NULL )
 			||   ( !IS_NPC ( victim ) && IS_SET ( victim->act, PLR_NOSUMMON ) )
@@ -4019,7 +4019,7 @@ void spell_summon ( int sn, int level, Creature *ch, void *vo, int target )
 
 	act ( "$n disappears suddenly.", victim, NULL, NULL, TO_ROOM );
 	char_from_room ( victim );
-	char_to_room ( victim, ch->in_room );
+	char_to_room ( victim, IN_ROOM ( ch ) );
 	act ( "$n arrives suddenly.", victim, NULL, NULL, TO_ROOM );
 	act ( "$n has summoned you!", ch, NULL, victim,   TO_VICT );
 	cmd_function ( victim, &cmd_look, "auto" );
@@ -4033,10 +4033,10 @@ void spell_teleport ( int sn, int level, Creature *ch, void *vo, int target )
 	Creature *victim = ( Creature * ) vo;
 	RoomData *pRoomIndex;
 
-	if ( victim->in_room == NULL
-			||   IS_SET ( victim->in_room->room_flags, ROOM_NO_RECALL )
+	if ( IN_ROOM ( victim ) == NULL
+			||   IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_NO_RECALL )
 			|| ( victim != ch && IS_SET ( victim->imm_flags, IMM_SUMMON ) )
-			|| ( !IS_NPC ( ch ) && victim->fighting != NULL )
+			|| ( !IS_NPC ( ch ) && FIGHTING ( victim ) != NULL )
 			|| ( victim != ch
 				 && ( saves_spell ( level - 5, victim, DAM_OTHER ) ) ) ) {
 		writeBuffer ( "You failed.\n\r", ch );
@@ -4071,7 +4071,7 @@ void spell_ventriloquate ( int sn, int level, Creature *ch, void *vo, int target
 	sprintf ( buf2, "Someone makes %s say '%s'.\n\r", speaker, target_name );
 	buf1[0] = UPPER ( buf1[0] );
 
-	for ( vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room ) {
+	for ( vch = IN_ROOM ( ch )->people; vch != NULL; vch = vch->next_in_room ) {
 		if ( !is_exact_name ( speaker, vch->name ) && IS_AWAKE ( vch ) )
 		{ writeBuffer ( saves_spell ( level, vch, DAM_OTHER ) ? buf2 : buf1, vch ); }
 	}
@@ -4119,13 +4119,13 @@ void spell_word_of_recall ( int sn, int level, Creature *ch, void *vo, int targe
 		return;
 	}
 
-	if ( IS_SET ( victim->in_room->room_flags, ROOM_NO_RECALL ) ||
+	if ( IS_SET ( IN_ROOM ( victim )->room_flags, ROOM_NO_RECALL ) ||
 			IS_AFFECTED ( victim, AFF_CURSE ) ) {
 		writeBuffer ( "Spell failed.\n\r", victim );
 		return;
 	}
 
-	if ( victim->fighting != NULL )
+	if ( FIGHTING ( victim ) != NULL )
 	{ stop_fighting ( victim, TRUE ); }
 
 	ch->move /= 2;
@@ -4181,14 +4181,14 @@ void spell_fire_breath ( int sn, int level, Creature *ch, void *vo, int target )
 	dice_dam = Math::instance().dice ( level, 20 );
 
 	dam = UMAX ( hp_dam + dice_dam / 10, dice_dam + hp_dam / 10 );
-	fire_effect ( victim->in_room, level, dam / 2, TARGET_ROOM );
+	fire_effect ( IN_ROOM ( victim ), level, dam / 2, TARGET_ROOM );
 
-	for ( vch = victim->in_room->people; vch != NULL; vch = vch_next ) {
+	for ( vch = IN_ROOM ( victim )->people; vch != NULL; vch = vch_next ) {
 		vch_next = vch->next_in_room;
 
 		if ( is_safe_spell ( ch, vch, TRUE )
 				||  ( IS_NPC ( vch ) && IS_NPC ( ch )
-					  &&   ( ch->fighting != vch || vch->fighting != ch ) ) )
+					  &&   ( FIGHTING ( ch ) != vch || FIGHTING ( vch ) != ch ) ) )
 		{ continue; }
 
 		if ( vch == victim ) { /* full damage */
@@ -4227,14 +4227,14 @@ void spell_frost_breath ( int sn, int level, Creature *ch, void *vo, int target 
 	dice_dam = Math::instance().dice ( level, 16 );
 
 	dam = UMAX ( hp_dam + dice_dam / 10, dice_dam + hp_dam / 10 );
-	cold_effect ( victim->in_room, level, dam / 2, TARGET_ROOM );
+	cold_effect ( IN_ROOM ( victim ), level, dam / 2, TARGET_ROOM );
 
-	for ( vch = victim->in_room->people; vch != NULL; vch = vch_next ) {
+	for ( vch = IN_ROOM ( victim )->people; vch != NULL; vch = vch_next ) {
 		vch_next = vch->next_in_room;
 
 		if ( is_safe_spell ( ch, vch, TRUE )
 				||  ( IS_NPC ( vch ) && IS_NPC ( ch )
-					  &&   ( ch->fighting != vch || vch->fighting != ch ) ) )
+					  &&   ( FIGHTING ( ch ) != vch || FIGHTING ( vch ) != ch ) ) )
 		{ continue; }
 
 		if ( vch == victim ) { /* full damage */
@@ -4272,14 +4272,14 @@ void spell_gas_breath ( int sn, int level, Creature *ch, void *vo, int target )
 	dice_dam = Math::instance().dice ( level, 12 );
 
 	dam = UMAX ( hp_dam + dice_dam / 10, dice_dam + hp_dam / 10 );
-	poison_effect ( ch->in_room, level, dam, TARGET_ROOM );
+	poison_effect ( IN_ROOM ( ch ), level, dam, TARGET_ROOM );
 
-	for ( vch = ch->in_room->people; vch != NULL; vch = vch_next ) {
+	for ( vch = IN_ROOM ( ch )->people; vch != NULL; vch = vch_next ) {
 		vch_next = vch->next_in_room;
 
 		if ( is_safe_spell ( ch, vch, TRUE )
 				||  ( IS_NPC ( ch ) && IS_NPC ( vch )
-					  &&   ( ch->fighting == vch || vch->fighting == ch ) ) )
+					  &&   ( FIGHTING ( ch ) == vch || FIGHTING ( vch ) == ch ) ) )
 		{ continue; }
 
 		if ( saves_spell ( level, vch, DAM_POISON ) ) {

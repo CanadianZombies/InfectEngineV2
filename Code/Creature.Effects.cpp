@@ -115,8 +115,8 @@ void acid_effect ( void *vo, int level, int dam, int target )
 		if ( Math::instance().percent() > chance )
 		{ return; }
 
-		if ( obj->carried_by != NULL )
-		{ act ( msg, obj->carried_by, obj, NULL, TO_ALL ); }
+		if ( CARRIED_BY ( obj ) != NULL )
+		{ act ( msg, CARRIED_BY ( obj ), obj, NULL, TO_ALL ); }
 		else if ( obj->in_room != NULL && obj->in_room->people != NULL )
 		{ act ( msg, obj->in_room->people, obj, NULL, TO_ALL ); }
 
@@ -152,9 +152,9 @@ void acid_effect ( void *vo, int level, int dam, int target )
 				obj->affected   = paf;
 			}
 
-			if ( obj->carried_by != NULL && obj->wear_loc != WEAR_NONE )
+			if ( CARRIED_BY ( obj ) != NULL && obj->wear_loc != WEAR_NONE )
 				for ( i = 0; i < 4; i++ )
-				{ obj->carried_by->armor[i] += 1; }
+				{ CARRIED_BY ( obj )->armor[i] += 1; }
 			return;
 		}
 
@@ -165,8 +165,8 @@ void acid_effect ( void *vo, int level, int dam, int target )
 				obj_from_obj ( t_obj );
 				if ( obj->in_room != NULL )
 				{ obj_to_room ( t_obj, obj->in_room ); }
-				else if ( obj->carried_by != NULL )
-				{ obj_to_room ( t_obj, obj->carried_by->in_room ); }
+				else if ( CARRIED_BY ( obj ) != NULL )
+				{ obj_to_room ( t_obj, CARRIED_BY ( obj )->in_room ); }
 				else {
 					extract_obj ( t_obj );
 					continue;
@@ -267,8 +267,8 @@ void cold_effect ( void *vo, int level, int dam, int target )
 		if ( Math::instance().percent() > chance )
 		{ return; }
 
-		if ( obj->carried_by != NULL )
-		{ act ( msg, obj->carried_by, obj, NULL, TO_ALL ); }
+		if ( CARRIED_BY ( obj ) != NULL )
+		{ act ( msg, CARRIED_BY ( obj ), obj, NULL, TO_ALL ); }
 		else if ( obj->in_room != NULL && obj->in_room->people != NULL )
 		{ act ( msg, obj->in_room->people, obj, NULL, TO_ALL ); }
 
@@ -384,8 +384,8 @@ void fire_effect ( void *vo, int level, int dam, int target )
 		if ( Math::instance().percent() > chance )
 		{ return; }
 
-		if ( obj->carried_by != NULL )
-		{ act ( msg, obj->carried_by, obj, NULL, TO_ALL ); }
+		if ( CARRIED_BY ( obj ) != NULL )
+		{ act ( msg, CARRIED_BY ( obj ), obj, NULL, TO_ALL ); }
 		else if ( obj->in_room != NULL && obj->in_room->people != NULL )
 		{ act ( msg, obj->in_room->people, obj, NULL, TO_ALL ); }
 
@@ -397,8 +397,8 @@ void fire_effect ( void *vo, int level, int dam, int target )
 				obj_from_obj ( t_obj );
 				if ( obj->in_room != NULL )
 				{ obj_to_room ( t_obj, obj->in_room ); }
-				else if ( obj->carried_by != NULL )
-				{ obj_to_room ( t_obj, obj->carried_by->in_room ); }
+				else if ( CARRIED_BY ( obj ) != NULL )
+				{ obj_to_room ( t_obj, CARRIED_BY ( obj )->in_room ); }
 				else {
 					extract_obj ( t_obj );
 					continue;
@@ -566,8 +566,8 @@ void shock_effect ( void *vo, int level, int dam, int target )
 		if ( Math::instance().percent() > chance )
 		{ return; }
 
-		if ( obj->carried_by != NULL )
-		{ act ( msg, obj->carried_by, obj, NULL, TO_ALL ); }
+		if ( CARRIED_BY ( obj ) != NULL )
+		{ act ( msg, CARRIED_BY ( obj ), obj, NULL, TO_ALL ); }
 		else if ( obj->in_room != NULL && obj->in_room->people != NULL )
 		{ act ( msg, obj->in_room->people, obj, NULL, TO_ALL ); }
 

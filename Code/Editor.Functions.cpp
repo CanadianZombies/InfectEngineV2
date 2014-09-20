@@ -327,7 +327,7 @@ REDIT ( redit_rlist )
 
 	ChopC ( argument, arg );
 
-	pArea = ch->in_room->area;
+	pArea = IN_ROOM ( ch )->area;
 	buf1 = new_buf();
 	/*    buf1[0] = '\0'; */
 	found   = FALSE;
@@ -374,7 +374,7 @@ REDIT ( redit_mlist )
 	}
 
 	buf1 = new_buf();
-	pArea = ch->in_room->area;
+	pArea = IN_ROOM ( ch )->area;
 	/*    buf1[0] = '\0'; */
 	fAll    = !str_cmp ( arg, "all" );
 	found   = FALSE;
@@ -424,7 +424,7 @@ REDIT ( redit_olist )
 		return FALSE;
 	}
 
-	pArea = ch->in_room->area;
+	pArea = IN_ROOM ( ch )->area;
 	buf1 = new_buf();
 	/*    buf1[0] = '\0'; */
 	fAll    = !str_cmp ( arg, "all" );
@@ -485,7 +485,7 @@ REDIT ( redit_mshow )
 	}
 
 	medit_show ( ch, argument );
-	ch->desc->pEdit = ( void * ) ch->in_room;
+	ch->desc->pEdit = ( void * ) IN_ROOM ( ch );
 	return FALSE;
 }
 
@@ -517,7 +517,7 @@ REDIT ( redit_oshow )
 	}
 
 	oedit_show ( ch, argument );
-	ch->desc->pEdit = ( void * ) ch->in_room;
+	ch->desc->pEdit = ( void * ) IN_ROOM ( ch );
 	return FALSE;
 }
 

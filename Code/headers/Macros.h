@@ -121,6 +121,12 @@
 #define LOWER(c)		((c) >= 'A' && (c) <= 'Z' ? (c)+'a'-'A' : (c))
 #define UPPER(c)		((c) >= 'a' && (c) <= 'z' ? (c)+'A'-'a' : (c))
 
+#define IN_ROOM(ch) ((ch)->in_room)
+#define FIGHTING(ch) ((ch)->fighting)
+
+#define CARRIED_BY(obj) ((obj)->carried_by)
+#define IN_OBJ(obj) ((obj)->in_obj)
+
 #define IS_SET(flag, bit)	((flag) & (bit))
 #define SET_BIT(var, bit)	((var) |= (bit))
 #define REMOVE_BIT(var, bit)	((var) &= ~(bit))
@@ -130,7 +136,7 @@
 /* Return pointers to what is being edited. */
 #define EDIT_MOB(Ch, Mob)	( Mob = (NPCData *)Ch->desc->pEdit )
 #define EDIT_OBJ(Ch, Obj)	( Obj = (ItemData *)Ch->desc->pEdit )
-#define EDIT_ROOM(Ch, Room)	( Room = Ch->in_room )
+#define EDIT_ROOM(Ch, Room)	( Room = IN_ROOM(ch) )
 #define EDIT_AREA(Ch, Area)	( Area = (Zone *)Ch->desc->pEdit )
 #define EDIT_MPCODE(Ch, Code)   ( Code = (MPROG_CODE*)Ch->desc->pEdit )
 

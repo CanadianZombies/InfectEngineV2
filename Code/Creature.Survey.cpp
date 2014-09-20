@@ -58,7 +58,7 @@ DefineCommand ( cmd_scan )
 	if ( arg1[0] == '\0' ) {
 		act ( "$n looks all around.", ch, NULL, NULL, TO_ROOM );
 		writeBuffer ( "Looking around you see:\n\r", ch );
-		scan_list ( ch->in_room, ch, 0, -1 );
+		scan_list ( IN_ROOM ( ch ), ch, 0, -1 );
 
 		for ( door = 0; door < 6; door++ ) {
 			if ( ( pExit = ch ->in_room->exit[door] ) != NULL )
@@ -77,7 +77,7 @@ DefineCommand ( cmd_scan )
 	act ( "$n peers intently $T.", ch, NULL, dir_name[door], TO_ROOM );
 	snprintf ( buf, sizeof ( buf ), "Looking %s you see:\n\r", dir_name[door] );
 
-	scan_room = ch->in_room;
+	scan_room = IN_ROOM ( ch );
 
 	for ( depth = 1; depth < 4; depth++ ) {
 		if ( ( pExit = scan_room->exit[door] ) != NULL ) {

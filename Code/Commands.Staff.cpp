@@ -333,7 +333,7 @@ DefineCommand ( cmd_smote )
 	writeBuffer ( argument, ch );
 	writeBuffer ( "\n\r", ch );
 
-	for ( vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room ) {
+	for ( vch = IN_ROOM ( ch )->people; vch != NULL; vch = vch->next_in_room ) {
 		if ( vch->desc == NULL || vch == ch )
 		{ continue; }
 
@@ -619,7 +619,7 @@ DefineCommand ( cmd_recho )
 
 	for ( d = socket_list; d; d = d->next ) {
 		if ( d->connected == CON_PLAYING
-				&&   d->character->in_room == ch->in_room ) {
+				&&   d->character->in_room == IN_ROOM ( ch ) ) {
 			if ( get_trust ( d->character ) >= get_trust ( ch ) )
 			{ writeBuffer ( "local> ", d->character ); }
 			writeBuffer ( argument, d->character );
@@ -641,8 +641,8 @@ DefineCommand ( cmd_zecho )
 
 	for ( d = socket_list; d; d = d->next ) {
 		if ( d->connected == CON_PLAYING
-				&&  d->character->in_room != NULL && ch->in_room != NULL
-				&&  d->character->in_room->area == ch->in_room->area ) {
+				&&  d->character->in_room != NULL && IN_ROOM ( ch ) != NULL
+				&&  d->character->in_room->area == IN_ROOM ( ch )->area ) {
 			if ( get_trust ( d->character ) >= get_trust ( ch ) )
 			{ writeBuffer ( "zone> ", d->character ); }
 			writeBuffer ( argument, d->character );
@@ -688,7 +688,7 @@ RoomData *find_location ( Creature *ch, const char *arg )
 	{ return get_room_index ( atoi ( arg ) ); }
 
 	if ( ( victim = get_char_world ( ch, arg ) ) != NULL )
-	{ return victim->in_room; }
+	{ return IN_ROOM ( victim ); }
 
 	if ( ( obj = get_obj_world ( ch, arg ) ) != NULL )
 	{ return obj->in_room; }
@@ -732,7 +732,7 @@ DefineCommand ( cmd_transfer )
 	 * Thanks to Grodyn for the optional location parameter.
 	 */
 	if ( arg2[0] == '\0' ) {
-		location = ch->in_room;
+		location = IN_ROOM ( ch );
 	} else {
 		if ( ( location = find_location ( ch, arg2 ) ) == NULL ) {
 			writeBuffer ( "No such location.\n\r", ch );
@@ -751,12 +751,12 @@ DefineCommand ( cmd_transfer )
 		return;
 	}
 
-	if ( victim->in_room == NULL ) {
+	if ( IN_ROOM ( victim ) == NULL ) {
 		writeBuffer ( "They are in limbo.\n\r", ch );
 		return;
 	}
 
-	if ( victim->fighting != NULL )
+	if ( FIGHTING ( victim ) != NULL )
 	{ stop_fighting ( victim, TRUE ); }
 	act ( "$n disappears in a mushroom cloud.", victim, NULL, NULL, TO_ROOM );
 	char_from_room ( victim );
@@ -796,7 +796,7 @@ DefineCommand ( cmd_at )
 		return;
 	}
 
-	original = ch->in_room;
+	original = IN_ROOM ( ch );
 	on = ch->on;
 	char_from_room ( ch );
 	char_to_room ( ch, location );
@@ -846,10 +846,10 @@ DefineCommand ( cmd_goto )
 		return;
 	}
 
-	if ( ch->fighting != NULL )
+	if ( FIGHTING ( ch ) != NULL )
 	{ stop_fighting ( ch, TRUE ); }
 
-	for ( rch = ch->in_room->people; rch != NULL; rch = rch->next_in_room ) {
+	for ( rch = IN_ROOM ( ch )->people; rch != NULL; rch = rch->next_in_room ) {
 		if ( get_trust ( rch ) >= ch->invis_level ) {
 			if ( ch->pcdata != NULL && !IS_NULLSTR ( ch->pcdata->bamfout ) )
 			{ act ( "$t", ch, ch->pcdata->bamfout, rch, TO_VICT ); }
@@ -862,7 +862,7 @@ DefineCommand ( cmd_goto )
 	char_to_room ( ch, location );
 
 
-	for ( rch = ch->in_room->people; rch != NULL; rch = rch->next_in_room ) {
+	for ( rch = IN_ROOM ( ch )->people; rch != NULL; rch = rch->next_in_room ) {
 		if ( get_trust ( rch ) >= ch->invis_level ) {
 			if ( ch->pcdata != NULL && !IS_NULLSTR ( ch->pcdata->bamfin ) )
 			{ act ( "$t", ch, ch->pcdata->bamfin, rch, TO_VICT ); }
@@ -895,10 +895,10 @@ DefineCommand ( cmd_violate )
 		return;
 	}
 
-	if ( ch->fighting != NULL )
+	if ( FIGHTING ( ch ) != NULL )
 	{ stop_fighting ( ch, TRUE ); }
 
-	for ( rch = ch->in_room->people; rch != NULL; rch = rch->next_in_room ) {
+	for ( rch = IN_ROOM ( ch )->people; rch != NULL; rch = rch->next_in_room ) {
 		if ( get_trust ( rch ) >= ch->invis_level ) {
 			if ( ch->pcdata != NULL && !IS_NULLSTR ( ch->pcdata->bamfout ) )
 			{ act ( "$t", ch, ch->pcdata->bamfout, rch, TO_VICT ); }
@@ -911,7 +911,7 @@ DefineCommand ( cmd_violate )
 	char_to_room ( ch, location );
 
 
-	for ( rch = ch->in_room->people; rch != NULL; rch = rch->next_in_room ) {
+	for ( rch = IN_ROOM ( ch )->people; rch != NULL; rch = rch->next_in_room ) {
 		if ( get_trust ( rch ) >= ch->invis_level ) {
 			if ( ch->pcdata != NULL && !IS_NULLSTR ( ch->pcdata->bamfin ) )
 			{ act ( "$t", ch, ch->pcdata->bamfin, rch, TO_VICT ); }
@@ -991,13 +991,13 @@ DefineCommand ( cmd_rstat )
 	int door;
 
 	ChopC ( argument, arg );
-	location = ( arg[0] == '\0' ) ? ch->in_room : find_location ( ch, arg );
+	location = ( arg[0] == '\0' ) ? IN_ROOM ( ch ) : find_location ( ch, arg );
 	if ( location == NULL ) {
 		writeBuffer ( "No such location.\n\r", ch );
 		return;
 	}
 
-	if ( !is_room_owner ( ch, location ) && ch->in_room != location
+	if ( !is_room_owner ( ch, location ) && IN_ROOM ( ch ) != location
 			&&  room_is_private ( location ) && !IS_TRUSTED ( ch, IMPLEMENTOR ) ) {
 		writeBuffer ( "That room is private right now.\n\r", ch );
 		return;
@@ -1123,9 +1123,9 @@ DefineCommand ( cmd_ostat )
 	sprintf ( buf,
 			  "In room: %d  In object: %s  Carried by: %s  Wear_loc: %d\n\r",
 			  obj->in_room    == NULL    ?        0 : obj->in_room->vnum,
-			  obj->in_obj     == NULL    ? "(none)" : obj->in_obj->short_descr,
-			  obj->carried_by == NULL    ? "(none)" :
-			  can_see ( ch, obj->carried_by ) ? obj->carried_by->name
+			  IN_OBJ ( obj )     == NULL    ? "(none)" : IN_OBJ ( obj )->short_descr,
+			  CARRIED_BY ( obj ) == NULL    ? "(none)" :
+			  can_see ( ch, CARRIED_BY ( obj ) ) ? CARRIED_BY ( obj )->name
 			  : "someone",
 			  obj->wear_loc );
 	writeBuffer ( buf, ch );
@@ -1406,7 +1406,7 @@ DefineCommand ( cmd_mstat )
 			  IS_NPC ( victim ) ? victim->pIndexData->new_format ? "new" : "old" : "pc",
 			  race_table[victim->race].name,
 			  IS_NPC ( victim ) ? victim->group : 0, sex_table[victim->sex].name,
-			  victim->in_room == NULL    ?        0 : victim->in_room->vnum
+			  IN_ROOM ( victim ) == NULL    ?        0 : IN_ROOM ( victim )->vnum
 			);
 	writeBuffer ( buf, ch );
 
@@ -1464,7 +1464,7 @@ DefineCommand ( cmd_mstat )
 		writeBuffer ( buf, ch );
 	}
 	sprintf ( buf, "Fighting: %s\n\r",
-			  victim->fighting ? victim->fighting->name : "(none)" );
+			  FIGHTING ( victim ) ? FIGHTING ( victim )->name : "(none)" );
 	writeBuffer ( buf, ch );
 
 	writeBuffer ( Format ( "Material bits: %s\n\r", material_bit_name ( victim->material_flags ) ), ch );
@@ -1545,7 +1545,7 @@ DefineCommand ( cmd_mstat )
 
 	sprintf ( buf, "Short description: %s\n\rLong  description: %s",
 			  victim->short_descr,
-			  victim->long_descr[0] != '\0' ? victim->long_descr : "(none)\n\r" );
+			  !IS_NULLSTR ( victim->long_descr ) ? victim->long_descr : "(none)\n\r" );
 	writeBuffer ( buf, ch );
 
 	if ( IS_NPC ( victim ) && victim->spec_fun != 0 ) {
@@ -1727,14 +1727,14 @@ DefineCommand ( cmd_owhere )
 		found = TRUE;
 		number++;
 
-		for ( in_obj = obj; in_obj->in_obj != NULL; in_obj = in_obj->in_obj )
+		for ( in_obj = obj; IN_OBJ ( in_obj ) != NULL; in_obj = IN_OBJ ( in_obj ) )
 			;
 
-		if ( in_obj->carried_by != NULL && can_see ( ch, in_obj->carried_by )
-				&&   in_obj->carried_by->in_room != NULL )
+		if ( CARRIED_BY ( in_obj ) != NULL && can_see ( ch, CARRIED_BY ( in_obj ) )
+				&&   CARRIED_BY ( in_obj )->in_room != NULL )
 			sprintf ( buf, "%3d) %s is carried by %s [Room %d]\n\r",
-					  number, obj->short_descr, PERS ( in_obj->carried_by, ch ),
-					  in_obj->carried_by->in_room->vnum );
+					  number, obj->short_descr, PERS ( CARRIED_BY ( in_obj ), ch ),
+					  CARRIED_BY ( in_obj )->in_room->vnum );
 		else if ( in_obj->in_room != NULL && can_see_room ( ch, in_obj->in_room ) )
 			sprintf ( buf, "%3d) %s is in %s [Room %d]\n\r",
 					  number, obj->short_descr, in_obj->in_room->name,
@@ -1781,11 +1781,11 @@ DefineCommand ( cmd_mwhere )
 				if ( d->original != NULL )
 					snprintf ( buf, sizeof ( buf ), "%3d) %s (in the body of %s) is in %s [%d]\n\r",
 							   count, d->original->name, victim->short_descr,
-							   victim->in_room->name, victim->in_room->vnum );
+							   IN_ROOM ( victim )->name, IN_ROOM ( victim )->vnum );
 				else
 					snprintf ( buf, sizeof ( buf ), "%3d) %s is in %s [%d]\n\r",
-							   count, victim->name, victim->in_room->name,
-							   victim->in_room->vnum );
+							   count, victim->name, IN_ROOM ( victim )->name,
+							   IN_ROOM ( victim )->vnum );
 				add_buf ( buffer, buf );
 			}
 		}
@@ -1798,15 +1798,15 @@ DefineCommand ( cmd_mwhere )
 	found = FALSE;
 	buffer = new_buf();
 	for ( victim = char_list; victim != NULL; victim = victim->next ) {
-		if ( victim->in_room != NULL
+		if ( IN_ROOM ( victim ) != NULL
 				&&   is_name ( argument, victim->name ) ) {
 			found = TRUE;
 			count++;
 			sprintf ( buf, "%3d) [%5d] %-28s [%5d] %s\n\r", count,
 					  IS_NPC ( victim ) ? victim->pIndexData->vnum : 0,
 					  IS_NPC ( victim ) ? victim->short_descr : victim->name,
-					  victim->in_room->vnum,
-					  victim->in_room->name );
+					  IN_ROOM ( victim )->vnum,
+					  IN_ROOM ( victim )->name );
 			add_buf ( buffer, buf );
 		}
 	}
@@ -2012,8 +2012,8 @@ DefineCommand ( cmd_snoop )
 		return;
 	}
 
-	if ( !is_room_owner ( ch, victim->in_room ) && ch->in_room != victim->in_room
-			&&  room_is_private ( victim->in_room ) && !IS_TRUSTED ( ch, IMPLEMENTOR ) ) {
+	if ( !is_room_owner ( ch, IN_ROOM ( victim ) ) && IN_ROOM ( ch ) != IN_ROOM ( victim )
+			&&  room_is_private ( IN_ROOM ( victim ) ) && !IS_TRUSTED ( ch, IMPLEMENTOR ) ) {
 		writeBuffer ( "That character is in a private room.\n\r", ch );
 		return;
 	}
@@ -2078,8 +2078,8 @@ DefineCommand ( cmd_switch )
 		return;
 	}
 
-	if ( !is_room_owner ( ch, victim->in_room ) && ch->in_room != victim->in_room
-			&&  room_is_private ( victim->in_room ) && !IS_TRUSTED ( ch, IMPLEMENTOR ) ) {
+	if ( !is_room_owner ( ch, IN_ROOM ( victim ) ) && IN_ROOM ( ch ) != IN_ROOM ( victim )
+			&&  room_is_private ( IN_ROOM ( victim ) ) && !IS_TRUSTED ( ch, IMPLEMENTOR ) ) {
 		writeBuffer ( "That character is in a private room.\n\r", ch );
 		return;
 	}
@@ -2215,10 +2215,10 @@ DefineCommand ( cmd_clone )
 
 		clone = create_object ( obj->pIndexData, 0 );
 		clone_object ( obj, clone );
-		if ( obj->carried_by != NULL )
+		if ( CARRIED_BY ( obj ) != NULL )
 		{ obj_to_char ( clone, ch ); }
 		else
-		{ obj_to_room ( clone, ch->in_room ); }
+		{ obj_to_room ( clone, IN_ROOM ( ch ) ); }
 		recursive_clone ( ch, obj, clone );
 
 		act ( "$n has created $p.", ch, clone, NULL, TO_ROOM );
@@ -2257,7 +2257,7 @@ DefineCommand ( cmd_clone )
 				new_obj->wear_loc = obj->wear_loc;
 			}
 		}
-		char_to_room ( clone, ch->in_room );
+		char_to_room ( clone, IN_ROOM ( ch ) );
 		act ( "$n has created $N.", ch, NULL, clone, TO_ROOM );
 		act ( "You clone $N.", ch, NULL, clone, TO_CHAR );
 		snprintf ( buf, sizeof ( buf ), "$N clones %s.", clone->short_descr );
@@ -2314,7 +2314,7 @@ DefineCommand ( cmd_mload )
 	}
 
 	victim = create_mobile ( pMobIndex );
-	char_to_room ( victim, ch->in_room );
+	char_to_room ( victim, IN_ROOM ( ch ) );
 	act ( "$n has created $N!", ch, NULL, victim, TO_ROOM );
 	snprintf ( buf, sizeof ( buf ), "$N loads %s.", victim->short_descr );
 	wiznet ( buf, ch, NULL, WIZ_LOAD, WIZ_SECURE, get_trust ( ch ) );
@@ -2362,7 +2362,7 @@ DefineCommand ( cmd_oload )
 	if ( CAN_WEAR ( obj, ITEM_TAKE ) )
 	{ obj_to_char ( obj, ch ); }
 	else
-	{ obj_to_room ( obj, ch->in_room ); }
+	{ obj_to_room ( obj, IN_ROOM ( ch ) ); }
 	act ( "$n has created $p!", ch, obj, NULL, TO_ROOM );
 	wiznet ( "$N loads $p.", ch, obj, WIZ_LOAD, WIZ_SECURE, get_trust ( ch ) );
 	writeBuffer ( "Ok.\n\r", ch );
@@ -2384,14 +2384,14 @@ DefineCommand ( cmd_purge )
 		Creature *vnext;
 		Item  *obj_next;
 
-		for ( victim = ch->in_room->people; victim != NULL; victim = vnext ) {
+		for ( victim = IN_ROOM ( ch )->people; victim != NULL; victim = vnext ) {
 			vnext = victim->next_in_room;
 			if ( IS_NPC ( victim ) && !IS_SET ( victim->act, ACT_NOPURGE )
 					&&   victim != ch /* safety precaution */ )
 			{ extract_char ( victim, TRUE ); }
 		}
 
-		for ( obj = ch->in_room->contents; obj != NULL; obj = obj_next ) {
+		for ( obj = IN_ROOM ( ch )->contents; obj != NULL; obj = obj_next ) {
 			obj_next = obj->next_content;
 			if ( !IS_OBJ_STAT ( obj, ITEM_NOPURGE ) )
 			{ extract_obj ( obj ); }
@@ -2566,7 +2566,7 @@ DefineCommand ( cmd_restore )
 	if ( arg[0] == '\0' || !str_cmp ( arg, "room" ) ) {
 		/* cure room */
 
-		for ( vch = ch->in_room->people; vch != NULL; vch = vch->next_in_room ) {
+		for ( vch = IN_ROOM ( ch )->people; vch != NULL; vch = vch->next_in_room ) {
 			affect_strip ( vch, gsn_plague );
 			affect_strip ( vch, gsn_poison );
 			affect_strip ( vch, gsn_blindness );
@@ -2580,7 +2580,7 @@ DefineCommand ( cmd_restore )
 			act ( "$n has restored you.", ch, NULL, vch, TO_VICT );
 		}
 
-		snprintf ( buf, sizeof ( buf ), "$N restored room %d.", ch->in_room->vnum );
+		snprintf ( buf, sizeof ( buf ), "$N restored room %d.", IN_ROOM ( ch )->vnum );
 		wiznet ( buf, ch, NULL, WIZ_RESTORE, WIZ_SECURE, get_trust ( ch ) );
 
 		writeBuffer ( "Room restored.\n\r", ch );
@@ -2607,7 +2607,7 @@ DefineCommand ( cmd_restore )
 			victim->mana	= victim->max_mana;
 			victim->move	= victim->max_move;
 			update_pos ( victim );
-			if ( victim->in_room != NULL )
+			if ( IN_ROOM ( victim ) != NULL )
 			{ act ( "$n has restored you.", ch, NULL, victim, TO_VICT ); }
 		}
 		writeBuffer ( "All active players restored.\n\r", ch );
@@ -2867,8 +2867,8 @@ DefineCommand ( cmd_peace )
 {
 	Creature *rch;
 
-	for ( rch = ch->in_room->people; rch != NULL; rch = rch->next_in_room ) {
-		if ( rch->fighting != NULL )
+	for ( rch = IN_ROOM ( ch )->people; rch != NULL; rch = rch->next_in_room ) {
+		if ( FIGHTING ( rch ) != NULL )
 		{ stop_fighting ( rch, TRUE ); }
 		if ( IS_NPC ( rch ) && IS_SET ( rch->act, ACT_AGGRESSIVE ) )
 		{ REMOVE_BIT ( rch->act, ACT_AGGRESSIVE ); }
@@ -2952,9 +2952,7 @@ DefineCommand ( cmd_set )
 {
 	char arg[MAX_INPUT_LENGTH];
 
-	argument = ChopC ( argument, arg );
-
-	if ( arg[0] == '\0' ) {
+	if ( IS_NULLSTR ( argument ) ) {
 		writeBuffer ( "Syntax:\n\r", ch );
 		writeBuffer ( "  set mob   <name> <field> <value>\n\r", ch );
 		writeBuffer ( "  set obj   <name> <field> <value>\n\r", ch );
@@ -2962,6 +2960,8 @@ DefineCommand ( cmd_set )
 		writeBuffer ( "  set skill <name> <spell or skill> <value>\n\r", ch );
 		return;
 	}
+
+	argument = ChopC ( argument, arg );
 
 	if ( !str_prefix ( arg, "mobile" ) || !str_prefix ( arg, "character" ) ) {
 		cmd_function ( ch, &cmd_mset, argument );
@@ -3062,7 +3062,16 @@ DefineCommand ( cmd_mset )
 	Creature *victim;
 	int value;
 
-	smash_tilde ( argument );
+	if ( IS_NULLSTR ( argument ) ) {
+		writeBuffer ( "Unknown Syntax!\r\nset char <name> <field> <value>\r\n", ch );
+		writeBuffer ( "  Field being one of:\n\r",			ch );
+		writeBuffer ( "    str int wis dex con sex archetype level\n\r",	ch );
+		writeBuffer ( "    race group gold silver hp mana move prac\n\r", ch );
+		writeBuffer ( "    align train thirst hunger drunk full\n\r",	ch );
+		writeBuffer ( "    security\n\r",				ch );
+		return;
+	}
+
 	argument = ChopC ( argument, arg1 );
 	argument = ChopC ( argument, arg2 );
 	strcpy ( arg3, argument );
@@ -3674,7 +3683,7 @@ DefineCommand ( cmd_rset )
 		return;
 	}
 
-	if ( !is_room_owner ( ch, location ) && ch->in_room != location
+	if ( !is_room_owner ( ch, location ) && IN_ROOM ( ch ) != location
 			&&  room_is_private ( location ) && !IS_TRUSTED ( ch, IMPLEMENTOR ) ) {
 		writeBuffer ( "That room is private right now.\n\r", ch );
 		return;
@@ -3841,9 +3850,9 @@ DefineCommand ( cmd_force )
 			return;
 		}
 
-		if ( !is_room_owner ( ch, victim->in_room )
-				&&  ch->in_room != victim->in_room
-				&&  room_is_private ( victim->in_room ) && !IS_TRUSTED ( ch, IMPLEMENTOR ) ) {
+		if ( !is_room_owner ( ch, IN_ROOM ( victim ) )
+				&&  IN_ROOM ( ch ) != IN_ROOM ( victim )
+				&&  room_is_private ( IN_ROOM ( victim ) ) && !IS_TRUSTED ( ch, IMPLEMENTOR ) ) {
 			writeBuffer ( "That character is in a private room.\n\r", ch );
 			return;
 		}

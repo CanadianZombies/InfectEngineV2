@@ -82,6 +82,7 @@ Item *rand_item ( Item *obj, int level )
 	buf_name[0] = '\0';
 	buf_short[0] = '\0';
 	buf_long[0] = '\0';
+	l_item_name[0] = '\0';
 
 	if ( weight > 50 ) { weight = 50; }
 

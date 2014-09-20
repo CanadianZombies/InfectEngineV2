@@ -63,7 +63,7 @@ DefineCommand ( cmd_enter )
 {
 	RoomData *location;
 
-	if ( ch->fighting != NULL )
+	if ( FIGHTING ( ch ) != NULL )
 	{ return; }
 
 	/* nifty portal stuff */
@@ -72,9 +72,9 @@ DefineCommand ( cmd_enter )
 		Item *portal;
 		Creature *fch, *fch_next;
 
-		old_room = ch->in_room;
+		old_room = IN_ROOM ( ch );
 
-		portal = get_obj_list ( ch, argument,  ch->in_room->contents );
+		portal = get_obj_list ( ch, argument,  IN_ROOM ( ch )->contents );
 
 		if ( portal == NULL ) {
 			writeBuffer ( "You don't see that here.\n\r", ch );
@@ -163,7 +163,7 @@ DefineCommand ( cmd_enter )
 
 			if ( fch->master == ch && fch->position == POS_STANDING ) {
 
-				if ( IS_SET ( ch->in_room->room_flags, ROOM_LAW )
+				if ( IS_SET ( IN_ROOM ( ch )->room_flags, ROOM_LAW )
 						&&  ( IS_NPC ( fch ) && IS_SET ( fch->act, ACT_AGGRESSIVE ) ) ) {
 					act ( "You can't bring $N into the city.",
 						  ch, NULL, fch, TO_CHAR );
@@ -179,7 +179,7 @@ DefineCommand ( cmd_enter )
 
 		if ( portal != NULL && portal->value[0] == -1 ) {
 			act ( "$p fades out of existence.", ch, portal, NULL, TO_CHAR );
-			if ( ch->in_room == old_room )
+			if ( IN_ROOM ( ch ) == old_room )
 			{ act ( "$p fades out of existence.", ch, portal, NULL, TO_ROOM ); }
 			else if ( old_room->people != NULL ) {
 				act ( "$p fades out of existence.",
