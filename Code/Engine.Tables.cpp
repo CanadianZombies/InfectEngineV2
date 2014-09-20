@@ -49,12 +49,12 @@ const struct clan_type clan_table[MAX_CLAN] = {
 /* for position */
 const struct position_type position_table[] = {
 	{	"dead",			"dead"	},
-	{	"mortally wounded",	"mort"	},
+	{	"dying",		"mort"	},
 	{	"incapacitated",	"incap"	},
 	{	"stunned",		"stun"	},
 	{	"sleeping",		"sleep"	},
 	{	"resting",		"rest"	},
-	{   "sitting",		"sit"   },
+		"sitting",		"sit"   },
 	{	"fighting",		"fight"	},
 	{	"standing",		"stand"	},
 	{	NULL,			NULL	}
