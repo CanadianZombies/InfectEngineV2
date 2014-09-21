@@ -212,6 +212,7 @@ int     get_age         args ( ( Creature *ch ) );
 void	reset_char	args ( ( Creature *ch )  );
 int	get_trust	args ( ( Creature *ch ) );
 int	get_curr_stat	args ( ( Creature *ch, int stat ) );
+int     get_defense(Creature *ch);
 int 	get_max_train	args ( ( Creature *ch, int stat ) );
 int	can_carry_n	args ( ( Creature *ch ) );
 int	can_carry_w	args ( ( Creature *ch ) );
