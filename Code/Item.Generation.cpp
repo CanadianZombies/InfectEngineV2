@@ -994,40 +994,49 @@ void set_obj_stats ( Item *obj, Creature * mob, bool special )
 			of -25 for an adamantanium torso, that is good shiz. And
 			the worst armor of a leather torso giving a minimum bonus
 			of -2.5.*/
-			obj->value[0] = obj->weight / 30;
+			obj->value[0] = Math::instance().fuzzy(obj->weight / 30);
 
 			/*I defaulted the worst case scenerio to 0, this doesnt mean
 			the armor is crap, it could still have bonus's given to it magicly.*/
 			if ( obj->value[0] <= 0 )
 			{ obj->value[0] = 0; }
 
-			obj->value[1] = obj->value[0];
-			obj->value[2] = obj->value[0];
+			// -- assign the armor values
+			obj->value[1] = Math::instance().fuzzy(obj->value[0]);
+			obj->value[2] = Math::instance().fuzzy(obj->value[0]);
 
+/*			// -- work in progress, intent to make values more realistic
+			// -- for certain types of armor, slashing/piercing/bashing
+			// -- should all have their own values based on type of armor
+			if(IS_SET(obj->material_flags, MAT_IRON)) {
+				obj->value[AC_PIERCE] = obj->value[0]+Math::instance().range(1,25);
+				obj->value[AC_SLASH] = obj->value[0]/3;
+			}
+*/
 			/*Now we deal with the magical defense*/
 			if ( IS_SET ( obj->material_flags, MAT_TITANIUM )
 					|| IS_SET ( obj->material_flags, MAT_ADAMANTANIUM ) )
-			{ obj->value[3] = obj->value[0] / 4; }
+			{ obj->value[3] = Math::instance().fuzzy(obj->value[0] / 4); }
 
 			else if ( IS_SET ( obj->material_flags, MAT_PLATINUM ) )
-			{ obj->value[3] = obj->value[0] * 3; }
+			{ obj->value[3] = Math::instance().fuzzy(obj->value[0] * 3); }
 
 			else if ( IS_SET ( obj->material_flags, MAT_OBSIDIAN ) )
-			{ obj->value[2] = obj->value[0] * 2; }
+			{ obj->value[2] = Math::instance().fuzzy(obj->value[0] * 2); }
 
 			else if ( IS_SET ( obj->material_flags, MAT_DOUBLE_PLATED ) )
-			{ obj->value[3] = obj->value[0] * .5; }
+			{ obj->value[3] = Math::instance().fuzzy(obj->value[0] * .5); }
 
 			else
-				/*Defaults have always been that this catagory is halfed*/
-			{ obj->value[3] = obj->value[0] / 2; }
+			/*Defaults have always been that this catagory is halfed*/
+			{ obj->value[3] = Math::instance().fuzzy(Math::instance().range((obj->value[0]/4), (obj->value[0] / 2)); }
 
 			/*special armor gets better defense based on its level.*/
 			if ( special ) {
-				obj->value[0] += obj->level / 10;
-				obj->value[1] += obj->level / 10;
-				obj->value[2] += obj->level / 10;
-				obj->value[3] += obj->level / 10;
+				obj->value[0] += Math::instance().fuzzy(obj->level / 10);
+				obj->value[1] += Math::instance().fuzzy(obj->level / 10);
+				obj->value[2] += Math::instance().fuzzy(obj->level / 10);
+				obj->value[3] += Math::instance().range(Math::instance().fuzzy(obj->level/12), obj->level / 10);
 			}
 
 			break;
