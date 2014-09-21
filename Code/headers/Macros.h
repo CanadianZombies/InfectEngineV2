@@ -168,13 +168,10 @@
 #define IS_NEUTRAL(ch)		(!IS_GOOD(ch) && !IS_EVIL(ch))
 
 #define IS_AWAKE(ch)		(ch->position > POS_SLEEPING)
-#define GET_AC(ch,type)		((ch)->armor[type]			    \
-							 + ( IS_AWAKE(ch)			    \
-								 ? dex_app[get_curr_stat(ch,STAT_DEX)].defensive : 0 ))
 
-#define GET_HITROLL(ch)	((ch)->hitroll+str_app[get_curr_stat(ch,STAT_STR)].tohit)
-
-#define GET_DAMROLL(ch) ((ch)->damroll+str_app[get_curr_stat(ch,STAT_STR)].todam)
+#define GET_AC(ch,type)		((ch)->armor[type] + ( IS_AWAKE(ch) ? get_defense(ch) : 0 ))
+#define GET_HITROLL(ch)		((ch)->hitroll+str_app[get_curr_stat(ch,STAT_STR)].tohit)
+#define GET_DAMROLL(ch) 	((ch)->damroll+str_app[get_curr_stat(ch,STAT_STR)].todam)
 
 #define IS_OUTSIDE(ch)		(!IS_SET(				    \
 							 (ch)->in_room->room_flags,		    \
