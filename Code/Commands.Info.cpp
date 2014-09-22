@@ -1187,36 +1187,37 @@ DefineCommand ( cmd_score )
 		return;
 	}
 
+	std::string buffer ( "" );
 	// -- align colour will change the colour of various variables later on.
 	char alignColour[10] = {'\0'};
 	snprintf ( alignColour, sizeof ( alignColour ), "%s", align > 0 ? "\a[F154]" : "\a[F200]" );
 
-	writeBuffer ( Format ( "                                         %s_______________\r\n", alignColour ), ch );
-	writeBuffer ( Format ( "  \aC%8s %8s %8s            \a[F232]/\aY%-15s\a[F232]\\\r\n",
-						   ch->pcdata->condition[COND_DRUNK]   > 10 ? "Drunk" : "",
-						   ch->pcdata->condition[COND_THIRST] ==  0 ? "Thirsty" : "",
-						   ch->pcdata->condition[COND_HUNGER]   ==  0 ? "Hungry" : "",
-						   ch->name ), ch );
-	writeBuffer ( Format ( "\a[F111]+%s--------------------------------------\a[F111]+ %-15s|\r\n", alignColour, " " ), ch );
-	writeBuffer ( Format ( "\a[F111]+%s--------------------------------\a[F043]< \a[F210]About \a[F043]>%s--------------\a[F111]+\r\n", alignColour, alignColour ), ch );
-	writeBuffer ( Format ( "\a[F232]|\aWAge:               \a[F332]%-3dyrs   \aWLevel:       \a[F332]%2d            \a[F232]|\r\n", get_age ( ch ), ch->level ), ch );
-	writeBuffer ( Format ( "\a[F232]|\aWHours:           \a[F332]%-5d      \aWExp:      \a[F332]%5d            \a[F232]|\r\n", ( ch->played + ( int ) ( current_time - ch->logon ) ) / 3600, ch->exp ), ch );
-	writeBuffer ( Format ( "\a[F232]|\aWRace:      \a[F332]%10s       \aWTNL:      \a[F332]%5d            \a[F232]|\r\n", race_table[ch->race].name, ( ( ch->level * 200 ) - ch->exp ) ), ch );
-	writeBuffer ( Format ( "\a[F232]|\aWArchetype: \a[F332]%10s       \aWCoward:   \a[F332]%5d            \a[F232]|\r\n", archetype_table[ch->archetype].name, ch->wimpy ), ch );
-	writeBuffer ( Format ( "\a[F232]|\aWGender:    \a[F332]%10s       \aWPosition: \a[F332]%10s       \a[F232]|\r\n", ch->sex == 0 ? "sexless" : ch->sex == 1 ? "male" : "female", position_table[ch->position].name ), ch );
-	writeBuffer ( Format ( "\a[F111]+%s--------------------------------\a[F043]<\a[F210]Statistics\a[F043]>%s-----------\a[F111]+\r\n", alignColour, alignColour ), ch );
-	writeBuffer ( Format ( "\a[F232]|\aWRating: \aWPierce: \a[F332]%5d \aWCrush:  \a[F332]%5d \aWHealth:  \aR%4d/\aY%4d \a[F232]|\r\n", GET_AC ( ch, AC_PIERCE ), GET_AC ( ch, AC_BASH ), ch->hit, ch->max_hit ), ch );
-	writeBuffer ( Format ( "\a[F232]|        \aWSlash:  \a[F332]%5d \aWUnique: \a[F332]%5d \aWBreath:  \aR%4d/\aY%4d \a[F232]|\r\n", GET_AC ( ch, AC_SLASH ), GET_AC ( ch, AC_EXOTIC ), ch->move, ch->max_move ), ch );
-	writeBuffer ( Format ( "\a[F232]|        \aWTo Hit: \a[F332]%5d \aWTo Dam: \a[F332]%5d \aWMagic:   \aR%4d/\aY%4d \a[F232]|\r\n", GET_HITROLL ( ch ), GET_DAMROLL ( ch ), ch->mana, ch->max_mana ), ch );
-	writeBuffer ( Format ( "\a[F111]+%s--------------------------------\a[F043]<\a[F210]Attributes\a[F043]>%s-----------\a[F111]+\r\n", alignColour, alignColour ), ch );
-	writeBuffer ( Format ( "\a[F232]|\aWST\a[F330]%25s \aWDE\a[F330]%25s\a[F232]|\r\n", outputStat ( ch, STAT_STR ), outputStat ( ch, STAT_DEX ) ), ch );
-	writeBuffer ( Format ( "\a[F232]|\aWIN\a[F330]%25s \aWWI\a[F330]%25s\a[F232]|\r\n", outputStat ( ch, STAT_INT ), outputStat ( ch, STAT_WIS ) ), ch );
-	writeBuffer ( Format ( "\a[F232]|\aWCO\a[F330]%25s   %25s\a[F232]|\r\n", outputStat ( ch, STAT_CON ), "" ), ch );
-	writeBuffer ( Format ( "\a[F111]+%s--------------------------------\a[F043]<\a[F210]Loot\a[F043]>%s-----------------\a[F111]+\r\n", alignColour, alignColour ), ch );
-	writeBuffer ( Format ( "\a[F232]|\aWGold: \a[F332]%5d \aWSilver: \a[F332]%5d    \aWCarrying: \a[F332]%5d Items     \a[F232]|\r\n", ch->gold, ch->silver, ch->carry_number ), ch );
-	writeBuffer ( Format ( "\a[F232]|\aWWeighing: \a[F332]%5dlbs                                     \a[F232]|\r\n", get_carry_weight ( ch ) / 10 ), ch );
-	writeBuffer ( Format ( "\a[F111]+%s--------------------------------\a[F043]<\a[F210]==========\a[F043]>%s-----------\a[F111]+\r\n\an", alignColour, alignColour ), ch );
-
+	buffer.append ( Format ( "                                         %s_______________\r\n", alignColour ) );
+	buffer.append ( Format ( "  \aC%8s %8s %8s            \a[F232]/\aY%-15s\a[F232]\\\r\n",
+							 ch->pcdata->condition[COND_DRUNK]   > 10 ? "Drunk" : "",
+							 ch->pcdata->condition[COND_THIRST] ==  0 ? "Thirsty" : "",
+							 ch->pcdata->condition[COND_HUNGER]   ==  0 ? "Hungry" : "",
+							 ch->name ) );
+	buffer.append ( Format ( "\a[F111]+%s--------------------------------------\a[F111]+ %-15s|\r\n", alignColour, " " ) );
+	buffer.append ( Format ( "\a[F111]+%s--------------------------------\a[F043]< \a[F210]About \a[F043]>%s--------------\a[F111]+\r\n", alignColour, alignColour ) );
+	buffer.append ( Format ( "\a[F232]|\aWAge:               \a[F332]%-3dyrs   \aWLevel:       \a[F332]%2d            \a[F232]|\r\n", get_age ( ch ), ch->level ) );
+	buffer.append ( Format ( "\a[F232]|\aWHours:           \a[F332]%-5d      \aWExp:      \a[F332]%5d            \a[F232]|\r\n", ( ch->played + ( int ) ( current_time - ch->logon ) ) / 3600, ch->exp ) );
+	buffer.append ( Format ( "\a[F232]|\aWRace:      \a[F332]%10s       \aWTNL:      \a[F332]%5d            \a[F232]|\r\n", race_table[ch->race].name, ( ( ch->level * 200 ) - ch->exp ) ) );
+	buffer.append ( Format ( "\a[F232]|\aWArchetype: \a[F332]%10s       \aWCoward:   \a[F332]%5d            \a[F232]|\r\n", archetype_table[ch->archetype].name, ch->wimpy ) );
+	buffer.append ( Format ( "\a[F232]|\aWGender:    \a[F332]%10s       \aWPosition: \a[F332]%10s       \a[F232]|\r\n", ch->sex == 0 ? "sexless" : ch->sex == 1 ? "male" : "female", position_table[ch->position].name ) );
+	buffer.append ( Format ( "\a[F111]+%s--------------------------------\a[F043]<\a[F210]Statistics\a[F043]>%s-----------\a[F111]+\r\n", alignColour, alignColour ) );
+	buffer.append ( Format ( "\a[F232]|\aWRating: \aWPierce: \a[F332]%5d \aWCrush:  \a[F332]%5d \aWHealth:  \aR%4d\aw/\aY%4d \a[F232]|\r\n", GET_AC ( ch, AC_PIERCE ), GET_AC ( ch, AC_BASH ), ch->hit, ch->max_hit ) );
+	buffer.append ( Format ( "\a[F232]|        \aWSlash:  \a[F332]%5d \aWUnique: \a[F332]%5d \aWBreath:  \aR%4d\aw/\aY%4d \a[F232]|\r\n", GET_AC ( ch, AC_SLASH ), GET_AC ( ch, AC_EXOTIC ), ch->move, ch->max_move ) );
+	buffer.append ( Format ( "\a[F232]|        \aWTo Hit: \a[F332]%5d \aWTo Dam: \a[F332]%5d \aWMagic:   \aR%4d\aw/\aY%4d \a[F232]|\r\n", GET_HITROLL ( ch ), GET_DAMROLL ( ch ), ch->mana, ch->max_mana ) );
+	buffer.append ( Format ( "\a[F111]+%s--------------------------------\a[F043]<\a[F210]Attributes\a[F043]>%s-----------\a[F111]+\r\n", alignColour, alignColour ) );
+	buffer.append ( Format ( "\a[F232]|\aWST\a[F330]%25s \aWDE\a[F330]%25s\a[F232]|\r\n", outputStat ( ch, STAT_STR ), outputStat ( ch, STAT_DEX ) ) );
+	buffer.append ( Format ( "\a[F232]|\aWIN\a[F330]%25s \aWWI\a[F330]%25s\a[F232]|\r\n", outputStat ( ch, STAT_INT ), outputStat ( ch, STAT_WIS ) ) );
+	buffer.append ( Format ( "\a[F232]|\aWCO\a[F330]%25s   %25s\a[F232]|\r\n", outputStat ( ch, STAT_CON ), "" ) );
+	buffer.append ( Format ( "\a[F111]+%s--------------------------------\a[F043]<\a[F210]Loot\a[F043]>%s-----------------\a[F111]+\r\n", alignColour, alignColour ) );
+	buffer.append ( Format ( "\a[F232]|\aWGold: \a[F332]%5d \aWSilver: \a[F332]%5d    \aWCarrying: \a[F332]%5d Items     \a[F232]|\r\n", ch->gold, ch->silver, ch->carry_number ) );
+	buffer.append ( Format ( "\a[F232]|\aWWeighing: \a[F332]%5dlbs                                     \a[F232]|\r\n", get_carry_weight ( ch ) / 10 ) );
+	buffer.append ( Format ( "\a[F111]+%s--------------------------------\a[F043]<\a[F210]==========\a[F043]>%s-----------\a[F111]+\r\n\an", alignColour, alignColour ) );
+	writeBuffer ( C_STR ( buffer ), ch );
 
 	/*
 	 	-- practice and trains are being stripped out of the mud, skill points will be added

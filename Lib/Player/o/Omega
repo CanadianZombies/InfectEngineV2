@@ -1,7 +1,7 @@
 #PLAYER
 Name Omega~
 Id   1407161012
-LogO 1411226415
+LogO 1411356808
 Vers 5
 Prom <%hhp %mm %vmv> ~
 Race human~
@@ -9,7 +9,7 @@ Sex  1
 Cla  3
 Levl 60
 Sec  9
-Plyd 3972041
+Plyd 4098958
 Not  0 0 0 0 0
 Scro 28
 Room 3
@@ -25,11 +25,13 @@ Sitrep ABC
 Pos  8
 Prac 5
 Trai 3
+Save  -24
 Alig  0
-Hit   4
-ACs 99 99 99 100
+Hit   17
+Dam   7
+ACs -37 -37 -37 64
 Attr 25 25 25 25 25
-AMod 3 0 0 0 0
+AMod 9 0 0 0 0
 Pass OmLtTe29L9oWQ~
 Titl  boobs are great!~
 Pnts 40
@@ -227,9 +229,9 @@ Wear -1
 Lev  35
 Cost 7175
 Val  6 6 12 0 0
-Affc 'reserved'   1  35  -1  -3  24          0
-Affc 'reserved'   1  35  -1   1  18          0
 Affc 'reserved'   1  35  -1   1  19          0
+Affc 'reserved'   1  35  -1   1  18          0
+Affc 'reserved'   1  35  -1  -3  24          0
 End
 
 #O
@@ -250,6 +252,232 @@ Lev  46
 Cost 6348
 Val  0 0 50 0 0
 Affc 'reserved'   1  46  -1   3   1          0
+End
+
+#O
+Vnum 48
+Enchanted
+Nest 0
+Name %ÆÃ% steel lantern~
+ShD  a %ÆÃ% steel lantern~
+Desc A %ÆÃ% steel lantern is lying here.~
+ExtF 65
+WeaF 1
+Wt   109
+Cond 60
+Mat D
+Requirements 2 0 0 0 0 0
+Wear -1
+Lev  25
+Cost 2725
+Val  0 0 50 0 0
+Affc 'reserved'   1  25  -1   1  18          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name gold war helm~
+ShD  a gold war helm~
+Desc A gold war helm has been dropped here.~
+ExtF 65
+WeaF 17
+Wt   51
+Cond 92
+Mat W
+Requirements 2 17 0 0 0 0
+Wear 6
+Lev  46
+Cost 22950
+Val  1 1 1 0 0
+Affc 'reserved'   1  46  -1   3  18          0
+Affc 'reserved'   1  46  -1  -3  24          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name titanium chestplate~
+ShD  a titanium chestplate~
+Desc A titanium chestplate is lying here.~
+ExtF 64
+WeaF 9
+Wt   732
+Cond 92
+Mat Y
+Requirements 2 0 0 0 0 0
+Wear 5
+Lev  50
+Cost 183000
+Val  24 24 24 6 0
+Affc 'reserved'   1  50  -1   3  19          0
+Affc 'reserved'   1  50  -1   3  18          0
+Affc 'reserved'   1  50  -1   1   1          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name silver couter~
+ShD  a silver couter~
+Desc A silver couter has been left here.~
+ExtF 66
+WeaF 257
+Wt   72
+Mat V
+Requirements 2 0 0 15 0 0
+Wear 10
+Lev  43
+Cost 25200
+Val  2 2 2 1 0
+Affc 'reserved'   1  43  -1   3  19          0
+Affc 'reserved'   1  43  -1  -3  24          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name gold mitten gauntlets~
+ShD  a gold mitten gauntlets~
+Desc A gold mitten gauntlets has been left here.~
+ExtF 65
+WeaF 129
+Wt   69
+Cond 81
+Mat W
+Requirements 2 17 0 0 0 0
+Wear 9
+Lev  47
+Cost 31050
+Val  2 2 2 1 0
+Affc 'reserved'   1  47  -1   3  18          0
+Affc 'reserved'   1  47  -1  -3  24          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name adamantanium leg plates~
+ShD  a adamantanium leg plates~
+Desc A adamantanium leg plates is lying here.~
+ExtF 64
+WeaF 33
+Wt   540
+Mat Z
+Requirements 2 0 0 0 0 0
+Wear 7
+Lev  56
+Cost 135000
+Val  18 18 18 4 0
+Affc 'reserved'   1  56  -1   1  19          0
+Affc 'reserved'   1  56  -1   1   1          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name mithril girdle~
+ShD  a mithril girdle~
+Desc A mithril girdle has been dropped here.~
+ExtF 1088
+WeaF 2049
+Wt   121
+Mat Q
+Requirements 2 0 0 0 0 0
+Wear 13
+Lev  33
+Cost 3993
+Val  4 4 4 2 0
+Affc 'reserved'   1  33  -1  -7  24          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name gold pouldron~
+ShD  a gold pouldron~
+Desc A gold pouldron is lying here.~
+ExtF 65
+WeaF 1025
+Wt   110
+Cond 94
+Mat W
+Requirements 2 17 0 0 0 0
+Wear 12
+Lev  46
+Cost 49500
+Val  3 3 3 1 0
+Affc 'reserved'   1  46  -1   3  18          0
+Affc 'reserved'   1  46  -1  -8  24          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name copper shackle~
+ShD  a copper shackle~
+Desc A copper shackle has been dropped here.~
+ExtF 65
+WeaF 4097
+Wt   141
+Cond 62
+Mat K
+Requirements 2 0 0 0 0 0
+Wear 14
+Lev  19
+Cost 2679
+Val  4 4 4 2 0
+Affc 'reserved'   1  19  -1   3   1          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name  adamantanium necklace~
+ShD  a  adamantanium necklace~
+Desc A  adamantanium necklace has been left here.~
+ExtF 64
+WeaF 5
+Wt   268
+Cond 94
+Mat Z
+Requirements 2 0 0 0 0 0
+Wear 3
+Lev  56
+Cost 67000
+Val  8 8 8 2 0
+Affc 'reserved'   1  56  -1   1  18          0
+Affc 'reserved'   1  56  -1   1   1          0
+End
+
+#O
+Vnum 47
+Enchanted
+Nest 0
+Name double plated sabots~
+ShD  a double plated sabots~
+Desc A double plated sabots has been left here.~
+ExtF 3136
+WeaF 65
+Wt   54
+Cond 90
+Mat U
+Requirements 2 0 0 0 0 0
+Wear -1
+Lev  41
+Cost 8100
+Val  1 1 1 0 0
+Affc 'reserved'   1  41  -1   1  18          0
+Affc 'reserved'   1  41  -1   2  19          0
 End
 
 #END
