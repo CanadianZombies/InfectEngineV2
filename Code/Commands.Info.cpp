@@ -1023,6 +1023,7 @@ DefineCommand ( cmd_look )
 DefineCommand ( cmd_read )
 {
 	cmd_function ( ch, &cmd_look, argument );
+	tail_chain();
 }
 
 DefineCommand ( cmd_examine )

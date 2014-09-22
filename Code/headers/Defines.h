@@ -105,6 +105,7 @@
 #define MAX_SOCIALS		  256
 #define MAX_SKILL		  150
 #define MAX_GROUP		   30
+#define MAX_ATTR      25
 #define MAX_IN_GROUP		   15
 #define MAX_ALIAS		    5
 #define MAX_CLASS		    4
