@@ -122,10 +122,6 @@ struct	wis_app_type {
 	int	practice;
 };
 
-struct	dex_app_type {
-	int	defensive;
-};
-
 struct	con_app_type {
 	int	hitp;
 	int	shock;

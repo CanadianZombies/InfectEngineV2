@@ -362,20 +362,19 @@ void paf_apply ( Item *obj )
 		APPLY_AC
 	};
 
-	/*
 	static const char *defensive_spell_types[] = {
 		"armor", "shield", "stone skin", "bless", "sanctuary"
-	}; */
+	};
 
 	static const char *offensive_spell_types[] = {
 		"lightning bolt", "acid blast", "magic missile"
 	};
 
-	/*
+
 	static const char *curitive_spell_types[] = {
 		"create food", "create spring", "cure blindness", "cure critical", "cure disease",
 		"cure poison", "remove curse", "refresh"
-	}; */
+	};
 
 	static const char *maledictive_spell_types[] = {
 		"blindness", "curse", "plague", "poison", "sleep", "weaken"
@@ -384,29 +383,39 @@ void paf_apply ( Item *obj )
 	static const char *mental_spell_types[] = {
 		"charm person", "dispel magic", "calm", "change sex", "floating disc"
 	};
-	/*
-	static char *misc_spell_types[] =
-	  {
-	"slow", "fly", "pass door", "frenzy", "giant strength",
-	"haste", "word of recall"
-	  };
 
-	if(obj->item_type == ITEM_STAFF)
-	{
-	if (IS_SET(obj->material_flags, MAT_ORTHOCLASE))
-	obj->value[3] = skill_lookup(defensive_spell_types[Math::instance().range(0, 4)]);
-	  if (IS_SET(obj->material_flags, MAT_PLAGIOCLASE))
-	obj->value[3] = skill_lookup(curitive_spell_types[Math::instance().range(0, 7)]);
-	  if (IS_SET(obj->material_flags, MAT_BIOTITE))
-	obj->value[3] = skill_lookup(misc_spell_types[Math::instance().range(0, 6)]);
-	} */
+	static const char *misc_spell_types[] = {
+		"slow", "fly", "pass door", "frenzy", "giant strength",
+		"haste", "word of recall"
+	};
+	/*
+		if(obj->item_type == ITEM_STAFF)
+		{
+		if (IS_SET(obj->material_flags, MAT_ORTHOCLASE))
+		obj->value[3] = skill_lookup(defensive_spell_types[Math::instance().range(0, 4)]);
+		  if (IS_SET(obj->material_flags, MAT_PLAGIOCLASE))
+		obj->value[3] = skill_lookup(curitive_spell_types[Math::instance().range(0, 7)]);
+		  if (IS_SET(obj->material_flags, MAT_BIOTITE))
+		obj->value[3] = skill_lookup(misc_spell_types[Math::instance().range(0, 6)]);
+		} */
 	if ( obj->item_type == ITEM_WAND ) {
 		if ( IS_SET ( obj->material_flags, MAT_QUARTZ ) )
 		{ obj->value[3] = skill_lookup ( offensive_spell_types[Math::instance().range ( 0, 3 )] ); }
-		if ( IS_SET ( obj->material_flags, MAT_TAINTED_MITHRIL ) )
+		else if ( IS_SET ( obj->material_flags, MAT_TAINTED_MITHRIL ) )
 		{ obj->value[3] = skill_lookup ( maledictive_spell_types[Math::instance().range ( 0, 5 )] ); }
-		if ( IS_SET ( obj->material_flags, MAT_OBSIDIAN ) )
+		else if ( IS_SET ( obj->material_flags, MAT_OBSIDIAN ) )
 		{ obj->value[3] = skill_lookup ( mental_spell_types[Math::instance().range ( 0, 4 )] ); }
+		else {
+			if ( Math::instance().percent() > 50 ) {
+				obj->value[3] = skill_lookup ( curitive_spell_types[Math::instance().range ( 0, 7 )] );
+			} else {
+				if ( Math::instance().percent() > 50 ) {
+					obj->value[3] = skill_lookup ( misc_spell_types[Math::instance().range ( 0, 6 )] );
+				} else {
+					obj->value[3] = skill_lookup ( defensive_spell_types[Math::instance().range ( 0, 4 )] );
+				}
+			}
+		}
 	} else if ( obj->item_type == ITEM_JEWELRY ) {
 		//A ring is based on its stone, lets keep all rings
 		//of the same stone all the same.
@@ -994,7 +1003,7 @@ void set_obj_stats ( Item *obj, Creature * mob, bool special )
 			of -25 for an adamantanium torso, that is good shiz. And
 			the worst armor of a leather torso giving a minimum bonus
 			of -2.5.*/
-			obj->value[0] = Math::instance().fuzzy(obj->weight / 30);
+			obj->value[0] = Math::instance().fuzzy ( obj->weight / 30 );
 
 			/*I defaulted the worst case scenerio to 0, this doesnt mean
 			the armor is crap, it could still have bonus's given to it magicly.*/
@@ -1002,41 +1011,41 @@ void set_obj_stats ( Item *obj, Creature * mob, bool special )
 			{ obj->value[0] = 0; }
 
 			// -- assign the armor values
-			obj->value[1] = Math::instance().fuzzy(obj->value[0]);
-			obj->value[2] = Math::instance().fuzzy(obj->value[0]);
+			obj->value[1] = Math::instance().fuzzy ( obj->value[0] );
+			obj->value[2] = Math::instance().fuzzy ( obj->value[0] );
 
-/*			// -- work in progress, intent to make values more realistic
-			// -- for certain types of armor, slashing/piercing/bashing
-			// -- should all have their own values based on type of armor
-			if(IS_SET(obj->material_flags, MAT_IRON)) {
-				obj->value[AC_PIERCE] = obj->value[0]+Math::instance().range(1,25);
-				obj->value[AC_SLASH] = obj->value[0]/3;
-			}
-*/
+			/*			// -- work in progress, intent to make values more realistic
+						// -- for certain types of armor, slashing/piercing/bashing
+						// -- should all have their own values based on type of armor
+						if(IS_SET(obj->material_flags, MAT_IRON)) {
+							obj->value[AC_PIERCE] = obj->value[0]+Math::instance().range(1,25);
+							obj->value[AC_SLASH] = obj->value[0]/3;
+						}
+			*/
 			/*Now we deal with the magical defense*/
 			if ( IS_SET ( obj->material_flags, MAT_TITANIUM )
 					|| IS_SET ( obj->material_flags, MAT_ADAMANTANIUM ) )
-			{ obj->value[3] = Math::instance().fuzzy(obj->value[0] / 4); }
+			{ obj->value[3] = Math::instance().fuzzy ( obj->value[0] / 4 ); }
 
 			else if ( IS_SET ( obj->material_flags, MAT_PLATINUM ) )
-			{ obj->value[3] = Math::instance().fuzzy(obj->value[0] * 3); }
+			{ obj->value[3] = Math::instance().fuzzy ( obj->value[0] * 3 ); }
 
 			else if ( IS_SET ( obj->material_flags, MAT_OBSIDIAN ) )
-			{ obj->value[2] = Math::instance().fuzzy(obj->value[0] * 2); }
+			{ obj->value[2] = Math::instance().fuzzy ( obj->value[0] * 2 ); }
 
 			else if ( IS_SET ( obj->material_flags, MAT_DOUBLE_PLATED ) )
-			{ obj->value[3] = Math::instance().fuzzy(obj->value[0] * .5); }
+			{ obj->value[3] = Math::instance().fuzzy ( obj->value[0] * .5 ); }
 
 			else
-			/*Defaults have always been that this catagory is halfed*/
-			{ obj->value[3] = Math::instance().fuzzy(Math::instance().range((obj->value[0]/4), (obj->value[0] / 2)); }
+				/*Defaults have always been that this catagory is halfed*/
+			{ obj->value[3] = Math::instance().fuzzy ( Math::instance().range ( ( obj->value[0] / 4 ), ( obj->value[0] / 2 ) ) ); }
 
 			/*special armor gets better defense based on its level.*/
 			if ( special ) {
-				obj->value[0] += Math::instance().fuzzy(obj->level / 10);
-				obj->value[1] += Math::instance().fuzzy(obj->level / 10);
-				obj->value[2] += Math::instance().fuzzy(obj->level / 10);
-				obj->value[3] += Math::instance().range(Math::instance().fuzzy(obj->level/12), obj->level / 10);
+				obj->value[0] += Math::instance().fuzzy ( obj->level / 10 );
+				obj->value[1] += Math::instance().fuzzy ( obj->level / 10 );
+				obj->value[2] += Math::instance().fuzzy ( obj->level / 10 );
+				obj->value[3] += Math::instance().range ( Math::instance().fuzzy ( obj->level / 12 ), obj->level / 10 );
 			}
 
 			break;
@@ -1241,22 +1250,39 @@ void set_name ( Item *obj, const char* wear_slot )
 				else { strcat ( mat_short, "gray-white" ); }
 			}
 		}
-		// -- we dont' want 'none' in our naming convention.
-		if ( SameString ( flag_string ( material_flags, obj->material_flags ), "none" ) ) {
-			if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 4 ) && mat_short[0] != '\0' ) {
-				sprintf ( buf, "%s %s", mat_short, wear_slot );
+
+		if ( obj->item_type == ITEM_WAND ) {
+			if ( SameString ( flag_string ( material_flags, obj->material_flags ), "none" ) ) {
+				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 4 ) && mat_short[0] != '\0' ) {
+					sprintf ( buf, "%s %s of %s", mat_short, wear_slot, skill_table[obj->value[3]].name );
+				} else {
+					sprintf ( buf, "%s of %s", wear_slot, skill_table[obj->value[3]].name );
+				}
 			} else {
-				sprintf ( buf, "%s", wear_slot );
+				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 5 ) && mat_short[0] != '\0'  ) {
+					sprintf ( buf, "%s %s %s of %s", mat_short, flag_string ( material_flags, obj->material_flags ), wear_slot, skill_table[obj->value[3]].name );
+				} else {
+					sprintf ( buf, "%s %s of %s", flag_string ( material_flags, obj->material_flags ), wear_slot, skill_table[obj->value[3]].name );
+				}
 			}
 		} else {
-			if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 5 ) && mat_short[0] != '\0'  ) {
-				sprintf ( buf, "%s %s %s", mat_short, flag_string ( material_flags, obj->material_flags ), wear_slot );
+
+			// -- we dont' want 'none' in our naming convention.
+			if ( SameString ( flag_string ( material_flags, obj->material_flags ), "none" ) ) {
+				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 4 ) && mat_short[0] != '\0' ) {
+					sprintf ( buf, "%s %s", mat_short, wear_slot );
+				} else {
+					sprintf ( buf, "%s", wear_slot );
+				}
 			} else {
-				sprintf ( buf, "%s %s", flag_string ( material_flags, obj->material_flags ), wear_slot );
+				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 5 ) && mat_short[0] != '\0'  ) {
+					sprintf ( buf, "%s %s %s", mat_short, flag_string ( material_flags, obj->material_flags ), wear_slot );
+				} else {
+					sprintf ( buf, "%s %s", flag_string ( material_flags, obj->material_flags ), wear_slot );
+				}
 			}
 		}
 	}
-
 	obj->name = assign_string ( buf );
 }
 
@@ -1755,6 +1781,8 @@ Item * create_random ( Creature * mob, const char *argument )
 
 	if ( !str_cmp ( arg, "light" ) ) {
 		ret_item = make_armor ( obj, mob, light_vnum, ITEM_LIGHT, ITEM_TAKE, light_types[Math::instance().range ( 0, MAX_LIGHT )] );
+	} else if ( !str_cmp ( arg, "wand" ) ) {
+		ret_item = make_armor ( obj, mob, light_vnum, ITEM_WAND, ITEM_TAKE | ITEM_HOLD, "wand" );
 	} else if ( !str_cmp ( arg, "neck" ) ) {
 		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_NECK | ITEM_TAKE, neck_types[Math::instance().range ( 0, MAX_NECK )] );
 	} else if ( !str_cmp ( arg, "about" ) ) {
@@ -1789,7 +1817,7 @@ DefineCommand ( cmd_randomitem )
 {
 	Creature *o;
 	if ( IS_NULLSTR ( argument ) ) {
-		writeBuffer ( "Syntax: /randomitem [creature name] [light,neck,about,helm,legs,hands,feet,wrist,shield,torso,weapon,all]\r\n", ch );
+		writeBuffer ( "Syntax: /randomitem [creature name] [light,neck,about,helm,legs,hands,feet,wrist,shield,torso,weapon,wand,all]\r\n", ch );
 		return;
 	}
 
@@ -1813,7 +1841,7 @@ DefineCommand ( cmd_randomitem )
 			"light", "helm", "face", "torso",
 			"arms", "hands", "legs",
 			"feet", "waist", "about",
-			"wrist", "neck", "weapon"
+			"wrist", "neck", "weapon", "wand"
 		};
 
 		int max_n = nelems ( type ) - 1;
@@ -1844,7 +1872,7 @@ void random_shop ( Creature *mob )
 		"light", "helm", "face", "torso",
 		"arms", "hands", "legs",
 		"feet", "waist", "about",
-		"wrist", "neck"
+		"wrist", "neck", "weapon", "wand"
 	};
 
 	int n_type = Math::instance().range ( 0, nelems ( type ) - 1 );
@@ -1859,7 +1887,8 @@ void random_shop ( Creature *mob )
 				&& !IS_SET ( mob->random, RANDOM_ARMS ) && !IS_SET ( mob->random, RANDOM_HANDS )
 				&& !IS_SET ( mob->random, RANDOM_LEGS ) && !IS_SET ( mob->random, RANDOM_FEET )
 				&& !IS_SET ( mob->random, RANDOM_WAIST ) && !IS_SET ( mob->random, RANDOM_WRIST )
-				&& !IS_SET ( mob->random, RANDOM_NECK ) && !IS_SET ( mob->random, RANDOM_SHIELD ) ) {
+				&& !IS_SET ( mob->random, RANDOM_NECK ) && !IS_SET ( mob->random, RANDOM_SHIELD )
+				&& !IS_SET ( mob->random, RANDOM_WAND ) ) {
 			// -- generate a random shop-set
 			for ( int x = 0; x < 5; x++ ) {
 				n_type = Math::instance().range ( 0, nelems ( type ) - 1 );
@@ -1888,6 +1917,16 @@ void random_shop ( Creature *mob )
 			for ( int x = 0; x < 5; x++ ) {
 				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
 					create_random ( mob, "light" );
+				}
+			}
+		}
+
+
+		if ( IS_SET ( mob->random, RANDOM_WAND ) ) {
+			create_random ( mob, "wand" );
+			for ( int x = 0; x < 5; x++ ) {
+				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
+					create_random ( mob, "wand" );
 				}
 			}
 		}
@@ -2015,46 +2054,46 @@ void create_random_equipment ( Creature * mob )
 		return;
 	}
 
-	/*If your mobs NOT a shop keeper, he will load his eq
-	for each slot he is assigned. You can also add percentage
-	checks to see if the item will load or not, I thought about
-	it but didnt feel it nessssesssssary unless I wanted to double
-	up on neck and wrist or rings like shown below.*/
-	if ( IS_SET ( mob->random, RANDOM_HELM ) )
+	if ( IS_SET ( mob->random, RANDOM_HELM ) && Math::instance().percent() > Math::instance().range ( 0, 70 ) )
 	{ create_random ( mob, "helm" ); }
-	if ( IS_SET ( mob->random, RANDOM_TORSO ) )
+	if ( IS_SET ( mob->random, RANDOM_TORSO ) && Math::instance().percent() > Math::instance().range ( 0, 70 ) )
 	{ create_random ( mob, "torso" ); }
-	if ( IS_SET ( mob->random, RANDOM_ARMS ) )
+	if ( IS_SET ( mob->random, RANDOM_ARMS ) && Math::instance().percent() > Math::instance().range ( 0, 70 ) )
 	{ create_random ( mob, "arms" ); }
-	if ( IS_SET ( mob->random, RANDOM_HANDS ) )
+	if ( IS_SET ( mob->random, RANDOM_HANDS ) && Math::instance().percent() > Math::instance().range ( 0, 70 ) )
 	{ create_random ( mob, "hands" ); }
-	if ( IS_SET ( mob->random, RANDOM_LEGS ) )
+	if ( IS_SET ( mob->random, RANDOM_LEGS ) && Math::instance().percent() > Math::instance().range ( 0, 70 ) )
 	{ create_random ( mob, "legs" ); }
-	if ( IS_SET ( mob->random, RANDOM_FEET ) )
+	if ( IS_SET ( mob->random, RANDOM_FEET ) && Math::instance().percent() > Math::instance().range ( 0, 70 ) )
 	{ create_random ( mob, "feet" ); }
-	if ( IS_SET ( mob->random, RANDOM_WAIST ) )
+	if ( IS_SET ( mob->random, RANDOM_WAIST ) && Math::instance().percent() > Math::instance().range ( 0, 70 ) )
 	{ create_random ( mob, "waist" ); }
-	if ( IS_SET ( mob->random, RANDOM_ABOUT ) )
+	if ( IS_SET ( mob->random, RANDOM_ABOUT ) && Math::instance().percent() > Math::instance().range ( 0, 70 ) )
 	{ create_random ( mob, "about" ); }
-	if ( IS_SET ( mob->random, RANDOM_WRIST ) ) {
+	if ( IS_SET ( mob->random, RANDOM_WRIST ) && Math::instance().percent() > Math::instance().range ( 0, 70 ) ) {
 		create_random ( mob, "wrist" );
 		if ( Math::instance().percent ( ) <= 25 )
 		{ create_random ( mob, "wrist" ); }
 	}
 
-	if ( IS_SET ( mob->random, RANDOM_NECK ) ) {
+	if ( IS_SET ( mob->random, RANDOM_NECK ) && Math::instance().percent() > Math::instance().range ( 0, 70 ) ) {
 		create_random ( mob, "neck" );
 		if ( Math::instance().percent ( ) <= 25 )
 		{ create_random ( mob, "neck" ); }
 	}
 
-	if ( IS_SET ( mob->random, RANDOM_LIGHT ) )
+	if ( IS_SET ( mob->random, RANDOM_LIGHT ) && Math::instance().percent() > Math::instance().range ( 0, 70 ) )
 	{ create_random ( mob, "light" ); }
 
-	if ( IS_SET ( mob->random, RANDOM_WEAPON ) )
+	if ( IS_SET ( mob->random, RANDOM_WEAPON ) && Math::instance().percent() > Math::instance().range ( 0, 70 ) )
 	{ create_random ( mob, "weapon" ); }
-	if ( IS_SET ( mob->random, RANDOM_SHIELD ) )
+	if ( IS_SET ( mob->random, RANDOM_SHIELD ) && Math::instance().percent() > Math::instance().range ( 0, 70 ) )
 	{ create_random ( mob, "shield" ); }
+
+	if ( IS_SET ( mob->random, RANDOM_WAND ) && Math::instance().percent() > Math::instance().range ( 0, 70 ) ) {
+		create_random ( mob, "wand" );
+	}
+
 
 	tail_chain( );
 }

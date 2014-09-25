@@ -1242,13 +1242,13 @@ DefineCommand ( cmd_pick )
 		if ( obj->item_type == ITEM_TREASURECHEST ) {
 			int lock_diff = obj->value[2];
 			int chance = get_skill ( ch, gsn_pick_lock );
-			int result = Math::instance().range ( chance * 8 / 12, chance ) + dex_app[get_curr_stat ( ch, STAT_DEX )].defensive;
+			int result = Math::instance().range ( chance * 8 / 12, chance ) + get_defense ( ch );
 			result += 5; // -- pick->condition / 10;
 			if ( result < lock_diff ) {
 				writeBuffer ( Format ( "You attempt to pick the lock on %s, but fail.\n\r", obj->short_descr ), ch );
 				/*ptc(ch,"Result was %d chance, and you needed to go over %d lock_diff.\n\r", result, lock_diff);*/
-				obj->value[2] -= dex_app[get_curr_stat ( ch, STAT_DEX )].defensive / 10;
-				if ( Math::instance().percent() > Math::instance().percent() + dex_app[get_curr_stat ( ch, STAT_DEX )].defensive ) {
+				obj->value[2] -= get_defense ( ch ) / 10;
+				if ( Math::instance().percent() > Math::instance().percent() + get_defense ( ch ) ) {
 					act ( "You wince as you feel your lockpick bend inside the lock.", ch, NULL, NULL, TO_CHAR );
 					act ( "You hear a wince from $n as $e tests $s skill at lockpicking.", ch, NULL, NULL, TO_ROOM );
 					/*					pick->condition -= Math::instance().range ( 1, 3 );

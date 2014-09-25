@@ -850,26 +850,27 @@ int get_age ( Creature *ch )
 // -- Maximum awesomeness allowed!
 int get_curr_stat ( Creature *ch, int stat )
 {
-	return URANGE(3, ch->perm_stat[stat] + ch->mod_stat[stat], MAX_ATTR);
+	return URANGE ( 3, ch->perm_stat[stat] + ch->mod_stat[stat], MAX_ATTR );
 }
 
 // -- replacement for the tabled defensive stat for dex. (dex_app)
-int get_defense(Creature *ch) {
-	int dex = get_curr_stat(ch, STAT_DEX);
-	if(dex <= 6) {
+int get_defense ( Creature *ch )
+{
+	int dex = get_curr_stat ( ch, STAT_DEX );
+	if ( dex <= 6 ) {
 		int ret_stat = 0;
-		for(int x = dex; x >=0; x--) {
+		for ( int x = dex; x >= 0; x-- ) {
 			ret_stat += 10;
 		}
 		return ret_stat;
 	}
-	if(dex >= 15) {
+	if ( dex >= 15 ) {
 		int ret_stat = -5;
-		for(int x = dex; x >= 15; x--) {
-			ret_stat = (ret_stat - 5);
-			if(dex>20) ret_stat = (ret_stat -5); // if we have more then 20 dex, we get a bigger bonus
+		for ( int x = dex; x >= 15; x-- ) {
+			ret_stat = ( ret_stat - 5 );
+			if ( dex > 20 ) { ret_stat = ( ret_stat - 5 ); } // if we have more then 20 dex, we get a bigger bonus
 		}
-		return ret_stat;		
+		return ret_stat;
 	}
 	return 0;
 }
