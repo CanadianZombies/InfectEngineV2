@@ -147,7 +147,7 @@
 		if ( (a) < 0 )					\
 			log_hd(LOG_ERROR, Format("CHECK_POS : " c " == %d < 0", a) );	\
 	}							\
-	 
+
 #define nelems(x)  (sizeof(x) / sizeof(x[0]))
 
 #define IS_NPC(ch)		(IS_SET((ch)->act, ACT_IS_NPC))
@@ -211,10 +211,16 @@
 	do { \
 		if(data) \
 		{ \
-			free((void *)data); \
-			data = NULL; \
-		} \
-	} \
+            if(typeid(point) == typeid(char *) || typeid(point) == typeid(const char *)) \
+            { \
+                delete [] point; \
+            } \
+            else { \
+                free((void *)data); \
+                data = NULL; \
+            } \
+        } \
+    } \
 	while(0);
 
 #define PURGE_DATA(data) \
