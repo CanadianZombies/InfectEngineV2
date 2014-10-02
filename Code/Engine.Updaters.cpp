@@ -1215,7 +1215,7 @@ void update_handler ( void )
 	static  int     pulse_mobile;
 	static  int     pulse_violence;
 	static  int     pulse_point;
-	static  int			pulse_music;
+	static  int		pulse_music;
 	static  int     pulse_msdp;
 	static  int     pulse_weather = PULSE_TICK / 2;
 
@@ -1226,39 +1226,53 @@ void update_handler ( void )
 	}
 
 	if ( --pulse_area     <= 0 ) {
+    #if defined (_DEBUG_)
 		log_hd ( LOG_DEBUG, Format ( "pulse_area = %d; area_update will be initiated.", PULSE_AREA ) );
+    #endif
 		pulse_area	= PULSE_AREA;
 		/* Math::instance().range( PULSE_AREA / 2, 3 * PULSE_AREA / 2 ); */
 		area_update	( );
 	}
 
 	if ( --pulse_music	  <= 0 ) {
+    #if defined (_DEBUG_)
 		log_hd ( LOG_DEBUG, Format ( "pulse_music = %d; song_update will be initiated.", PULSE_MUSIC ) );
+    #endif
 		pulse_music	= PULSE_MUSIC;
 		song_update();
 	}
 
 	if ( --pulse_mobile   <= 0 ) {
+    #if defined (_DEBUG_)
 		log_hd ( LOG_DEBUG, Format ( "pulse_mobile = %d; mobile_update will be initiated.", PULSE_MOBILE ) );
+    #endif
 		pulse_mobile	= PULSE_MOBILE;
 		mobile_update	( );
 	}
 
 	if ( --pulse_violence <= 0 ) {
-		// log_hd(LOG_DEBUG, Format("pulse_violence = %d; violence_update will be initiated.", PULSE_VIOLENCE));
+
+    #if defined (_DEBUG_)
+        log_hd(LOG_DEBUG, Format("pulse_violence = %d; violence_update will be initiated.", PULSE_VIOLENCE));
+    #endif
 		pulse_violence	= PULSE_VIOLENCE;
 		violence_update	( );
 	}
 
 	/// -- temporary solution until we create an event to handle this.
 	if ( --pulse_weather <= 0 ) {
+    #if defined (_DEBUG_)
 		log_hd ( LOG_DEBUG, Format ( "pulse_weather = %d; weather_update will be initiated.", PULSE_TICK ) );
+    #endif
 		pulse_weather = PULSE_TICK;
 		weather_update();
 	}
 
 	if ( --pulse_point    <= 0 ) {
+
+    #if defined (_DEBUG_)
 		log_hd ( LOG_DEBUG, Format ( "pulse_tick = %d;  char_update, obj_update will be initiated", PULSE_TICK ) );
+    #endif
 		wiznet ( "TICK!", NULL, NULL, WIZ_TICKS, 0, 0 );
 		pulse_point     = PULSE_TICK;
 		/* Math::instance().range( PULSE_TICK / 2, 3 * PULSE_TICK / 2 ); */

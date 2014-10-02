@@ -178,12 +178,12 @@ const	struct	cmd_type	cmd_table	[] = {
 	{ "clan",		cmd_clantalk,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_COMM },
 	{ "music",          cmd_music,   	POS_SLEEPING,    0,  LOG_NORMAL, 1, CAT_COMM },
 	{ "order",		cmd_order,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_COMBAT },
-	{ "practice",       cmd_practice,	POS_SLEEPING,    0,  LOG_NORMAL, 1, CAT_INFO },
+	{ "practice",   cmd_practice,	POS_SLEEPING,    0,  LOG_NORMAL, 1, CAT_INFO },
 	{ "rest",		cmd_rest,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_MOVE },
 	{ "sit",		cmd_sit,	POS_SLEEPING,    0,  LOG_NORMAL, 1, CAT_MOVE },
 	{ "stand",		cmd_stand,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_MOVE },
 	{ "tell",		cmd_tell,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_COMM },
-	{ "unlock",         	cmd_unlock,      POS_RESTING,    0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "unlock",     cmd_unlock,      POS_RESTING,    0,  LOG_NORMAL, 1, CAT_ITEM },
 	{ "wield",		cmd_wear,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
 
 	{ "affects",		cmd_affects,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
@@ -244,7 +244,6 @@ const	struct	cmd_type	cmd_table	[] = {
 	{ "grats",		cmd_grats,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_COMM },
 	{ "gtell",		cmd_gtell,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_COMM },
 	{ "note",		cmd_note,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_COMM },
-	{ "pose",		cmd_pose,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_COMM },
 	{ "question",		cmd_question,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_COMM },
 	{ "quote",		cmd_quote,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_COMM },
 	{ "quiet",		cmd_quiet,	POS_SLEEPING, 	 0,  LOG_NORMAL, 1, CAT_COMM },
@@ -320,8 +319,7 @@ const	struct	cmd_type	cmd_table	[] = {
 	{ "version",		cmd_version,	POS_DEAD,	 0,  LOG_NORMAL, 1, CAT_INFO },
 	{ "wake",		cmd_wake,	POS_SLEEPING,	 0,  LOG_NORMAL, 1, CAT_MOVE },
 	{ "where",		cmd_where,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_INFO },
-
-	{ "",		0,		POS_DEAD,	 0,  LOG_NORMAL, 0, CAT_INFO }
+	{ NULL,		0,		POS_DEAD,	 0,  LOG_NORMAL, 0, CAT_INFO }
 };
 
 

@@ -58,10 +58,6 @@ extern	const	struct	liq_type	liq_table	[];
 extern	const	struct	skill_type	skill_table	[MAX_SKILL];
 extern  const   struct  group_type      group_table	[MAX_GROUP];
 extern          struct social_type      social_table	[MAX_SOCIALS];
-extern	const   char *				title_table	[MAX_CLASS]
-[MAX_LEVEL + 1]
-[2];
-
 
 
 /*

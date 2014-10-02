@@ -645,7 +645,6 @@ Command ( cmd_permban	);
 Command (	cmd_pick		);
 Command ( cmd_play		);
 Command ( cmd_pmote	);
-Command (	cmd_pose		);
 Command ( cmd_pour		);
 Command (	cmd_practice	);
 Command ( cmd_prefi	);
