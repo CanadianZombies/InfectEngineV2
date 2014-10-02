@@ -519,6 +519,7 @@ void    make_treasure_chest args ( ( Creature *ch, Creature *victim, int level )
 
 
 // -- Commands
+Command ( cmd_about );
 Command (	cmd_advance	);
 Command ( cmd_affects	);
 Command ( cmd_afk		);

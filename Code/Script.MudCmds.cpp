@@ -260,7 +260,7 @@ DefineCommand ( cmd_mpgecho )
 	}
 
 	for ( d = socket_list; d; d = d->next ) {
-		if ( d->connected == CON_PLAYING ) {
+		if ( d->connected == STATE_PLAYING ) {
 			if ( IsStaff ( d->character ) )
 			{ writeBuffer ( "Mob echo> ", d->character ); }
 			writeBuffer ( argument, d->character );
@@ -288,7 +288,7 @@ DefineCommand ( cmd_mpzecho )
 	{ return; }
 
 	for ( d = socket_list; d; d = d->next ) {
-		if ( d->connected == CON_PLAYING
+		if ( d->connected == STATE_PLAYING
 				&&   d->character->in_room != NULL
 				&&   d->character->in_room->area == IN_ROOM ( ch )->area ) {
 			if ( IsStaff ( d->character ) )

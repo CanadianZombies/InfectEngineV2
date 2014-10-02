@@ -78,7 +78,7 @@ void song_update ( void )
 			for ( d = socket_list; d != NULL; d = d->next ) {
 				victim = d->original ? d->original : d->character;
 
-				if ( d->connected == CON_PLAYING &&
+				if ( d->connected == STATE_PLAYING &&
 						!IS_SET ( victim->comm, COMM_NOMUSIC ) &&
 						!IS_SET ( victim->comm, COMM_QUIET ) )
 				{ act_new ( "$t", d->character, buf, NULL, TO_CHAR, POS_SLEEPING ); }

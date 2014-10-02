@@ -336,7 +336,7 @@ void RunMudLoop ( int control )
 			if ( FD_ISSET ( d->descriptor, &exc_set ) ) {
 				FD_CLR ( d->descriptor, &in_set  );
 				FD_CLR ( d->descriptor, &out_set );
-				if ( d->character && d->connected == CON_PLAYING )
+				if ( d->character && d->connected == STATE_PLAYING )
 				{ save_char_obj ( d->character ); }
 				d->outtop	= 0;
 				close_socket ( d );
@@ -355,7 +355,7 @@ void RunMudLoop ( int control )
 				{ d->character->timer = 0; }
 				if ( !read_from_descriptor ( d ) ) {
 					FD_CLR ( d->descriptor, &out_set );
-					if ( d->character != NULL && d->connected == CON_PLAYING )
+					if ( d->character != NULL && d->connected == STATE_PLAYING )
 					{ save_char_obj ( d->character ); }
 					d->outtop	= 0;
 					close_socket ( d );
@@ -393,7 +393,7 @@ void RunMudLoop ( int control )
 				{ StringEditorOptions ( d->character, d->incomm ); }
 				else {
 					switch ( d->connected ) {
-						case CON_PLAYING:
+						case STATE_PLAYING:
 							if ( !run_olc_editor ( d ) )
 							{ substitute_alias ( d, d->incomm ); }
 							break;
@@ -423,7 +423,7 @@ void RunMudLoop ( int control )
 			if ( ( d->fcommand || d->outtop > 0 )
 					&&   FD_ISSET ( d->descriptor, &out_set ) ) {
 				if ( !process_output ( d, TRUE ) ) {
-					if ( d->character != NULL && d->connected == CON_PLAYING )
+					if ( d->character != NULL && d->connected == STATE_PLAYING )
 					{ save_char_obj ( d->character ); }
 					d->outtop	= 0;
 					close_socket ( d );
@@ -517,7 +517,7 @@ void init_descriptor ( int control )
 	dnew = new_descriptor();
 
 	dnew->descriptor	= desc;
-	dnew->connected	= CON_GET_NAME;
+	dnew->connected	= STATE_GET_NAME;
 	dnew->showstr_head	= NULL;
 	dnew->showstr_point = NULL;
 	dnew->outsize	= 2000;
@@ -609,7 +609,7 @@ void close_socket ( Socket *dclose )
 	if ( ( ch = dclose->character ) != NULL ) {
 		log_hd ( LOG_SECURITY, Format ( "Closing link to %s.", ch->name ) );
 		/* cut down on wiznet spam when rebooting */
-		if ( dclose->connected == CON_PLAYING && !is_shutdown ) {
+		if ( dclose->connected == STATE_PLAYING && !is_shutdown ) {
 			act ( "$n has lost $s link.", ch, NULL, NULL, TO_ROOM );
 			wiznet ( "Net death has claimed $N.", ch, NULL, WIZ_LINKS, 0, 0 );
 			ch->desc = NULL;
@@ -748,7 +748,7 @@ void read_from_buffer ( Socket *d )
 			d->repeat = 0;
 		} else {
 			if ( ++d->repeat >= 25 && d->character
-					&&  d->connected == CON_PLAYING ) {
+					&&  d->connected == STATE_PLAYING ) {
 				log_hd ( LOG_SECURITY, Format ( "%s input spamming!", d->host ) );
 				wiznet ( "$N is input spamming!!",
 						 d->character, NULL, WIZ_SPAM, 0, get_trust ( d->character ) );
@@ -808,9 +808,9 @@ bool process_output ( Socket *d, bool fPrompt )
 		; /* The last sent data was OOB, so do NOT draw the prompt */
 	else if ( !is_shutdown && d->showstr_point )
 	{ write_to_buffer ( d, "\r\n\r\n\a[F500] { \a[F535]Shoot that Return Key \a[F500]} \an\r\n\r\n", 0 ); }
-	else if ( fPrompt && d->pEditBackup && d->connected == CON_PLAYING )
+	else if ( fPrompt && d->pEditBackup && d->connected == STATE_PLAYING )
 	{ write_to_buffer ( d, "} ", 2 ); }
-	else if ( fPrompt && d->connected == CON_PLAYING ) {
+	else if ( fPrompt && d->connected == STATE_PLAYING ) {
 		Creature *ch;
 		Creature *victim;
 
@@ -1162,7 +1162,7 @@ void nanny ( Socket *d, char *argument )
 			close_socket ( d );
 			return;
 
-		case CON_GET_NAME:
+		case STATE_GET_NAME:
 			if ( IS_NULLSTR ( argument ) ) {
 				close_socket ( d );
 				return;
@@ -1205,7 +1205,7 @@ void nanny ( Socket *d, char *argument )
 				write_to_buffer ( d, "Password: ", 0 );
 				ProtocolNoEcho ( d, true );
 
-				d->connected = CON_GET_OLD_PASSWORD;
+				d->connected = STATE_GET_OLD_PASSWORD;
 				return;
 			} else {
 				/* New player */
@@ -1224,12 +1224,12 @@ void nanny ( Socket *d, char *argument )
 
 				sprintf ( buf, "Did I get that right, %s (Y/N)? ", argument );
 				write_to_buffer ( d, buf, 0 );
-				d->connected = CON_CONFIRM_NEW_NAME;
+				d->connected = STATE_CONFIRM_NEW_NAME;
 				return;
 			}
 			break;
 
-		case CON_GET_OLD_PASSWORD:
+		case STATE_GET_OLD_PASSWORD:
 			write_to_buffer ( d, "\n\r", 2 );
 
 			if ( strcmp ( crypt ( argument, ch->pcdata->pwd ), ch->pcdata->pwd ) ) {
@@ -1251,16 +1251,16 @@ void nanny ( Socket *d, char *argument )
 
 			if ( IsStaff ( ch ) ) {
 				cmd_function ( ch, &cmd_help, "imotd" );
-				d->connected = CON_READ_IMOTD;
+				d->connected = STATE_READ_IMOTD;
 			} else {
 				cmd_function ( ch, &cmd_help, "motd" );
-				d->connected = CON_READ_MOTD;
+				d->connected = STATE_READ_MOTD;
 			}
 			break;
 
 		/* RT code for breaking link */
 
-		case CON_BREAK_CONNECT:
+		case STATE_BREAK_CONNECT:
 			switch ( *argument ) {
 				case 'y' :
 				case 'Y':
@@ -1282,7 +1282,7 @@ void nanny ( Socket *d, char *argument )
 						recycle_char ( d->character );
 						d->character = NULL;
 					}
-					d->connected = CON_GET_NAME;
+					d->connected = STATE_GET_NAME;
 					break;
 
 				case 'n' :
@@ -1292,7 +1292,7 @@ void nanny ( Socket *d, char *argument )
 						recycle_char ( d->character );
 						d->character = NULL;
 					}
-					d->connected = CON_GET_NAME;
+					d->connected = STATE_GET_NAME;
 					break;
 
 				default:
@@ -1301,7 +1301,7 @@ void nanny ( Socket *d, char *argument )
 			}
 			break;
 
-		case CON_CONFIRM_NEW_NAME:
+		case STATE_CONFIRM_NEW_NAME:
 			switch ( *argument ) {
 				case 'y':
 				case 'Y':
@@ -1310,7 +1310,7 @@ void nanny ( Socket *d, char *argument )
 					write_to_buffer ( d, buf, 0 );
 					ProtocolNoEcho ( d, true );
 
-					d->connected = CON_GET_NEW_PASSWORD;
+					d->connected = STATE_GET_NEW_PASSWORD;
 					break;
 
 				case 'n':
@@ -1318,7 +1318,7 @@ void nanny ( Socket *d, char *argument )
 					write_to_buffer ( d, "Ok, what IS it, then? ", 0 );
 					recycle_char ( d->character );
 					d->character = NULL;
-					d->connected = CON_GET_NAME;
+					d->connected = STATE_GET_NAME;
 					break;
 
 				default:
@@ -1327,7 +1327,7 @@ void nanny ( Socket *d, char *argument )
 			}
 			break;
 
-		case CON_GET_NEW_PASSWORD:
+		case STATE_GET_NEW_PASSWORD:
 #if defined(unix)
 			write_to_buffer ( d, "\n\r", 2 );
 #endif
@@ -1366,10 +1366,10 @@ void nanny ( Socket *d, char *argument )
 			PURGE_DATA ( ch->pcdata->pwd );
 			ch->pcdata->pwd	= assign_string ( pwdnew );
 			write_to_buffer ( d, "Please retype password: ", 0 );
-			d->connected = CON_CONFIRM_NEW_PASSWORD;
+			d->connected = STATE_CONFIRM_NEW_PASSWORD;
 			break;
 
-		case CON_CONFIRM_NEW_PASSWORD:
+		case STATE_CONFIRM_NEW_PASSWORD:
 #if defined(unix)
 			write_to_buffer ( d, "\n\r", 2 );
 #endif
@@ -1377,7 +1377,7 @@ void nanny ( Socket *d, char *argument )
 			if ( strcmp ( crypt ( argument, ch->pcdata->pwd ), ch->pcdata->pwd ) ) {
 				write_to_buffer ( d, "Passwords don't match.\n\rRetype password: ",
 								  0 );
-				d->connected = CON_GET_NEW_PASSWORD;
+				d->connected = STATE_GET_NEW_PASSWORD;
 				return;
 			}
 
@@ -1391,10 +1391,10 @@ void nanny ( Socket *d, char *argument )
 			}
 			write_to_buffer ( d, "\n\r", 0 );
 			write_to_buffer ( d, "What is your race (help for more information)? ", 0 );
-			d->connected = CON_GET_NEW_RACE;
+			d->connected = STATE_GET_NEW_RACE;
 			break;
 
-		case CON_GET_NEW_RACE:
+		case STATE_GET_NEW_RACE:
 			ChopC ( argument, arg );
 
 			if ( !strcmp ( arg, "help" ) ) {
@@ -1447,11 +1447,11 @@ void nanny ( Socket *d, char *argument )
 			ch->size = pc_race_table[race].size;
 
 			write_to_buffer ( d, "What is your sex (M/F)? ", 0 );
-			d->connected = CON_GET_NEW_SEX;
+			d->connected = STATE_GET_NEW_SEX;
 			break;
 
 
-		case CON_GET_NEW_SEX:
+		case STATE_GET_NEW_SEX:
 			switch ( argument[0] ) {
 				case 'm':
 				case 'M':
@@ -1476,10 +1476,10 @@ void nanny ( Socket *d, char *argument )
 			}
 			strcat ( buf, "]: " );
 			write_to_buffer ( d, buf, 0 );
-			d->connected = CON_GET_NEW_CLASS;
+			d->connected = STATE_GET_NEW_CLASS;
 			break;
 
-		case CON_GET_NEW_CLASS:
+		case STATE_GET_NEW_CLASS:
 			iClass = archetype_lookup ( argument );
 
 			if ( iClass == -1 ) {
@@ -1497,10 +1497,10 @@ void nanny ( Socket *d, char *argument )
 			write_to_buffer ( d, "\n\r", 2 );
 			write_to_buffer ( d, "You may be good, neutral, or evil.\n\r", 0 );
 			write_to_buffer ( d, "Which alignment (G/N/E)? ", 0 );
-			d->connected = CON_GET_ALIGNMENT;
+			d->connected = STATE_GET_ALIGNMENT;
 			break;
 
-		case CON_GET_ALIGNMENT:
+		case STATE_GET_ALIGNMENT:
 			switch ( argument[0] ) {
 				case 'g' :
 				case 'G' :
@@ -1528,10 +1528,10 @@ void nanny ( Socket *d, char *argument )
 			write_to_buffer ( d, "Do you wish to customize this character?\n\r", 0 );
 			write_to_buffer ( d, "Customization takes time, but allows a wider range of skills and abilities.\n\r", 0 );
 			write_to_buffer ( d, "Customize (Y/N)? ", 0 );
-			d->connected = CON_DEFAULT_CHOICE;
+			d->connected = STATE_DEFAULT_CHOICE;
 			break;
 
-		case CON_DEFAULT_CHOICE:
+		case STATE_DEFAULT_CHOICE:
 			write_to_buffer ( d, "\n\r", 2 );
 			switch ( argument[0] ) {
 				case 'y':
@@ -1543,7 +1543,7 @@ void nanny ( Socket *d, char *argument )
 					write_to_buffer ( d, "You already have the following skills:\n\r", 0 );
 					cmd_function ( ch, &cmd_skills, "" );
 					cmd_function ( ch, &cmd_help, "menu choice" );
-					d->connected = CON_GEN_GROUPS;
+					d->connected = STATE_GEN_GROUPS;
 					break;
 				case 'n':
 				case 'N':
@@ -1559,7 +1559,7 @@ void nanny ( Socket *d, char *argument )
 						}
 					strcat ( buf, "\n\rYour choice? " );
 					write_to_buffer ( d, buf, 0 );
-					d->connected = CON_PICK_WEAPON;
+					d->connected = STATE_PICK_WEAPON;
 					break;
 				default:
 					write_to_buffer ( d, "Please answer (Y/N)? ", 0 );
@@ -1567,7 +1567,7 @@ void nanny ( Socket *d, char *argument )
 			}
 			break;
 
-		case CON_PICK_WEAPON:
+		case STATE_PICK_WEAPON:
 			write_to_buffer ( d, "\n\r", 2 );
 			weapon = weapon_lookup ( argument );
 			if ( weapon == -1 || ch->pcdata->learned[*weapon_table[weapon].gsn] <= 0 ) {
@@ -1587,10 +1587,10 @@ void nanny ( Socket *d, char *argument )
 			ch->pcdata->learned[*weapon_table[weapon].gsn] = 40;
 			write_to_buffer ( d, "\n\r", 2 );
 			cmd_function ( ch, &cmd_help, "motd" );
-			d->connected = CON_READ_MOTD;
+			d->connected = STATE_READ_MOTD;
 			break;
 
-		case CON_GEN_GROUPS:
+		case STATE_GEN_GROUPS:
 			writeBuffer ( "\n\r", ch );
 
 			if ( !str_cmp ( argument, "done" ) ) {
@@ -1627,7 +1627,7 @@ void nanny ( Socket *d, char *argument )
 					}
 				strcat ( buf, "\n\rYour choice? " );
 				write_to_buffer ( d, buf, 0 );
-				d->connected = CON_PICK_WEAPON;
+				d->connected = STATE_PICK_WEAPON;
 				break;
 			}
 
@@ -1639,13 +1639,13 @@ void nanny ( Socket *d, char *argument )
 			cmd_function ( ch, &cmd_help, "menu choice" );
 			break;
 
-		case CON_READ_IMOTD:
+		case STATE_READ_IMOTD:
 			write_to_buffer ( d, "\n\r", 2 );
 			cmd_function ( ch, &cmd_help, "motd" );
-			d->connected = CON_READ_MOTD;
+			d->connected = STATE_READ_MOTD;
 			break;
 
-		case CON_READ_MOTD:
+		case STATE_READ_MOTD:
 			if ( ch->pcdata == NULL || IS_NULLSTR ( ch->pcdata->pwd ) ) {
 				write_to_buffer ( d, "Warning! Null password!\n\r", 0 );
 				write_to_buffer ( d, "Type 'password null <new password>' to fix.\n\r", 0 );
@@ -1656,7 +1656,7 @@ void nanny ( Socket *d, char *argument )
 			ch->next	= char_list;
 			char_list	= ch;
 
-			d->connected	= CON_PLAYING;
+			d->connected	= STATE_PLAYING;
 			reset_char ( ch );
 
 			// -- increment our total connections.
@@ -1870,7 +1870,7 @@ bool check_reconnect ( Socket *d, char *name, bool fConn )
 				log_hd ( LOG_SECURITY, Format ( "%s@%s reconnected.", ch->name, d->host ) );
 				wiznet ( "$N groks the fullness of $S link.",
 						 ch, NULL, WIZ_LINKS, 0, 0 );
-				d->connected = CON_PLAYING;
+				d->connected = STATE_PLAYING;
 			}
 			return TRUE;
 		}
@@ -1891,13 +1891,13 @@ bool check_playing ( Socket *d, char *name )
 	for ( dold = socket_list; dold; dold = dold->next ) {
 		if ( dold != d
 				&&   dold->character != NULL
-				&&   dold->connected != CON_GET_NAME
-				&&   dold->connected != CON_GET_OLD_PASSWORD
+				&&   dold->connected != STATE_GET_NAME
+				&&   dold->connected != STATE_GET_OLD_PASSWORD
 				&&   !str_cmp ( name, dold->original
 								? dold->original->name : dold->character->name ) ) {
 			write_to_buffer ( d, "That character is already playing.\n\r", 0 );
 			write_to_buffer ( d, "Do you wish to connect anyway (Y/N)?", 0 );
-			d->connected = CON_BREAK_CONNECT;
+			d->connected = STATE_BREAK_CONNECT;
 			return TRUE;
 		}
 	}
@@ -1911,7 +1911,7 @@ void stop_idling ( Creature *ch )
 {
 	if ( ch == NULL
 			||   ch->desc == NULL
-			||   ch->desc->connected != CON_PLAYING
+			||   ch->desc->connected != STATE_PLAYING
 			||   ch->was_in_room == NULL
 			||   IN_ROOM ( ch ) != get_room_index ( ROOM_VNUM_LIMBO ) )
 	{ return; }

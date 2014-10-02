@@ -270,7 +270,7 @@ DefineCommand ( cmd_auction )
 
 		victim = d->original ? d->original : d->character;
 
-		if ( d->connected == CON_PLAYING &&
+		if ( d->connected == STATE_PLAYING &&
 				d->character != ch &&
 				!IS_SET ( victim->comm, COMM_NOAUCTION ) &&
 				!IS_SET ( victim->comm, COMM_QUIET ) ) {
@@ -315,7 +315,7 @@ DefineCommand ( cmd_gossip )
 
 			victim = d->original ? d->original : d->character;
 
-			if ( d->connected == CON_PLAYING &&
+			if ( d->connected == STATE_PLAYING &&
 					d->character != ch &&
 					!IS_SET ( victim->comm, COMM_NOGOSSIP ) &&
 					!IS_SET ( victim->comm, COMM_QUIET ) ) {
@@ -360,7 +360,7 @@ DefineCommand ( cmd_grats )
 
 			victim = d->original ? d->original : d->character;
 
-			if ( d->connected == CON_PLAYING &&
+			if ( d->connected == STATE_PLAYING &&
 					d->character != ch &&
 					!IS_SET ( victim->comm, COMM_NOGRATS ) &&
 					!IS_SET ( victim->comm, COMM_QUIET ) ) {
@@ -405,7 +405,7 @@ DefineCommand ( cmd_quote )
 
 			victim = d->original ? d->original : d->character;
 
-			if ( d->connected == CON_PLAYING &&
+			if ( d->connected == STATE_PLAYING &&
 					d->character != ch &&
 					!IS_SET ( victim->comm, COMM_NOQUOTE ) &&
 					!IS_SET ( victim->comm, COMM_QUIET ) ) {
@@ -450,7 +450,7 @@ DefineCommand ( cmd_question )
 
 			victim = d->original ? d->original : d->character;
 
-			if ( d->connected == CON_PLAYING &&
+			if ( d->connected == STATE_PLAYING &&
 					d->character != ch &&
 					!IS_SET ( victim->comm, COMM_NOQUESTION ) &&
 					!IS_SET ( victim->comm, COMM_QUIET ) ) {
@@ -495,7 +495,7 @@ DefineCommand ( cmd_answer )
 
 			victim = d->original ? d->original : d->character;
 
-			if ( d->connected == CON_PLAYING &&
+			if ( d->connected == STATE_PLAYING &&
 					d->character != ch &&
 					!IS_SET ( victim->comm, COMM_NOQUESTION ) &&
 					!IS_SET ( victim->comm, COMM_QUIET ) ) {
@@ -541,7 +541,7 @@ DefineCommand ( cmd_music )
 
 			victim = d->original ? d->original : d->character;
 
-			if ( d->connected == CON_PLAYING &&
+			if ( d->connected == STATE_PLAYING &&
 					d->character != ch &&
 					!IS_SET ( victim->comm, COMM_NOMUSIC ) &&
 					!IS_SET ( victim->comm, COMM_QUIET ) ) {
@@ -584,7 +584,7 @@ DefineCommand ( cmd_clantalk )
 	writeBuffer ( buf, ch );
 	sprintf ( buf, "$n clans '%s'", argument );
 	for ( d = socket_list; d != NULL; d = d->next ) {
-		if ( d->connected == CON_PLAYING &&
+		if ( d->connected == STATE_PLAYING &&
 				d->character != ch &&
 				is_same_clan ( ch, d->character ) &&
 				!IS_SET ( d->character->comm, COMM_NOCLAN ) &&
@@ -617,7 +617,7 @@ DefineCommand ( cmd_immtalk )
 	sprintf ( buf, "$n: %s", argument );
 	act_new ( "$n: $t", ch, argument, NULL, TO_CHAR, POS_DEAD );
 	for ( d = socket_list; d != NULL; d = d->next ) {
-		if ( d->connected == CON_PLAYING &&
+		if ( d->connected == STATE_PLAYING &&
 				IsStaff ( d->character ) &&
 				!IS_SET ( d->character->comm, COMM_NOWIZ ) ) {
 			act_new ( "$n: $t", ch, argument, d->character, TO_VICT, POS_DEAD );
@@ -679,7 +679,7 @@ DefineCommand ( cmd_shout )
 
 		victim = d->original ? d->original : d->character;
 
-		if ( d->connected == CON_PLAYING &&
+		if ( d->connected == STATE_PLAYING &&
 				d->character != ch &&
 				!IS_SET ( victim->comm, COMM_SHOUTSOFF ) &&
 				!IS_SET ( victim->comm, COMM_QUIET ) ) {
@@ -850,7 +850,7 @@ DefineCommand ( cmd_yell )
 
 	act ( "You yell '$t'", ch, argument, NULL, TO_CHAR );
 	for ( d = socket_list; d != NULL; d = d->next ) {
-		if ( d->connected == CON_PLAYING
+		if ( d->connected == STATE_PLAYING
 				&&   d->character != ch
 				&&   d->character->in_room != NULL
 				&&   d->character->in_room->area == IN_ROOM ( ch )->area

@@ -559,7 +559,7 @@ void TimeEvent::Execute()
 
 	if ( buf[0] != '\0' ) {
 		for ( d = socket_list; d != NULL; d = d->next ) {
-			if ( d->connected == CON_PLAYING
+			if ( d->connected == STATE_PLAYING
 					&&   IS_OUTSIDE ( d->character )
 					&&   IS_AWAKE ( d->character ) )
 			{ writeBuffer ( buf, d->character ); }

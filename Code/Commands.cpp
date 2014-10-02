@@ -254,7 +254,8 @@ const	struct	cmd_type	cmd_table	[] = {
 	{ "unread",		cmd_unread,	POS_SLEEPING,    0,  LOG_NORMAL, 1, CAT_COMM },
 	{ "yell",		cmd_yell,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_COMM },
 
-	{ "brandish",		cmd_brandish,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "about",      cmd_about,  POS_RESTING,     0,  LOG_NORMAL, 1, CAT_ITEM },
+	{ "brandish",	cmd_brandish,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
 	{ "close",		cmd_close,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
 	{ "drink",		cmd_drink,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },
 	{ "drop",		cmd_drop,	POS_RESTING,	 0,  LOG_NORMAL, 1, CAT_ITEM },

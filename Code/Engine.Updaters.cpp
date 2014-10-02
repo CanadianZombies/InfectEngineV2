@@ -634,7 +634,7 @@ void weather_update ( void )
 
 	if ( buf[0] != '\0' ) {
 		for ( d = socket_list; d != NULL; d = d->next ) {
-			if ( d->connected == CON_PLAYING
+			if ( d->connected == STATE_PLAYING
 					&&   IS_OUTSIDE ( d->character )
 					&&   IS_AWAKE ( d->character ) )
 			{ writeBuffer ( buf, d->character ); }
@@ -1092,7 +1092,7 @@ void msdp_update ( void )
 	int PlayerCount = 0;
 
 	for ( d = socket_list; d != NULL; d = d->next ) {
-		if ( d->character && d->connected == CON_PLAYING && !IS_NPC ( d->character ) ) {
+		if ( d->character && d->connected == STATE_PLAYING && !IS_NPC ( d->character ) ) {
 			char buf[MAX_STRING_LENGTH];
 			Creature *pOpponent = d->character->fighting;
 			RoomData *pRoom = d->character->in_room;
@@ -1230,7 +1230,6 @@ void update_handler ( void )
 		log_hd ( LOG_DEBUG, Format ( "pulse_area = %d; area_update will be initiated.", PULSE_AREA ) );
 #endif
 		pulse_area	= PULSE_AREA;
-		/* Math::instance().range( PULSE_AREA / 2, 3 * PULSE_AREA / 2 ); */
 		area_update	( );
 	}
 

@@ -137,6 +137,26 @@ char *telopts[NTELOPTS] = {
 #endif
 
 
+typedef enum {  STATE_PLAYING = 0,                    // -- in game
+				STATE_GET_NAME,
+				STATE_GET_OLD_PASSWORD,
+				STATE_GET_NEW_PASSWORD,
+				STATE_GET_NEW_RACE,
+				STATE_GET_NEW_SEX,
+				STATE_GET_NEW_CLASS,
+				STATE_GET_ALIGNMENT,
+				STATE_CONFIRM_NEW_NAME,
+				STATE_CONFIRM_NEW_PASSWORD,
+				STATE_DEFAULT_CHOICE,
+				STATE_GEN_GROUPS,
+				STATE_PICK_WEAPON,
+				STATE_READ_IMOTD,
+				STATE_READ_MOTD,
+				STATE_BREAK_CONNECT
+			 } connection_states;
+
+
+
 #endif
 
 // -- EOF

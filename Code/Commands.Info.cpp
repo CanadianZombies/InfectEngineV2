@@ -117,8 +117,7 @@ char *format_obj_to_char ( Item *obj, Creature *ch, bool fShort )
  */
 void show_list_to_char ( Item *list, Creature *ch, bool fShort, bool fShowNothing )
 {
-	char buf[MAX_STRING_LENGTH];
-	BUFFER *output;
+	std::string output ( "" );
 	char **prgpstrShow;
 	int *prgnShow;
 	char *pstrShow;
@@ -130,11 +129,6 @@ void show_list_to_char ( Item *list, Creature *ch, bool fShort, bool fShowNothin
 
 	if ( ch->desc == NULL )
 	{ return; }
-
-	/*
-	 * Alloc space for output lines.
-	 */
-	output = new_buf();
 
 	count = 0;
 	for ( obj = list; obj != NULL; obj = obj->next_content )
@@ -190,14 +184,13 @@ void show_list_to_char ( Item *list, Creature *ch, bool fShort, bool fShowNothin
 
 		if ( IS_NPC ( ch ) || IS_SET ( ch->comm, COMM_COMBINE ) ) {
 			if ( prgnShow[iShow] != 1 ) {
-				sprintf ( buf, "(%2d) ", prgnShow[iShow] );
-				add_buf ( output, buf );
+				output.append ( Format ( "(%2d) ", prgnShow[iShow] ) );
 			} else {
-				add_buf ( output, "     " );
+				output.append ( "     " );
 			}
 		}
-		add_buf ( output, prgpstrShow[iShow] );
-		add_buf ( output, "\n\r" );
+		output.append ( prgpstrShow[iShow] );
+		output.append ( "\n\r" );
 		PURGE_DATA ( prgpstrShow[iShow] );
 	}
 
@@ -206,14 +199,12 @@ void show_list_to_char ( Item *list, Creature *ch, bool fShort, bool fShowNothin
 		{ writeBuffer ( "     ", ch ); }
 		writeBuffer ( "Nothing.\n\r", ch );
 	}
-	writePage ( buf_string ( output ), ch );
+	writePage ( C_STR ( output ), ch );
 
-	/*
-	 * Clean up.
-	 */
-	recycle_buf ( output );
-	PURGE_DATA ( prgpstrShow );
-	PURGE_DATA ( prgnShow );
+	// -- cleanup!
+	// -- PURGE_DATA will corrupt absolutely here.
+	free ( ( void * ) prgpstrShow );
+	free ( ( void * ) prgnShow );
 	return;
 }
 
@@ -1388,8 +1379,8 @@ DefineCommand ( cmd_help )
 			{ add_buf ( output, pHelp->text ); }
 			found = TRUE;
 			/* small hack :) */
-			if ( ch->desc != NULL && ch->desc->connected != CON_PLAYING
-					&&  		    ch->desc->connected != CON_GEN_GROUPS )
+			if ( ch->desc != NULL && ch->desc->connected != STATE_PLAYING
+					&&  		    ch->desc->connected != STATE_GEN_GROUPS )
 			{ break; }
 		}
 	}
@@ -1664,7 +1655,7 @@ DefineCommand ( cmd_count )
 	count = 0;
 
 	for ( d = socket_list; d != NULL; d = d->next )
-		if ( d->connected == CON_PLAYING && can_see ( ch, d->character ) )
+		if ( d->connected == STATE_PLAYING && can_see ( ch, d->character ) )
 		{ count++; }
 
 	max_on = UMAX ( count, max_on );
@@ -1829,7 +1820,7 @@ DefineCommand ( cmd_where )
 		writeBuffer ( "Players near you:\n\r", ch );
 		found = FALSE;
 		for ( d = socket_list; d; d = d->next ) {
-			if ( d->connected == CON_PLAYING
+			if ( d->connected == STATE_PLAYING
 					&& ( victim = d->character ) != NULL
 					&&   !IS_NPC ( victim )
 					&&   IN_ROOM ( victim ) != NULL
@@ -2375,6 +2366,80 @@ DefineCommand ( cmd_levelup )
 	}
 	return;
 }
+
+int getApplyTotal ( Item * obj, int app_type )
+{
+	int to_return = 0;
+	Affect * paf;
+
+	if ( !obj->enchanted ) {
+		if ( obj->pIndexData->affected != NULL ) {
+			for ( paf = obj->pIndexData->affected; paf != NULL; paf = paf->next ) {
+				if ( paf->location != app_type )
+				{ continue; }
+				to_return += paf->modifier;
+			}
+		}
+	}
+	if ( obj->affected != NULL ) {
+		for ( paf = obj->affected; paf != NULL; paf = paf->next ) {
+			if ( paf->location != app_type )
+			{ continue; }
+			to_return += paf->modifier;
+		}
+	}
+
+	/* possible future planning here
+	if (obj->affected2 != NULL ) {
+		for ( paf = obj->affected2; paf != NULL; paf = paf->next ) {
+			if ( paf->location != app_type )
+			{ continue; }
+			to_return += paf->modifier;
+		}
+	} */
+	return to_return;
+}
+
+DefineCommand ( cmd_about )
+{
+	Item *o, *on;
+
+	if ( IS_NULLSTR ( argument ) ) {
+		writeBuffer ( "Syntax: about <item name>\r\n", ch );
+		return;
+	}
+
+	bool first = false;
+	std::string search_for;
+	ChopString ( argument, search_for );
+
+	for ( o = CARRYING ( ch ); o; o = on ) {
+		on = o->next_content;
+		if ( is_name ( C_STR ( search_for ), o->name ) ) {
+			writeBuffer ( Format ( "\ayAbout the Item:           \aW%s\an\r\n", o->short_descr ), ch );
+			writeBuffer ( Format ( "\ayLevel:                    \aW%d\an\r\n", o->level ), ch );
+			writeBuffer ( Format ( "\ayRequirements:             \acSTR\aB{\aW%d\aB} \acINT\aB{\aW%d\aB} \acCON\aB{\aW%d\aB} \acWIS\aB{\aW%d\aB} \acDEX\aB{\aW%d\aB} \acSIZE:\aB{\aW%s\aB}\an\r\n", o->requirements[STR_REQ],
+								   o->requirements[INT_REQ], o->requirements[CON_REQ], o->requirements[WIS_REQ], o->requirements[DEX_REQ],
+								   size_table[ ( int ) o->requirements[SIZ_REQ]].name ), ch );
+
+			for ( int x = 1; apply_flags[x].name != NULL; x++ ) {
+				// -- starts at 1 so it skips the apply none option.
+				int ret = getApplyTotal ( o, apply_flags[x].bit );
+				if ( ret != 0 ) {
+					if ( !first ) {
+						first = true;
+						writeBuffer ( "\aGBenefits and Disadvantages:\an\r\n", ch );
+					}
+					writeBuffer ( Format ( "\t\aC%s \awwill be affected by \aO%d\an\r\n", capitalize ( apply_flags[x].name ), ret ), ch );
+				}
+			}
+			return;
+		}
+	}
+	writeBuffer ( "You do not seem to be carrying that item.\r\n", ch );
+	return;
+}
+
 // -- EOF
 
 

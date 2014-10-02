@@ -302,27 +302,6 @@
 #define dd			536870912
 #define ee			1073741824
 
-
-/*
- * Connected state for a channel.
- */
-#define CON_PLAYING			 0
-#define CON_GET_NAME			 1
-#define CON_GET_OLD_PASSWORD		 2
-#define CON_CONFIRM_NEW_NAME		 3
-#define CON_GET_NEW_PASSWORD		 4
-#define CON_CONFIRM_NEW_PASSWORD	 5
-#define CON_GET_NEW_RACE		 6
-#define CON_GET_NEW_SEX			 7
-#define CON_GET_NEW_CLASS		 8
-#define CON_GET_ALIGNMENT		 9
-#define CON_DEFAULT_CHOICE		10
-#define CON_GEN_GROUPS			11
-#define CON_PICK_WEAPON			12
-#define CON_READ_IMOTD			13
-#define CON_READ_MOTD			14
-#define CON_BREAK_CONNECT		15
-
 /*
  * TO types for act.
  */
@@ -827,9 +806,6 @@
 #define PUT_ON			(N)
 #define PUT_IN			(O)
 #define PUT_INSIDE		(P)
-
-
-
 
 /*
  * Apply types (for affects).

@@ -37,6 +37,7 @@
 
 #ifndef _Structures_H
 #define _Structures_H
+
 /*
  * Site ban structure.
  */

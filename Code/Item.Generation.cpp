@@ -327,6 +327,8 @@ void paf_set ( Item *obj, int types, int modifier, int bitvector )
 	paf->duration = -1;
 	paf->modifier = modifier;
 	paf->bitvector = 0;
+
+	// -- linked list
 	paf->next = obj->affected;
 	obj->affected = paf;
 

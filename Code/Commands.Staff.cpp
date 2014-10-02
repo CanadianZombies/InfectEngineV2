@@ -144,7 +144,7 @@ void wiznet ( const char *str, Creature *ch, Item *obj,
 	Socket *d;
 
 	for ( d = socket_list; d != NULL; d = d->next ) {
-		if ( d->connected == CON_PLAYING
+		if ( d->connected == STATE_PLAYING
 				&&  IsStaff ( d->character )
 				&&  IS_SET ( d->character->wiznet, WIZ_ON )
 				&&  ( !flag || IS_SET ( d->character->wiznet, flag ) )
@@ -594,7 +594,7 @@ DefineCommand ( cmd_echo )
 	}
 
 	for ( d = socket_list; d; d = d->next ) {
-		if ( d->connected == CON_PLAYING ) {
+		if ( d->connected == STATE_PLAYING ) {
 			if ( get_trust ( d->character ) >= get_trust ( ch ) )
 			{ writeBuffer ( "global> ", d->character ); }
 			writeBuffer ( argument, d->character );
@@ -618,7 +618,7 @@ DefineCommand ( cmd_recho )
 	}
 
 	for ( d = socket_list; d; d = d->next ) {
-		if ( d->connected == CON_PLAYING
+		if ( d->connected == STATE_PLAYING
 				&&   d->character->in_room == IN_ROOM ( ch ) ) {
 			if ( get_trust ( d->character ) >= get_trust ( ch ) )
 			{ writeBuffer ( "local> ", d->character ); }
@@ -640,7 +640,7 @@ DefineCommand ( cmd_zecho )
 	}
 
 	for ( d = socket_list; d; d = d->next ) {
-		if ( d->connected == CON_PLAYING
+		if ( d->connected == STATE_PLAYING
 				&&  d->character->in_room != NULL && IN_ROOM ( ch ) != NULL
 				&&  d->character->in_room->area == IN_ROOM ( ch )->area ) {
 			if ( get_trust ( d->character ) >= get_trust ( ch ) )
@@ -716,7 +716,7 @@ DefineCommand ( cmd_transfer )
 
 	if ( !str_cmp ( arg1, "all" ) ) {
 		for ( d = socket_list; d != NULL; d = d->next ) {
-			if ( d->connected == CON_PLAYING
+			if ( d->connected == STATE_PLAYING
 					&&   d->character != ch
 					&&   d->character->in_room != NULL
 					&&   can_see ( ch, d->character ) ) {
@@ -1773,7 +1773,7 @@ DefineCommand ( cmd_mwhere )
 
 		buffer = new_buf();
 		for ( d = socket_list; d != NULL; d = d->next ) {
-			if ( d->character != NULL && d->connected == CON_PLAYING
+			if ( d->character != NULL && d->connected == STATE_PLAYING
 					&&  d->character->in_room != NULL && can_see ( ch, d->character )
 					&&  can_see_room ( ch, d->character->in_room ) ) {
 				victim = d->character;

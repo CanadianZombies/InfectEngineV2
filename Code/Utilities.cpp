@@ -107,7 +107,7 @@ void sitrep ( int bitvector, const std::string &str )
 		sok_n = sok->next;
 		Socket *s = sok;
 
-		if ( s->character && s->connected == CON_PLAYING ) {
+		if ( s->character && s->connected == STATE_PLAYING ) {
 			Creature *cr = s->character;
 			if ( IS_SET ( cr->sitrep, bitvector ) ) {
 				writeBuffer ( Format ( "\ay{\aYSITREP\ay} \aR: \an%s\n\r", C_STR ( str ) ), cr );

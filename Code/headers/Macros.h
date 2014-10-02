@@ -124,6 +124,7 @@
 #define IN_ROOM(ch) ((ch)->in_room)
 #define FIGHTING(ch) ((ch)->fighting)
 
+#define CARRYING(ch) ((ch)->carrying)
 #define CARRIED_BY(obj) ((obj)->carried_by)
 #define IN_OBJ(obj) ((obj)->in_obj)
 
@@ -147,7 +148,7 @@
 		if ( (a) < 0 )					\
 			log_hd(LOG_ERROR, Format("CHECK_POS : " c " == %d < 0", a) );	\
 	}							\
-
+	 
 #define nelems(x)  (sizeof(x) / sizeof(x[0]))
 
 #define IS_NPC(ch)		(IS_SET((ch)->act, ACT_IS_NPC))
@@ -211,16 +212,16 @@
 	do { \
 		if(data) \
 		{ \
-            if(typeid(point) == typeid(char *) || typeid(point) == typeid(const char *)) \
-            { \
-                delete [] point; \
-            } \
-            else { \
-                free((void *)data); \
-                data = NULL; \
-            } \
-        } \
-    } \
+			if(typeid(data) == typeid(char *) || typeid(data) == typeid(const char *)) \
+			{ \
+				delete [] data; \
+			} \
+			else { \
+				free ((void *) data); \
+				data = NULL; \
+			} \
+		} \
+	} \
 	while(0);
 
 #define PURGE_DATA(data) \
@@ -237,7 +238,7 @@
 
 #define PERS(ch, looker)	( can_see( looker, (ch) ) ?		\
 							  ( IS_NPC(ch) ? (ch)->short_descr	\
-								: (ch)->name ) : "someone" )
+								: (ch)->name ) : "an unknown figure" )
 
 
 #endif
