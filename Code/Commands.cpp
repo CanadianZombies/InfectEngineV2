@@ -774,7 +774,7 @@ DefineCommand ( cmd_commands )
 				break;
 		};
 		for ( char_level = 'a'; char_level <= 'z'; char_level++ ) { 		// -- alphabetical sort (kind of)
-			for ( lcmd = 0; cmd_table[lcmd].name[0] != '\0'; lcmd++ ) {	// -- loop through the actual commands
+			for ( lcmd = 0; !IS_NULLSTR ( cmd_table[lcmd].name ); lcmd++ ) {	// -- loop through the actual commands
 				if ( cmd_table[lcmd].level <= get_trust ( ch )
 						&&   cmd_table[lcmd].show
 						&&   cmd_table[lcmd].category == x

@@ -753,23 +753,52 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 		}
 	}
 
-	// -- lowbie gear assigned 1-5 for stats
-	if ( IS_SET ( obj->material_flags, MAT_PRACTICE ) ) {
-		for ( int x = 0; x < MAX_REQ; x++ ) {
-			obj->requirements[x] = Math::instance().range ( 1, 5 );
-		}
-		// -- practice gear is ALWAYS one size fits all!
-		obj->requirements[SIZ_REQ] = SIZE_MAGIC;
-	} else {
-		// -- add some requirements if we haven't already set them (possibly)
-		if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 3 ) ) {
+	// -- weapons have some extra blastoids here.  Like we ensure size is magic
+	// -- unless the a really low chance happens.
+	if ( obj->item_type == ITEM_WEAPON ) {
+		// -- lowbie gear assigned 1-5 for stats
+		if ( IS_SET ( obj->material_flags, MAT_PRACTICE ) ) {
 			for ( int x = 0; x < MAX_REQ; x++ ) {
-				if ( x == SIZ_REQ ) { break; }	// -- do not adjust size if previously set!
-				obj->requirements[x] += Math::instance().range ( 0, 3 );
+				obj->requirements[x] = Math::instance().range ( 1, 5 );
+			}
+			// -- practice gear is ALWAYS one size fits all!
+			obj->requirements[SIZ_REQ] = SIZE_MAGIC;
+		} else {
+			// -- add some requirements if we haven't already set them (possibly)
+			if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 3 ) ) {
+				for ( int x = 0; x < MAX_REQ; x++ ) {
+					if ( x == SIZ_REQ ) { break; }	// -- do not adjust size if previously set!
+					obj->requirements[x] += Math::instance().range ( 0, 3 );
+				}
+			}
+
+			// -- chance to offset the size, ultimately we want it to be size magic.
+			// -- so that everyone can use them, with only a small chance for them to be
+			// -- offset too much.
+			if ( Math::instance().percent() < 93 )
+			{ obj->requirements[SIZ_REQ] = SIZE_MAGIC; }
+			else {
+				obj->requirements[SIZ_REQ] = Math::instance().range ( 0, SIZE_MAGIC );
+			}
+		}
+	} else { // -- all other items are assigned here.
+		// -- lowbie gear assigned 1-5 for stats
+		if ( IS_SET ( obj->material_flags, MAT_PRACTICE ) ) {
+			for ( int x = 0; x < MAX_REQ; x++ ) {
+				obj->requirements[x] = Math::instance().range ( 1, 5 );
+			}
+			// -- practice gear is ALWAYS one size fits all!
+			obj->requirements[SIZ_REQ] = SIZE_MAGIC;
+		} else {
+			// -- add some requirements if we haven't already set them (possibly)
+			if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 3 ) ) {
+				for ( int x = 0; x < MAX_REQ; x++ ) {
+					if ( x == SIZ_REQ ) { break; }	// -- do not adjust size if previously set!
+					obj->requirements[x] += Math::instance().range ( 0, 3 );
+				}
 			}
 		}
 	}
-
 	// -- correcting glitches
 	if ( obj->requirements[SIZ_REQ] > SIZE_MAGIC ) {
 		obj->requirements[SIZ_REQ] = SIZE_MAGIC;
