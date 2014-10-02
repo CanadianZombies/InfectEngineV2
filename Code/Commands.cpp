@@ -467,7 +467,7 @@ void interpret ( Creature *ch, const char *argument )
 	 */
 	found = FALSE;
 	trust = get_trust ( ch );
-	for ( cmd = 0; cmd_table[cmd].name[0] != '\0'; cmd++ ) {
+	for ( cmd = 0; !IS_NULLSTR ( cmd_table[cmd].name ); cmd++ ) {
 		if ( command[0] == cmd_table[cmd].name[0]
 				&&   !str_prefix ( command, cmd_table[cmd].name )
 				&&   cmd_table[cmd].level <= trust ) {
