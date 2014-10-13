@@ -560,19 +560,26 @@ void interpret ( Creature *ch, const char *argument )
 /* function to keep argument safe in all commands -- no static strings */
 void _cmd_function ( Creature *ch, CmdData *cmd_fun, const char *L_command, const char *argument, const char *file, const char *function, int line )
 {
-	char *command_string;
+	try {
+		char command_string[MAX_OUTPUT_BUFFER] = {'\0'};
+		// -- typically this should be an impossibility.  But just in-case
+		if(strlen(argument) > MAX_OUTPUT_BUFFER) {
+			throw("_cmd_function: Argument supplied exceeds MAX_OUTPUT_BUFFER length");
+		}
+	
+		strncpy(command_string, argument, MAX_OUTPUT_BUFFER);
 
-	/* copy the string */
-	command_string = assign_string ( argument );
+		// -- cmd_function now puts this data in the debug log for safe keeping, incase the dispatch causes a crash.
+		log_hd ( LOG_DEBUG, Format ( "%s->%s->%d->cmd_function->Cmd:%s(%p) Cr:%s(%p) Args:(%s)", file, function, line, L_command, cmd_fun, ch ? ch->name : "", ch, argument ? argument : "{NULL DATA}" ) );
 
-	// -- cmd_function now puts this data in the debug log for safe keeping, incase the dispatch causes a crash.
-	log_hd ( LOG_DEBUG, Format ( "%s->%s->%d->cmd_function->Cmd:%s(%p) Cr:%s(%p) Args:(%s)", file, function, line, L_command, cmd_fun, ch ? ch->name : "", ch, argument ? argument : "{NULL DATA}" ) );
+		/* dispatch the command */
+		( *cmd_fun ) ( ch, L_command, command_string, -1 );
 
-	/* dispatch the command */
-	( *cmd_fun ) ( ch, L_command, command_string, -1 );
-
-	/* free the string */
-	PURGE_DATA ( command_string );
+		tail_chain();
+	} catch (...) {
+		CATCH(false);
+	}
+	return;
 }
 
 bool check_social ( Creature *ch, const char *command, const char *argument )
