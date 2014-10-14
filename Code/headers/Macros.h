@@ -47,6 +47,12 @@
 // -- Make two strings best of friends and join them like blood brothers.
 #define CONCAT_STR(A, B) (#A " " #B)
 
+//-- ASSERT
+#define ASSERT(exp) do { \
+		if(!exp) \
+		{ SUICIDE; } \
+	} while(0)
+	
 // ------------------------------------------------------------
 // -- forces the mud to CRASH at specified part.
 // -- LOG_SUICIDE forces the mud to log where the suicide was called from, then crashes the mud
