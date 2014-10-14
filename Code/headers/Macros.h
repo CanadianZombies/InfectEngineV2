@@ -49,10 +49,13 @@
 
 //-- ASSERT
 #define ASSERT(exp) do { \
-		if(!exp) \
+		if(exp) { \
+		  ; \
+		} \
+		else \
 		{ SUICIDE; } \
 	} while(0)
-	
+
 // ------------------------------------------------------------
 // -- forces the mud to CRASH at specified part.
 // -- LOG_SUICIDE forces the mud to log where the suicide was called from, then crashes the mud
@@ -64,6 +67,18 @@
 // -- THROW_ERROR allows us to throw out an error easily, with all the appropriate information attached to it
 // -- for file, function, and line it came from.
 #define THROW_ERROR(...) (throw std::runtime_error( Format("InfectEngine encountered a runtime error: %s, %s, %d: %s", __FILE__, __FUNCTION__, __LINE__, __VA_ARGS__)) )
+
+// -- use assert to throw a message
+#define ASSERT_THROW(exp, message) do \
+	{ \
+		if(exp) { \
+			; \
+		} \
+		else { \
+			THROW_ERROR(CONCAT_STR(exp, message); \
+		} \
+	} while(0)
+
 
 // -- lets log our errno string properly.
 #define ReportErrno(ErrorString) _Error( (ErrorString), __FILE__, __FUNCTION__, __LINE__)
