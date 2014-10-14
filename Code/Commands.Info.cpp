@@ -2375,9 +2375,7 @@ int getApplyTotal ( Item * obj, int app_type )
 	int to_return = 0;
 	Affect * paf;
 
-	if(!obj) {
-		SUICIDE;
-	}
+	ASSERT(obj == NULL)
 
 	if ( !obj->enchanted ) {
 		if ( obj->pIndexData->affected != NULL ) {
