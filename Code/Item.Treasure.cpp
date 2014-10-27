@@ -201,6 +201,7 @@ void make_gem ( int level, Item *box )
 
 }
 
+Item *generateRandomItem ( Creature *o );
 void make_treasure_chest ( Creature *ch, Creature *victim, int level )
 {
 	Item *box;
@@ -267,12 +268,18 @@ void make_treasure_chest ( Creature *ch, Creature *victim, int level )
 
 	box->wear_flags     = ITEM_TAKE;
 	box->item_type      = ITEM_TREASURECHEST;
-	if ( !strcmp ( box_keywd, "iron" ) )
-	{ box->weight     = 50; }
-	else if ( !strcmp ( box_keywd, "brass" ) )
-	{ box->weight     = 40; }
-	else if ( !strcmp ( box_keywd, "wood" ) )
-	{ box->weight     = 30; }
+	box->material_flags = MAT_IRON;
+	if ( !strcmp ( box_keywd, "iron" ) ) {
+		box->weight     = 50;
+		box->material_flags = MAT_IRON;
+	} else if ( !strcmp ( box_keywd, "brass" ) ) {
+		box->weight     = 40;
+		box->material_flags = MAT_BRASS;
+	} else if ( !strcmp ( box_keywd, "wood" ) ) {
+		box->weight     = 30;
+		box->material_flags = MAT_WOOD;
+	}
+
 	box->timer          = Math::instance().range ( level * 8 / 12, level * 9 / 11 );
 	box->value[0]       = Math::instance().range ( 1, level ); /* silver coins */
 	box->value[1]       = CONT_CLOSEABLE; /* container-type flags */
@@ -318,43 +325,83 @@ void make_treasure_chest ( Creature *ch, Creature *victim, int level )
 	/* see if the box has any gems */
 	chance = Math::instance().percent();
 	if ( chance < Math::instance().percent() ) {
-		switch ( Math::instance().range ( 1, 6 ) ) {
+		switch ( Math::instance().range ( 1, 8 ) ) {
 			case 1:
-				make_gem ( level, box );
-				make_gem ( level, box );
+				for ( int x = 0; x < 2; x++ );
+				{
+					make_gem ( UMIN ( 1, UMAX ( Math::instance().fuzzy ( level ), MAX_LEVEL ) ), box );
+				}
 				break;
 			case 2:
-				make_gem ( level, box );
-				make_gem ( level, box );
+				for ( int x = 0; x < 2; x++ );
+				{
+					make_gem ( UMIN ( 1, UMAX ( Math::instance().fuzzy ( level ), MAX_LEVEL ) ), box );
+				}
+				if ( Math::instance().percent() > 30 ) {
+					make_gem ( UMIN ( 1, UMAX ( Math::instance().fuzzy ( level ), MAX_LEVEL ) ), box );
+				}
 				break;
 			case 3:
-				make_gem ( level, box );
-				make_gem ( level, box );
-				make_gem ( level, box );
-				make_gem ( level, box );
+				for ( int x = 0; x < 4; x++ );
+				{
+					if ( Math::instance().percent() > 30 )
+					{ make_gem ( UMIN ( 1, UMAX ( Math::instance().fuzzy ( level ), MAX_LEVEL ) ), box ); }
+				}
 				break;
 			case 4:
-				make_gem ( level, box );
-				make_gem ( level, box );
-				make_gem ( level, box );
-				make_gem ( level, box );
-				make_gem ( level, box );
+				for ( int x = 0; x < 5; x++ );
+				{
+					if ( Math::instance().percent() > 30 )
+					{ make_gem ( UMIN ( 1, UMAX ( Math::instance().fuzzy ( level ), MAX_LEVEL ) ), box ); }
+				}
 				break;
 			case 5:
-				make_gem ( level, box );
-				make_gem ( level, box );
-				make_gem ( level, box );
-				make_gem ( level, box );
-				make_gem ( level, box );
-				make_gem ( level, box );
+				for ( int x = 0; x < 6; x++ );
+				{
+					if ( Math::instance().percent() > 30 )
+					{ make_gem ( UMIN ( 1, UMAX ( Math::instance().fuzzy ( level ), MAX_LEVEL ) ), box ); }
+				}
+				if ( Math::instance().percent() > Math::instance().percent() ) {
+					Item *o = generateRandomItem ( ch );    // -- made to ch's level!
+					obj_from_char ( o );                    // -- make sure its not on anything.
+					obj_to_obj ( o, box );
+				}
 				break;
 			case 6:
-				make_gem ( level, box );
-				make_gem ( level, box );
-				make_gem ( level, box );
-				make_gem ( level, box );
-				make_gem ( level, box );
+				for ( int x = 0; x < 5; x++ );
+				{
+					if ( Math::instance().percent() > 30 )
+					{ make_gem ( UMIN ( 1, UMAX ( Math::instance().fuzzy ( level ), MAX_LEVEL ) ), box ); }
+				}
 				obj_to_obj ( make_treasure_item ( level ), box );
+				break;
+			case 7:
+				for ( int x = 0; x < 5; x++ );
+				{
+					if ( Math::instance().percent() > 30 )
+					{ make_gem ( UMIN ( 1, UMAX ( Math::instance().fuzzy ( level ), MAX_LEVEL ) ), box ); }
+				}
+				obj_to_obj ( make_treasure_item ( level ), box );
+				obj_to_obj ( make_treasure_item ( level ), box );
+				if ( Math::instance().percent() > Math::instance().percent() ) {
+					Item *o = generateRandomItem ( victim );    // -- made to ch's level!
+					obj_from_char ( o );                    // -- make sure its not on anything.
+					obj_to_obj ( o, box );
+				}
+				break;
+			case 8:
+				for ( int x = 0; x < 2; x++ );
+				{
+					if ( Math::instance().percent() > 30 )
+					{ make_gem ( UMIN ( 1, UMAX ( Math::instance().fuzzy ( level ), MAX_LEVEL ) ), box ); }
+				}
+				obj_to_obj ( make_treasure_item ( level ), box );
+				obj_to_obj ( make_treasure_item ( level ), box );
+				if ( Math::instance().percent() > Math::instance().percent() ) {
+					Item *o = generateRandomItem ( victim );    // -- made to ch's level!
+					obj_from_char ( o );                    // -- make sure its not on anything.
+					obj_to_obj ( o, box );
+				}
 				break;
 		}
 	}

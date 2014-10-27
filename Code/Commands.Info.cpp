@@ -2261,8 +2261,8 @@ DefineCommand ( cmd_password )
 DefineCommand ( cmd_levelup )
 {
 	// -- die out.
-	assert(ch);
-	if(IS_NPC(ch)) { return; }
+	assert ( ch );
+	if ( IS_NPC ( ch ) ) { return; }
 	if ( !IS_SET ( IN_ROOM ( ch )->room_flags, ROOM_SAFE ) ) {
 		writeBuffer ( "You must be in a room that is safe to level up!\r\n", ch );
 		return;
@@ -2375,7 +2375,7 @@ int getApplyTotal ( Item * obj, int app_type )
 	int to_return = 0;
 	Affect * paf;
 
-	ASSERT(obj == NULL)
+	ASSERT ( obj != NULL );
 
 	if ( !obj->enchanted ) {
 		if ( obj->pIndexData->affected != NULL ) {

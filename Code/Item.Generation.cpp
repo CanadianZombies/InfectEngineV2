@@ -1843,6 +1843,23 @@ Item * create_random ( Creature * mob, const char *argument )
 	return ret_item;
 }
 
+Item *generateRandomItem ( Creature *o )
+{
+	static const char *type[] = {
+		"light", "helm", "face", "torso",
+		"arms", "hands", "legs",
+		"feet", "waist", "about",
+		"wrist", "neck", "weapon", "wand"
+	};
+
+	int max_n = nelems ( type ) - 1;
+	Item *obj = create_random ( o, type[Math::instance().range ( 0, max_n )] );
+	if ( obj ) {
+		obj_from_char ( obj ); // -- not on an creature
+		return obj;
+	}
+	return NULL;
+}
 // -- used to test the randomitem generation
 DefineCommand ( cmd_randomitem )
 {
