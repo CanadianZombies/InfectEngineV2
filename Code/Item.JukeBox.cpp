@@ -212,7 +212,7 @@ DefineCommand ( cmd_play )
 		return;
 	}
 
-	if ( !str_cmp ( arg, "list" ) ) {
+	if ( SameString ( arg, "list" ) ) {
 		BUFFER *buffer;
 		char buf[MAX_STRING_LENGTH];
 		int col = 0;
@@ -222,7 +222,7 @@ DefineCommand ( cmd_play )
 		argument = str;
 		argument = ChopC ( argument, arg );
 
-		if ( !str_cmp ( arg, "artist" ) )
+		if ( SameString ( arg, "artist" ) )
 		{ artist = TRUE; }
 
 		if ( argument[0] != '\0' )
@@ -257,7 +257,7 @@ DefineCommand ( cmd_play )
 		return;
 	}
 
-	if ( !str_cmp ( arg, "loud" ) ) {
+	if ( SameString ( arg, "loud" ) ) {
 		argument = str;
 		global = TRUE;
 	}

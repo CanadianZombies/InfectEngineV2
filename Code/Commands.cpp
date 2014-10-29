@@ -346,7 +346,7 @@ void attempt_staff_command ( Creature *ch, const std::string &pcomm, const std::
 
 	for ( cmd = 0; !IS_NULLSTR ( staff_cmd_table[cmd].name ); cmd++ ) {
 		if ( staff_command[0] == staff_cmd_table[cmd].name[0]
-				&&  !str_cmp ( staff_command.c_str(), staff_cmd_table[cmd].name ) ) {
+				&&  SameString ( staff_command.c_str(), staff_cmd_table[cmd].name ) ) {
 			found = true;
 			break;
 		}
@@ -625,7 +625,7 @@ bool check_social ( Creature *ch, const char *command, const char *argument )
 			 * I just know this is the path to a 12" 'if' statement.  :(
 			 * But two players asked for it already!  -- Furey
 			 */
-			if ( !str_cmp ( social_table[cmd].name, "snore" ) )
+			if ( SameString ( social_table[cmd].name, "snore" ) )
 			{ break; }
 			writeBuffer ( "In your dreams, or what?\n\r", ch );
 			return TRUE;

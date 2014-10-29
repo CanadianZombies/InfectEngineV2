@@ -249,19 +249,19 @@ void boot_db ( void )
 				word = fread_word ( fpArea );
 
 				if ( word[0] == '$'               )                 { break; }
-				else if ( !str_cmp ( word, "AREA"     ) ) { load_area    ( fpArea ); }
-				/* OLC */     else if ( !str_cmp ( word, "AREADATA" ) ) { new_load_area ( fpArea ); }
-				else if ( !str_cmp ( word, "HELPS"    ) ) { load_helps   ( fpArea, strArea ); }
-				else if ( !str_cmp ( word, "MOBOLD"   ) ) { load_old_mob ( fpArea ); }
-				else if ( !str_cmp ( word, "MOBILES"  ) ) { load_mobiles ( fpArea ); }
-				else if ( !str_cmp ( word, "MOBPROGS" ) ) { load_mobprogs ( fpArea ); }
-				else if ( !str_cmp ( word, "OBJOLD"   ) ) { load_old_obj ( fpArea ); }
-				else if ( !str_cmp ( word, "OBJECTS"  ) ) { load_objects ( fpArea ); }
-				else if ( !str_cmp ( word, "RESETS"   ) ) { load_resets  ( fpArea ); }
-				else if ( !str_cmp ( word, "ROOMS"    ) ) { load_rooms   ( fpArea ); }
-				else if ( !str_cmp ( word, "SHOPS"    ) ) { load_shops   ( fpArea ); }
-				else if ( !str_cmp ( word, "SOCIALS"  ) ) { load_socials ( fpArea ); }
-				else if ( !str_cmp ( word, "SPECIALS" ) ) { load_specials ( fpArea ); }
+				else if ( SameString ( word, "AREA"     ) ) { load_area    ( fpArea ); }
+				/* OLC */     else if ( SameString ( word, "AREADATA" ) ) { new_load_area ( fpArea ); }
+				else if ( SameString ( word, "HELPS"    ) ) { load_helps   ( fpArea, strArea ); }
+				else if ( SameString ( word, "MOBOLD"   ) ) { load_old_mob ( fpArea ); }
+				else if ( SameString ( word, "MOBILES"  ) ) { load_mobiles ( fpArea ); }
+				else if ( SameString ( word, "MOBPROGS" ) ) { load_mobprogs ( fpArea ); }
+				else if ( SameString ( word, "OBJOLD"   ) ) { load_old_obj ( fpArea ); }
+				else if ( SameString ( word, "OBJECTS"  ) ) { load_objects ( fpArea ); }
+				else if ( SameString ( word, "RESETS"   ) ) { load_resets  ( fpArea ); }
+				else if ( SameString ( word, "ROOMS"    ) ) { load_rooms   ( fpArea ); }
+				else if ( SameString ( word, "SHOPS"    ) ) { load_shops   ( fpArea ); }
+				else if ( SameString ( word, "SOCIALS"  ) ) { load_socials ( fpArea ); }
+				else if ( SameString ( word, "SPECIALS" ) ) { load_specials ( fpArea ); }
 				else {
 					log_hd ( LOG_ERROR,  "Boot_db: bad section name." );
 					exit ( 1 );
@@ -374,7 +374,7 @@ void load_area ( FILE *fp )
 #endif
 
 #define KEY( literal, field, value )                \
-	if ( !str_cmp( word, literal ) )    \
+	if ( SameString( word, literal ) )    \
 	{                                   \
 		field  = value;                 \
 		fMatch = TRUE;                  \
@@ -382,7 +382,7 @@ void load_area ( FILE *fp )
 	}
 
 #define SKEY( string, field )                       \
-	if ( !str_cmp( word, string ) )     \
+	if ( SameString( word, string ) )     \
 	{                                   \
 		PURGE_DATA( field );           \
 		field = fread_string( fp );     \
@@ -434,14 +434,14 @@ void new_load_area ( FILE *fp )
 				KEY ( "Security", pArea->security, fread_number ( fp ) );
 				break;
 			case 'V':
-				if ( !str_cmp ( word, "VNUMs" ) ) {
+				if ( SameString ( word, "VNUMs" ) ) {
 					pArea->min_vnum = fread_number ( fp );
 					pArea->max_vnum = fread_number ( fp );
 					fMatch = true;
 				}
 				break;
 			case 'E':
-				if ( !str_cmp ( word, "End" ) ) {
+				if ( SameString ( word, "End" ) ) {
 					fMatch = TRUE;
 					if ( area_first == NULL )
 					{ area_first = pArea; }
@@ -513,7 +513,7 @@ void load_helps ( FILE *fp, char *fname )
 			if ( current_area )
 			{ current_area->helps	= had; }
 			had_list		= had;
-		} else if ( str_cmp ( fname, had_list->filename ) ) {
+		} else if ( !SameString ( fname, had_list->filename ) ) {
 			had			= new_had ();
 			had->filename		= assign_string ( fname );
 			had->area		= current_area;
@@ -529,7 +529,7 @@ void load_helps ( FILE *fp, char *fname )
 		pHelp->keyword	= keyword;
 		pHelp->text	= fread_string ( fp );
 
-		if ( !str_cmp ( pHelp->keyword, "greeting" ) )
+		if ( SameString ( pHelp->keyword, "greeting" ) )
 		{ help_greeting = pHelp->text; }
 
 		if ( help_first == NULL )

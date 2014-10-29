@@ -929,7 +929,7 @@ DefineCommand ( cmd_asave )
 
 	/* Save the world, only authorized areas. */
 	/* -------------------------------------- */
-	if ( !str_cmp ( "world", arg1 ) ) {
+	if ( SameString ( "world", arg1 ) ) {
 		save_area_list();
 		for ( pArea = area_first; pArea; pArea = pArea->next ) {
 			/* Builder must be assigned this area. */
@@ -950,7 +950,7 @@ DefineCommand ( cmd_asave )
 
 	/* Save changed areas, only authorized areas. */
 	/* ------------------------------------------ */
-	if ( !str_cmp ( "changed", arg1 ) ) {
+	if ( SameString ( "changed", arg1 ) ) {
 		char buf[MAX_INPUT_LENGTH];
 
 		save_area_list();
@@ -982,7 +982,7 @@ DefineCommand ( cmd_asave )
 
 		save_other_helps ( ch );
 
-		if ( !str_cmp ( buf, "None.\n\r" ) ) {
+		if ( SameString ( buf, "None.\n\r" ) ) {
 			if ( ch )
 			{ writeBuffer ( buf, ch ); }
 			else
@@ -993,14 +993,14 @@ DefineCommand ( cmd_asave )
 
 	/* Save the area.lst file. */
 	/* ----------------------- */
-	if ( !str_cmp ( arg1, "list" ) ) {
+	if ( SameString ( arg1, "list" ) ) {
 		save_area_list();
 		return;
 	}
 
 	/* Save area being edited, if authorized. */
 	/* -------------------------------------- */
-	if ( !str_cmp ( arg1, "area" ) ) {
+	if ( SameString ( arg1, "area" ) ) {
 		if ( !ch || !ch->desc )
 		{ return; }
 

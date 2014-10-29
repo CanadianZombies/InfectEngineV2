@@ -407,7 +407,7 @@ DefineCommand ( cmd_mpjunk )
 	if ( arg[0] == '\0' )
 	{ return; }
 
-	if ( str_cmp ( arg, "all" ) && str_prefix ( "all.", arg ) ) {
+	if ( !SameString ( arg, "all" ) && str_prefix ( "all.", arg ) ) {
 		if ( ( obj = get_obj_wear ( ch, arg ) ) != NULL ) {
 			unequip_char ( ch, obj );
 			extract_obj ( obj );
@@ -745,7 +745,7 @@ DefineCommand ( cmd_mptransfer )
 		return;
 	}
 
-	if ( !str_cmp ( arg1, "all" ) ) {
+	if ( SameString ( arg1, "all" ) ) {
 		Creature *victim_next;
 
 		for ( victim = IN_ROOM ( ch )->people; victim != NULL; victim = victim_next ) {
@@ -840,7 +840,7 @@ DefineCommand ( cmd_mpforce )
 		return;
 	}
 
-	if ( !str_cmp ( arg, "all" ) ) {
+	if ( SameString ( arg, "all" ) ) {
 		Creature *vch;
 		Creature *vch_next;
 
@@ -1025,7 +1025,7 @@ DefineCommand ( cmd_mpdamage )
 									 IS_NPC ( ch ) ? ch->pIndexData->vnum : 0 ) );
 		return;
 	}
-	if ( !str_cmp ( target, "all" ) )
+	if ( SameString ( target, "all" ) )
 	{ fAll = TRUE; }
 	else if ( ( victim = get_char_room ( ch, target ) ) == NULL )
 	{ return; }
@@ -1258,7 +1258,7 @@ DefineCommand ( cmd_mpremove )
 	{ return; }
 
 	ChopC ( argument, arg );
-	if ( !str_cmp ( arg, "all" ) )
+	if ( SameString ( arg, "all" ) )
 	{ fAll = TRUE; }
 	else if ( !is_number ( arg ) ) {
 		log_hd ( LOG_ERROR | LOG_DEBUG, Format ( "MpRemove: Invalid object from vnum %d.",

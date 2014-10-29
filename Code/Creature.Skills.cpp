@@ -585,7 +585,7 @@ DefineCommand ( cmd_groups )
 		return;
 	}
 
-	if ( !str_cmp ( argument, "all" ) ) { /* show all groups */
+	if ( SameString ( argument, "all" ) ) { /* show all groups */
 		for ( gn = 0; gn < MAX_GROUP; gn++ ) {
 			if ( group_table[gn].name == NULL )
 			{ break; }

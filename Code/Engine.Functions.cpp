@@ -978,7 +978,7 @@ bool is_exact_name ( const char *str, const char *namelist )
 		namelist = ChopC ( namelist, name );
 		if ( name[0] == '\0' )
 		{ return FALSE; }
-		if ( !str_cmp ( str, name ) )
+		if ( SameString ( str, name ) )
 		{ return TRUE; }
 	}
 }
@@ -2097,7 +2097,7 @@ Creature *get_char_room ( Creature *ch, const char *argument )
 
 	number = number_argument ( argument, arg );
 	count  = 0;
-	if ( !str_cmp ( arg, "self" ) )
+	if ( SameString ( arg, "self" ) )
 	{ return ch; }
 	for ( rch = IN_ROOM ( ch )->people; rch != NULL; rch = rch->next_in_room ) {
 		if ( !can_see ( ch, rch ) || !is_name ( arg, rch->name ) )

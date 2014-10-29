@@ -1810,33 +1810,33 @@ Item * create_random ( Creature * mob, const char *argument )
 
 	target_name = ChopC ( argument, arg );
 
-	if ( !str_cmp ( arg, "light" ) ) {
+	if ( SameString ( arg, "light" ) ) {
 		ret_item = make_armor ( obj, mob, light_vnum, ITEM_LIGHT, ITEM_TAKE, light_types[Math::instance().range ( 0, MAX_LIGHT )] );
-	} else if ( !str_cmp ( arg, "wand" ) ) {
+	} else if ( SameString ( arg, "wand" ) ) {
 		ret_item = make_armor ( obj, mob, light_vnum, ITEM_WAND, ITEM_TAKE | ITEM_HOLD, "wand" );
-	} else if ( !str_cmp ( arg, "neck" ) ) {
+	} else if ( SameString ( arg, "neck" ) ) {
 		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_NECK | ITEM_TAKE, neck_types[Math::instance().range ( 0, MAX_NECK )] );
-	} else if ( !str_cmp ( arg, "about" ) ) {
+	} else if ( SameString ( arg, "about" ) ) {
 		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_ABOUT | ITEM_TAKE, about_types[Math::instance().range ( 0, MAX_ABOUT )] );
-	} else if ( !str_cmp ( arg, "helm" ) ) {
+	} else if ( SameString ( arg, "helm" ) ) {
 		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_HEAD | ITEM_TAKE, head_types[Math::instance().range ( 0, MAX_HEAD )] );
-	} else if ( !str_cmp ( arg, "arms" ) ) {
+	} else if ( SameString ( arg, "arms" ) ) {
 		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_ARMS | ITEM_TAKE, arms_types[Math::instance().range ( 0, MAX_ARMS )] );
-	} else if ( !str_cmp ( arg, "legs" ) ) {
+	} else if ( SameString ( arg, "legs" ) ) {
 		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_LEGS | ITEM_TAKE, legs_types[Math::instance().range ( 0, MAX_LEGS )] );
-	} else if ( !str_cmp ( arg, "hands" ) ) {
+	} else if ( SameString ( arg, "hands" ) ) {
 		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_HANDS | ITEM_TAKE, hand_types[Math::instance().range ( 0, MAX_HAND )] );
-	} else if ( !str_cmp ( arg, "feet" ) ) {
+	} else if ( SameString ( arg, "feet" ) ) {
 		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_FEET | ITEM_TAKE, feet_types[Math::instance().range ( 0, MAX_FEET )] );
-	} else if ( !str_cmp ( arg, "wrist" ) ) {
+	} else if ( SameString ( arg, "wrist" ) ) {
 		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_WRIST | ITEM_TAKE, wrist_types[Math::instance().range ( 0, MAX_WRIST )] );
-	} else if ( !str_cmp ( arg, "shield" ) ) {
+	} else if ( SameString ( arg, "shield" ) ) {
 		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_SHIELD | ITEM_TAKE, shield_types[Math::instance().range ( 0, MAX_SHIELD )] );
-	} else if ( !str_cmp ( arg, "waist" ) ) {
+	} else if ( SameString ( arg, "waist" ) ) {
 		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_WAIST | ITEM_TAKE, waist_types[Math::instance().range ( 0, MAX_WAIST )] );
-	} else if ( !str_cmp ( arg, "torso" ) ) {
+	} else if ( SameString ( arg, "torso" ) ) {
 		ret_item = make_armor ( obj, mob, armor_vnum, ITEM_ARMOR, ITEM_WEAR_BODY | ITEM_TAKE, body_types[Math::instance().range ( 0, MAX_BODY )] );
-	} else if ( !str_cmp ( arg, "weapon" ) ) {
+	} else if ( SameString ( arg, "weapon" ) ) {
 		ret_item = make_weapon ( obj, mob, weapon_vnum, verb_types[Math::instance().range ( 0, MAX_VERBS )] );
 	}
 	tail_chain( );

@@ -197,7 +197,7 @@ void ban_site ( Creature *ch, const char *argument, bool fPerm )
 
 	prev = NULL;
 	for ( pban = ban_list; pban != NULL; prev = pban, pban = pban->next ) {
-		if ( !str_cmp ( name, pban->name ) ) {
+		if ( SameString ( name, pban->name ) ) {
 			if ( pban->level > get_trust ( ch ) ) {
 				writeBuffer ( "That ban was set by a higher power.\n\r", ch );
 				return;
@@ -259,7 +259,7 @@ DefineCommand ( cmd_allow )
 
 	prev = NULL;
 	for ( curr = ban_list; curr != NULL; prev = curr, curr = curr->next ) {
-		if ( !str_cmp ( arg, curr->name ) ) {
+		if ( SameString ( arg, curr->name ) ) {
 			if ( curr->level > get_trust ( ch ) ) {
 				writeBuffer (
 					"You are not powerful enough to lift that ban.\n\r", ch );

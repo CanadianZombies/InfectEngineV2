@@ -167,7 +167,7 @@ void fwrite_char ( Creature *ch, FILE *fp )
 	{ fprintf ( fp, "LnD  %s~\n",	ch->long_descr	); }
 	if ( !IS_NULLSTR ( ch->description ) )
 	{ fprintf ( fp, "Desc %s~\n",	ch->description	); }
-	if ( !IS_NULLSTR ( ch->prompt ) || !str_cmp ( ch->prompt, "<%hhp %mm %vmv> " ) )
+	if ( !IS_NULLSTR ( ch->prompt ) || SameString ( ch->prompt, "<%hhp %mm %vmv> " ) )
 	{ fprintf ( fp, "Prom %s~\n",      ch->prompt  	); }
 	fprintf ( fp, "Race %s~\n", pc_race_table[ch->race].name );
 	if ( ch->clan )
@@ -590,11 +590,11 @@ bool load_char_obj ( Socket *d, char *name )
 			}
 
 			word = fread_word ( fp );
-			if      ( !str_cmp ( word, "PLAYER" ) ) { fread_char ( ch, fp ); }
-			else if ( !str_cmp ( word, "OBJECT" ) ) { fread_obj  ( ch, fp ); }
-			else if ( !str_cmp ( word, "O"      ) ) { fread_obj  ( ch, fp ); }
-			else if ( !str_cmp ( word, "PET"    ) ) { fread_pet  ( ch, fp ); }
-			else if ( !str_cmp ( word, "END"    ) ) { break; }
+			if      ( SameString ( word, "PLAYER" ) ) { fread_char ( ch, fp ); }
+			else if ( SameString ( word, "OBJECT" ) ) { fread_obj  ( ch, fp ); }
+			else if ( SameString ( word, "O"      ) ) { fread_obj  ( ch, fp ); }
+			else if ( SameString ( word, "PET"    ) ) { fread_pet  ( ch, fp ); }
+			else if ( SameString ( word, "END"    ) ) { break; }
 			else {
 				log_hd ( LOG_ERROR, Format ( "load_char_obj: bad section: %s", word ) );
 				break;
@@ -643,7 +643,7 @@ bool load_char_obj ( Socket *d, char *name )
 #endif
 
 #define KEY( literal, field, value )					\
-	if ( !str_cmp( word, literal ) )	\
+	if ( SameString( word, literal ) )	\
 	{					\
 		field  = value;			\
 		fMatch = TRUE;			\
@@ -656,7 +656,7 @@ bool load_char_obj ( Socket *d, char *name )
 #endif
 
 #define KEYS( literal, field, value )					\
-	if ( !str_cmp( word, literal ) )	\
+	if ( SameString( word, literal ) )	\
 	{					\
 		PURGE_DATA(field);			\
 		field  = value;			\
@@ -691,7 +691,7 @@ void fread_char ( Creature *ch, FILE *fp )
 				KEY ( "Alignment",	ch->alignment,		fread_number ( fp ) );
 				KEY ( "Alig",	ch->alignment,		fread_number ( fp ) );
 
-				if ( !str_cmp ( word, "Alia" ) ) {
+				if ( SameString ( word, "Alia" ) ) {
 					if ( count >= MAX_ALIAS ) {
 						fread_to_eol ( fp );
 						fMatch = TRUE;
@@ -705,7 +705,7 @@ void fread_char ( Creature *ch, FILE *fp )
 					break;
 				}
 
-				if ( !str_cmp ( word, "Alias" ) ) {
+				if ( SameString ( word, "Alias" ) ) {
 					if ( count >= MAX_ALIAS ) {
 						fread_to_eol ( fp );
 						fMatch = TRUE;
@@ -719,13 +719,13 @@ void fread_char ( Creature *ch, FILE *fp )
 					break;
 				}
 
-				if ( !str_cmp ( word, "AC" ) || !str_cmp ( word, "Armor" ) ) {
+				if ( SameString ( word, "AC" ) || SameString ( word, "Armor" ) ) {
 					fread_to_eol ( fp );
 					fMatch = TRUE;
 					break;
 				}
 
-				if ( !str_cmp ( word, "ACs" ) ) {
+				if ( SameString ( word, "ACs" ) ) {
 					int i;
 
 					for ( i = 0; i < 4; i++ )
@@ -734,7 +734,7 @@ void fread_char ( Creature *ch, FILE *fp )
 					break;
 				}
 
-				if ( !str_cmp ( word, "AffD" ) ) {
+				if ( SameString ( word, "AffD" ) ) {
 					Affect *paf;
 					int sn;
 
@@ -757,7 +757,7 @@ void fread_char ( Creature *ch, FILE *fp )
 					break;
 				}
 
-				if ( !str_cmp ( word, "Affc" ) ) {
+				if ( SameString ( word, "Affc" ) ) {
 					Affect *paf;
 					int sn;
 
@@ -781,7 +781,7 @@ void fread_char ( Creature *ch, FILE *fp )
 					break;
 				}
 
-				if ( !str_cmp ( word, "AttrMod"  ) || !str_cmp ( word, "AMod" ) ) {
+				if ( SameString ( word, "AttrMod"  ) || SameString ( word, "AMod" ) ) {
 					int stat;
 					for ( stat = 0; stat < MAX_STATS; stat ++ )
 					{ ch->mod_stat[stat] = fread_number ( fp ); }
@@ -789,7 +789,7 @@ void fread_char ( Creature *ch, FILE *fp )
 					break;
 				}
 
-				if ( !str_cmp ( word, "AttrPerm" ) || !str_cmp ( word, "Attr" ) ) {
+				if ( SameString ( word, "AttrPerm" ) || SameString ( word, "Attr" ) ) {
 					int stat;
 
 					for ( stat = 0; stat < MAX_STATS; stat++ )
@@ -811,14 +811,14 @@ void fread_char ( Creature *ch, FILE *fp )
 				KEY ( "Cla",		ch->archetype,		fread_number ( fp ) );
 				KEY ( "Clan",	ch->clan,	clan_lookup ( fread_string ( fp ) ) );
 
-				if ( !str_cmp ( word, "Condition" ) || !str_cmp ( word, "Cond" ) ) {
+				if ( SameString ( word, "Condition" ) || SameString ( word, "Cond" ) ) {
 					ch->pcdata->condition[0] = fread_number ( fp );
 					ch->pcdata->condition[1] = fread_number ( fp );
 					ch->pcdata->condition[2] = fread_number ( fp );
 					fMatch = TRUE;
 					break;
 				}
-				if ( !str_cmp ( word, "Cnd" ) ) {
+				if ( SameString ( word, "Cnd" ) ) {
 					ch->pcdata->condition[0] = fread_number ( fp );
 					ch->pcdata->condition[1] = fread_number ( fp );
 					ch->pcdata->condition[2] = fread_number ( fp );
@@ -838,7 +838,7 @@ void fread_char ( Creature *ch, FILE *fp )
 				break;
 
 			case 'E':
-				if ( !str_cmp ( word, "End" ) ) {
+				if ( SameString ( word, "End" ) ) {
 					/* adjust hp mana move up  -- here for speed's sake */
 					percent = ( current_time - lastlogoff ) * 25 / ( 2 * 60 * 60 );
 
@@ -858,7 +858,7 @@ void fread_char ( Creature *ch, FILE *fp )
 
 			case 'G':
 				KEY ( "Gold",	ch->gold,		fread_number ( fp ) );
-				if ( !str_cmp ( word, "Group" )  || !str_cmp ( word, "Gr" ) ) {
+				if ( SameString ( word, "Group" )  || SameString ( word, "Gr" ) ) {
 					int gn;
 					char *temp;
 
@@ -878,7 +878,7 @@ void fread_char ( Creature *ch, FILE *fp )
 				KEY ( "Hitroll",	ch->hitroll,		fread_number ( fp ) );
 				KEY ( "Hit",		ch->hitroll,		fread_number ( fp ) );
 
-				if ( !str_cmp ( word, "HpManaMove" ) || !str_cmp ( word, "HMV" ) ) {
+				if ( SameString ( word, "HpManaMove" ) || SameString ( word, "HMV" ) ) {
 					ch->hit		= fread_number ( fp );
 					ch->max_hit	= fread_number ( fp );
 					ch->mana	= fread_number ( fp );
@@ -889,7 +889,7 @@ void fread_char ( Creature *ch, FILE *fp )
 					break;
 				}
 
-				if ( !str_cmp ( word, "HpManaMovePerm" ) || !str_cmp ( word, "HMVP" ) ) {
+				if ( SameString ( word, "HpManaMovePerm" ) || SameString ( word, "HMVP" ) ) {
 					ch->pcdata->perm_hit	= fread_number ( fp );
 					ch->pcdata->perm_mana   = fread_number ( fp );
 					ch->pcdata->perm_move   = fread_number ( fp );
@@ -920,7 +920,7 @@ void fread_char ( Creature *ch, FILE *fp )
 			case 'N':
 				KEYS ( "Name",	ch->name,		fread_string ( fp ) );
 				KEY ( "Note",	ch->pcdata->last_note,	fread_number ( fp ) );
-				if ( !str_cmp ( word, "Not" ) ) {
+				if ( SameString ( word, "Not" ) ) {
 					ch->pcdata->last_note			= fread_number ( fp );
 					ch->pcdata->last_idea			= fread_number ( fp );
 					ch->pcdata->last_penalty		= fread_number ( fp );
@@ -950,7 +950,7 @@ void fread_char ( Creature *ch, FILE *fp )
 				KEY ( "Race",        ch->race,
 					  race_lookup ( fread_string ( fp ) ) );
 
-				if ( !str_cmp ( word, "Room" ) ) {
+				if ( SameString ( word, "Room" ) ) {
 					IN_ROOM ( ch ) = get_room_index ( fread_number ( fp ) );
 					if ( IN_ROOM ( ch ) == NULL )
 					{ IN_ROOM ( ch ) = get_room_index ( ROOM_VNUM_LIMBO ); }
@@ -972,7 +972,7 @@ void fread_char ( Creature *ch, FILE *fp )
 				KEY ( "Sitrep",	ch->sitrep,		fread_flag ( fp ) );
 				KEY ( "SFlag", ch->sflag,		fread_flag ( fp ) );
 
-				if ( !str_cmp ( word, "Skill" ) || !str_cmp ( word, "Sk" ) ) {
+				if ( SameString ( word, "Skill" ) || SameString ( word, "Sk" ) ) {
 					int sn;
 					int value;
 					char *temp;
@@ -998,7 +998,7 @@ void fread_char ( Creature *ch, FILE *fp )
 				KEY ( "Trust",	ch->trust,		fread_number ( fp ) );
 				KEY ( "Tru",		ch->trust,		fread_number ( fp ) );
 
-				if ( !str_cmp ( word, "Title" )  || !str_cmp ( word, "Titl" ) ) {
+				if ( SameString ( word, "Title" )  || SameString ( word, "Titl" ) ) {
 					ch->pcdata->title = fread_string ( fp );
 					if ( ch->pcdata->title[0] != '.' && ch->pcdata->title[0] != ','
 							&&  ch->pcdata->title[0] != '!' && ch->pcdata->title[0] != '?' ) {
@@ -1015,7 +1015,7 @@ void fread_char ( Creature *ch, FILE *fp )
 			case 'V':
 				KEY ( "Version",     ch->version,		fread_number ( fp ) );
 				KEY ( "Vers",	ch->version,		fread_number ( fp ) );
-				if ( !str_cmp ( word, "Vnum" ) ) {
+				if ( SameString ( word, "Vnum" ) ) {
 					ch->pIndexData = get_mob_index ( fread_number ( fp ) );
 					fMatch = TRUE;
 					break;
@@ -1047,7 +1047,7 @@ void fread_pet ( Creature *ch, FILE *fp )
 
 	/* first entry had BETTER be the vnum or we barf */
 	word = feof ( fp ) ? ( char * ) "END" : fread_word ( fp );
-	if ( !str_cmp ( word, "Vnum" ) ) {
+	if ( SameString ( word, "Vnum" ) ) {
 		int vnum;
 
 		vnum = fread_number ( fp );
@@ -1076,7 +1076,7 @@ void fread_pet ( Creature *ch, FILE *fp )
 				KEY ( "AfBy",	pet->affected_by,	fread_flag ( fp ) );
 				KEY ( "Alig",	pet->alignment,		fread_number ( fp ) );
 
-				if ( !str_cmp ( word, "ACs" ) ) {
+				if ( SameString ( word, "ACs" ) ) {
 					int i;
 
 					for ( i = 0; i < 4; i++ )
@@ -1085,7 +1085,7 @@ void fread_pet ( Creature *ch, FILE *fp )
 					break;
 				}
 
-				if ( !str_cmp ( word, "AffD" ) ) {
+				if ( SameString ( word, "AffD" ) ) {
 					Affect *paf;
 					int sn;
 
@@ -1108,7 +1108,7 @@ void fread_pet ( Creature *ch, FILE *fp )
 					break;
 				}
 
-				if ( !str_cmp ( word, "Affc" ) ) {
+				if ( SameString ( word, "Affc" ) ) {
 					Affect *paf;
 					int sn;
 
@@ -1132,7 +1132,7 @@ void fread_pet ( Creature *ch, FILE *fp )
 					break;
 				}
 
-				if ( !str_cmp ( word, "AMod" ) ) {
+				if ( SameString ( word, "AMod" ) ) {
 					int stat;
 
 					for ( stat = 0; stat < MAX_STATS; stat++ )
@@ -1141,7 +1141,7 @@ void fread_pet ( Creature *ch, FILE *fp )
 					break;
 				}
 
-				if ( !str_cmp ( word, "Attr" ) ) {
+				if ( SameString ( word, "Attr" ) ) {
 					int stat;
 
 					for ( stat = 0; stat < MAX_STATS; stat++ )
@@ -1162,7 +1162,7 @@ void fread_pet ( Creature *ch, FILE *fp )
 				break;
 
 			case 'E':
-				if ( !str_cmp ( word, "End" ) ) {
+				if ( SameString ( word, "End" ) ) {
 					pet->leader = ch;
 					pet->master = ch;
 					ch->pet = pet;
@@ -1188,7 +1188,7 @@ void fread_pet ( Creature *ch, FILE *fp )
 			case 'H':
 				KEY ( "Hit",	pet->hitroll,		fread_number ( fp ) );
 
-				if ( !str_cmp ( word, "HMV" ) ) {
+				if ( SameString ( word, "HMV" ) ) {
 					pet->hit	= fread_number ( fp );
 					pet->max_hit	= fread_number ( fp );
 					pet->mana	= fread_number ( fp );
@@ -1255,7 +1255,7 @@ void fread_obj ( Creature *ch, FILE *fp )
 	make_new = FALSE;
 
 	word   = feof ( fp ) ? ( char * ) "End" : fread_word ( fp );
-	if ( !str_cmp ( word, "Vnum" ) ) {
+	if ( SameString ( word, "Vnum" ) ) {
 		int vnum;
 		first = FALSE;  /* fp will be in right place */
 
@@ -1294,7 +1294,7 @@ void fread_obj ( Creature *ch, FILE *fp )
 				break;
 
 			case 'A':
-				if ( !str_cmp ( word, "AffD" ) ) {
+				if ( SameString ( word, "AffD" ) ) {
 					Affect *paf;
 					int sn;
 
@@ -1316,7 +1316,7 @@ void fread_obj ( Creature *ch, FILE *fp )
 					fMatch		= TRUE;
 					break;
 				}
-				if ( !str_cmp ( word, "Affc" ) ) {
+				if ( SameString ( word, "Affc" ) ) {
 					Affect *paf;
 					int sn;
 
@@ -1353,7 +1353,7 @@ void fread_obj ( Creature *ch, FILE *fp )
 
 			case 'E':
 
-				if ( !str_cmp ( word, "Enchanted" ) ) {
+				if ( SameString ( word, "Enchanted" ) ) {
 					obj->enchanted = TRUE;
 					fMatch 	= TRUE;
 					break;
@@ -1362,7 +1362,7 @@ void fread_obj ( Creature *ch, FILE *fp )
 				KEY ( "ExtraFlags",	obj->extra_flags,	fread_number ( fp ) );
 				KEY ( "ExtF",	obj->extra_flags,	fread_number ( fp ) );
 
-				if ( !str_cmp ( word, "ExtraDescr" ) || !str_cmp ( word, "ExDe" ) ) {
+				if ( SameString ( word, "ExtraDescr" ) || SameString ( word, "ExDe" ) ) {
 					DescriptionData *ed;
 
 					ed = new_extra_descr();
@@ -1374,7 +1374,7 @@ void fread_obj ( Creature *ch, FILE *fp )
 					fMatch = TRUE;
 				}
 
-				if ( !str_cmp ( word, "End" ) ) {
+				if ( SameString ( word, "End" ) ) {
 					if ( !fNest || ( fVnum && obj->pIndexData == NULL ) ) {
 						log_hd ( LOG_ERROR, "Fread_obj: incomplete object." );
 						recycle_obj ( obj );
@@ -1432,7 +1432,7 @@ void fread_obj ( Creature *ch, FILE *fp )
 			case 'N':
 				KEY ( "Name",	obj->name,		fread_string ( fp ) );
 
-				if ( !str_cmp ( word, "Nest" ) ) {
+				if ( SameString ( word, "Nest" ) ) {
 					iNest = fread_number ( fp );
 					if ( iNest < 0 || iNest >= MAX_NEST ) {
 						log_hd ( LOG_ERROR, Format ( "Fread_obj: bad nest %d.", iNest ) );
@@ -1445,7 +1445,7 @@ void fread_obj ( Creature *ch, FILE *fp )
 				break;
 
 			case 'O':
-				if ( !str_cmp ( word, "Oldstyle" ) ) {
+				if ( SameString ( word, "Oldstyle" ) ) {
 					if ( obj->pIndexData != NULL && obj->pIndexData->new_format )
 					{ make_new = TRUE; }
 					fMatch = TRUE;
@@ -1453,7 +1453,7 @@ void fread_obj ( Creature *ch, FILE *fp )
 				break;
 
 			case 'R':
-				if ( !str_cmp ( word, "Requirements" ) ) {
+				if ( SameString ( word, "Requirements" ) ) {
 					obj->requirements[SIZ_REQ]	= fread_number ( fp );
 					obj->requirements[STR_REQ]	= fread_number ( fp );
 					obj->requirements[DEX_REQ]	= fread_number ( fp );
@@ -1468,7 +1468,7 @@ void fread_obj ( Creature *ch, FILE *fp )
 				KEY ( "ShortDescr",	obj->short_descr,	fread_string ( fp ) );
 				KEY ( "ShD",		obj->short_descr,	fread_string ( fp ) );
 
-				if ( !str_cmp ( word, "Spell" ) ) {
+				if ( SameString ( word, "Spell" ) ) {
 					int iValue;
 					int sn;
 
@@ -1493,7 +1493,7 @@ void fread_obj ( Creature *ch, FILE *fp )
 				break;
 
 			case 'V':
-				if ( !str_cmp ( word, "Values" ) || !str_cmp ( word, "Vals" ) ) {
+				if ( SameString ( word, "Values" ) || SameString ( word, "Vals" ) ) {
 					obj->value[0]	= fread_number ( fp );
 					obj->value[1]	= fread_number ( fp );
 					obj->value[2]	= fread_number ( fp );
@@ -1504,7 +1504,7 @@ void fread_obj ( Creature *ch, FILE *fp )
 					break;
 				}
 
-				if ( !str_cmp ( word, "Val" ) ) {
+				if ( SameString ( word, "Val" ) ) {
 					obj->value[0] 	= fread_number ( fp );
 					obj->value[1]	= fread_number ( fp );
 					obj->value[2] 	= fread_number ( fp );
@@ -1514,7 +1514,7 @@ void fread_obj ( Creature *ch, FILE *fp )
 					break;
 				}
 
-				if ( !str_cmp ( word, "Vnum" ) ) {
+				if ( SameString ( word, "Vnum" ) ) {
 					int vnum;
 
 					vnum = fread_number ( fp );

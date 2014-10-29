@@ -68,7 +68,7 @@
 */
 Item *rand_item ( Item *obj, int level )
 {
-	char *l_item_name;
+	char l_item_name[1000];
 	char mat_short[MSL];
 	char buf_name[MSL];
 	char buf_short[MSL];
@@ -83,6 +83,8 @@ Item *rand_item ( Item *obj, int level )
 	buf_short[0] = '\0';
 	buf_long[0] = '\0';
 	l_item_name[0] = '\0';
+
+	strcpy ( l_item_name, "" ); // -- stop an annoying warning
 
 	if ( weight > 50 ) { weight = 50; }
 

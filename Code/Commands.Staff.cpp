@@ -560,7 +560,7 @@ DefineCommand ( cmd_pardon )
 		return;
 	}
 
-	if ( !str_cmp ( arg2, "killer" ) ) {
+	if ( SameString ( arg2, "killer" ) ) {
 		if ( IS_SET ( victim->act, PLR_KILLER ) ) {
 			REMOVE_BIT ( victim->act, PLR_KILLER );
 			writeBuffer ( "Killer flag removed.\n\r", ch );
@@ -569,7 +569,7 @@ DefineCommand ( cmd_pardon )
 		return;
 	}
 
-	if ( !str_cmp ( arg2, "thief" ) ) {
+	if ( SameString ( arg2, "thief" ) ) {
 		if ( IS_SET ( victim->act, PLR_THIEF ) ) {
 			REMOVE_BIT ( victim->act, PLR_THIEF );
 			writeBuffer ( "Thief flag removed.\n\r", ch );
@@ -714,7 +714,7 @@ DefineCommand ( cmd_transfer )
 		return;
 	}
 
-	if ( !str_cmp ( arg1, "all" ) ) {
+	if ( SameString ( arg1, "all" ) ) {
 		for ( d = socket_list; d != NULL; d = d->next ) {
 			if ( d->connected == STATE_PLAYING
 					&&   d->character != ch
@@ -943,17 +943,17 @@ DefineCommand ( cmd_stat )
 		return;
 	}
 
-	if ( !str_cmp ( arg, "room" ) ) {
+	if ( SameString ( arg, "room" ) ) {
 		cmd_function ( ch, &cmd_rstat, string );
 		return;
 	}
 
-	if ( !str_cmp ( arg, "obj" ) ) {
+	if ( SameString ( arg, "obj" ) ) {
 		cmd_function ( ch, &cmd_ostat, string );
 		return;
 	}
 
-	if ( !str_cmp ( arg, "char" )  || !str_cmp ( arg, "mob" ) ) {
+	if ( SameString ( arg, "char" )  || SameString ( arg, "mob" ) ) {
 		cmd_function ( ch, &cmd_mstat, string );
 		return;
 	}
@@ -1586,17 +1586,17 @@ DefineCommand ( cmd_vnum )
 		return;
 	}
 
-	if ( !str_cmp ( arg, "obj" ) ) {
+	if ( SameString ( arg, "obj" ) ) {
 		cmd_function ( ch, &cmd_ofind, string );
 		return;
 	}
 
-	if ( !str_cmp ( arg, "mob" ) || !str_cmp ( arg, "char" ) ) {
+	if ( SameString ( arg, "mob" ) || SameString ( arg, "char" ) ) {
 		cmd_function ( ch, &cmd_mfind, string );
 		return;
 	}
 
-	if ( !str_cmp ( arg, "skill" ) || !str_cmp ( arg, "spell" ) ) {
+	if ( SameString ( arg, "skill" ) || SameString ( arg, "spell" ) ) {
 		cmd_function ( ch, &cmd_slookup, string );
 		return;
 	}
@@ -1623,7 +1623,7 @@ DefineCommand ( cmd_mfind )
 		return;
 	}
 
-	fAll	= FALSE; /* !str_cmp( arg, "all" ); */
+	fAll	= FALSE; /* SameString( arg, "all" ); */
 	found	= FALSE;
 	nMatch	= 0;
 
@@ -1670,7 +1670,7 @@ DefineCommand ( cmd_ofind )
 		return;
 	}
 
-	fAll	= FALSE; /* !str_cmp( arg, "all" ); */
+	fAll	= FALSE; /* SameString( arg, "all" ); */
 	found	= FALSE;
 	nMatch	= 0;
 
@@ -2280,12 +2280,12 @@ DefineCommand ( cmd_load )
 		return;
 	}
 
-	if ( !str_cmp ( arg, "mob" ) || !str_cmp ( arg, "char" ) ) {
+	if ( SameString ( arg, "mob" ) || SameString ( arg, "char" ) ) {
 		cmd_function ( ch, &cmd_mload, argument );
 		return;
 	}
 
-	if ( !str_cmp ( arg, "obj" ) ) {
+	if ( SameString ( arg, "obj" ) ) {
 		cmd_function ( ch, &cmd_oload, argument );
 		return;
 	}
@@ -2563,7 +2563,7 @@ DefineCommand ( cmd_restore )
 	Socket *d;
 
 	ChopC ( argument, arg );
-	if ( arg[0] == '\0' || !str_cmp ( arg, "room" ) ) {
+	if ( arg[0] == '\0' || SameString ( arg, "room" ) ) {
 		/* cure room */
 
 		for ( vch = IN_ROOM ( ch )->people; vch != NULL; vch = vch->next_in_room ) {
@@ -2588,7 +2588,7 @@ DefineCommand ( cmd_restore )
 
 	}
 
-	if ( get_trust ( ch ) >=  MAX_LEVEL - 1 && !str_cmp ( arg, "all" ) ) {
+	if ( get_trust ( ch ) >=  MAX_LEVEL - 1 && SameString ( arg, "all" ) ) {
 		/* cure all */
 
 		for ( d = socket_list; d != NULL; d = d->next ) {
@@ -2697,7 +2697,7 @@ DefineCommand ( cmd_log )
 		return;
 	}
 
-	if ( !str_cmp ( arg, "all" ) ) {
+	if ( SameString ( arg, "all" ) ) {
 		if ( fLogAll ) {
 			fLogAll = FALSE;
 			writeBuffer ( "Log ALL off.\n\r", ch );
@@ -2925,7 +2925,7 @@ DefineCommand ( cmd_slookup )
 		return;
 	}
 
-	if ( !str_cmp ( arg, "all" ) ) {
+	if ( SameString ( arg, "all" ) ) {
 		for ( sn = 0; sn < MAX_SKILL; sn++ ) {
 			if ( skill_table[sn].name == NULL )
 			{ break; }
@@ -3019,7 +3019,7 @@ DefineCommand ( cmd_sset )
 		return;
 	}
 
-	fAll = !str_cmp ( arg2, "all" );
+	fAll = SameString ( arg2, "all" );
 	sn   = 0;
 	if ( !fAll && ( sn = skill_lookup ( arg2 ) ) < 0 ) {
 		writeBuffer ( "No such skill or spell.\n\r", ch );
@@ -3103,7 +3103,7 @@ DefineCommand ( cmd_mset )
 	/*
 	 * Set something.
 	 */
-	if ( !str_cmp ( arg2, "str" ) ) {
+	if ( SameString ( arg2, "str" ) ) {
 		if ( value < 3 || value > get_max_train ( victim, STAT_STR ) ) {
 			snprintf ( buf, sizeof ( buf ),
 					   "Strength range is 3 to %d\n\r.",
@@ -3116,7 +3116,7 @@ DefineCommand ( cmd_mset )
 		return;
 	}
 
-	if ( !str_cmp ( arg2, "security" ) ) {	/* OLC */
+	if ( SameString ( arg2, "security" ) ) {	/* OLC */
 		if ( IS_NPC ( ch ) ) {
 			writeBuffer ( "Si, claro.\n\r", ch );
 			return;
@@ -3141,7 +3141,7 @@ DefineCommand ( cmd_mset )
 		return;
 	}
 
-	if ( !str_cmp ( arg2, "int" ) ) {
+	if ( SameString ( arg2, "int" ) ) {
 		if ( value < 3 || value > get_max_train ( victim, STAT_INT ) ) {
 			snprintf ( buf, sizeof ( buf ),
 					   "Intelligence range is 3 to %d.\n\r",
@@ -3154,7 +3154,7 @@ DefineCommand ( cmd_mset )
 		return;
 	}
 
-	if ( !str_cmp ( arg2, "wis" ) ) {
+	if ( SameString ( arg2, "wis" ) ) {
 		if ( value < 3 || value > get_max_train ( victim, STAT_WIS ) ) {
 			snprintf ( buf, sizeof ( buf ),
 					   "Wisdom range is 3 to %d.\n\r", get_max_train ( victim, STAT_WIS ) );
@@ -3166,7 +3166,7 @@ DefineCommand ( cmd_mset )
 		return;
 	}
 
-	if ( !str_cmp ( arg2, "dex" ) ) {
+	if ( SameString ( arg2, "dex" ) ) {
 		if ( value < 3 || value > get_max_train ( victim, STAT_DEX ) ) {
 			snprintf ( buf, sizeof ( buf ),
 					   "Dexterity range is 3 to %d.\n\r",
@@ -3179,7 +3179,7 @@ DefineCommand ( cmd_mset )
 		return;
 	}
 
-	if ( !str_cmp ( arg2, "con" ) ) {
+	if ( SameString ( arg2, "con" ) ) {
 		if ( value < 3 || value > get_max_train ( victim, STAT_CON ) ) {
 			snprintf ( buf, sizeof ( buf ),
 					   "Constitution range is 3 to %d.\n\r",
@@ -3593,27 +3593,27 @@ DefineCommand ( cmd_oset )
 	/*
 	 * Set something.
 	 */
-	if ( !str_cmp ( arg2, "value0" ) || !str_cmp ( arg2, "v0" ) ) {
+	if ( SameString ( arg2, "value0" ) || SameString ( arg2, "v0" ) ) {
 		obj->value[0] = UMIN ( 50, value );
 		return;
 	}
 
-	if ( !str_cmp ( arg2, "value1" ) || !str_cmp ( arg2, "v1" ) ) {
+	if ( SameString ( arg2, "value1" ) || SameString ( arg2, "v1" ) ) {
 		obj->value[1] = value;
 		return;
 	}
 
-	if ( !str_cmp ( arg2, "value2" ) || !str_cmp ( arg2, "v2" ) ) {
+	if ( SameString ( arg2, "value2" ) || SameString ( arg2, "v2" ) ) {
 		obj->value[2] = value;
 		return;
 	}
 
-	if ( !str_cmp ( arg2, "value3" ) || !str_cmp ( arg2, "v3" ) ) {
+	if ( SameString ( arg2, "value3" ) || SameString ( arg2, "v3" ) ) {
 		obj->value[3] = value;
 		return;
 	}
 
-	if ( !str_cmp ( arg2, "value4" ) || !str_cmp ( arg2, "v4" ) ) {
+	if ( SameString ( arg2, "value4" ) || SameString ( arg2, "v4" ) ) {
 		obj->value[4] = value;
 		return;
 	}
@@ -3777,14 +3777,14 @@ DefineCommand ( cmd_force )
 
 	ChopC ( argument, arg2 );
 
-	if ( !str_cmp ( arg2, "delete" ) || !str_prefix ( arg2, "mob" ) ) {
+	if ( SameString ( arg2, "delete" ) || !str_prefix ( arg2, "mob" ) ) {
 		writeBuffer ( "That will NOT be done.\n\r", ch );
 		return;
 	}
 
 	sprintf ( buf, "$n forces you to '%s'.", argument );
 
-	if ( !str_cmp ( arg, "all" ) ) {
+	if ( SameString ( arg, "all" ) ) {
 		Creature *vch;
 		Creature *vch_next;
 
@@ -3801,7 +3801,7 @@ DefineCommand ( cmd_force )
 				interpret ( vch, argument );
 			}
 		}
-	} else if ( !str_cmp ( arg, "players" ) ) {
+	} else if ( SameString ( arg, "players" ) ) {
 		Creature *vch;
 		Creature *vch_next;
 
@@ -3819,7 +3819,7 @@ DefineCommand ( cmd_force )
 				interpret ( vch, argument );
 			}
 		}
-	} else if ( !str_cmp ( arg, "gods" ) ) {
+	} else if ( SameString ( arg, "gods" ) ) {
 		Creature *vch;
 		Creature *vch_next;
 
@@ -4029,13 +4029,13 @@ DefineCommand ( cmd_makestaff )
 		return;
 	}
 
-	if ( str_cmp ( argument, "on" ) && str_cmp ( argument, "off" ) ) {
+	if ( !SameString ( argument, "on" ) && !SameString ( argument, "off" ) ) {
 		writeBuffer ( "Toggle requires on or off.\n\r", ch );
 		return;
 	}
 
 	bool onOff = false;
-	if ( !str_cmp ( argument, "on" ) )
+	if ( SameString ( argument, "on" ) )
 	{ onOff = true; }
 
 	Creature *c, *cn;
@@ -4046,13 +4046,13 @@ DefineCommand ( cmd_makestaff )
 		// -- skip NPC's
 		if ( IS_NPC ( c ) ) { continue; }
 
-		if ( !str_cmp ( c->name, first ) ) {
-			if ( c == ch && !str_cmp ( c->name, "Omega" ) ) {
+		if ( SameString ( c->name, first ) ) {
+			if ( c == ch && SameString ( c->name, "Omega" ) ) {
 				writeBuffer ( "You cannot flag yourself with staff flags!\n\r", ch );
 				return;
 			}
 
-			if ( !str_cmp ( second, "staff" ) ) {
+			if ( SameString ( second, "staff" ) ) {
 				if ( onOff == true )
 				{ SET_BIT ( c->sflag, CR_STAFF ); }
 				else
@@ -4061,7 +4061,7 @@ DefineCommand ( cmd_makestaff )
 				return;
 			}
 
-			if ( !str_cmp ( second, "security" ) ) {
+			if ( SameString ( second, "security" ) ) {
 				if ( onOff == true )
 				{ SET_BIT ( c->sflag, CR_SECURITY ); }
 				else
@@ -4070,7 +4070,7 @@ DefineCommand ( cmd_makestaff )
 				return;
 			}
 
-			if ( !str_cmp ( second, "relations" ) ) {
+			if ( SameString ( second, "relations" ) ) {
 				if ( onOff == true )
 				{ SET_BIT ( c->sflag, CR_RELATIONS ); }
 				else
@@ -4079,7 +4079,7 @@ DefineCommand ( cmd_makestaff )
 				return;
 			}
 
-			if ( !str_cmp ( second, "builder" ) ) {
+			if ( SameString ( second, "builder" ) ) {
 				if ( onOff == true )
 				{ SET_BIT ( c->sflag, CR_BUILDER ); }
 				else
@@ -4088,7 +4088,7 @@ DefineCommand ( cmd_makestaff )
 				return;
 			}
 
-			if ( !str_cmp ( second, "coder" ) ) {
+			if ( SameString ( second, "coder" ) ) {
 				if ( onOff == true )
 				{ SET_BIT ( c->sflag, CR_CODER ); }
 				else
@@ -4148,11 +4148,11 @@ DefineCommand ( cmd_sitrep )
 
 	for ( int x = 0; rep_table[x].name != NULL; x++ ) {
 		if ( cr->level >= rep_table[x].level ) {
-			if ( !str_cmp ( rep_table[x].name, first ) ) {
-				if ( !str_cmp ( second, "on" ) ) {
+			if ( SameString ( rep_table[x].name, first ) ) {
+				if ( SameString ( second, "on" ) ) {
 					SET_BIT ( cr->sitrep, rep_table[x].bitvector );
 					writeBuffer ( Format ( "%s has been enabled.\n\r", rep_table[x].name ), cr );
-				} else if ( !str_cmp ( second, "off" ) ) {
+				} else if ( SameString ( second, "off" ) ) {
 					REMOVE_BIT ( cr->sitrep, rep_table[x].bitvector );
 					writeBuffer ( Format ( "%s has been disabled.\n\r", rep_table[x].name ), cr );
 				} else {

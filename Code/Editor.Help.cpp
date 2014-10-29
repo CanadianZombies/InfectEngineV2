@@ -250,7 +250,7 @@ void hedit ( Creature *ch, const char *argument )
 		return;
 	}
 
-	if ( !str_cmp ( command, "done" ) ) {
+	if ( SameString ( command, "done" ) ) {
 		edit_done ( ch );
 		return;
 	}
@@ -350,7 +350,7 @@ HEDIT ( hedit_list )
 
 	EDIT_HELP ( ch, pHelp );
 
-	if ( !str_cmp ( argument, "all" ) ) {
+	if ( SameString ( argument, "all" ) ) {
 		buffer = new_buf();
 
 		for ( pHelp = help_first; pHelp; pHelp = pHelp->next ) {
@@ -367,7 +367,7 @@ HEDIT ( hedit_list )
 		return FALSE;
 	}
 
-	if ( !str_cmp ( argument, "area" ) ) {
+	if ( SameString ( argument, "area" ) ) {
 		if ( IN_ROOM ( ch )->area->helps == NULL ) {
 			writeBuffer ( "There are no helps in this area.\n\r", ch );
 			return FALSE;

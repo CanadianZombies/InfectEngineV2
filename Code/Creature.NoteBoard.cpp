@@ -217,27 +217,27 @@ void load_thread ( const char *name, NOTE_DATA **list, int type, time_t recycle_
 
 		ALLOC_DATA ( pnote, NOTE_DATA, 1 );
 
-		if ( str_cmp ( fread_word ( fp ), "sender" ) )
+		if ( !SameString ( fread_word ( fp ), "sender" ) )
 		{ break; }
 		pnote->sender   = fread_string ( fp );
 
-		if ( str_cmp ( fread_word ( fp ), "date" ) )
+		if ( !SameString ( fread_word ( fp ), "date" ) )
 		{ break; }
 		pnote->date     = fread_string ( fp );
 
-		if ( str_cmp ( fread_word ( fp ), "stamp" ) )
+		if ( !SameString ( fread_word ( fp ), "stamp" ) )
 		{ break; }
 		pnote->date_stamp = fread_number ( fp );
 
-		if ( str_cmp ( fread_word ( fp ), "to" ) )
+		if ( !SameString ( fread_word ( fp ), "to" ) )
 		{ break; }
 		pnote->to_list  = fread_string ( fp );
 
-		if ( str_cmp ( fread_word ( fp ), "subject" ) )
+		if ( !SameString ( fread_word ( fp ), "subject" ) )
 		{ break; }
 		pnote->subject  = fread_string ( fp );
 
-		if ( str_cmp ( fread_word ( fp ), "text" ) )
+		if ( !SameString ( fread_word ( fp ), "text" ) )
 		{ break; }
 		pnote->text     = fread_string ( fp );
 
@@ -319,7 +319,7 @@ void append_note ( NOTE_DATA *pnote )
 
 bool is_note_to ( Creature *ch, NOTE_DATA *pnote )
 {
-	if ( !str_cmp ( ch->name, pnote->sender ) )
+	if ( SameString ( ch->name, pnote->sender ) )
 	{ return TRUE; }
 
 	if ( is_exact_name ( "all", pnote->to_list ) )
@@ -375,13 +375,13 @@ void note_remove ( Creature *ch, NOTE_DATA *pnote, bool idelete )
 		to_list	= pnote->to_list;
 		while ( *to_list != '\0' ) {
 			to_list	= ChopC ( to_list, to_one );
-			if ( to_one[0] != '\0' && str_cmp ( ch->name, to_one ) ) {
+			if ( to_one[0] != '\0' && !SameString ( ch->name, to_one ) ) {
 				strcat ( to_new, " " );
 				strcat ( to_new, to_one );
 			}
 		}
 		/* Just a simple recipient removal? */
-		if ( str_cmp ( ch->name, pnote->sender ) && to_new[0] != '\0' ) {
+		if ( !SameString ( ch->name, pnote->sender ) && to_new[0] != '\0' ) {
 			PURGE_DATA ( pnote->to_list );
 			pnote->to_list = assign_string ( to_new + 1 );
 			return;
@@ -463,7 +463,7 @@ bool hide_note ( Creature *ch, NOTE_DATA *pnote )
 	if ( pnote->date_stamp <= last_read )
 	{ return TRUE; }
 
-	if ( !str_cmp ( ch->name, pnote->sender ) )
+	if ( SameString ( ch->name, pnote->sender ) )
 	{ return TRUE; }
 
 	if ( !is_note_to ( ch, pnote ) )
@@ -547,7 +547,7 @@ void parse_note ( Creature *ch, const char *argument, int type )
 	if ( arg[0] == '\0' || !str_prefix ( arg, "read" ) ) {
 		bool fAll;
 
-		if ( !str_cmp ( argument, "all" ) ) {
+		if ( SameString ( argument, "all" ) ) {
 			fAll = TRUE;
 			anum = 0;
 		}
@@ -710,7 +710,7 @@ void parse_note ( Creature *ch, const char *argument, int type )
 		return;
 	}
 
-	if ( !str_cmp ( arg, "+" ) ) {
+	if ( SameString ( arg, "+" ) ) {
 		note_attach ( ch, type );
 		if ( ch->pnote->type != type ) {
 			writeBuffer (
@@ -735,7 +735,7 @@ void parse_note ( Creature *ch, const char *argument, int type )
 		return;
 	}
 
-	if ( !str_cmp ( arg, "-" ) ) {
+	if ( SameString ( arg, "-" ) ) {
 		int len;
 		bool found = FALSE;
 
@@ -844,14 +844,14 @@ void parse_note ( Creature *ch, const char *argument, int type )
 			return;
 		}
 
-		if ( !str_cmp ( ch->pnote->to_list, "" ) ) {
+		if ( SameString ( ch->pnote->to_list, "" ) ) {
 			writeBuffer (
 				"You need to provide a recipient (name, all, or immortal).\n\r",
 				ch );
 			return;
 		}
 
-		if ( !str_cmp ( ch->pnote->subject, "" ) ) {
+		if ( SameString ( ch->pnote->subject, "" ) ) {
 			writeBuffer ( "You need to provide a subject.\n\r", ch );
 			return;
 		}

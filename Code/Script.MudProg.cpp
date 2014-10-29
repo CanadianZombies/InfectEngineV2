@@ -203,7 +203,7 @@ int keyword_lookup ( const char **table, char *keyword )
 {
 	register int i;
 	for ( i = 0; table[i][0] != '\n'; i++ )
-		if ( !str_cmp ( table[i], keyword ) )
+		if ( SameString ( table[i], keyword ) )
 		{ return ( i ); }
 	return -1;
 }
@@ -961,7 +961,7 @@ void program_flow (
 		/*
 		 * Match control words
 		 */
-		if ( !str_cmp ( control, "if" ) ) {
+		if ( SameString ( control, "if" ) ) {
 			if ( state[level] == BEGIN_BLOCK ) {
 				log_hd ( LOG_ERROR | LOG_DEBUG, Format ( "Mobprog: misplaced if statement, mob %d prog %d",
 						 mvnum, pvnum ) );
@@ -986,7 +986,7 @@ void program_flow (
 				return;
 			}
 			state[level] = END_BLOCK;
-		} else if ( !str_cmp ( control, "or" ) ) {
+		} else if ( SameString ( control, "or" ) ) {
 			if ( !level || state[level - 1] != BEGIN_BLOCK ) {
 				log_hd ( LOG_ERROR | LOG_DEBUG, Format ( "Mobprog: or without if, mob %d prog %d",
 						 mvnum, pvnum ) );
@@ -1002,7 +1002,7 @@ void program_flow (
 				return;
 			}
 			cond[level] = ( eval == TRUE ) ? TRUE : cond[level];
-		} else if ( !str_cmp ( control, "and" ) ) {
+		} else if ( SameString ( control, "and" ) ) {
 			if ( !level || state[level - 1] != BEGIN_BLOCK ) {
 				log_hd ( LOG_ERROR | LOG_DEBUG, Format ( "Mobprog: and without if, mob %d prog %d",
 						 mvnum, pvnum ) );
@@ -1018,7 +1018,7 @@ void program_flow (
 				return;
 			}
 			cond[level] = ( cond[level] == TRUE ) && ( eval == TRUE ) ? TRUE : FALSE;
-		} else if ( !str_cmp ( control, "endif" ) ) {
+		} else if ( SameString ( control, "endif" ) ) {
 			if ( !level || state[level - 1] != BEGIN_BLOCK ) {
 				log_hd ( LOG_ERROR | LOG_DEBUG, Format ( "Mobprog: endif without if, mob %d prog %d",
 						 mvnum, pvnum ) );
@@ -1027,7 +1027,7 @@ void program_flow (
 			cond[level] = TRUE;
 			state[level] = IN_BLOCK;
 			state[--level] = END_BLOCK;
-		} else if ( !str_cmp ( control, "else" ) ) {
+		} else if ( SameString ( control, "else" ) ) {
 			if ( !level || state[level - 1] != BEGIN_BLOCK ) {
 				log_hd ( LOG_ERROR | LOG_DEBUG, Format ( "Mobprog: else without if, mob %d prog %d",
 						 mvnum, pvnum ) );
@@ -1037,13 +1037,13 @@ void program_flow (
 			state[level] = IN_BLOCK;
 			cond[level] = ( cond[level] == TRUE ) ? FALSE : TRUE;
 		} else if ( cond[level] == TRUE
-					&& ( !str_cmp ( control, "break" ) || !str_cmp ( control, "end" ) ) ) {
+					&& ( SameString ( control, "break" ) || SameString ( control, "end" ) ) ) {
 			call_level--;
 			return;
 		} else if ( ( !level || cond[level] == TRUE ) && buf[0] != '\0' ) {
 			state[level] = IN_BLOCK;
 			expand_arg ( data, buf, mob, ch, arg1, arg2, rch );
-			if ( !str_cmp ( control, "mob" ) ) {
+			if ( SameString ( control, "mob" ) ) {
 				/*
 				 * Found a mob restricted command, pass it to mob interpreter
 				 */
@@ -1183,7 +1183,7 @@ void mp_give_trigger ( Creature *mob, Creature *ch, Item *obj )
 					p = ChopC ( p, buf );
 
 					if ( is_name ( buf, obj->name )
-							||   !str_cmp ( "all", buf ) ) {
+							||   SameString ( "all", buf ) ) {
 						program_flow ( prg->vnum, prg->code, mob, ch, ( void * ) obj, NULL );
 						return;
 					}

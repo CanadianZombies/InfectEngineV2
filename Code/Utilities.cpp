@@ -501,32 +501,117 @@ char * str_str ( const char *astr, const char *bstr )
 	return strstr ( ( char* ) astr, ( char* ) bstr );
 }
 
+
+// case-insensitive string comparisons
+bool SameString ( const std::string &a, const std::string &b )
+{
+	try {
+		// they are not the same if they are empty
+		if ( a.empty() ) { return false; }
+		if ( b.empty() ) { return false; }
+
+		if ( a.length() != b.length() )
+		{ return false; }
+
+		for ( int x = 0; ( a[x] != '\0' && b[x] != '\0' ); x++ ) {
+			if ( tolower ( a[x] ) != tolower ( b[x] ) )
+			{ return false; }
+		}
+	} catch ( ... ) {
+		CATCH ( false );
+		return false;
+	}
+	return true;
+}
+
 /*
  * Compare strings, case insensitive.
  * Return TRUE if different
  *   (compatibility with historical functions).
  */
-bool str_cmp ( const char *astr, const char *bstr )
+bool SameString ( const char *astr, const char *bstr )
 {
 	if ( astr == NULL ) {
-		log_hd ( LOG_ERROR, "Str_cmp: null astr." );
-		return TRUE;
+		log_hd ( LOG_ERROR, "!SameString: null astr." );
+		return false;
 	}
 
 	if ( bstr == NULL ) {
-		log_hd ( LOG_ERROR, "Str_cmp: null bstr." );
-		return TRUE;
+		log_hd ( LOG_ERROR, "!SameString: null bstr." );
+		return false;
 	}
 
-	for ( ; *astr || *bstr; astr++, bstr++ ) {
-		if ( LOWER ( *astr ) != LOWER ( *bstr ) )
-		{ return TRUE; }
-	}
-
-	return FALSE;
+	std::string a = astr;
+	std::string b = bstr;
+	return SameString ( a, b );
 }
 
+bool SameString ( const char *astr, const std::string bstr )
+{
+	if ( astr == NULL ) {
+		log_hd ( LOG_ERROR, "!SameString: null astr." );
+		return false;
+	}
 
+	std::string a = astr;
+	return SameString ( a, bstr );
+}
+
+bool SameString ( const std::string &astr, const char *bstr )
+{
+	if ( bstr == NULL ) {
+		log_hd ( LOG_ERROR, "!SameString: null bstr." );
+		return false;
+	}
+
+	std::string b = bstr;
+	return SameString ( astr, b );
+}
+
+// is the keyword/name within the 'namelist'
+bool IsSameList ( const std::string &nameToFind, const std::string &namelist )
+{
+	try {
+		if ( namelist.empty() )
+		{ return false; }
+
+		std::string nList = namelist;
+		std::string name;
+
+		while ( true ) {
+			// chop chop, each word.
+			nList = ChopString ( nList, name );
+
+			// is the name empty? break.
+			if ( name.empty() )
+			{ break; }
+
+			// are the string the same?
+			if ( SameString ( nameToFind, name ) )
+			{ return false; }
+
+			// is the namelist empty now?
+			if ( nList.empty() )
+			{ break; }
+		}
+	} catch ( ... ) {
+		CATCH ( false );
+		return false;
+	}
+	return false;
+}
+
+const char *getDateTime ( time_t timeVal )
+{
+	static char lickmenow[200] = {'\0'};
+	struct tm *tm_ptr;
+	tm_ptr = localtime ( &timeVal );
+	//* Easier then my ex girlfriend. *//
+	snprintf ( lickmenow, 200, "%02d/%02d/%02d - %02d:%02d:%02d", tm_ptr->tm_year + 1900,
+			   tm_ptr->tm_mon + 1, tm_ptr->tm_mday,
+			   tm_ptr->tm_hour, tm_ptr->tm_min, tm_ptr->tm_sec );
+	return lickmenow;
+}
 
 /*
  * Compare strings, case insensitive, for prefix matching.
@@ -595,7 +680,7 @@ bool str_suffix ( const char *astr, const char *bstr )
 
 	sstr1 = strlen ( astr );
 	sstr2 = strlen ( bstr );
-	if ( sstr1 <= sstr2 && !str_cmp ( astr, bstr + sstr2 - sstr1 ) )
+	if ( sstr1 <= sstr2 && SameString ( astr, bstr + sstr2 - sstr1 ) )
 	{ return FALSE; }
 	else
 	{ return TRUE; }

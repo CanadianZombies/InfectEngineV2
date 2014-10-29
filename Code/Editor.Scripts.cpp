@@ -86,7 +86,7 @@ void mpedit ( Creature *ch, const char *argument )
 		return;
 	}
 
-	if ( !str_cmp ( command, "done" ) ) {
+	if ( SameString ( command, "done" ) ) {
 		edit_done ( ch );
 		return;
 	}
@@ -139,7 +139,7 @@ DefineCommand ( cmd_mpedit )
 		return;
 	}
 
-	if ( !str_cmp ( command, "create" ) ) {
+	if ( SameString ( command, "create" ) ) {
 		if ( argument[0] == '\0' ) {
 			writeBuffer ( "Sintaxis : mpedit create [vnum]\n\r", ch );
 			return;
@@ -231,7 +231,7 @@ MPEDIT ( mpedit_list )
 	MPROG_CODE *mprg;
 	char buf[MAX_STRING_LENGTH];
 	BUFFER *buffer;
-	bool fAll = !str_cmp ( argument, "all" );
+	bool fAll = SameString ( argument, "all" );
 	char blah;
 	Zone *ad;
 

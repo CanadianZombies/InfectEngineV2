@@ -65,13 +65,13 @@ bool can_loot ( Creature *ch, Item *obj )
 
 	owner = NULL;
 	for ( wch = char_list; wch != NULL ; wch = wch->next )
-		if ( !str_cmp ( wch->name, obj->owner ) )
+		if ( SameString ( wch->name, obj->owner ) )
 		{ owner = wch; }
 
 	if ( owner == NULL )
 	{ return TRUE; }
 
-	if ( !str_cmp ( ch->name, owner->name ) )
+	if ( SameString ( ch->name, owner->name ) )
 	{ return TRUE; }
 
 	if ( !IS_NPC ( owner ) && IS_SET ( owner->act, PLR_CANLOOT ) )
@@ -185,7 +185,7 @@ DefineCommand ( cmd_get )
 	argument = ChopC ( argument, arg1 );
 	argument = ChopC ( argument, arg2 );
 
-	if ( !str_cmp ( arg2, "from" ) )
+	if ( SameString ( arg2, "from" ) )
 	{ argument = ChopC ( argument, arg2 ); }
 
 	/* Get type. */
@@ -195,7 +195,7 @@ DefineCommand ( cmd_get )
 	}
 
 	if ( arg2[0] == '\0' ) {
-		if ( str_cmp ( arg1, "all" ) && str_prefix ( "all.", arg1 ) ) {
+		if ( !SameString ( arg1, "all" ) && str_prefix ( "all.", arg1 ) ) {
 			/* 'get obj' */
 			obj = get_obj_list ( ch, arg1, IN_ROOM ( ch )->contents );
 			if ( obj == NULL ) {
@@ -225,7 +225,7 @@ DefineCommand ( cmd_get )
 		}
 	} else {
 		/* 'get ... container' */
-		if ( !str_cmp ( arg2, "all" ) || !str_prefix ( "all.", arg2 ) ) {
+		if ( SameString ( arg2, "all" ) || !str_prefix ( "all.", arg2 ) ) {
 			writeBuffer ( "You can't do that.\n\r", ch );
 			return;
 		}
@@ -265,7 +265,7 @@ DefineCommand ( cmd_get )
 			return;
 		}
 
-		if ( str_cmp ( arg1, "all" ) && str_prefix ( "all.", arg1 ) ) {
+		if ( !SameString ( arg1, "all" ) && str_prefix ( "all.", arg1 ) ) {
 			/* 'get obj container' */
 			obj = get_obj_list ( ch, arg1, container->contains );
 			if ( obj == NULL ) {
@@ -316,7 +316,7 @@ DefineCommand ( cmd_put )
 	argument = ChopC ( argument, arg1 );
 	argument = ChopC ( argument, arg2 );
 
-	if ( !str_cmp ( arg2, "in" ) || !str_cmp ( arg2, "on" ) )
+	if ( SameString ( arg2, "in" ) || SameString ( arg2, "on" ) )
 	{ argument = ChopC ( argument, arg2 ); }
 
 	if ( arg1[0] == '\0' || arg2[0] == '\0' ) {
@@ -324,7 +324,7 @@ DefineCommand ( cmd_put )
 		return;
 	}
 
-	if ( !str_cmp ( arg2, "all" ) || !str_prefix ( "all.", arg2 ) ) {
+	if ( SameString ( arg2, "all" ) || !str_prefix ( "all.", arg2 ) ) {
 		writeBuffer ( "You can't do that.\n\r", ch );
 		return;
 	}
@@ -346,7 +346,7 @@ DefineCommand ( cmd_put )
 		return;
 	}
 
-	if ( str_cmp ( arg1, "all" ) && str_prefix ( "all.", arg1 ) ) {
+	if ( !SameString ( arg1, "all" ) && str_prefix ( "all.", arg1 ) ) {
 		/* 'put obj container' */
 		if ( ( obj = get_obj_carry ( ch, arg1, ch ) ) == NULL ) {
 			writeBuffer ( "You do not have that item.\n\r", ch );
@@ -461,14 +461,14 @@ DefineCommand ( cmd_drop )
 		amount   = atoi ( arg );
 		argument = ChopC ( argument, arg );
 		if ( amount <= 0
-				|| ( str_cmp ( arg, "coins" ) && str_cmp ( arg, "coin" ) &&
-					 str_cmp ( arg, "gold"  ) && str_cmp ( arg, "silver" ) ) ) {
+				|| ( !SameString ( arg, "coins" ) && !SameString ( arg, "coin" ) &&
+					 !SameString ( arg, "gold"  ) && !SameString ( arg, "silver" ) ) ) {
 			writeBuffer ( "Sorry, you can't do that.\n\r", ch );
 			return;
 		}
 
-		if ( !str_cmp ( arg, "coins" ) || !str_cmp ( arg, "coin" )
-				||   !str_cmp ( arg, "silver" ) ) {
+		if ( SameString ( arg, "coins" ) || SameString ( arg, "coin" )
+				||   SameString ( arg, "silver" ) ) {
 			if ( ch->silver < amount ) {
 				writeBuffer ( "You don't have that much silver.\n\r", ch );
 				return;
@@ -526,7 +526,7 @@ DefineCommand ( cmd_drop )
 		return;
 	}
 
-	if ( str_cmp ( arg, "all" ) && str_prefix ( "all.", arg ) ) {
+	if ( !SameString ( arg, "all" ) && str_prefix ( "all.", arg ) ) {
 		/* 'drop obj' */
 		if ( ( obj = get_obj_carry ( ch, arg, ch ) ) == NULL ) {
 			writeBuffer ( "You do not have that item.\n\r", ch );
@@ -606,13 +606,13 @@ DefineCommand ( cmd_give )
 
 		amount   = atoi ( arg1 );
 		if ( amount <= 0
-				|| ( str_cmp ( arg2, "coins" ) && str_cmp ( arg2, "coin" ) &&
-					 str_cmp ( arg2, "gold"  ) && str_cmp ( arg2, "silver" ) ) ) {
+				|| ( !SameString ( arg2, "coins" ) && !SameString ( arg2, "coin" ) &&
+					 !SameString ( arg2, "gold"  ) && !SameString ( arg2, "silver" ) ) ) {
 			writeBuffer ( "Sorry, you can't do that.\n\r", ch );
 			return;
 		}
 
-		silver = str_cmp ( arg2, "gold" );
+		silver = !SameString ( arg2, "gold" );
 
 		argument = ChopC ( argument, arg2 );
 		if ( arg2[0] == '\0' ) {
@@ -934,7 +934,7 @@ DefineCommand ( cmd_pour )
 		return;
 	}
 
-	if ( !str_cmp ( argument, "out" ) ) {
+	if ( SameString ( argument, "out" ) ) {
 		if ( out->value[1] == 0 ) {
 			writeBuffer ( "It's already empty.\n\r", ch );
 			return;
@@ -1542,7 +1542,7 @@ DefineCommand ( cmd_wear )
 		return;
 	}
 
-	if ( !str_cmp ( arg, "all" ) ) {
+	if ( SameString ( arg, "all" ) ) {
 		Item *obj_next;
 
 		for ( obj = ch->carrying; obj != NULL; obj = obj_next ) {
@@ -1603,7 +1603,7 @@ DefineCommand ( cmd_sacrifice )
 
 	ChopC ( argument, arg );
 
-	if ( arg[0] == '\0' || !str_cmp ( arg, ch->name ) ) {
+	if ( arg[0] == '\0' || SameString ( arg, ch->name ) ) {
 		act ( "$n offers $mself to Mota, who graciously declines.",
 			  ch, NULL, NULL, TO_ROOM );
 		writeBuffer (
@@ -2023,10 +2023,10 @@ DefineCommand ( cmd_steal )
 		return;
 	}
 
-	if ( !str_cmp ( arg1, "coin"  )
-			||   !str_cmp ( arg1, "coins" )
-			||   !str_cmp ( arg1, "gold"  )
-			||	 !str_cmp ( arg1, "silver" ) ) {
+	if ( SameString ( arg1, "coin"  )
+			||   SameString ( arg1, "coins" )
+			||   SameString ( arg1, "gold"  )
+			||	 SameString ( arg1, "silver" ) ) {
 		int gold, silver;
 
 		gold = victim->gold * Math::instance().range ( 1, ch->level ) / MAX_LEVEL;
@@ -2156,7 +2156,7 @@ void obj_to_keeper ( Item *obj, Creature *ch )
 		t_obj_next = t_obj->next_content;
 
 		if ( obj->pIndexData == t_obj->pIndexData
-				&&  !str_cmp ( obj->short_descr, t_obj->short_descr ) ) {
+				&&  SameString ( obj->short_descr, t_obj->short_descr ) ) {
 			/* if this is an unlimited item, destroy the new one */
 			if ( IS_OBJ_STAT ( t_obj, ITEM_INVENTORY ) ) {
 				extract_obj ( obj );
@@ -2203,7 +2203,7 @@ Item *get_obj_keeper ( Creature *ch, Creature *keeper, char *argument )
 			/* skip other objects of the same name */
 			while ( obj->next_content != NULL
 					&& obj->pIndexData == obj->next_content->pIndexData
-					&& !str_cmp ( obj->short_descr, obj->next_content->short_descr ) )
+					&& SameString ( obj->short_descr, obj->next_content->short_descr ) )
 			{ obj = obj->next_content; }
 		}
 	}
@@ -2236,7 +2236,7 @@ int get_cost ( Creature *keeper, Item *obj, bool fBuy )
 		if ( !IS_OBJ_STAT ( obj, ITEM_SELL_EXTRACT ) ) {
 			for ( obj2 = keeper->carrying; obj2; obj2 = obj2->next_content ) {
 				if ( obj->pIndexData == obj2->pIndexData
-						&&   !str_cmp ( obj->short_descr, obj2->short_descr ) ) {
+						&&   SameString ( obj->short_descr, obj2->short_descr ) ) {
 					if ( IS_OBJ_STAT ( obj2, ITEM_INVENTORY ) )
 					{ cost /= 2; }
 					else
@@ -2384,7 +2384,7 @@ DefineCommand ( cmd_buy )
 					count < number && t_obj != NULL;
 					t_obj = t_obj->next_content ) {
 				if ( t_obj->pIndexData == obj->pIndexData
-						&&  !str_cmp ( t_obj->short_descr, obj->short_descr ) )
+						&&  SameString ( t_obj->short_descr, obj->short_descr ) )
 				{ count++; }
 				else
 				{ break; }
@@ -2582,7 +2582,7 @@ DefineCommand ( cmd_list )
 
 										while ( obj->next_content != NULL
 												&& obj->pIndexData == obj->next_content->pIndexData
-												&& !str_cmp ( obj->short_descr, obj->next_content->short_descr ) ) {
+												&& SameString ( obj->short_descr, obj->next_content->short_descr ) ) {
 											obj = obj->next_content;
 											count++;
 										}
@@ -2638,7 +2638,7 @@ DefineCommand ( cmd_list )
 
 									while ( obj->next_content != NULL
 											&& obj->pIndexData == obj->next_content->pIndexData
-											&& !str_cmp ( obj->short_descr, obj->next_content->short_descr ) ) {
+											&& SameString ( obj->short_descr, obj->next_content->short_descr ) ) {
 										obj = obj->next_content;
 										count++;
 									}

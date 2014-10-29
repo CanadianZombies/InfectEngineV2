@@ -129,7 +129,7 @@ void	recycle_mem	args ( ( void *pMem, int sMem ) );
 char *	assign_string_old		args ( ( const char *str ) );
 char *assign_string ( const std::string &str );
 void	smash_tilde	args ( ( const char *str ) );
-bool	str_cmp		args ( ( const char *astr, const char *bstr ) );
+
 bool	str_prefix	args ( ( const char *astr, const char *bstr ) );
 bool	str_infix	args ( ( const char *astr, const char *bstr ) );
 bool	str_suffix	args ( ( const char *astr, const char *bstr ) );
@@ -323,13 +323,18 @@ const char *grab_time_log ( time_t the_ttime );
 const char *wrapstr ( const char *str );
 const char *whoami();
 
+bool IsSameList ( const std::string &nameToFind, const std::string &namelist );
+bool SameString ( const std::string &astr, const char *bstr );
+bool SameString ( const char *astr, const std::string bstr );
+bool SameString ( const char *astr, const char *bstr );
+bool SameString ( const std::string &a, const std::string &b );
+
+
 // Utilities.Twitter.cpp
 const char *getDateTime ( time_t timeVal );
 char* all_capitalize ( const char *str );
 void issueSystemCommandNoReturn ( const std::string &argument );
 std::string ChopString ( const std::string &argument, std::string &first );
-bool SameString ( const std::string &a, const std::string &b );
-bool IsSameList ( const std::string &nameToFind, const std::string &namelist );
 std::string addTweetHashtags ( const std::string &tweetStr );
 void tweetStatement ( const std::string &tweet );
 

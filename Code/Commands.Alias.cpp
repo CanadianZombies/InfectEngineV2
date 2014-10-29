@@ -135,7 +135,7 @@ DefineCommand ( cmd_alias )
 		return;
 	}
 
-	if ( !str_prefix ( "una", arg ) || !str_cmp ( "alias", arg ) ) {
+	if ( !str_prefix ( "una", arg ) || SameString ( "alias", arg ) ) {
 		writeBuffer ( "Sorry, that word is reserved.\n\r", ch );
 		return;
 	}
@@ -146,7 +146,7 @@ DefineCommand ( cmd_alias )
 					||	rch->pcdata->alias_sub[pos] == NULL )
 			{ break; }
 
-			if ( !str_cmp ( arg, rch->pcdata->alias[pos] ) ) {
+			if ( SameString ( arg, rch->pcdata->alias[pos] ) ) {
 				snprintf ( buf, sizeof ( buf ), "%s aliases to '%s'.\n\r", rch->pcdata->alias[pos],
 						   rch->pcdata->alias_sub[pos] );
 				writeBuffer ( buf, ch );
@@ -167,7 +167,7 @@ DefineCommand ( cmd_alias )
 		if ( rch->pcdata->alias[pos] == NULL )
 		{ break; }
 
-		if ( !str_cmp ( arg, rch->pcdata->alias[pos] ) ) { /* redefine an alias */
+		if ( SameString ( arg, rch->pcdata->alias[pos] ) ) { /* redefine an alias */
 			PURGE_DATA ( rch->pcdata->alias_sub[pos] );
 			rch->pcdata->alias_sub[pos] = assign_string ( argument );
 			snprintf ( buf, sizeof ( buf ), "%s is now realiased to '%s'.\n\r", arg, argument );

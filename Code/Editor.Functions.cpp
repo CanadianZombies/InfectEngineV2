@@ -180,7 +180,7 @@ void show_skill_cmds ( Creature *ch, int tar )
 		if ( !skill_table[sn].name )
 		{ break; }
 
-		if ( !str_cmp ( skill_table[sn].name, "reserved" )
+		if ( SameString ( skill_table[sn].name, "reserved" )
 				|| skill_table[sn].spell_fun == spell_null )
 		{ continue; }
 
@@ -376,7 +376,7 @@ REDIT ( redit_mlist )
 	buf1 = new_buf();
 	pArea = IN_ROOM ( ch )->area;
 	/*    buf1[0] = '\0'; */
-	fAll    = !str_cmp ( arg, "all" );
+	fAll    = SameString ( arg, "all" );
 	found   = FALSE;
 
 	for ( vnum = pArea->min_vnum; vnum <= pArea->max_vnum; vnum++ ) {
@@ -427,7 +427,7 @@ REDIT ( redit_olist )
 	pArea = IN_ROOM ( ch )->area;
 	buf1 = new_buf();
 	/*    buf1[0] = '\0'; */
-	fAll    = !str_cmp ( arg, "all" );
+	fAll    = SameString ( arg, "all" );
 	found   = FALSE;
 
 	for ( vnum = pArea->min_vnum; vnum <= pArea->max_vnum; vnum++ ) {
@@ -1176,7 +1176,7 @@ bool change_exit ( Creature *ch, const char *argument, int door )
 		return FALSE;
 	}
 
-	if ( !str_cmp ( command, "delete" ) ) {
+	if ( SameString ( command, "delete" ) ) {
 		RoomData *pToRoom;
 		int rev;                                     /* ROM OLC */
 
@@ -1206,7 +1206,7 @@ bool change_exit ( Creature *ch, const char *argument, int door )
 		return TRUE;
 	}
 
-	if ( !str_cmp ( command, "link" ) ) {
+	if ( SameString ( command, "link" ) ) {
 		Exit *pExit;
 		RoomData *toRoom;
 
@@ -1248,7 +1248,7 @@ bool change_exit ( Creature *ch, const char *argument, int door )
 		return TRUE;
 	}
 
-	if ( !str_cmp ( command, "dig" ) ) {
+	if ( SameString ( command, "dig" ) ) {
 		char buf[MAX_STRING_LENGTH];
 
 		if ( arg[0] == '\0' || !is_number ( arg ) ) {
@@ -1262,7 +1262,7 @@ bool change_exit ( Creature *ch, const char *argument, int door )
 		return TRUE;
 	}
 
-	if ( !str_cmp ( command, "room" ) ) {
+	if ( SameString ( command, "room" ) ) {
 		RoomData *toRoom;
 
 		if ( arg[0] == '\0' || !is_number ( arg ) ) {
@@ -1287,7 +1287,7 @@ bool change_exit ( Creature *ch, const char *argument, int door )
 		return TRUE;
 	}
 
-	if ( !str_cmp ( command, "key" ) ) {
+	if ( SameString ( command, "key" ) ) {
 		ItemData *key;
 
 		if ( arg[0] == '\0' || !is_number ( arg ) ) {
@@ -1318,7 +1318,7 @@ bool change_exit ( Creature *ch, const char *argument, int door )
 		return TRUE;
 	}
 
-	if ( !str_cmp ( command, "name" ) ) {
+	if ( SameString ( command, "name" ) ) {
 		if ( arg[0] == '\0' ) {
 			writeBuffer ( "Syntax:  [direction] name [string]\n\r", ch );
 			writeBuffer ( "         [direction] name none\n\r", ch );
@@ -1332,7 +1332,7 @@ bool change_exit ( Creature *ch, const char *argument, int door )
 
 		PURGE_DATA ( pRoom->exit[door]->keyword );
 
-		if ( str_cmp ( arg, "none" ) )
+		if ( !SameString ( arg, "none" ) )
 		{ pRoom->exit[door]->keyword = assign_string ( arg ); }
 		else
 		{ pRoom->exit[door]->keyword = assign_string ( "" ); }
@@ -1441,7 +1441,7 @@ REDIT ( redit_ed )
 		return FALSE;
 	}
 
-	if ( !str_cmp ( command, "add" ) ) {
+	if ( SameString ( command, "add" ) ) {
 		if ( keyword[0] == '\0' ) {
 			writeBuffer ( "Syntax:  ed add [keyword]\n\r", ch );
 			return FALSE;
@@ -1459,7 +1459,7 @@ REDIT ( redit_ed )
 	}
 
 
-	if ( !str_cmp ( command, "edit" ) ) {
+	if ( SameString ( command, "edit" ) ) {
 		if ( keyword[0] == '\0' ) {
 			writeBuffer ( "Syntax:  ed edit [keyword]\n\r", ch );
 			return FALSE;
@@ -1481,7 +1481,7 @@ REDIT ( redit_ed )
 	}
 
 
-	if ( !str_cmp ( command, "delete" ) ) {
+	if ( SameString ( command, "delete" ) ) {
 		DescriptionData *ped = NULL;
 
 		if ( keyword[0] == '\0' ) {
@@ -1512,7 +1512,7 @@ REDIT ( redit_ed )
 	}
 
 
-	if ( !str_cmp ( command, "format" ) ) {
+	if ( SameString ( command, "format" ) ) {
 		if ( keyword[0] == '\0' ) {
 			writeBuffer ( "Syntax:  ed format [keyword]\n\r", ch );
 			return FALSE;
@@ -3142,7 +3142,7 @@ OEDIT ( oedit_ed )
 		return FALSE;
 	}
 
-	if ( !str_cmp ( command, "add" ) ) {
+	if ( SameString ( command, "add" ) ) {
 		if ( keyword[0] == '\0' ) {
 			writeBuffer ( "Syntax:  ed add [keyword]\n\r", ch );
 			return FALSE;
@@ -3158,7 +3158,7 @@ OEDIT ( oedit_ed )
 		return TRUE;
 	}
 
-	if ( !str_cmp ( command, "edit" ) ) {
+	if ( SameString ( command, "edit" ) ) {
 		if ( keyword[0] == '\0' ) {
 			writeBuffer ( "Syntax:  ed edit [keyword]\n\r", ch );
 			return FALSE;
@@ -3179,7 +3179,7 @@ OEDIT ( oedit_ed )
 		return TRUE;
 	}
 
-	if ( !str_cmp ( command, "delete" ) ) {
+	if ( SameString ( command, "delete" ) ) {
 		DescriptionData *ped = NULL;
 
 		if ( keyword[0] == '\0' ) {
@@ -3210,7 +3210,7 @@ OEDIT ( oedit_ed )
 	}
 
 
-	if ( !str_cmp ( command, "format" ) ) {
+	if ( SameString ( command, "format" ) ) {
 		if ( keyword[0] == '\0' ) {
 			writeBuffer ( "Syntax:  ed format [keyword]\n\r", ch );
 			return FALSE;
@@ -3776,7 +3776,7 @@ MEDIT ( medit_spec )
 	}
 
 
-	if ( !str_cmp ( argument, "none" ) ) {
+	if ( SameString ( argument, "none" ) ) {
 		pMob->spec_fun = NULL;
 
 		writeBuffer ( "Spec removed.\n\r", ch );
@@ -4006,7 +4006,7 @@ MEDIT ( medit_shop )
 	}
 
 
-	if ( !str_cmp ( command, "hours" ) ) {
+	if ( SameString ( command, "hours" ) ) {
 		if ( arg1[0] == '\0' || !is_number ( arg1 )
 				|| argument[0] == '\0' || !is_number ( argument ) ) {
 			writeBuffer ( "Syntax:  shop hours [#xopening] [#xclosing]\n\r", ch );
@@ -4026,7 +4026,7 @@ MEDIT ( medit_shop )
 	}
 
 
-	if ( !str_cmp ( command, "profit" ) ) {
+	if ( SameString ( command, "profit" ) ) {
 		if ( arg1[0] == '\0' || !is_number ( arg1 )
 				|| argument[0] == '\0' || !is_number ( argument ) ) {
 			writeBuffer ( "Syntax:  shop profit [#xbuying%] [#xselling%]\n\r", ch );
@@ -4046,7 +4046,7 @@ MEDIT ( medit_shop )
 	}
 
 
-	if ( !str_cmp ( command, "type" ) ) {
+	if ( SameString ( command, "type" ) ) {
 		char buf[MAX_INPUT_LENGTH];
 		int value;
 
@@ -4806,7 +4806,7 @@ REDIT ( redit_owner )
 	}
 
 	PURGE_DATA ( pRoom->owner );
-	if ( !str_cmp ( argument, "none" ) )
+	if ( SameString ( argument, "none" ) )
 	{ pRoom->owner = assign_string ( "" ); }
 	else
 	{ pRoom->owner = assign_string ( argument ); }

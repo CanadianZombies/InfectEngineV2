@@ -169,7 +169,7 @@ HELP_AREA * had_lookup ( const char *arg )
 	extern HELP_AREA * had_list;
 
 	for ( temp = had_list; temp; temp = temp->next )
-		if ( !str_cmp ( arg, temp->filename ) )
+		if ( SameString ( arg, temp->filename ) )
 		{ return temp; }
 
 	return NULL;

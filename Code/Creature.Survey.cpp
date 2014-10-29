@@ -65,12 +65,12 @@ DefineCommand ( cmd_scan )
 			{ scan_list ( pExit->u1.to_room, ch, 1, door ); }
 		}
 		return;
-	} else if ( !str_cmp ( arg1, "n" ) || !str_cmp ( arg1, "north" ) ) { door = 0; }
-	else if ( !str_cmp ( arg1, "e" ) || !str_cmp ( arg1, "east" ) )  { door = 1; }
-	else if ( !str_cmp ( arg1, "s" ) || !str_cmp ( arg1, "south" ) ) { door = 2; }
-	else if ( !str_cmp ( arg1, "w" ) || !str_cmp ( arg1, "west" ) )  { door = 3; }
-	else if ( !str_cmp ( arg1, "u" ) || !str_cmp ( arg1, "up" ) )   { door = 4; }
-	else if ( !str_cmp ( arg1, "d" ) || !str_cmp ( arg1, "down" ) )  { door = 5; }
+	} else if ( SameString ( arg1, "n" ) || SameString ( arg1, "north" ) ) { door = 0; }
+	else if ( SameString ( arg1, "e" ) || SameString ( arg1, "east" ) )  { door = 1; }
+	else if ( SameString ( arg1, "s" ) || SameString ( arg1, "south" ) ) { door = 2; }
+	else if ( SameString ( arg1, "w" ) || SameString ( arg1, "west" ) )  { door = 3; }
+	else if ( SameString ( arg1, "u" ) || SameString ( arg1, "up" ) )   { door = 4; }
+	else if ( SameString ( arg1, "d" ) || SameString ( arg1, "down" ) )  { door = 5; }
 	else { writeBuffer ( "Which way do you want to scan?\n\r", ch ); return; }
 
 	act ( "You peer intently $T.", ch, NULL, dir_name[door], TO_CHAR );

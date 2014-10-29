@@ -1269,8 +1269,8 @@ void nanny ( Socket *d, char *argument )
 						if ( d_old == d || d_old->character == NULL )
 						{ continue; }
 
-						if ( str_cmp ( ch->name, d_old->original ?
-									   d_old->original->name : d_old->character->name ) )
+						if ( !SameString ( ch->name, d_old->original ?
+										   d_old->original->name : d_old->character->name ) )
 						{ continue; }
 
 						close_socket ( d_old );
@@ -1593,7 +1593,7 @@ void nanny ( Socket *d, char *argument )
 		case STATE_GEN_GROUPS:
 			writeBuffer ( "\n\r", ch );
 
-			if ( !str_cmp ( argument, "done" ) ) {
+			if ( SameString ( argument, "done" ) ) {
 				if ( ch->pcdata->points == pc_race_table[ch->race].points ) {
 					writeBuffer ( "You didn't pick anything.\n\r", ch );
 					break;
@@ -1754,11 +1754,11 @@ bool check_parse_name ( char *name )
 	/* check clans */
 	for ( clan = 0; clan < MAX_CLAN; clan++ ) {
 		if ( LOWER ( name[0] ) == LOWER ( clan_table[clan].name[0] )
-				&&  !str_cmp ( name, clan_table[clan].name ) )
+				&&  SameString ( name, clan_table[clan].name ) )
 		{ return FALSE; }
 	}
 
-	if ( str_cmp ( capitalize ( name ), "Alander" ) && ( !str_prefix ( "Alan", name )
+	if ( !SameString ( capitalize ( name ), "Alander" ) && ( !str_prefix ( "Alan", name )
 			|| !str_suffix ( "Alander", name ) ) )
 	{ return FALSE; }
 
@@ -1781,7 +1781,7 @@ bool check_parse_name ( char *name )
 
 	// -- no naming ourselves after commands.
 	/*for ( int cmd = 0; cmd_table[cmd].name; cmd++ ) {
-		if ( !str_cmp ( name, cmd_table[cmd].name ) ) {
+		if ( SameString ( name, cmd_table[cmd].name ) ) {
 			return false;
 		}
 	} */
@@ -1852,7 +1852,7 @@ bool check_reconnect ( Socket *d, char *name, bool fConn )
 	for ( ch = char_list; ch != NULL; ch = ch->next ) {
 		if ( !IS_NPC ( ch )
 				&&   ( !fConn || ch->desc == NULL )
-				&&   !str_cmp ( d->character->name, ch->name ) ) {
+				&&   SameString ( d->character->name, ch->name ) ) {
 			if ( fConn == FALSE ) {
 				PURGE_DATA ( d->character->pcdata->pwd );
 				d->character->pcdata->pwd = assign_string ( ch->pcdata->pwd );
@@ -1893,8 +1893,8 @@ bool check_playing ( Socket *d, char *name )
 				&&   dold->character != NULL
 				&&   dold->connected != STATE_GET_NAME
 				&&   dold->connected != STATE_GET_OLD_PASSWORD
-				&&   !str_cmp ( name, dold->original
-								? dold->original->name : dold->character->name ) ) {
+				&&   SameString ( name, dold->original
+								  ? dold->original->name : dold->character->name ) ) {
 			write_to_buffer ( d, "That character is already playing.\n\r", 0 );
 			write_to_buffer ( d, "Do you wish to connect anyway (Y/N)?", 0 );
 			d->connected = STATE_BREAK_CONNECT;

@@ -978,7 +978,7 @@ DefineCommand ( cmd_quit )
 	Socket *d, *d_next;
 	int id;
 
-	if ( !str_cmp ( argument, "delete" ) ) {
+	if ( SameString ( argument, "delete" ) ) {
 		writeBuffer ( "Alas, all good things must come to an end.\n\r", ch );
 		act ( "$n has left the game.", ch, NULL, NULL, TO_ROOM );
 		log_hd ( LOG_SECURITY,  Format ( "%s has quit.", ch->name ) );
@@ -1217,7 +1217,7 @@ DefineCommand ( cmd_order )
 	argument = ChopC ( argument, arg );
 	ChopC ( argument, arg2 );
 
-	if ( !str_cmp ( arg2, "delete" ) || !str_cmp ( arg2, "mob" ) ) {
+	if ( SameString ( arg2, "delete" ) || SameString ( arg2, "mob" ) ) {
 		writeBuffer ( "That will NOT be done.\n\r", ch );
 		return;
 	}
@@ -1232,7 +1232,7 @@ DefineCommand ( cmd_order )
 		return;
 	}
 
-	if ( !str_cmp ( arg, "all" ) ) {
+	if ( SameString ( arg, "all" ) ) {
 		fAll   = TRUE;
 		victim = NULL;
 	} else {

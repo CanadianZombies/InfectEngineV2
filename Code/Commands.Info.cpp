@@ -801,7 +801,7 @@ DefineCommand ( cmd_look )
 	number = number_argument ( arg1, arg3 );
 	count = 0;
 
-	if ( arg1[0] == '\0' || !str_cmp ( arg1, "auto" ) ) {
+	if ( arg1[0] == '\0' || SameString ( arg1, "auto" ) ) {
 		/* 'look' or 'look auto' */
 		writeBuffer ( Format ( "\a[F303][\a[F453]%s\a[F303]]\an", IN_ROOM ( ch )->name ), ch );
 
@@ -828,7 +828,7 @@ DefineCommand ( cmd_look )
 		return;
 	}
 
-	if ( !str_cmp ( arg1, "i" ) || !str_cmp ( arg1, "in" )  || !str_cmp ( arg1, "on" ) ) {
+	if ( SameString ( arg1, "i" ) || SameString ( arg1, "in" )  || SameString ( arg1, "on" ) ) {
 		/* 'look in' */
 		if ( arg2[0] == '\0' ) {
 			writeBuffer ( "Look in what?\n\r", ch );
@@ -888,7 +888,7 @@ DefineCommand ( cmd_look )
 
 	/*  -- Future development will require better syntax for looking at/in things in an attempt
 	    -- to make us look a lot less like a standard DIKU derived mud but more like our own creation.
-	    if(str_cmp(arg1, "at"))
+	    if(!SameString(arg1, "at"))
 	    {
 		writeBuffer("Syntax: look in <obj>\r\n", ch);
 		writeBuffer("        look at <obj|victim>\r\n", ch);
@@ -975,12 +975,12 @@ DefineCommand ( cmd_look )
 		return;
 	}
 
-	if ( !str_cmp ( arg1, "n" ) || !str_cmp ( arg1, "north" ) ) { door = 0; }
-	else if ( !str_cmp ( arg1, "e" ) || !str_cmp ( arg1, "east"  ) ) { door = 1; }
-	else if ( !str_cmp ( arg1, "s" ) || !str_cmp ( arg1, "south" ) ) { door = 2; }
-	else if ( !str_cmp ( arg1, "w" ) || !str_cmp ( arg1, "west"  ) ) { door = 3; }
-	else if ( !str_cmp ( arg1, "u" ) || !str_cmp ( arg1, "up"    ) ) { door = 4; }
-	else if ( !str_cmp ( arg1, "d" ) || !str_cmp ( arg1, "down"  ) ) { door = 5; }
+	if ( SameString ( arg1, "n" ) || SameString ( arg1, "north" ) ) { door = 0; }
+	else if ( SameString ( arg1, "e" ) || SameString ( arg1, "east"  ) ) { door = 1; }
+	else if ( SameString ( arg1, "s" ) || SameString ( arg1, "south" ) ) { door = 2; }
+	else if ( SameString ( arg1, "w" ) || SameString ( arg1, "west"  ) ) { door = 3; }
+	else if ( SameString ( arg1, "u" ) || SameString ( arg1, "up"    ) ) { door = 4; }
+	else if ( SameString ( arg1, "d" ) || SameString ( arg1, "down"  ) ) { door = 5; }
 	else {
 		writeBuffer ( "You do not see that here.\n\r", ch );
 		return;
@@ -1089,7 +1089,7 @@ DefineCommand ( cmd_exits )
 	bool fAuto;
 	int door;
 
-	fAuto  = !str_cmp ( argument, "auto" );
+	fAuto  = SameString ( argument, "auto" );
 
 	if ( !check_blind ( ch ) )
 	{ return; }
@@ -1365,7 +1365,7 @@ DefineCommand ( cmd_help )
 			if ( found )
 				add_buf ( output,
 						  "\n\r============================================================\n\r\n\r" );
-			if ( pHelp->level >= 0 && str_cmp ( argall, "imotd" ) ) {
+			if ( pHelp->level >= 0 && !SameString ( argall, "imotd" ) ) {
 				add_buf ( output, pHelp->keyword );
 				add_buf ( output, "\n\r" );
 			}

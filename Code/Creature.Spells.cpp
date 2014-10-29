@@ -478,7 +478,7 @@ DefineCommand ( cmd_cast )
 		return;
 	}
 
-	if ( str_cmp ( skill_table[sn].name, "ventriloquate" ) )
+	if ( !SameString ( skill_table[sn].name, "ventriloquate" ) )
 	{ say_spell ( ch, sn ); }
 
 	WAIT_STATE ( ch, skill_table[sn].beats );
@@ -1336,9 +1336,9 @@ void spell_continual_light ( int sn, int level, Creature *ch, void *vo, int targ
 
 void spell_control_weather ( int sn, int level, Creature *ch, void *vo, int target )
 {
-	if ( !str_cmp ( target_name, "better" ) )
+	if ( SameString ( target_name, "better" ) )
 	{ weather_info.change += Math::instance().dice ( level / 3, 4 ); }
-	else if ( !str_cmp ( target_name, "worse" ) )
+	else if ( SameString ( target_name, "worse" ) )
 	{ weather_info.change -= Math::instance().dice ( level / 3, 4 ); }
 	else
 	{ writeBuffer ( "Do you want it to get better or worse?\n\r", ch ); }

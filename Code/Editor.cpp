@@ -436,7 +436,7 @@ void aedit ( Creature *ch, const char *argument )
 		return;
 	}
 
-	if ( !str_cmp ( command, "done" ) ) {
+	if ( SameString ( command, "done" ) ) {
 		edit_done ( ch );
 		return;
 	}
@@ -493,7 +493,7 @@ void redit ( Creature *ch, const char *argument )
 		return;
 	}
 
-	if ( !str_cmp ( command, "done" ) ) {
+	if ( SameString ( command, "done" ) ) {
 		edit_done ( ch );
 		return;
 	}
@@ -543,7 +543,7 @@ void oedit ( Creature *ch, const char *argument )
 		return;
 	}
 
-	if ( !str_cmp ( command, "done" ) ) {
+	if ( SameString ( command, "done" ) ) {
 		edit_done ( ch );
 		return;
 	}
@@ -593,7 +593,7 @@ void medit ( Creature *ch, const char *argument )
 		return;
 	}
 
-	if ( !str_cmp ( command, "done" ) ) {
+	if ( SameString ( command, "done" ) ) {
 		edit_done ( ch );
 		return;
 	}
@@ -687,7 +687,7 @@ DefineCommand ( cmd_aedit )
 			writeBuffer ( "That area vnum does not exist.\n\r", ch );
 			return;
 		}
-	} else if ( !str_cmp ( arg, "create" ) ) {
+	} else if ( SameString ( arg, "create" ) ) {
 		if ( ch->pcdata->security < 9 ) {
 			writeBuffer ( "AEdit : You do not have the security to create a new area.\n\r", ch );
 			return;
@@ -723,7 +723,7 @@ DefineCommand ( cmd_redit )
 
 	pRoom = IN_ROOM ( ch );
 
-	if ( !str_cmp ( arg1, "reset" ) ) {	/* redit reset */
+	if ( SameString ( arg1, "reset" ) ) {	/* redit reset */
 		if ( !IS_BUILDER ( ch, pRoom->area ) ) {
 			writeBuffer ( "You do not have access to that area.\n\r" , ch );
 			return;
@@ -733,7 +733,7 @@ DefineCommand ( cmd_redit )
 		writeBuffer ( "Room reset.\n\r", ch );
 
 		return;
-	} else if ( !str_cmp ( arg1, "create" ) ) {	/* redit create <vnum> */
+	} else if ( SameString ( arg1, "create" ) ) {	/* redit create <vnum> */
 		if ( argument[0] == '\0' || atoi ( argument ) == 0 ) {
 			writeBuffer ( "Syntax:  edit room create [vnum]\n\r", ch );
 			return;
@@ -806,7 +806,7 @@ DefineCommand ( cmd_oedit )
 		ch->desc->editor = ED_OBJECT;
 		return;
 	} else {
-		if ( !str_cmp ( arg1, "create" ) ) {
+		if ( SameString ( arg1, "create" ) ) {
 			value = atoi ( argument );
 			if ( argument[0] == '\0' || value == 0 ) {
 				writeBuffer ( "Syntax:  edit object create [vnum]\n\r", ch );
@@ -868,7 +868,7 @@ DefineCommand ( cmd_medit )
 		ch->desc->editor = ED_MOBILE;
 		return;
 	} else {
-		if ( !str_cmp ( arg1, "create" ) ) {
+		if ( SameString ( arg1, "create" ) ) {
 			value = atoi ( argument );
 			if ( arg1[0] == '\0' || value == 0 ) {
 				writeBuffer ( "Syntax:  edit mobile create [vnum]\n\r", ch );
@@ -1193,7 +1193,7 @@ DefineCommand ( cmd_resets )
 		 * Delete a reset.
 		 * ---------------
 		 */
-		if ( !str_cmp ( arg2, "delete" ) ) {
+		if ( SameString ( arg2, "delete" ) ) {
 			int insert_loc = atoi ( arg1 );
 
 			if ( !IN_ROOM ( ch )->reset_first ) {
@@ -1240,13 +1240,13 @@ DefineCommand ( cmd_resets )
 			 * Add a reset.
 			 * ------------
 			 */
-			if ( ( !str_cmp ( arg2, "mob" ) && is_number ( arg3 ) )
-					|| ( !str_cmp ( arg2, "obj" ) && is_number ( arg3 ) ) ) {
+			if ( ( SameString ( arg2, "mob" ) && is_number ( arg3 ) )
+					|| ( SameString ( arg2, "obj" ) && is_number ( arg3 ) ) ) {
 				/*
 				 * Check for Mobile reset.
 				 * -----------------------
 				 */
-				if ( !str_cmp ( arg2, "mob" ) ) {
+				if ( SameString ( arg2, "mob" ) ) {
 					if ( get_mob_index ( is_number ( arg3 ) ? atoi ( arg3 ) : 1 ) == NULL ) {
 						writeBuffer ( "That mob does not exist.\n\r", ch );
 						return;
@@ -1262,7 +1262,7 @@ DefineCommand ( cmd_resets )
 					 * Check for Object reset.
 					 * -----------------------
 					 */
-					if ( !str_cmp ( arg2, "obj" ) ) {
+					if ( SameString ( arg2, "obj" ) ) {
 						pReset = new_reset_data();
 						pReset->arg1    = atoi ( arg3 );
 						/*
@@ -1287,7 +1287,7 @@ DefineCommand ( cmd_resets )
 							 * Inside the room.
 							 * ----------------
 							 */
-							if ( !str_cmp ( arg4, "room" ) ) {
+							if ( SameString ( arg4, "room" ) ) {
 								if ( get_obj_index ( atoi ( arg3 ) ) == NULL ) {
 									writeBuffer ( "That object does not exist.\n\r", ch );
 									return;
@@ -1321,7 +1321,7 @@ DefineCommand ( cmd_resets )
 				add_reset ( IN_ROOM ( ch ), pReset, atoi ( arg1 ) );
 				SET_BIT ( IN_ROOM ( ch )->area->area_flags, AREA_CHANGED );
 				writeBuffer ( "Reset added.\n\r", ch );
-			} else if ( !str_cmp ( arg2, "random" ) && is_number ( arg3 ) ) {
+			} else if ( SameString ( arg2, "random" ) && is_number ( arg3 ) ) {
 				if ( atoi ( arg3 ) < 1 || atoi ( arg3 ) > 6 ) {
 					writeBuffer ( "Invalid argument.\n\r", ch );
 					return;

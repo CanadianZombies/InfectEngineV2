@@ -273,12 +273,12 @@ int find_door ( Creature *ch, char *arg )
 	Exit *pexit;
 	int door;
 
-	if ( !str_cmp ( arg, "n" ) || !str_cmp ( arg, "north" ) ) { door = 0; }
-	else if ( !str_cmp ( arg, "e" ) || !str_cmp ( arg, "east"  ) ) { door = 1; }
-	else if ( !str_cmp ( arg, "s" ) || !str_cmp ( arg, "south" ) ) { door = 2; }
-	else if ( !str_cmp ( arg, "w" ) || !str_cmp ( arg, "west"  ) ) { door = 3; }
-	else if ( !str_cmp ( arg, "u" ) || !str_cmp ( arg, "up"    ) ) { door = 4; }
-	else if ( !str_cmp ( arg, "d" ) || !str_cmp ( arg, "down"  ) ) { door = 5; }
+	if ( SameString ( arg, "n" ) || SameString ( arg, "north" ) ) { door = 0; }
+	else if ( SameString ( arg, "e" ) || SameString ( arg, "east"  ) ) { door = 1; }
+	else if ( SameString ( arg, "s" ) || SameString ( arg, "south" ) ) { door = 2; }
+	else if ( SameString ( arg, "w" ) || SameString ( arg, "west"  ) ) { door = 3; }
+	else if ( SameString ( arg, "u" ) || SameString ( arg, "up"    ) ) { door = 4; }
+	else if ( SameString ( arg, "d" ) || SameString ( arg, "down"  ) ) { door = 5; }
 	else {
 		for ( door = 0; door <= 5; door++ ) {
 			if ( ( pexit = IN_ROOM ( ch )->exit[door] ) != NULL
@@ -1894,45 +1894,45 @@ DefineCommand ( cmd_train )
 
 	cost = 1;
 
-	if ( !str_cmp ( argument, "str" ) ) {
+	if ( SameString ( argument, "str" ) ) {
 		if ( archetype_table[ch->archetype].attr_prime == STAT_STR )
 		{ cost    = 1; }
 		stat        = STAT_STR;
 		pOutput     = "strength";
 	}
 
-	else if ( !str_cmp ( argument, "int" ) ) {
+	else if ( SameString ( argument, "int" ) ) {
 		if ( archetype_table[ch->archetype].attr_prime == STAT_INT )
 		{ cost    = 1; }
 		stat	    = STAT_INT;
 		pOutput     = "intelligence";
 	}
 
-	else if ( !str_cmp ( argument, "wis" ) ) {
+	else if ( SameString ( argument, "wis" ) ) {
 		if ( archetype_table[ch->archetype].attr_prime == STAT_WIS )
 		{ cost    = 1; }
 		stat	    = STAT_WIS;
 		pOutput     = "wisdom";
 	}
 
-	else if ( !str_cmp ( argument, "dex" ) ) {
+	else if ( SameString ( argument, "dex" ) ) {
 		if ( archetype_table[ch->archetype].attr_prime == STAT_DEX )
 		{ cost    = 1; }
 		stat  	    = STAT_DEX;
 		pOutput     = "dexterity";
 	}
 
-	else if ( !str_cmp ( argument, "con" ) ) {
+	else if ( SameString ( argument, "con" ) ) {
 		if ( archetype_table[ch->archetype].attr_prime == STAT_CON )
 		{ cost    = 1; }
 		stat	    = STAT_CON;
 		pOutput     = "constitution";
 	}
 
-	else if ( !str_cmp ( argument, "hp" ) )
+	else if ( SameString ( argument, "hp" ) )
 	{ cost = 1; }
 
-	else if ( !str_cmp ( argument, "mana" ) )
+	else if ( SameString ( argument, "mana" ) )
 	{ cost = 1; }
 
 	else {
@@ -1967,7 +1967,7 @@ DefineCommand ( cmd_train )
 		return;
 	}
 
-	if ( !str_cmp ( "hp", argument ) ) {
+	if ( SameString ( "hp", argument ) ) {
 		if ( cost > ch->train ) {
 			writeBuffer ( "You don't have enough training sessions.\n\r", ch );
 			return;
@@ -1982,7 +1982,7 @@ DefineCommand ( cmd_train )
 		return;
 	}
 
-	if ( !str_cmp ( "mana", argument ) ) {
+	if ( SameString ( "mana", argument ) ) {
 		if ( cost > ch->train ) {
 			writeBuffer ( "You don't have enough training sessions.\n\r", ch );
 			return;
