@@ -142,7 +142,7 @@ const struct staff_cmd_type staff_cmd_table[] = {
 
 	{ "mpdump",	cmd_mpdump,	CR_CODER,	LOG_NEVER,  1, "Dump mudprog data to flatfile" },
 	{ "mpstat",	cmd_mpstat,	CR_CODER,	LOG_NEVER,  1, "Get the status of current mudprogs" },
-	{ "wizhelp",	cmd_wizhelp,	CR_STAFF,	LOG_NORMAL, 1, "See a list of staff commands" },
+	{ "commands",	cmd_scommands,	CR_STAFF,	LOG_NORMAL, 1, "See a list of staff commands" },
 
 	{ "edit",	cmd_olc,	CR_BUILDER,    LOG_NORMAL, 1, "Online Creation Suite control command" },
 	{ "asave",      cmd_asave,	CR_BUILDER,    LOG_NORMAL, 1, "Save work completed within the Online Creation Suite" },
@@ -803,7 +803,7 @@ DefineCommand ( cmd_commands )
 	return;
 }
 
-DefineCommand ( cmd_wizhelp )
+DefineCommand ( cmd_scommands )
 {
 	BUFFER *output = new_buf();
 	int lcmd;

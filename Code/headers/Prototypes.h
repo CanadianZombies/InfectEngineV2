@@ -737,7 +737,6 @@ Command (	cmd_west		);
 Command (	cmd_where	);
 Command (	cmd_users		);
 Command (	cmd_wimpy	);
-Command (	cmd_wizhelp	);
 Command (	cmd_lockdown	);
 Command ( cmd_wiznet	);
 Command ( cmd_worth	);
@@ -772,6 +771,8 @@ Command ( cmd_hedit	);
 Command ( cmd_randomitem );
 Command ( cmd_search );
 Command ( cmd_unarm );
+Command ( cmd_scommands );
+
 // -- mob_cmds
 /*
  * Command functions.
