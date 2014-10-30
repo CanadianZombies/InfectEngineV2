@@ -91,6 +91,10 @@ int	socket		args ( ( int domain, int type, int protocol ) );
 /*
  * Global variables.
  */
+fd_set in_set;
+fd_set out_set;
+fd_set exc_set;
+
 Socket *   socket_list;	/* All open descriptors		*/
 Socket *   d_next;		/* Next descriptor in loop	*/
 FILE *		    fpReserve;		/* Reserved file handle		*/
@@ -278,7 +282,221 @@ int init_socket ( int port )
 }
 #endif
 
-#if defined(unix)
+void processInput ( )
+{
+	Socket *d, *d_next;
+
+	for ( d = socket_list; d != NULL; d = d_next ) {
+		d_next	= d->next;
+		d->fcommand	= FALSE;
+
+		if ( FD_ISSET ( d->descriptor, &in_set ) ) {
+			if ( d->character != NULL )
+			{ d->character->timer = 0; }
+			if ( !read_from_descriptor ( d ) ) {
+				FD_CLR ( d->descriptor, &out_set );
+				if ( d->character != NULL && d->connected == STATE_PLAYING )
+				{ save_char_obj ( d->character ); }
+				d->outtop	= 0;
+				close_socket ( d );
+				continue;
+			}
+		}
+
+		if ( d->character != NULL && d->character->daze > 0 )
+		{ --d->character->daze; }
+
+		if ( d->character != NULL && d->character->wait > 0 ) {
+			--d->character->wait;
+			continue;
+		}
+
+		read_from_buffer ( d );
+		if ( d->incomm[0] != '\0' ) {
+			d->fcommand	= TRUE;
+			if ( d->pProtocol != NULL )
+			{ d->pProtocol->WriteOOB = 0; }
+
+
+			stop_idling ( d->character );
+
+			/* OLC */
+			if ( d->showstr_point )
+			{ show_string ( d, d->incomm ); }
+			else if ( d->character && d->character->queries.querycommand ) {
+				log_hd ( LOG_COMMAND, Format ( "Q-Player:  %s ::  Argument:  \"%s\"", d->character ? d->character->name : "!Error!",
+											   d->incomm ? d->incomm : "{No Argument}" ) );
+				( *d->character->queries.queryfunc )
+				( d->character, Format ( "queried_command:%p", d->character->queries.queryfunc ),
+				  d->incomm ? d->incomm : "", d->character->queries.querycommand );
+			} else if ( d->pEditString )
+			{ StringEditorOptions ( d->character, d->incomm ); }
+			else {
+				switch ( d->connected ) {
+					case STATE_PLAYING:
+						if ( !run_olc_editor ( d ) )
+						{ substitute_alias ( d, d->incomm ); }
+						break;
+					default:
+						nanny ( d, d->incomm );
+						break;
+				}
+			}
+			d->incomm[0]	= '\0';
+		}
+	}
+}
+
+void acceptNewConnections ( int ctrl, struct timeval null_time )
+{
+	int maxdesc;
+	Socket *d, *d_next;
+	/*
+	 * Poll all active descriptors.
+	 */
+	FD_ZERO ( &in_set  );
+	FD_ZERO ( &out_set );
+	FD_ZERO ( &exc_set );
+	FD_SET ( ctrl, &in_set );
+	maxdesc	= ctrl;
+	for ( d = socket_list; d; d = d_next ) {
+		d_next = d->next;
+
+		maxdesc = UMAX ( maxdesc, d->descriptor );
+		FD_SET ( d->descriptor, &in_set  );
+		FD_SET ( d->descriptor, &out_set );
+		FD_SET ( d->descriptor, &exc_set );
+	}
+
+	if ( select ( maxdesc + 1, &in_set, &out_set, &exc_set, &null_time ) < 0 ) {
+		ReportErrno ( "select: poll (failed)" );
+		exit ( 1 );
+	}
+
+	// -- do we have a new socket connection?
+	if ( FD_ISSET ( ctrl, &in_set ) )
+	{ init_descriptor ( ctrl ); }
+
+}
+
+void processBrokenSockets()
+{
+	Socket *d, *d_next;
+
+	for ( d = socket_list; d != NULL; d = d_next ) {
+		d_next = d->next;
+		if ( FD_ISSET ( d->descriptor, &exc_set ) ) {
+			FD_CLR ( d->descriptor, &in_set  );
+			FD_CLR ( d->descriptor, &out_set );
+			if ( d->character && d->connected == STATE_PLAYING )
+			{ save_char_obj ( d->character ); }
+			d->outtop	= 0;
+			close_socket ( d );
+		}
+	}
+}
+
+void processSocketOutput()
+{
+	Socket *d, *d_next;
+
+	// -- handle output
+	for ( d = socket_list; d != NULL; d = d_next ) {
+		d_next = d->next;
+
+		if ( ( d->fcommand || d->outtop > 0 )
+				&&   FD_ISSET ( d->descriptor, &out_set ) ) {
+			if ( !process_output ( d, TRUE ) ) {
+				if ( d->character != NULL && d->connected == STATE_PLAYING )
+				{ save_char_obj ( d->character ); }
+				d->outtop	= 0;
+				close_socket ( d );
+			}
+		}
+	}
+}
+
+int kbhit ( void )
+{
+	struct timeval tv;
+	fd_set kbHit_fd;
+
+	tv.tv_sec = 0;
+	tv.tv_usec = 0;
+	FD_ZERO ( &kbHit_fd );
+	FD_SET ( 0, &kbHit_fd );
+
+	if ( select ( 1, &kbHit_fd, NULL, NULL, &tv ) == -1 )
+	{ return 0; }
+
+	if ( FD_ISSET ( 0, &kbHit_fd ) )
+	{ return 1; }
+
+	return 0;
+}
+
+void processDevCommands ( const std::string &kbHitStr )
+{
+	std::string command;
+	std::string argument;
+
+	argument = ChopString ( kbHitStr, command );
+
+	if ( SameString ( kbHitStr, "help" ) || kbHitStr.empty() ) {
+		std::cout << "+----------------DEVELOPER CONSOLE----------------+" << std::endl;
+		std::cout << "help              - Displays this message          " << std::endl;
+		std::cout << "shutdown          - Deploys the shutdown sequence  " << std::endl;
+		std::cout << "version           - Displays the CME Version	 " << std::endl;
+		std::cout << "+-------------------------------------------------+" << std::endl;
+		std::cout << "Remember, please press 'RETURN' twice after each command!" << std::endl;
+		std::cout << "More developer commands are on-route in the near future!" << std::endl;
+		std::cout << "+-------------------------------------------------+" << std::endl;
+		return;
+	}
+
+	std::cout << "---------------------------------------------------------------" << std::endl;
+	std::cout << "Developer issued command: " << command << std::endl;
+	std::cout << "---------------------------------------------------------------" << std::endl;
+
+
+
+	if ( SameString ( kbHitStr, "shutdown" ) ) {
+		is_shutdown = true;
+		std::cout << "The mud has entered into shutdown mode." << std::endl;
+		return;
+	}
+
+	// rock out our version
+	if ( SameString ( command, "version" ) ) {
+		std::cout << "InfectedCityV2 Build Version: " << getVersion() << "\n\r\n\r" << std::endl;
+		return;
+	}
+
+	std::cout << "Unknown command:" << command << std::endl;
+
+} // -- end of end of processDevCommands
+
+void processDevConsole()
+{
+	static std::string kbHitStr;
+
+	if ( kbhit() ) {
+		char c = getchar();
+		switch ( c ) {
+			default:
+				kbHitStr.append ( Format ( "%c", c ) );
+				break;
+			case '\n':
+			case '\r':
+				processDevCommands ( kbHitStr );
+				kbHitStr.clear();
+				break;
+		}
+	}
+	return;
+}
+
+
 void RunMudLoop ( int control )
 {
 	static struct timeval null_time;
@@ -291,120 +509,17 @@ void RunMudLoop ( int control )
 
 	/* Main loop */
 	while ( !is_shutdown ) {
-		fd_set in_set;
-		fd_set out_set;
-		fd_set exc_set;
-		Socket *d;
-		int maxdesc;
 
 #if defined(MALLOC_DEBUG)
 		if ( malloc_verify( ) != 1 )
 		{ abort( ); }
 #endif
 
-		/*
-		 * Poll all active descriptors.
-		 */
-		FD_ZERO ( &in_set  );
-		FD_ZERO ( &out_set );
-		FD_ZERO ( &exc_set );
-		FD_SET ( control, &in_set );
-		maxdesc	= control;
-		for ( d = socket_list; d; d = d->next ) {
-			maxdesc = UMAX ( maxdesc, d->descriptor );
-			FD_SET ( d->descriptor, &in_set  );
-			FD_SET ( d->descriptor, &out_set );
-			FD_SET ( d->descriptor, &exc_set );
-		}
 
-		if ( select ( maxdesc + 1, &in_set, &out_set, &exc_set, &null_time ) < 0 ) {
-			ReportErrno ( "Game_loop: select: poll" );
-			exit ( 1 );
-		}
-
-		/*
-		 * New connection?
-		 */
-		if ( FD_ISSET ( control, &in_set ) )
-		{ init_descriptor ( control ); }
-
-		/*
-		 * Kick out the freaky folks.
-		 */
-		for ( d = socket_list; d != NULL; d = d_next ) {
-			d_next = d->next;
-			if ( FD_ISSET ( d->descriptor, &exc_set ) ) {
-				FD_CLR ( d->descriptor, &in_set  );
-				FD_CLR ( d->descriptor, &out_set );
-				if ( d->character && d->connected == STATE_PLAYING )
-				{ save_char_obj ( d->character ); }
-				d->outtop	= 0;
-				close_socket ( d );
-			}
-		}
-
-		/*
-		 * Process input.
-		 */
-		for ( d = socket_list; d != NULL; d = d_next ) {
-			d_next	= d->next;
-			d->fcommand	= FALSE;
-
-			if ( FD_ISSET ( d->descriptor, &in_set ) ) {
-				if ( d->character != NULL )
-				{ d->character->timer = 0; }
-				if ( !read_from_descriptor ( d ) ) {
-					FD_CLR ( d->descriptor, &out_set );
-					if ( d->character != NULL && d->connected == STATE_PLAYING )
-					{ save_char_obj ( d->character ); }
-					d->outtop	= 0;
-					close_socket ( d );
-					continue;
-				}
-			}
-
-			if ( d->character != NULL && d->character->daze > 0 )
-			{ --d->character->daze; }
-
-			if ( d->character != NULL && d->character->wait > 0 ) {
-				--d->character->wait;
-				continue;
-			}
-
-			read_from_buffer ( d );
-			if ( d->incomm[0] != '\0' ) {
-				d->fcommand	= TRUE;
-				if ( d->pProtocol != NULL )
-				{ d->pProtocol->WriteOOB = 0; }
-
-
-				stop_idling ( d->character );
-
-				/* OLC */
-				if ( d->showstr_point )
-				{ show_string ( d, d->incomm ); }
-				else if ( d->character && d->character->queries.querycommand ) {
-					log_hd ( LOG_COMMAND, Format ( "Q-Player:  %s ::  Argument:  %s",  d->character->name,
-												   d->incomm ? d->incomm : "" ) );
-					( *d->character->queries.queryfunc )
-					( d->character, Format ( "queried_command:%p", d->character->queries.queryfunc ),
-					  d->incomm ? d->incomm : "", d->character->queries.querycommand );
-				} else if ( d->pEditString )
-				{ StringEditorOptions ( d->character, d->incomm ); }
-				else {
-					switch ( d->connected ) {
-						case STATE_PLAYING:
-							if ( !run_olc_editor ( d ) )
-							{ substitute_alias ( d, d->incomm ); }
-							break;
-						default:
-							nanny ( d, d->incomm );
-							break;
-					}
-				}
-				d->incomm[0]	= '\0';
-			}
-		}
+		processDevConsole();                            // -- attempt to read for developer input
+		acceptNewConnections ( control, null_time );    // -- attempt to detect new connections.
+		processBrokenSockets();                         // -- attempt to purge broken sockets
+		processInput ();                                // -- attempt to cull the socket input
 
 		// -- attempt to control our errors and our updaters
 		try {
@@ -414,24 +529,13 @@ void RunMudLoop ( int control )
 		}
 
 		// -- push our EventManager
-		EventManager::instance().updateEvents();
-
-		// -- handle output
-		for ( d = socket_list; d != NULL; d = d_next ) {
-			d_next = d->next;
-
-			if ( ( d->fcommand || d->outtop > 0 )
-					&&   FD_ISSET ( d->descriptor, &out_set ) ) {
-				if ( !process_output ( d, TRUE ) ) {
-					if ( d->character != NULL && d->connected == STATE_PLAYING )
-					{ save_char_obj ( d->character ); }
-					d->outtop	= 0;
-					close_socket ( d );
-				}
-			}
+		try {
+			EventManager::instance().updateEvents();
+		} catch ( ... ) {
+			CATCH ( false );
 		}
 
-
+		processSocketOutput();
 
 		/*
 		 * Synchronize to a clock.
@@ -481,8 +585,6 @@ void RunMudLoop ( int control )
 
 	return;
 }
-#endif
-
 
 
 #if defined(unix)

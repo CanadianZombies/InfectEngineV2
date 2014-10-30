@@ -1,7 +1,7 @@
 #PLAYER
 Name Omega~
 Id   1407161012
-LogO 1414614010
+LogO 1414673783
 Vers 5
 Prom <%hhp %mm %vmv> ~
 Race human~
@@ -9,7 +9,7 @@ Sex  1
 Cla  3
 Levl 60
 Sec  9
-Plyd 6276124
+Plyd 6305405
 Not  0 0 0 0 0
 Scro 28
 Room 3
@@ -229,9 +229,9 @@ Wear -1
 Lev  35
 Cost 7175
 Val  6 6 12 0 0
-Affc 'reserved'   1  35  -1   1  19          0
-Affc 'reserved'   1  35  -1   1  18          0
 Affc 'reserved'   1  35  -1  -3  24          0
+Affc 'reserved'   1  35  -1   1  18          0
+Affc 'reserved'   1  35  -1   1  19          0
 End
 
 #O
@@ -291,8 +291,8 @@ Wear -1
 Lev  46
 Cost 22950
 Val  1 1 1 0 0
-Affc 'reserved'   1  46  -1   3  18          0
 Affc 'reserved'   1  46  -1  -3  24          0
+Affc 'reserved'   1  46  -1   3  18          0
 End
 
 #O
@@ -312,9 +312,9 @@ Wear -1
 Lev  50
 Cost 183000
 Val  24 24 24 6 0
-Affc 'reserved'   1  50  -1   3  19          0
-Affc 'reserved'   1  50  -1   3  18          0
 Affc 'reserved'   1  50  -1   1   1          0
+Affc 'reserved'   1  50  -1   3  18          0
+Affc 'reserved'   1  50  -1   3  19          0
 End
 
 #O
@@ -333,8 +333,8 @@ Wear 10
 Lev  43
 Cost 25200
 Val  2 2 2 1 0
-Affc 'reserved'   1  43  -1   3  19          0
 Affc 'reserved'   1  43  -1  -3  24          0
+Affc 'reserved'   1  43  -1   3  19          0
 End
 
 #O
@@ -354,8 +354,8 @@ Wear 9
 Lev  47
 Cost 31050
 Val  2 2 2 1 0
-Affc 'reserved'   1  47  -1   3  18          0
 Affc 'reserved'   1  47  -1  -3  24          0
+Affc 'reserved'   1  47  -1   3  18          0
 End
 
 #O
@@ -374,8 +374,8 @@ Wear -1
 Lev  56
 Cost 135000
 Val  18 18 18 4 0
-Affc 'reserved'   1  56  -1   1  19          0
 Affc 'reserved'   1  56  -1   1   1          0
+Affc 'reserved'   1  56  -1   1  19          0
 End
 
 #O
@@ -414,8 +414,8 @@ Wear 12
 Lev  46
 Cost 49500
 Val  3 3 3 1 0
-Affc 'reserved'   1  46  -1   3  18          0
 Affc 'reserved'   1  46  -1  -8  24          0
+Affc 'reserved'   1  46  -1   3  18          0
 End
 
 #O
@@ -455,8 +455,8 @@ Wear 3
 Lev  56
 Cost 67000
 Val  8 8 8 2 0
-Affc 'reserved'   1  56  -1   1  18          0
 Affc 'reserved'   1  56  -1   1   1          0
+Affc 'reserved'   1  56  -1   1  18          0
 End
 
 #END
