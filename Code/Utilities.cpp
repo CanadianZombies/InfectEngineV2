@@ -161,6 +161,8 @@ bool file_exists ( const char *name )
 // ------------------------------------------------------------------------------
 void _log_hd ( long logFlag, const char *mFile, const char *mFunction, int mLine, const std::string &logStr )
 {
+	if(mNoLogging) { return; }
+	
 	try {
 		static bool called_tzset = false;
 		static int debugCounter = 0;
