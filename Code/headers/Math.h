@@ -51,7 +51,8 @@ class Math : public Instance<Math>
 		int bits ( int number );
 
 		int range ( int lower, int higher );
-
+		long range (long lower, long higher );
+		
 		int percent ( void );
 		int fuzzy ( int number );
 		int door ( void );
