@@ -96,7 +96,7 @@ extern bool mGodMode;
 extern bool mPeacefulMode;
 extern bool mNoLogging;
 extern bool mVerboseLogging;
-
+extern bool mDoubleExperience;
 /*
  * Global Constants
  */
