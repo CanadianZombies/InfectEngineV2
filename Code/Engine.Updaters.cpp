@@ -1029,6 +1029,11 @@ void aggr_update ( void )
 	Creature *vch, *vch_next;
 	Creature *victim;
 
+	if(mPeacefulMode) {
+		return;
+	}
+
+
 	for ( wch = char_list; wch != NULL; wch = wch_next ) {
 		wch_next = wch->next;
 		if ( IS_NPC ( wch )
