@@ -84,6 +84,26 @@ int Math::range ( int lower, int higher )
 	return lower + number;
 }
 
+long Math::range ( long lower, long higher )
+{
+	long power;
+	long number;
+
+	if ( lower == 0 && higher == 0 )
+	{ return 0; }
+
+	if ( ( higher = higher - lower + 1 ) <= 1 )
+	{ return lower; }
+
+	for ( power = 2; power < higher; power <<= 1 )
+		;
+
+	while ( ( number = generate() & ( power - 1 ) ) >= higher )
+		;
+
+	return lower + number;
+}
+
 int Math::percent ( void )
 {
 	return range ( 1, 100 );
