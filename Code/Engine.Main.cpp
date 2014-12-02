@@ -140,9 +140,7 @@ int main ( int argc, char **argv )
 	current_time 	= ( time_t ) now_time.tv_sec;
 	strcpy ( str_boot_time, ctime ( &current_time ) );
 
-	/*
-	 * Reserve one channel for our use.
-	 */
+	// -- reserve a file descriptor to potential protect against problems later on.
 	if ( ( fpReserve = fopen ( NULL_FILE, "r" ) ) == NULL ) {
 		ReportErrno ( NULL_FILE );
 		exit ( 1 );
@@ -152,6 +150,7 @@ int main ( int argc, char **argv )
 
 	build_directories();
 
+	// -- process our bootup options.
 	if ( argc > 1 ) {
 		int y = argc;
 		
@@ -159,42 +158,69 @@ int main ( int argc, char **argv )
 			bool optionReal = false;
 			log_hd(LOG_ALL, Format("Boot Option %s selected", argv[y]));
 
+			// -- shouldn't be an issue but just to be sure.
+			if(argv[y] == NULL) { break; }
+
+			// -- have we detected the port?
+			std::string arggy = argv[y];
+			
+			size_t p_found = arggy.find("port:");
+			if(p_found != std::string::npos ) {
+				std::string np;
+				int x = 0;
+				for(x = 0; x < arggy.length(); x++) {
+					if(!is_number(arggy[x]) { continue; }
+					np.append(arggy[x]);
+				}
+				
+				// -- check port boundaries.
+				if(!is_number(np.c_str()) || atoi(C_STR(np)) < 1024 || atoi(C_STR(np)) > 9999 ) {
+					// -- error in bootup, we abort
+					std::cout << "Port selected was not a valid port(Port must be between 1024 and 9999)" <<std::endl;
+					abort();
+				} else {
+					// -- an acceptable port will be assigned appropriately.
+					port = atoi(C_STR(np));
+				}
+				optionReal = true;
+			}
+
 			// -- enable the developer console.
-			if(SameString(argv[y], "console")) {
+			if(SameString(arggy, "console")) {
 				mDeveloperConsole = true;
 				optionReal = true;
 			}
 			
 			// -- everyone has staff commands!
-			if(SameString(argv[y], "godmode")) {
+			if(SameString(arggy, "godmode")) {
 				mGodMode = true;
 				optionReal = true;
 			}
 			
 			// -- disable combat!
-			if(SameString(argv[y], "peaceful")) {
+			if(SameString(arggy, "peaceful")) {
 				mPeacefulMode = true;
 				optionReal = true;
 			}
 			
 			// -- disable the ability to log
-			if(SameString(argv[y], "nolog")) {
+			if(SameString(arggy, "nolog")) {
 				mNoLogging = true;
 				optionReal = true;
 			}
 			
-			if(SameString(argv[y], "verbose")) {
+			if(SameString(arggy, "verbose")) {
 				mVerboseLogging = true;
 				optionReal = true
 			}
 			
-			if(SameString(argv[y], "doublexp")) {
+			if(SameString(arggy, "doublexp")) {
 				mDoubleExperience = true;
 				optionReal = true;
 			}
 			
 			if(!optionReal) {
-				log_hd(LOG_ALL, Format("Boot Option %s does not exist!", argv[y]));
+				log_hd(LOG_ALL, Format("Boot Option '%s' does not exist!", C_STR(arggy)));
 			}
 			y--;
 		}
