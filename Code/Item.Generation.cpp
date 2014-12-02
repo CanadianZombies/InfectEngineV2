@@ -1337,13 +1337,16 @@ void set_long ( Item *obj )
 
 void remove_material ( Item *obj, int bit )
 {
-	if(!obj) { throw("remove_material called on NULL Item."); }
+	ASSERT_THROW(!obj, "remove_material called on NULL Item.");
+	
 	REMOVE_BIT ( obj->material_flags, bit );
 	return;
 }
 
 void set_material ( Item *obj, int bit )
 {
+	ASSERT_THROW(!obj, "set_material called on NULL Item.");
+	
 	static int armor_types[] = {
 		MAT_PRACTICE, MAT_LEATHER, MAT_WOOD, MAT_BONE, MAT_EBONY,
 		MAT_IVORY, MAT_DRAGONSCALE, MAT_COPPER, MAT_BRASS, MAT_BRONZE,
