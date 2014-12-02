@@ -67,19 +67,7 @@ extern	int	malloc_verify	args ( ( void ) );
 const	char 	go_ahead_str	[] = { ( char ) IAC, ( char ) GA, '\0' };
 #endif
 
-
-/*
-    Linux shouldn't need these. If you have a problem compiling, try
-    uncommenting these functions.
-*/
-/*
-int	accept		args( ( int s, struct sockaddr *addr, int *addrlen ) );
-int	bind		args( ( int s, struct sockaddr *name, int namelen ) );
-int	getpeername	args( ( int s, struct sockaddr *name, int *namelen ) );
-int	getsockname	args( ( int s, struct sockaddr *name, int *namelen ) );
-int	listen		args( ( int s, int backlog ) );
-*/
-
+// -- Just incase
 int	close		args ( ( int fd ) );
 int	gettimeofday	args ( ( struct timeval *tp, struct timezone *tzp ) );
 /* int	read		args( ( int fd, char *buf, int nbyte ) ); */
@@ -97,6 +85,7 @@ fd_set exc_set;
 
 Socket *   socket_list;	/* All open descriptors		*/
 Socket *   d_next;		/* Next descriptor in loop	*/
+
 FILE *		    fpReserve;		/* Reserved file handle		*/
 bool		    god;		/* All new chars are gods!	*/
 bool		    is_shutdown;		/* Shutdown			*/
@@ -105,7 +94,11 @@ bool		    newbielockdown;		/* Game is newbielockdowned		*/
 char		    str_boot_time[MAX_INPUT_LENGTH];
 time_t		    current_time;	/* time of this pulse */
 bool		    MOBtrigger = TRUE;  /* act() switch                 */
-
+bool 			mDeveloperConsole = false;
+bool 			mGodMode = false;
+bool 			mPeacefulMode = false;
+bool 			mNoLogging = false;
+bool 			mVerboseLogging = false;
 
 /*
  * OS-dependent local functions.
@@ -155,21 +148,52 @@ int main ( int argc, char **argv )
 		exit ( 1 );
 	}
 
-	/*
-	 * Get the port number.
-	 */
 	port = 4000;
-	if ( argc > 1 ) {
-		if ( !is_number ( argv[1] ) ) {
-			fprintf ( stderr, "Usage: %s [port #]\n", argv[0] );
-			exit ( 1 );
-		} else if ( ( port = atoi ( argv[1] ) ) <= 1024 ) {
-			fprintf ( stderr, "Port number must be above 1024.\n" );
-			exit ( 1 );
-		}
-	}
 
 	build_directories();
+
+	if ( argc > 1 ) {
+		int y = argc;
+		
+		while(y > 0) {
+			bool optionReal = false;
+			log_hd(LOG_ALL, Format("Boot Option %s selected", argv[y]));
+
+			// -- enable the developer console.
+			if(SameString(argv[y], "console")) {
+				mDeveloperConsole = true;
+				optionReal = true;
+			}
+			
+			// -- everyone has staff commands!
+			if(SameString(argv[y], "godmode")) {
+				mGodMode = true;
+				optionReal = true;
+			}
+			
+			// -- disable combat!
+			if(SameString(argv[y], "peaceful")) {
+				mPeacefulMode = true;
+				optionReal = true;
+			}
+			
+			// -- disable the ability to log
+			if(SameString(argv[y], "nolog")) {
+				mNoLogging = true;
+				optionReal = true;
+			}
+			
+			if(SameString(argv[y], "verbose")) {
+				mVerboseLogging = true;
+				optionReal = true
+			}
+			
+			if(!optionReal) {
+				log_hd(LOG_ALL, Format("Boot Option %s does not exist!", argv[y]));
+			}
+			y--;
+		}
+	}
 
 	{
 		FILE *fp = fopen ( "InfectEngine.pid", "w" );
@@ -225,7 +249,6 @@ int main ( int argc, char **argv )
 	return 0;
 }
 
-#if defined(unix)
 int init_socket ( int port )
 {
 	static struct sockaddr_in sa_zero;
@@ -280,7 +303,6 @@ int init_socket ( int port )
 
 	return fd;
 }
-#endif
 
 void processInput ( )
 {
@@ -317,15 +339,14 @@ void processInput ( )
 			if ( d->pProtocol != NULL )
 			{ d->pProtocol->WriteOOB = 0; }
 
-
 			stop_idling ( d->character );
 
-			/* OLC */
 			if ( d->showstr_point )
 			{ show_string ( d, d->incomm ); }
 			else if ( d->character && d->character->queries.querycommand ) {
-				log_hd ( LOG_COMMAND, Format ( "Q-Player:  %s ::  Argument:  \"%s\"", d->character ? d->character->name : "!Error!",
-											   d->incomm ? d->incomm : "{No Argument}" ) );
+				log_hd ( LOG_COMMAND, Format ( "Q-Player:  %s ::  Argument:  \"%s\"", 
+					d->character ? d->character->name : "!Error!",
+					d->incomm ? d->incomm : "{No Argument}" ) );
 				( *d->character->queries.queryfunc )
 				( d->character, Format ( "queried_command:%p", d->character->queries.queryfunc ),
 				  d->incomm ? d->incomm : "", d->character->queries.querycommand );
@@ -351,14 +372,17 @@ void acceptNewConnections ( int ctrl, struct timeval null_time )
 {
 	int maxdesc;
 	Socket *d, *d_next;
-	/*
-	 * Poll all active descriptors.
-	 */
+
+	// -- reset the file descriptors
 	FD_ZERO ( &in_set  );
 	FD_ZERO ( &out_set );
 	FD_ZERO ( &exc_set );
+
+	// -- set the input file descriptor
 	FD_SET ( ctrl, &in_set );
+	
 	maxdesc	= ctrl;
+	
 	for ( d = socket_list; d; d = d_next ) {
 		d_next = d->next;
 
@@ -446,6 +470,8 @@ void processDevCommands ( const std::string &kbHitStr )
 		std::cout << "+----------------DEVELOPER CONSOLE----------------+" << std::endl;
 		std::cout << "help              - Displays this message          " << std::endl;
 		std::cout << "shutdown          - Deploys the shutdown sequence  " << std::endl;
+		std::cout << "sockets           - Lists all connected sockets    " << std::endl;
+		std::cout << "broadcast <msg>   - Broadcasts a message to all    " << std::endl;
 		std::cout << "version           - Displays the CME Version	 " << std::endl;
 		std::cout << "+-------------------------------------------------+" << std::endl;
 		std::cout << "Remember, please press 'RETURN' twice after each command!" << std::endl;
@@ -454,11 +480,39 @@ void processDevCommands ( const std::string &kbHitStr )
 		return;
 	}
 
+#ifdef _DEBUG_
 	std::cout << "---------------------------------------------------------------" << std::endl;
 	std::cout << "Developer issued command: " << command << std::endl;
+	std::cout << "Developer issued argument:" << argument << std::endl;
 	std::cout << "---------------------------------------------------------------" << std::endl;
+#endif
 
+	if ( SameString ( kbHitStr, "sockets")) {
+		Socket *d, *d_next;
+		int cnt = 0;
+		for ( d = socket_list; d != NULL; d = d_next ) {
+			d_next = d->next;
+			std::cout << "[" << d->descriptor << "] " << d->character ? d->character->name ? d->character->name : "[Creation]" : "No Character" << std::endl;
+			cnt++;
+		}
+		std::cout << "There were " << cnt << " socket(s) connected." << std::endl;
+		return;
+	}
 
+	if ( SameString ( kbHitStr, "broadcast")) {
+		if(argument.empty()) {
+			std::cout << "Broadcast what?" << std::endl;
+			return;
+		}
+		Socket *d, *d_next;
+
+		for ( d = socket_list; d != NULL; d = d_next ) {
+			d_next = d->next;
+			writeBuffer(d, Format("\aO{\aYSystem Message\aO}\aw: \aC%s\an\r\n", C_STR(argument)));
+		}
+		std::cout << "System message has been broadcasted." << std::endl;
+		return;
+	}
 
 	if ( SameString ( kbHitStr, "shutdown" ) ) {
 		is_shutdown = true;
@@ -473,12 +527,14 @@ void processDevCommands ( const std::string &kbHitStr )
 	}
 
 	std::cout << "Unknown command:" << command << std::endl;
-
+	return;
 } // -- end of end of processDevCommands
 
 void processDevConsole()
 {
 	static std::string kbHitStr;
+
+	if(!mDeveloperConsole) { return; }
 
 	if ( kbhit() ) {
 		char c = getchar();
@@ -514,7 +570,6 @@ void RunMudLoop ( int control )
 		if ( malloc_verify( ) != 1 )
 		{ abort( ); }
 #endif
-
 
 		processDevConsole();                            // -- attempt to read for developer input
 		acceptNewConnections ( control, null_time );    // -- attempt to detect new connections.
@@ -567,7 +622,7 @@ void RunMudLoop ( int control )
 				stall_time.tv_usec = usecDelta;
 				stall_time.tv_sec  = secDelta;
 				if ( select ( 0, NULL, NULL, NULL, &stall_time ) < 0 ) {
-					ReportErrno ( "Game_loop: select: stall" );
+					ReportErrno ( "RunMudLoop: select: stall" );
 					exit ( 1 );
 				}
 			}
