@@ -279,9 +279,6 @@ void save_mobiles ( FILE *fp, Zone *pArea )
 }
 
 
-
-
-
 /*****************************************************************************
  Name:		save_object
  Purpose:	Save one object to file.
