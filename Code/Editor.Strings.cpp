@@ -79,11 +79,7 @@ std::string remove_tilde ( std::string str )
 	for ( int x = 0; str[x] != '\0'; x++ ) {
 		if ( str[x] == '~' )
 		{ outstr.append ( "-" ); }
-		else {
-			char b[10];
-			snprintf ( b, 10, "%c", str[x] );
-			outstr.append ( b );
-		}
+		else {	outstr.append ( Format("%c", str[x] ) ); }
 	}
 
 	return outstr;
@@ -288,7 +284,7 @@ char *StringEditor_FormatString ( char *oldstring )
 
 	xbuf[0] = 0;
 
-	for ( ; ; ) {
+	while(true) {
 		for ( i = 0; i < 77; i++ ) {
 			if ( !* ( rdesc + i ) ) { break; }
 		}
@@ -331,7 +327,7 @@ char *first_arg ( char *argument, char *arg_first, bool fCase )
 	char cEnd;
 
 	if ( argument == NULL ) {
-		log_hd ( LOG_ERROR, "first_arg called with NULL argument, processing to cause detectable crash." );
+		log_hd ( LOG_ERROR | LOG_DEBUG, "first_arg called with NULL argument, processing to cause detectable crash." );
 	}
 
 	while ( *argument == ' ' )
@@ -631,7 +627,7 @@ void StringEditorOptions ( Creature *cr, char *argument )
 			writeBuffer ( "|                                       |     insert <str> on line <num>   |\n\r", cr );
 			writeBuffer ( "+=======================================+==================================+\n\r", cr );
 			writeBuffer ( "|  :/ <command>   - Execute Command     |  :lr       - <num> <str>         |\n\r", cr );
-			writeBuffer ( "|                                       |    (replaces line num with str_  |\n\r", cr );
+			writeBuffer ( "|                                       |    (replaces line num with str)  |\n\r", cr );
 			writeBuffer ( "+=======================================+==================================+\n\r", cr );
 			writeBuffer ( "|  :q               - complete string(saves changes)                       |\n\r", cr );
 			writeBuffer ( "|  :@               - cancel string(reverts changes)                       |\n\r", cr );
@@ -738,7 +734,6 @@ char* all_capitalize ( const char *str )
 	{ strcap[i] = toupper ( str[i] ); }
 	strcap[i] = '\0';
 
-
 	return strcap;
 }
 
@@ -766,7 +761,6 @@ char *ChopC ( const char *argument, char *first_arg )
 
 	while ( isspace ( *argument ) )
 	{ argument++; }
-
 
 	return ( char * ) argument;
 }
@@ -1119,7 +1113,6 @@ std::string getArg ( const std::string &str, int arg )
 	for ( int x = 1; x <= arg; x++ ) {
 		data = ChopString ( data, argument );
 		if ( arg == x ) {
-
 			return argument;
 		}
 	}
