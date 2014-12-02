@@ -483,11 +483,18 @@ void ExpEvent::Execute ( void )
 					totalGain += jm;
 				}
 
+				// -- for double experience!
+				if(mDoubleExperience)
+				{ totalGain = (totalGain *2); }
+
 				// -- assign the experience properly.
 				ch->exp += totalGain;
 				//			update_board ( ch, totalGain, BOARD_EXP );
 
-				writeBuffer ( Format ( "\n\r\ac*** \aYYour survival in \aG%s \aYhas yielded the reward of \aR%d\aY experience gained \ac***\an\n\r", "The Infected City", totalGain ), ch );
+				if(mDoubleExperience)
+					writeBuffer ( Format ( "\n\r\ac*** \aYYour survival in \aG%s \aYhas yielded the reward of \aR%d\aY double experience gained \ac***\an\n\r", "The Infected City", totalGain ), ch );
+				else
+					writeBuffer ( Format ( "\n\r\ac*** \aYYour survival in \aG%s \aYhas yielded the reward of \aR%d\aY experience gained \ac***\an\n\r", "The Infected City", totalGain ), ch );
 
 				if ( ch->level < MAX_LEVEL && ch->exp >= ( ch->level * 200 ) ) {
 					writeBuffer ( "You are ready to level up! Please find a safe spot to level up!\r\n", ch );
