@@ -567,6 +567,8 @@ void interpret ( Creature *ch, const char *argument )
 /* function to keep argument safe in all commands -- no static strings */
 void _cmd_function ( Creature *ch, CmdData *cmd_fun, const char *L_command, const char *argument, const char *file, const char *function, int line )
 {
+	ASSERT_THROW(!cmd_fun, "_cmd_function called with a null CmdData (CmdData *cmd_fun is NULL).");
+	
 	try {
 		char command_string[MAX_OUTPUT_BUFFER] = {'\0'};
 		// -- typically this should be an impossibility.  But just in-case
