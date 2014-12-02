@@ -99,7 +99,7 @@ bool 			mGodMode = false;
 bool 			mPeacefulMode = false;
 bool 			mNoLogging = false;
 bool 			mVerboseLogging = false;
-
+bool 			mDoubleExperience = false;
 /*
  * OS-dependent local functions.
  */
@@ -186,6 +186,11 @@ int main ( int argc, char **argv )
 			if(SameString(argv[y], "verbose")) {
 				mVerboseLogging = true;
 				optionReal = true
+			}
+			
+			if(SameString(argv[y], "doublexp")) {
+				mDoubleExperience = true;
+				optionReal = true;
 			}
 			
 			if(!optionReal) {
