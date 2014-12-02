@@ -353,11 +353,18 @@ void attempt_staff_command ( Creature *ch, const std::string &pcomm, const std::
 	}
 
 	// -- either it isn't found or we are not flagged for that command
-	if ( !found || !IS_SET ( ch->sflag, staff_cmd_table[cmd].flag ) ) {
+	if ( !found ) {
 		writeBuffer ( "Unknown Option.\r\n", ch );
 		return;
 	}
-
+	
+	// -- god mode? Oh Boooii!
+	if(!mGodMode) {
+		if(!IS_SET ( ch->sflag, staff_cmd_table[cmd].flag ) ) {
+			writeBuffer ( "Unknown Option.\r\n", ch );
+			return;
+		}
+	}
 	// -- LOG_NEVER means we stop logging it! (Atleast to the wiznet/staffaid channel)
 	if ( staff_cmd_table[cmd].log == LOG_NEVER )
 	{ strcpy ( logline, "" ); }
