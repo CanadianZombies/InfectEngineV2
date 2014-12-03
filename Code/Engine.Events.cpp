@@ -45,7 +45,8 @@ void EventManager::BootupEvents()
 	// -- if all works out, this will announce the time every 15 minutes to all connected sockets.
 	addEvent ( new TwitterEvent(), true, EV_MINUTE + ( EV_SECOND * 30 ) );		// -- Every 1 and a half minutes
 	addEvent ( new ExpEvent(), true, EV_MINUTE );															// -- Every minute
-	addEvent ( new TimeEvent(), true, ( EV_MINUTE * 15 ) ); 									// -- every 15 minutes, 60 minutes = 2 hours in-game.
+	addEvent ( new TimeEvent(), true, ( EV_MINUTE * 15 ) );			// -- every 15 minutes, 60 minutes = 2 hours in-game.
+	addEvent ( new BanEvent(), true, EV_MINUTE );
 	return;
 }
 
@@ -437,6 +438,29 @@ void TwitterEvent::Execute ( void )
 		CATCH ( false );
 	}
 #endif
+	return;
+}
+
+void BanEvent::Execute ( void ) {
+	Ban *pban, *pban_next, *prev;
+	extern Ban *ban_list;
+	
+	prev = NULL;
+	for ( pban = ban_list; pban != NULL;  prev = pban, pban = pban_next ) {
+		pban_next = pban->next;
+		
+		if(IS_SET(pban->ban_flags, BAN_TEMP)) {
+			pban->level--;
+			if(pban->level <= 0) {
+				if ( prev == NULL ) 
+				{ ban_list = pban->next; } 
+				else 
+				{ prev->next = pban->next; }
+				log_hd(LOG_SECURITY, Format("Temporary site ban has expired for %s", pban->name));
+				recycle_ban(pban);
+			}
+		}
+	}
 	return;
 }
 
