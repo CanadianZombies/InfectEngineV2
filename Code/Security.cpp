@@ -51,7 +51,7 @@ void save_bans ( void )
 	}
 
 	for ( pban = ban_list; pban != NULL; pban = pban->next ) {
-		// -- we don't save temporary bans.
+		// -- we don't save temporary bans as they expire every 60 minutes.
 		if ( IS_SET ( pban->ban_flags, BAN_TEMP)) { continue; }
 		
 		if ( IS_SET ( pban->ban_flags, BAN_PERMANENT ) ) {
@@ -76,7 +76,7 @@ void load_bans ( void )
 	{ return; }
 
 	ban_last = NULL;
-	for ( ; ; ) {
+	while(true) {
 		Ban *pban;
 		if ( feof ( fp ) ) {
 			fclose ( fp );
@@ -239,6 +239,10 @@ void ban_site ( Creature *ch, const char *argument, bool fPerm )
 	/* set ban type */
 	pban->ban_flags = type;
 
+	// -- level is used as minutes remaining for temporary sitebans, defaults to 60 minutes.
+	if(IS_SET(pban->ban_flags, BAN_TEMP))
+	{ pban->level = 60; }
+
 	if ( prefix )
 	{ SET_BIT ( pban->ban_flags, BAN_PREFIX ); }
 	if ( suffix )
@@ -248,6 +252,7 @@ void ban_site ( Creature *ch, const char *argument, bool fPerm )
 
 	pban->next  = ban_list;
 	ban_list    = pban;
+	
 	save_bans();
 	if(ch) {
 		snprintf ( buf, sizeof ( buf ), "%s has been banned.\n\r", pban->name );
