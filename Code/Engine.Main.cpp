@@ -154,9 +154,9 @@ int main ( int argc, char **argv )
 	if ( argc > 1 ) {
 		int y = argc;
 		
-		while(y > 0) {
+		while(y >= 0) {
 			bool optionReal = false;
-			log_hd(LOG_ALL, Format("Boot Option %s selected", argv[y]));
+			log_hd(LOG_ALL, Format("Boot Option '%s' selected", argv[y]));
 
 			// -- shouldn't be an issue but just to be sure.
 			if(argv[y] == NULL) { break; }
@@ -176,7 +176,7 @@ int main ( int argc, char **argv )
 				// -- check port boundaries.
 				if(!is_number(np.c_str()) || atoi(C_STR(np)) < 1024 || atoi(C_STR(np)) > 9999 ) {
 					// -- error in bootup, we abort
-					std::cout << "Port selected was not a valid port(Port must be between 1024 and 9999)" <<std::endl;
+					std::cout << "Port selected was not a valid port(Port must be between 1024 and 9999)" << std::endl;
 					abort();
 				} else {
 					// -- an acceptable port will be assigned appropriately.
@@ -226,6 +226,7 @@ int main ( int argc, char **argv )
 		}
 	}
 
+	// -- add our pid to the flatfile.
 	{
 		FILE *fp = fopen ( "InfectEngine.pid", "w" );
 
@@ -378,6 +379,8 @@ void processInput ( )
 				log_hd ( LOG_COMMAND, Format ( "Q-Player:  %s ::  Argument:  \"%s\"", 
 					d->character ? d->character->name : "!Error!",
 					d->incomm ? d->incomm : "{No Argument}" ) );
+					
+				// -- process the queried function
 				( *d->character->queries.queryfunc )
 				( d->character, Format ( "queried_command:%p", d->character->queries.queryfunc ),
 				  d->incomm ? d->incomm : "", d->character->queries.querycommand );
@@ -403,6 +406,9 @@ void acceptNewConnections ( int ctrl, struct timeval null_time )
 {
 	int maxdesc;
 	Socket *d, *d_next;
+
+	// -- just reset the data pointers incase of overflows/leaks elsewhere.
+	d = d_next = NULL;
 
 	// -- reset the file descriptors
 	FD_ZERO ( &in_set  );
@@ -557,7 +563,7 @@ void processDevCommands ( const std::string &kbHitStr )
 		return;
 	}
 
-	std::cout << "Unknown command:" << command << std::endl;
+	std::cout << "Unknown command: " << command << std::endl;
 	return;
 } // -- end of end of processDevCommands
 
@@ -565,6 +571,9 @@ void processDevConsole()
 {
 	static std::string kbHitStr;
 
+	// -- mDeveloperConsole has to be activated via bootup options in order to work.
+	// -- this ensures safety of the system and ensures that developer console is only used
+	// -- when intentionally used.  Not by accident to prevent 'problems' and security risks.
 	if(!mDeveloperConsole) { return; }
 
 	if ( kbhit() ) {
@@ -592,9 +601,11 @@ void RunMudLoop ( int control )
 	signal ( SIGPIPE, SIG_IGN );
 	gettimeofday ( &last_time, NULL );
 	current_time = ( time_t ) last_time.tv_sec;
-	bool first_loop = true;
+	static bool first_loop = true;
+	static bool first_event_loop = true;
+	static bool first_update_handler = true;
 
-	/* Main loop */
+	// -- run until we are shutdown
 	while ( !is_shutdown ) {
 
 #if defined(MALLOC_DEBUG)
@@ -610,6 +621,10 @@ void RunMudLoop ( int control )
 		// -- attempt to control our errors and our updaters
 		try {
 			update_handler( );
+			if(first_update_handler) {
+				first_update_handler = false;
+				log_hd ( LOG_DEBUG, "Successfully processed the first batch of oldstyle event updaters." );
+			}
 		} catch ( ... ) {
 			CATCH ( false );
 		}
@@ -617,6 +632,10 @@ void RunMudLoop ( int control )
 		// -- push our EventManager
 		try {
 			EventManager::instance().updateEvents();
+			if(first_event_loop) {
+				first_event_loop = false;
+				log_hd ( LOG_DEBUG, "Successfully processed the first EventManager events." );
+			}
 		} catch ( ... ) {
 			CATCH ( false );
 		}
@@ -676,6 +695,8 @@ void RunMudLoop ( int control )
 #if defined(unix)
 void init_descriptor ( int control )
 {
+	static bool first_connection = true;
+	
 	char buf[MAX_STRING_LENGTH];
 	Socket *dnew;
 	struct sockaddr_in sock;
@@ -736,6 +757,12 @@ void init_descriptor ( int control )
 		from = gethostbyaddr ( ( char * ) &sock.sin_addr,
 							   sizeof ( sock.sin_addr ), AF_INET );
 		dnew->host = assign_string ( from ? from->h_name : buf );
+	}
+
+	// -- logging of our first connection to the debug log
+	if(first_connection) {
+		first_connection = false;
+		log_hd(LOG_DEBUG, Format("First connection since system bootup by %s @ %s", dnew->host, grab_time_log(current_time)));
 	}
 
 	/*
@@ -948,11 +975,11 @@ void read_from_buffer ( Socket *d )
 							 get_trust ( d->character ) );
 
 				d->repeat = 0;
-				/*
-						write_to_descriptor( d->descriptor,
-						    "\n\r*** PUT A LID ON IT!!! ***\n\r", 0 );
-						strcpy( d->incomm, "quit" );
-				*/
+				
+				write_to_descriptor( d->descriptor, "\n\r*** You are temporarily banned for Spamming! ***\n\r", 0 );
+				// -- temporarily ban the host
+				ban_site(NULL, Format("%s temp", d->host), false );
+				cmd_function(NULL, cmd_disconnect, Format("%d", d->descriptor));
 			}
 		}
 	}
