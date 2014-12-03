@@ -779,6 +779,12 @@ void init_descriptor ( int control )
 		recycle_descriptor ( dnew );
 		return;
 	}
+	if ( check_ban ( dnew->host, BAN_TEMP ) ) {
+		write_to_descriptor ( desc, Format("Your login site is currently under a temporary site ban. It will be un-banned within an hour.\n\r"), 0 );
+		close ( desc );
+		recycle_descriptor ( dnew );
+		return;
+	}
 	// -- add our sockets to the list
 	dnew->next		= socket_list;
 	socket_list		= dnew;
