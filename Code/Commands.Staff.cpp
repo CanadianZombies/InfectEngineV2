@@ -494,7 +494,9 @@ DefineCommand ( cmd_disconnect )
 
 	ChopC ( argument, arg );
 	if ( arg[0] == '\0' ) {
-		writeBuffer ( "Disconnect whom?\n\r", ch );
+		if(ch) {
+			writeBuffer ( "Disconnect whom?\n\r", ch );
+		}
 		return;
 	}
 
@@ -505,7 +507,9 @@ DefineCommand ( cmd_disconnect )
 		for ( d = socket_list; d != NULL; d = d->next ) {
 			if ( d->descriptor == desc ) {
 				close_socket ( d );
-				writeBuffer ( "Ok.\n\r", ch );
+				if(ch) {
+					writeBuffer ( Format("Ok, %d has been disconnected.\n\r", desc), ch );
+				}
 				return;
 			}
 		}
@@ -530,7 +534,9 @@ DefineCommand ( cmd_disconnect )
 	}
 
 	log_hd ( LOG_ERROR, "cmd_disconnect: descriptor not found, cannot perform disconnection." );
-	writeBuffer ( "Descriptor not found!\n\r", ch );
+	if(ch) {
+		writeBuffer ( "Descriptor not found!\n\r", ch );
+	}
 	return;
 }
 
