@@ -91,7 +91,12 @@ extern		EnvironmentDataData		weather_info;
 extern		bool			MOBtrigger;
 extern		unsigned long 		connect_count;
 
-
+extern bool mDeveloperConsole;
+extern bool mGodMode;
+extern bool mPeacefulMode;
+extern bool mNoLogging;
+extern bool mVerboseLogging;
+extern bool mDoubleExperience;
 /*
  * Global Constants
  */

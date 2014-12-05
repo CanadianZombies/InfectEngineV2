@@ -161,6 +161,8 @@ bool file_exists ( const char *name )
 // ------------------------------------------------------------------------------
 void _log_hd ( long logFlag, const char *mFile, const char *mFunction, int mLine, const std::string &logStr )
 {
+	if(mNoLogging) { return; }
+	
 	try {
 		static bool called_tzset = false;
 		static int debugCounter = 0;
@@ -301,12 +303,15 @@ void _log_hd ( long logFlag, const char *mFile, const char *mFunction, int mLine
 
 				// -- no matter what only debug messages end up in the runtime.debug file.
 				if ( log_table[logX].logtype == LOG_DEBUG ) {
-					// -- We only keep the last 500 debug messages before we wipe the file and
+					int maxDebug = 500;
+					if(mVerboseLogging)
+						maxDebug = 1500;
+					// -- We only keep the last maxDebug debug messages before we wipe the file and
 					// -- create a new one.  Purpose behind this is to eliminate massive debug logs
 					// -- and by all account, no debug file should be empty.  This is an excellent
 					// -- way to log things leading up to a crash, or simply a great way to log
 					// -- the current stack leading up to a shutdown/crash/etc.
-					if ( ++debugCounter > 500 ) {
+					if ( ++debugCounter > maxDebug ) {
 						unlink ( Format ( "%s%s/%d/%s", LOG_DIR, the_date, getpid(), DEBUG_FILE ) );
 						debugCounter = 1;
 					}
@@ -332,8 +337,12 @@ void _log_hd ( long logFlag, const char *mFile, const char *mFunction, int mLine
 						if ( !exists ) {
 							fprintf ( fp, "Engine Version: %s\n", getVersion() );
 						}
+						if(mVerboseLogging)
+						fprintf ( fp, "\t%s : %s\n", the_time, C_STR ( logStr ) );
+						else
 						fprintf ( fp, "\t%s : %s : %s : %d : %s\n", the_time, mFile, mFunction, mLine, C_STR ( logStr ) );
 					}
+					
 					// -- sitrep our log out to those who can listen to it.
 					sitrep ( log_table[logX].crFlagSitrep, Format ( "\a[F350](\a[F541]%s\a[F350]) %s%s : %s\an", log_table[logX].broadcast, log_table[logX].colour, the_time, C_STR ( logOutStr ) ) );
 				}

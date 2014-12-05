@@ -45,7 +45,8 @@ void EventManager::BootupEvents()
 	// -- if all works out, this will announce the time every 15 minutes to all connected sockets.
 	addEvent ( new TwitterEvent(), true, EV_MINUTE + ( EV_SECOND * 30 ) );		// -- Every 1 and a half minutes
 	addEvent ( new ExpEvent(), true, EV_MINUTE );															// -- Every minute
-	addEvent ( new TimeEvent(), true, ( EV_MINUTE * 15 ) ); 									// -- every 15 minutes, 60 minutes = 2 hours in-game.
+	addEvent ( new TimeEvent(), true, ( EV_MINUTE * 15 ) );			// -- every 15 minutes, 60 minutes = 2 hours in-game.
+	addEvent ( new BanEvent(), true, EV_MINUTE );
 	return;
 }
 
@@ -440,6 +441,29 @@ void TwitterEvent::Execute ( void )
 	return;
 }
 
+void BanEvent::Execute ( void ) {
+	Ban *pban, *pban_next, *prev;
+	extern Ban *ban_list;
+	
+	prev = NULL;
+	for ( pban = ban_list; pban != NULL;  prev = pban, pban = pban_next ) {
+		pban_next = pban->next;
+		
+		if(IS_SET(pban->ban_flags, BAN_TEMP)) {
+			pban->level--;
+			if(pban->level <= 0) {
+				if ( prev == NULL ) 
+				{ ban_list = pban->next; } 
+				else 
+				{ prev->next = pban->next; }
+				log_hd(LOG_SECURITY, Format("Temporary site ban has expired for %s", pban->name));
+				recycle_ban(pban);
+			}
+		}
+	}
+	return;
+}
+
 // -- -------------------------------------------------------------
 // -- EXP Bucket system, so experience gains happen periodically
 // -- and not all at once.  Ie, it can take some time to level up!
@@ -483,11 +507,18 @@ void ExpEvent::Execute ( void )
 					totalGain += jm;
 				}
 
+				// -- for double experience!
+				if(mDoubleExperience)
+				{ totalGain = (totalGain *2); }
+
 				// -- assign the experience properly.
 				ch->exp += totalGain;
 				//			update_board ( ch, totalGain, BOARD_EXP );
 
-				writeBuffer ( Format ( "\n\r\ac*** \aYYour survival in \aG%s \aYhas yielded the reward of \aR%d\aY experience gained \ac***\an\n\r", "The Infected City", totalGain ), ch );
+				if(mDoubleExperience)
+					writeBuffer ( Format ( "\n\r\ac*** \aYYour survival in \aG%s \aYhas yielded the reward of \aR%d\aY double experience gained \ac***\an\n\r", "The Infected City", totalGain ), ch );
+				else
+					writeBuffer ( Format ( "\n\r\ac*** \aYYour survival in \aG%s \aYhas yielded the reward of \aR%d\aY experience gained \ac***\an\n\r", "The Infected City", totalGain ), ch );
 
 				if ( ch->level < MAX_LEVEL && ch->exp >= ( ch->level * 200 ) ) {
 					writeBuffer ( "You are ready to level up! Please find a safe spot to level up!\r\n", ch );

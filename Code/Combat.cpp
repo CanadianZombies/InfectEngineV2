@@ -157,6 +157,10 @@ void violence_update ( void )
 		if ( ( victim = FIGHTING ( ch ) ) == NULL || IN_ROOM ( ch ) == NULL )
 		{ continue; }
 
+		if(mPeacefulMode) {
+			stop_fighting(ch, false);
+		}
+
 		if ( IS_AWAKE ( ch ) && IN_ROOM ( ch ) == IN_ROOM ( victim ) )
 		{ multi_hit ( ch, victim, TYPE_UNDEFINED ); }
 		else
@@ -263,6 +267,11 @@ void multi_hit ( Creature *ch, Creature *victim, int dt )
 {
 	int     chance;
 
+	if(mPeacefulMode) {
+		stop_fighting(ch, false);
+		stop_fighting(victim, false);
+	}
+
 	/* decrement the wait */
 	if ( ch->desc == NULL )
 	{ ch->wait = UMAX ( 0, ch->wait - PULSE_VIOLENCE ); }
@@ -331,6 +340,12 @@ void mob_hit ( Creature *ch, Creature *victim, int dt )
 {
 	int chance, number;
 	Creature *vch, *vch_next;
+
+	if(mPeacefulMode) {
+		stop_fighting(ch, false);
+		stop_fighting(victim, false);
+	}
+
 
 	one_hit ( ch, victim, dt );
 

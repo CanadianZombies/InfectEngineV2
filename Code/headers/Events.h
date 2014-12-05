@@ -158,6 +158,10 @@ class LuaEvent : public Event
 		std::string getScriptName ( void ) { return mScriptName; }
 };
 
+class BanEvent : public Event
+{
+	DEFINE_EVENT( BanEvent );
+};
 
 class ExpEvent : public Event
 {

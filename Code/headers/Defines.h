@@ -318,6 +318,7 @@
 #define BAN_ALL			D
 #define BAN_PERMIT		E
 #define BAN_PERMANENT		F
+#define BAN_TEMP        G
 
 #define SUN_DARK		    0
 #define SUN_RISE		    1

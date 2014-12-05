@@ -41,49 +41,17 @@ void set_material args ( ( Item *obj, int bit ) );
 void rem_material args ( ( Item *obj, int bit ) );
 Item * create_random ( Creature * mob, const char *argument );
 Item * make_armor ( Item* obj, Creature* mob, int random_vnum, int item_type, int wear_flags, const char* wear_name );
-#define MAX_VERBS 40
+
+#define MAX_VERBS 42
 const char *verb_types[] = {
-	"expensive looking",
-	"inscrutable",
-	"ugly",
-	"old",
-	"amazing",
-	"uncommon",
-	"ornate",
-	"splendid",
-	"ancient",
-	"dusty",
-	"scratched",
-	"flawed",
-	"burnt",
-	"heavy",
-	"gilded",
-	"spooky",
-	"plain",
-	"dirty",
-	"wrinkled",
-	"shiny",
-	"warped",
-	"cheaply made",
-	"flawed",
-	"burnt",
-	"slightly used",
-	"well used",
-	"slightly used",
-	"sought after",
-	"rare looking",
-	"common",
-	"unique looking",
-	"breath taking",
-	"colorful",
-	"divinely carved",
-	"dirty",
-	"chipped",
-	"blood stained",
-	"dull looking",
-	"tinted",
-	"shiny",
-	"fragile looking"
+	"expensive looking",	"inscrutable",	"ugly",	"old",	"shabby",	"decrepit",
+	"amazing",	"uncommon",	"ornate",	"splendid",	"ancient",	"dusty",
+	"scratched",	"flawed",	"burnt",	"heavy",	"gilded",	"spooky",
+	"plain",	"dirty",	"wrinkled",	"shiny",	"warped",	"cheaply made",
+	"flawed",	"burnt",	"slightly used",	"well used",	"slightly used",	"sought after",
+	"rare looking",	"common",	"unique looking",	"breath taking",	"colorful",
+	"divinely carved",	"dirty",	"chipped",	"blood stained",	"dull looking",	"tinted",
+	"shiny",	"fragile looking"
 };
 
 const char *some[] = {
@@ -638,32 +606,13 @@ void obj_cost ( Item *obj, Creature * mob )
 
 void obj_condition ( Item *obj )
 {
-	int condition;
+	int condition = Math::instance().range(Math::instance().range(1,20), Math::instance().range(45,70));
+	condition += (obj->level/3);
+	
+	if(condition  > 100)
+	{ condition = 100; }
 
-	/*Condition is based on level, low level eq sucks anyways:)*/
-	if ( obj->level <= 5 )
-	{ condition = Math::instance().range ( 1, 100 ); }
-	else if ( obj->level <= 10 )
-	{ condition = Math::instance().range ( 10, 100 ); }
-	else if ( obj->level <= 15 )
-	{ condition = Math::instance().range ( 20, 100 ); }
-	else if ( obj->level <= 25 )
-	{ condition = Math::instance().range ( 30, 100 ); }
-	else if ( obj->level <= 30 )
-	{ condition = Math::instance().range ( 40, 100 ); }
-	else if ( obj->level <= 35 )
-	{ condition = Math::instance().range ( 50, 100 ); }
-	else if ( obj->level <= 40 )
-	{ condition = Math::instance().range ( 60, 100 ); }
-	else if ( obj->level <= 45 )
-	{ condition = Math::instance().range ( 70, 100 ); }
-	else if ( obj->level <= 50 )
-	{ condition = Math::instance().range ( 80, 100 ); }
-	else
-	{ condition = Math::instance().range ( 90, 100 ); }
-
-	if ( IS_SET ( obj->material_flags, MAT_TAINTED_MITHRIL )
-			|| IS_SET ( obj->material_flags, MAT_MITHRIL ) )
+	if ( IS_SET ( obj->material_flags, MAT_TAINTED_MITHRIL ) || IS_SET ( obj->material_flags, MAT_MITHRIL ) )
 	{ condition = 100; }
 
 	// -- practice gear is always cheaply made!
@@ -672,6 +621,7 @@ void obj_condition ( Item *obj )
 	}
 
 	obj->condition = condition;
+	return;
 }
 
 void set_material_based_flags ( Item *obj, Creature * mob )
@@ -679,21 +629,22 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 	if ( IS_SET ( obj->material_flags, MAT_DOUBLE_PLATED ) ) {
 		SET_BIT ( obj->extra_flags, ITEM_ANTI_EVIL );
 		SET_BIT ( obj->extra_flags, ITEM_ANTI_NEUTRAL );
+		obj->requirements[CON_REQ] += Math::instance().range(2,3);
 	}
 
 	if ( IS_SET ( obj->material_flags, MAT_SILVER ) ) {
 		SET_BIT ( obj->extra_flags, ITEM_HUM );
-		obj->requirements[CON_REQ] = Math::instance().range ( 13, 15 );
+		obj->requirements[CON_REQ] += Math::instance().range ( 7, 10 );
 	}
 
 	if ( IS_SET ( obj->material_flags, MAT_GOLD ) ) {
 		SET_BIT ( obj->extra_flags, ITEM_GLOW );
-		obj->requirements[STR_REQ] = Math::instance().range ( 17, 15 );
+		obj->requirements[STR_REQ] += Math::instance().range ( 10, 15 );
 	}
 
 	if ( IS_SET ( obj->material_flags, MAT_TAINTED_MITHRIL ) ) {
 		SET_BIT ( obj->extra_flags, ITEM_ANTI_GOOD );
-		obj->requirements[CON_REQ] = Math::instance().range ( 22, 25 );
+		obj->requirements[CON_REQ] += Math::instance().range ( 10, 13 );
 	}
 
 	if ( IS_SET ( obj->material_flags, MAT_MITHRIL ) )
@@ -701,24 +652,24 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 
 	if ( IS_SET ( obj->material_flags, MAT_OPAL ) ) {
 		SET_BIT ( obj->extra_flags, ITEM_ANTI_GOOD );
-		obj->requirements[DEX_REQ] = 17;
+		obj->requirements[DEX_REQ] += 4;
 	}
 
 	if ( IS_SET ( obj->material_flags, MAT_ONYX ) ) {
 		SET_BIT ( obj->extra_flags, ITEM_ANTI_EVIL );
-		obj->requirements[WIS_REQ] = 22;
+		obj->requirements[WIS_REQ] += 4;
 	}
 
 	if ( IS_SET ( obj->material_flags, MAT_OBSIDIAN ) ) {
 		SET_BIT ( obj->extra_flags, ITEM_INVIS );
-		obj->requirements[STR_REQ] = 19;
+		obj->requirements[STR_REQ] += 4;
 
 	}
 
 	if ( IS_SET ( obj->material_flags, MAT_QUARTZ ) ) {
 		SET_BIT ( obj->extra_flags, ITEM_NOLOCATE );
-		obj->requirements[STR_REQ] = Math::instance().range ( 13, 17 );
-		obj->requirements[DEX_REQ] = Math::instance().range ( 13, 17 );
+		obj->requirements[STR_REQ] += Math::instance().range ( 13, 17 );
+		obj->requirements[DEX_REQ] += Math::instance().range ( 13, 17 );
 	}			// MAT_QUARTZ are hidden!
 
 	/*Lets add some gusto.*/
@@ -747,11 +698,11 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 	}
 
 	/*Low lvl equipment sucks:)*/
-	if ( obj->level <= 7 ) {
+	if ( obj->level <= 3 ) {
 		if ( !IS_SET ( obj->extra_flags, ITEM_MELT_DROP ) )
 		{ SET_BIT ( obj->extra_flags, ITEM_MELT_DROP ); }
 		for ( int x = 0; x < MAX_REQ; x++ ) {
-			obj->requirements[x] = Math::instance().range ( 1, 15 );
+			obj->requirements[x] += Math::instance().range ( 1, 3 );
 		}
 	}
 
@@ -761,7 +712,7 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 		// -- lowbie gear assigned 1-5 for stats
 		if ( IS_SET ( obj->material_flags, MAT_PRACTICE ) ) {
 			for ( int x = 0; x < MAX_REQ; x++ ) {
-				obj->requirements[x] = Math::instance().range ( 1, 5 );
+				obj->requirements[x] += Math::instance().range ( 1, 5 );
 			}
 			// -- practice gear is ALWAYS one size fits all!
 			obj->requirements[SIZ_REQ] = SIZE_MAGIC;
@@ -787,7 +738,7 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 		// -- lowbie gear assigned 1-5 for stats
 		if ( IS_SET ( obj->material_flags, MAT_PRACTICE ) ) {
 			for ( int x = 0; x < MAX_REQ; x++ ) {
-				obj->requirements[x] = Math::instance().range ( 1, 5 );
+				obj->requirements[x] += Math::instance().range ( 1, 5 );
 			}
 			// -- practice gear is ALWAYS one size fits all!
 			obj->requirements[SIZ_REQ] = SIZE_MAGIC;
@@ -801,10 +752,20 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 			}
 		}
 	}
+	
+	// -- making sure we do not exceed our maximum requirements.
+	for ( int x = 0; x < MAX_REQ; x++ ) {
+		if(x == SIZ_REQ) continue;
+		
+		if(obj->requirements[x] > 25) {
+			obj->requirements[x] = 25;
+		}	
+	}	
 	// -- correcting glitches
 	if ( obj->requirements[SIZ_REQ] > SIZE_MAGIC ) {
 		obj->requirements[SIZ_REQ] = SIZE_MAGIC;
 	}
+	return;
 }
 
 void obj_level ( Item *obj, Creature * mob )
@@ -829,6 +790,7 @@ void obj_level ( Item *obj, Creature * mob )
 		if ( obj->requirements[SIZ_REQ] < 0 ) { obj->requirements[SIZ_REQ] = 0; }
 		if ( obj->requirements[SIZ_REQ] > SIZE_MAGIC ) { obj->requirements[SIZ_REQ] = SIZE_MAGIC; }
 	}
+	return;
 }
 
 void obj_weight ( Item *obj )
@@ -948,6 +910,7 @@ void obj_weight ( Item *obj )
 	{ weight = Math::instance().range ( 100, 200 ); }
 
 	obj->weight = weight;
+	return;
 }
 
 #define ANSI_ESCAPE "[0"
@@ -1374,11 +1337,16 @@ void set_long ( Item *obj )
 
 void remove_material ( Item *obj, int bit )
 {
+	ASSERT_THROW(!obj, "remove_material called on NULL Item.");
+	
 	REMOVE_BIT ( obj->material_flags, bit );
+	return;
 }
 
 void set_material ( Item *obj, int bit )
 {
+	ASSERT_THROW(!obj, "set_material called on NULL Item.");
+	
 	static int armor_types[] = {
 		MAT_PRACTICE, MAT_LEATHER, MAT_WOOD, MAT_BONE, MAT_EBONY,
 		MAT_IVORY, MAT_DRAGONSCALE, MAT_COPPER, MAT_BRASS, MAT_BRONZE,
@@ -2142,8 +2110,8 @@ void create_random_equipment ( Creature * mob )
 		create_random ( mob, "wand" );
 	}
 
-
 	tail_chain( );
+	return;
 }
 
 // -- EOF

@@ -90,22 +90,23 @@ std::string addTweetHashtags ( const std::string &tweetStr )
 
 	// -- easy to add more to hashtag!
 	const struct twit_types twit_table[] = {
-		{ "#MUDS", 2 },					{ "#MUDDING", 30},
+		{ "#MUDS", 2 },				{ "#MUDDING", 30},
 		{ "#TEXTGAMES", 5 },			{ "#PLAGUEDONES", 6 },
-		{ "#ZOMBIES", 3},				{ "#WALKERS", 10},
+		{ "#ZOMBIES", 3},			{ "#WALKERS", 10},
 		{ "#INFECTEDCITY", 18},			{ "#INFECTENGINE", 18},
 		{ "#OLDSCHOOLGAMES", 30},		{ "#GAMES", 20},
 		{ "#FREEGAMES", 30},			{ "#RPG", 30},
-		{ "#WRITING", 30},				{ "#SCRAWL", 30},
-		{ "#INFECT", 30 },				{ "#DEADWORLD", 30 },
-		{ "#UNDEAD", 30 },				{ "#SURVIVAL", 75 },
+		{ "#WRITING", 30},			{ "#SCRAWL", 30},
+		{ "#INFECT", 30 },			{ "#DEADWORLD", 30 },
+		{ "#UNDEAD", 30 },			{ "#SURVIVAL", 75 },
 		{ "#HOWDOISURVIVE", 75},		{ "#STALKED", 75 },
-		{ "#RAGE", 75 },				{ "#RETROGAMING", 30 },
-		{ "#LETTHEREBEZOMBIES", 100}, 	{ "#DEADWALKING", 100 },
+		{ "#RAGE", 75 },			{ "#RETROGAMING", 30 },
+		{ "#LETTHEREBEZOMBIES", 100}, 		{ "#DEADWALKING", 100 },
 		{ "#TEXTFORLIFE", 100},			{ "#CLASSICGAMING", 100 },
 		{ "#CLASSICSURVIVAL", 100},		{ "#TBC", 100 },
-		{ "#MTF", 100},					{ "#AWESOME", 100},
-		{ "#MULTIUSERDUNGEON", 100},	{ "#GAMING", 100 },
+		{ "#MTF", 100},				{ "#AWESOME", 100},
+		{ "#MULTIUSERDUNGEON", 100},		{ "#GAMING", 100 },
+		{ "@ZombieBoots", 100},
 		{ NULL, 0 },
 	};
 
