@@ -606,10 +606,10 @@ void obj_cost ( Item *obj, Creature * mob )
 
 void obj_condition ( Item *obj )
 {
-	int condition = Math::instance().range(Math::instance().range(1,20), Math::instance().range(45,70));
-	condition += (obj->level/3);
-	
-	if(condition  > 100)
+	int condition = Math::instance().range ( Math::instance().range ( 1, 20 ), Math::instance().range ( 45, 70 ) );
+	condition += ( obj->level / 3 );
+
+	if ( condition  > 100 )
 	{ condition = 100; }
 
 	if ( IS_SET ( obj->material_flags, MAT_TAINTED_MITHRIL ) || IS_SET ( obj->material_flags, MAT_MITHRIL ) )
@@ -629,7 +629,7 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 	if ( IS_SET ( obj->material_flags, MAT_DOUBLE_PLATED ) ) {
 		SET_BIT ( obj->extra_flags, ITEM_ANTI_EVIL );
 		SET_BIT ( obj->extra_flags, ITEM_ANTI_NEUTRAL );
-		obj->requirements[CON_REQ] += Math::instance().range(2,3);
+		obj->requirements[CON_REQ] += Math::instance().range ( 2, 3 );
 	}
 
 	if ( IS_SET ( obj->material_flags, MAT_SILVER ) ) {
@@ -752,15 +752,15 @@ void set_material_based_flags ( Item *obj, Creature * mob )
 			}
 		}
 	}
-	
+
 	// -- making sure we do not exceed our maximum requirements.
 	for ( int x = 0; x < MAX_REQ; x++ ) {
-		if(x == SIZ_REQ) continue;
-		
-		if(obj->requirements[x] > 25) {
+		if ( x == SIZ_REQ ) { continue; }
+
+		if ( obj->requirements[x] > 25 ) {
 			obj->requirements[x] = 25;
-		}	
-	}	
+		}
+	}
 	// -- correcting glitches
 	if ( obj->requirements[SIZ_REQ] > SIZE_MAGIC ) {
 		obj->requirements[SIZ_REQ] = SIZE_MAGIC;
@@ -1337,16 +1337,16 @@ void set_long ( Item *obj )
 
 void remove_material ( Item *obj, int bit )
 {
-	ASSERT_THROW(!obj, "remove_material called on NULL Item.");
-	
+	ASSERT_THROW ( !obj, "remove_material called on NULL Item." );
+
 	REMOVE_BIT ( obj->material_flags, bit );
 	return;
 }
 
 void set_material ( Item *obj, int bit )
 {
-	ASSERT_THROW(!obj, "set_material called on NULL Item.");
-	
+	ASSERT_THROW ( !obj, "set_material called on NULL Item." );
+
 	static int armor_types[] = {
 		MAT_PRACTICE, MAT_LEATHER, MAT_WOOD, MAT_BONE, MAT_EBONY,
 		MAT_IVORY, MAT_DRAGONSCALE, MAT_COPPER, MAT_BRASS, MAT_BRONZE,

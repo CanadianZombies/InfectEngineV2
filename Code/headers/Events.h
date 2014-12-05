@@ -160,7 +160,7 @@ class LuaEvent : public Event
 
 class BanEvent : public Event
 {
-	DEFINE_EVENT( BanEvent );
+		DEFINE_EVENT ( BanEvent );
 };
 
 class ExpEvent : public Event

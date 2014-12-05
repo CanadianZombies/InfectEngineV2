@@ -826,7 +826,7 @@ Item *make_treasure_item ( int level )
 			if ( !CAN_WEAR ( obj, ITEM_TAKE ) ) /* set take if not set */
 			{ obj->wear_flags   = ITEM_TAKE; }
 			obj->value[1]     = remort ? 2 : 1; /* if the obj is remort, times 2 */
-			obj->value[2]     = Math::instance().range ( oWeight * 1.75, oWeight * 2.5 ); /* sick */
+			obj->value[2]     = Math::instance().range ( ( int ) ( oWeight * 1.75 ), ( int ) ( oWeight * 2.5 ) ); /* sick */
 			break;
 
 		case ITEM_ARMOR:

@@ -55,6 +55,7 @@ extern	int	malloc_verify	args ( ( void ) );
 #include <signal.h>
 #endif
 
+void ban_site ( Creature *ch, const char *argument, bool fPerm );
 
 /*
  * Socket and TCP/IP stuff.
@@ -153,74 +154,74 @@ int main ( int argc, char **argv )
 	// -- process our bootup options.
 	if ( argc > 1 ) {
 		int y = argc;
-		
-		while(y >= 0) {
+
+		while ( y >= 0 ) {
 			bool optionReal = false;
-			log_hd(LOG_ALL, Format("Boot Option '%s' selected", argv[y]));
+			log_hd ( LOG_ALL, Format ( "Boot Option '%s' selected", argv[y] ) );
 
 			// -- shouldn't be an issue but just to be sure.
-			if(argv[y] == NULL) { break; }
+			if ( argv[y] == NULL ) { break; }
 
 			// -- have we detected the port?
 			std::string arggy = argv[y];
-			
-			size_t p_found = arggy.find("port:");
-			if(p_found != std::string::npos ) {
+
+			size_t p_found = arggy.find ( "port:" );
+			if ( p_found != std::string::npos ) {
 				std::string np;
-				int x = 0;
-				for(x = 0; x < arggy.length(); x++) {
-					if(!is_number(arggy[x]) { continue; }
-					np.append(arggy[x]);
+				size_t x = 0;
+				for ( x = 0; x < arggy.length(); x++ ) {
+					if ( !is_number ( Format ( "%c", arggy[x] ) ) ) { continue; }
+					np.append ( Format ( "%c", arggy[x] ) );
 				}
-				
+
 				// -- check port boundaries.
-				if(!is_number(np.c_str()) || atoi(C_STR(np)) < 1024 || atoi(C_STR(np)) > 9999 ) {
+				if ( !is_number ( np.c_str() ) || atoi ( C_STR ( np ) ) < 1024 || atoi ( C_STR ( np ) ) > 9999 ) {
 					// -- error in bootup, we abort
 					std::cout << "Port selected was not a valid port(Port must be between 1024 and 9999)" << std::endl;
 					abort();
 				} else {
 					// -- an acceptable port will be assigned appropriately.
-					port = atoi(C_STR(np));
+					port = atoi ( C_STR ( np ) );
 				}
 				optionReal = true;
 			}
 
 			// -- enable the developer console.
-			if(SameString(arggy, "console")) {
+			if ( SameString ( arggy, "console" ) ) {
 				mDeveloperConsole = true;
 				optionReal = true;
 			}
-			
+
 			// -- everyone has staff commands!
-			if(SameString(arggy, "godmode")) {
+			if ( SameString ( arggy, "godmode" ) ) {
 				mGodMode = true;
 				optionReal = true;
 			}
-			
+
 			// -- disable combat!
-			if(SameString(arggy, "peaceful")) {
+			if ( SameString ( arggy, "peaceful" ) ) {
 				mPeacefulMode = true;
 				optionReal = true;
 			}
-			
+
 			// -- disable the ability to log
-			if(SameString(arggy, "nolog")) {
+			if ( SameString ( arggy, "nolog" ) ) {
 				mNoLogging = true;
 				optionReal = true;
 			}
-			
-			if(SameString(arggy, "verbose")) {
+
+			if ( SameString ( arggy, "verbose" ) ) {
 				mVerboseLogging = true;
-				optionReal = true
+				optionReal = true;
 			}
-			
-			if(SameString(arggy, "doublexp")) {
+
+			if ( SameString ( arggy, "doublexp" ) ) {
 				mDoubleExperience = true;
 				optionReal = true;
 			}
-			
-			if(!optionReal) {
-				log_hd(LOG_ALL, Format("Boot Option '%s' does not exist!", C_STR(arggy)));
+
+			if ( !optionReal ) {
+				log_hd ( LOG_ALL, Format ( "Boot Option '%s' does not exist!", C_STR ( arggy ) ) );
 			}
 			y--;
 		}
@@ -376,10 +377,10 @@ void processInput ( )
 			if ( d->showstr_point )
 			{ show_string ( d, d->incomm ); }
 			else if ( d->character && d->character->queries.querycommand ) {
-				log_hd ( LOG_COMMAND, Format ( "Q-Player:  %s ::  Argument:  \"%s\"", 
-					d->character ? d->character->name : "!Error!",
-					d->incomm ? d->incomm : "{No Argument}" ) );
-					
+				log_hd ( LOG_COMMAND, Format ( "Q-Player:  %s ::  Argument:  \"%s\"",
+											   d->character ? d->character->name : "!Error!",
+											   d->incomm ? d->incomm : "{No Argument}" ) );
+
 				// -- process the queried function
 				( *d->character->queries.queryfunc )
 				( d->character, Format ( "queried_command:%p", d->character->queries.queryfunc ),
@@ -417,9 +418,9 @@ void acceptNewConnections ( int ctrl, struct timeval null_time )
 
 	// -- set the input file descriptor
 	FD_SET ( ctrl, &in_set );
-	
+
 	maxdesc	= ctrl;
-	
+
 	for ( d = socket_list; d; d = d_next ) {
 		d_next = d->next;
 
@@ -524,20 +525,20 @@ void processDevCommands ( const std::string &kbHitStr )
 	std::cout << "---------------------------------------------------------------" << std::endl;
 #endif
 
-	if ( SameString ( kbHitStr, "sockets")) {
+	if ( SameString ( kbHitStr, "sockets" ) ) {
 		Socket *d, *d_next;
 		int cnt = 0;
 		for ( d = socket_list; d != NULL; d = d_next ) {
 			d_next = d->next;
-			std::cout << "[" << d->descriptor << "] " << d->character ? d->character->name ? d->character->name : "[Creation]" : "No Character" << std::endl;
+			std::cout << Format ( "[%d] %s", d->descriptor, d->character ? d->character->name : d->host ) << std::endl;
 			cnt++;
 		}
 		std::cout << "There were " << cnt << " socket(s) connected." << std::endl;
 		return;
 	}
 
-	if ( SameString ( kbHitStr, "broadcast")) {
-		if(argument.empty()) {
+	if ( SameString ( kbHitStr, "broadcast" ) ) {
+		if ( argument.empty() ) {
 			std::cout << "Broadcast what?" << std::endl;
 			return;
 		}
@@ -545,7 +546,7 @@ void processDevCommands ( const std::string &kbHitStr )
 
 		for ( d = socket_list; d != NULL; d = d_next ) {
 			d_next = d->next;
-			writeBuffer(d, Format("\aO{\aYSystem Message\aO}\aw: \aC%s\an\r\n", C_STR(argument)));
+			write_to_buffer ( d, Format ( "\r\n\r\n\aO{\aYSystem Message\aO}\aw: \aC%s\an\r\n\r\n", C_STR ( argument ) ), 0 );
 		}
 		std::cout << "System message has been broadcasted." << std::endl;
 		return;
@@ -574,7 +575,7 @@ void processDevConsole()
 	// -- mDeveloperConsole has to be activated via bootup options in order to work.
 	// -- this ensures safety of the system and ensures that developer console is only used
 	// -- when intentionally used.  Not by accident to prevent 'problems' and security risks.
-	if(!mDeveloperConsole) { return; }
+	if ( !mDeveloperConsole ) { return; }
 
 	if ( kbhit() ) {
 		char c = getchar();
@@ -621,7 +622,7 @@ void RunMudLoop ( int control )
 		// -- attempt to control our errors and our updaters
 		try {
 			update_handler( );
-			if(first_update_handler) {
+			if ( first_update_handler ) {
 				first_update_handler = false;
 				log_hd ( LOG_DEBUG, "Successfully processed the first batch of oldstyle event updaters." );
 			}
@@ -632,7 +633,7 @@ void RunMudLoop ( int control )
 		// -- push our EventManager
 		try {
 			EventManager::instance().updateEvents();
-			if(first_event_loop) {
+			if ( first_event_loop ) {
 				first_event_loop = false;
 				log_hd ( LOG_DEBUG, "Successfully processed the first EventManager events." );
 			}
@@ -696,7 +697,7 @@ void RunMudLoop ( int control )
 void init_descriptor ( int control )
 {
 	static bool first_connection = true;
-	
+
 	char buf[MAX_STRING_LENGTH];
 	Socket *dnew;
 	struct sockaddr_in sock;
@@ -760,9 +761,9 @@ void init_descriptor ( int control )
 	}
 
 	// -- logging of our first connection to the debug log
-	if(first_connection) {
+	if ( first_connection ) {
 		first_connection = false;
-		log_hd(LOG_DEBUG, Format("First connection since system bootup by %s @ %s", dnew->host, grab_time_log(current_time)));
+		log_hd ( LOG_DEBUG, Format ( "First connection since system bootup by %s @ %s", dnew->host, grab_time_log ( current_time ) ) );
 	}
 
 	/*
@@ -780,7 +781,7 @@ void init_descriptor ( int control )
 		return;
 	}
 	if ( check_ban ( dnew->host, BAN_TEMP ) ) {
-		write_to_descriptor ( desc, Format("Your login site is currently under a temporary site ban. It will be un-banned within an hour.\n\r"), 0 );
+		write_to_descriptor ( desc, Format ( "Your login site is currently under a temporary site ban. It will be un-banned within an hour.\n\r" ), 0 );
 		close ( desc );
 		recycle_descriptor ( dnew );
 		return;
@@ -981,11 +982,11 @@ void read_from_buffer ( Socket *d )
 							 get_trust ( d->character ) );
 
 				d->repeat = 0;
-				
-				write_to_descriptor( d->descriptor, "\n\r*** You are temporarily banned for Spamming! ***\n\r", 0 );
+
+				write_to_descriptor ( d->descriptor, "\n\r*** You are temporarily banned for Spamming! ***\n\r", 0 );
 				// -- temporarily ban the host
-				ban_site(NULL, Format("%s temp", d->host), false );
-				cmd_function(NULL, cmd_disconnect, Format("%d", d->descriptor));
+				ban_site ( NULL, Format ( "%s temp", d->host ), false );
+				cmd_function ( NULL, cmd_disconnect, Format ( "%d", d->descriptor ) );
 			}
 		}
 	}

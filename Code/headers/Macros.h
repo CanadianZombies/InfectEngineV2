@@ -75,7 +75,7 @@
 			; \
 		} \
 		else { \
-			THROW_ERROR(CONCAT_STR(exp, message); \
+			THROW_ERROR(CONCAT_STR(exp, message)); \
 		} \
 	} while(0)
 

@@ -79,7 +79,7 @@ std::string remove_tilde ( std::string str )
 	for ( int x = 0; str[x] != '\0'; x++ ) {
 		if ( str[x] == '~' )
 		{ outstr.append ( "-" ); }
-		else {	outstr.append ( Format("%c", str[x] ) ); }
+		else {	outstr.append ( Format ( "%c", str[x] ) ); }
 	}
 
 	return outstr;
@@ -284,7 +284,7 @@ char *StringEditor_FormatString ( char *oldstring )
 
 	xbuf[0] = 0;
 
-	while(true) {
+	while ( true ) {
 		for ( i = 0; i < 77; i++ ) {
 			if ( !* ( rdesc + i ) ) { break; }
 		}

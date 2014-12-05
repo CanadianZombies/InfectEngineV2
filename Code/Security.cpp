@@ -52,8 +52,8 @@ void save_bans ( void )
 
 	for ( pban = ban_list; pban != NULL; pban = pban->next ) {
 		// -- we don't save temporary bans as they expire every 60 minutes.
-		if ( IS_SET ( pban->ban_flags, BAN_TEMP)) { continue; }
-		
+		if ( IS_SET ( pban->ban_flags, BAN_TEMP ) ) { continue; }
+
 		if ( IS_SET ( pban->ban_flags, BAN_PERMANENT ) ) {
 			found = TRUE;
 			fprintf ( fp, "%-20s %-2d %s\n", pban->name, pban->level,
@@ -76,7 +76,7 @@ void load_bans ( void )
 	{ return; }
 
 	ban_last = NULL;
-	while(true) {
+	while ( true ) {
 		Ban *pban;
 		if ( feof ( fp ) ) {
 			fclose ( fp );
@@ -143,26 +143,26 @@ void ban_site ( Creature *ch, const char *argument, bool fPerm )
 
 	if ( arg1[0] == '\0' ) {
 		if ( ban_list == NULL ) {
-			if(ch) {
+			if ( ch ) {
 				writeBuffer ( "No sites banned at this time.\n\r", ch );
 			}
 			return;
 		}
 		buffer = new_buf();
-		if(ch) {
+		if ( ch ) {
 			add_buf ( buffer, "Banned sites  level  type     status\n\r" );
 			for ( pban = ban_list; pban != NULL; pban = pban->next ) {
 				sprintf ( buf2, "%s%s%s",
-					  	IS_SET ( pban->ban_flags, BAN_PREFIX ) ? "*" : "",
-					  	pban->name,
-					  	IS_SET ( pban->ban_flags, BAN_SUFFIX ) ? "*" : "" );
+						  IS_SET ( pban->ban_flags, BAN_PREFIX ) ? "*" : "",
+						  pban->name,
+						  IS_SET ( pban->ban_flags, BAN_SUFFIX ) ? "*" : "" );
 				snprintf ( buf, sizeof ( buf ), "%-12s    %-3d  %-7s  %s\n\r",
-					   	buf2, pban->level,
-					   	IS_SET ( pban->ban_flags, BAN_TEMP ) ? "temp" :
-					   	IS_SET ( pban->ban_flags, BAN_NEWBIES ) ? "newbies" :
-					   	IS_SET ( pban->ban_flags, BAN_PERMIT )  ? "permit"  :
-					   	IS_SET ( pban->ban_flags, BAN_ALL )     ? "all"	: "",
-					   	IS_SET ( pban->ban_flags, BAN_PERMANENT ) ? "perm" : "temp" );
+						   buf2, pban->level,
+						   IS_SET ( pban->ban_flags, BAN_TEMP ) ? "temp" :
+						   IS_SET ( pban->ban_flags, BAN_NEWBIES ) ? "newbies" :
+						   IS_SET ( pban->ban_flags, BAN_PERMIT )  ? "permit"  :
+						   IS_SET ( pban->ban_flags, BAN_ALL )     ? "all"	: "",
+						   IS_SET ( pban->ban_flags, BAN_PERMANENT ) ? "perm" : "temp" );
 				add_buf ( buffer, buf );
 			}
 			writePage ( buf_string ( buffer ), ch );
@@ -176,15 +176,14 @@ void ban_site ( Creature *ch, const char *argument, bool fPerm )
 	{ type = BAN_ALL; }
 	else if ( !str_prefix ( arg2, "newbies" ) )
 	{ type = BAN_NEWBIES; }
-	else if(!str_prefix(arg2, "temp")) {
+	else if ( !str_prefix ( arg2, "temp" ) ) {
 		type = BAN_TEMP;
-	}
-	else if ( !str_prefix ( arg2, "permit" ) )
+	} else if ( !str_prefix ( arg2, "permit" ) )
 	{ type = BAN_PERMIT; }
 	else {
-		if(ch) {
+		if ( ch ) {
 			writeBuffer ( "Acceptable ban types are all, newbies, and permit, temp.\n\r",
-					  ch );
+						  ch );
 		}
 		return;
 	}
@@ -202,7 +201,7 @@ void ban_site ( Creature *ch, const char *argument, bool fPerm )
 	}
 
 	if ( strlen ( name ) == 0 ) {
-		if(ch) {
+		if ( ch ) {
 			writeBuffer ( "You have to ban SOMETHING.\n\r", ch );
 		}
 		return;
@@ -211,7 +210,7 @@ void ban_site ( Creature *ch, const char *argument, bool fPerm )
 	prev = NULL;
 	for ( pban = ban_list; pban != NULL; prev = pban, pban = pban->next ) {
 		if ( SameString ( name, pban->name ) ) {
-			if(ch) {
+			if ( ch ) {
 				if ( pban->level > get_trust ( ch ) ) {
 					writeBuffer ( "That ban was set by a higher power.\n\r", ch );
 					return;
@@ -227,7 +226,7 @@ void ban_site ( Creature *ch, const char *argument, bool fPerm )
 				{ ban_list = pban->next; }
 				else
 				{ prev->next = pban->next; }
-				recycle_ban ( pban );				
+				recycle_ban ( pban );
 			}
 		}
 	}
@@ -240,7 +239,7 @@ void ban_site ( Creature *ch, const char *argument, bool fPerm )
 	pban->ban_flags = type;
 
 	// -- level is used as minutes remaining for temporary sitebans, defaults to 60 minutes.
-	if(IS_SET(pban->ban_flags, BAN_TEMP))
+	if ( IS_SET ( pban->ban_flags, BAN_TEMP ) )
 	{ pban->level = 60; }
 
 	if ( prefix )
@@ -252,9 +251,9 @@ void ban_site ( Creature *ch, const char *argument, bool fPerm )
 
 	pban->next  = ban_list;
 	ban_list    = pban;
-	
+
 	save_bans();
-	if(ch) {
+	if ( ch ) {
 		snprintf ( buf, sizeof ( buf ), "%s has been banned.\n\r", pban->name );
 		writeBuffer ( buf, ch );
 	}

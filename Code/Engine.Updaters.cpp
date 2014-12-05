@@ -1029,7 +1029,7 @@ void aggr_update ( void )
 	Creature *vch, *vch_next;
 	Creature *victim;
 
-	if(mPeacefulMode) {
+	if ( mPeacefulMode ) {
 		return;
 	}
 
