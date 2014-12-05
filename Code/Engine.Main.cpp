@@ -444,9 +444,10 @@ void processDevCommands ( const std::string &kbHitStr )
 
 	if ( SameString ( kbHitStr, "help" ) || kbHitStr.empty() ) {
 		std::cout << "+----------------DEVELOPER CONSOLE----------------+" << std::endl;
-		std::cout << "help              - Displays this message          " << std::endl;
-		std::cout << "shutdown          - Deploys the shutdown sequence  " << std::endl;
-		std::cout << "version           - Displays the CME Version	 " << std::endl;
+		std::cout << "help                 - Displays this message          " << std::endl;
+		std::cout << "shutdown             - Deploys the shutdown sequence  " << std::endl;
+		std::cout << "version              - Displays the CME Version	 " << std::endl;
+		std::cout << "broadcast <argument> - Broadcasts a message to all connected players." << std::endl;
 		std::cout << "+-------------------------------------------------+" << std::endl;
 		std::cout << "Remember, please press 'RETURN' twice after each command!" << std::endl;
 		std::cout << "More developer commands are on-route in the near future!" << std::endl;
@@ -469,6 +470,15 @@ void processDevCommands ( const std::string &kbHitStr )
 	// rock out our version
 	if ( SameString ( command, "version" ) ) {
 		std::cout << "InfectedCityV2 Build Version: " << getVersion() << "\n\r\n\r" << std::endl;
+		return;
+	}
+
+	if ( SameString ( command, "broadcast" ) ) {
+		if ( argument.empty() ) {
+			std::cout << "Broadcast what?" << std..endl;
+			return;
+		}
+		announce ( argument );
 		return;
 	}
 
