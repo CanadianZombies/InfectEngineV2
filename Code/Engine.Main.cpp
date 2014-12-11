@@ -153,9 +153,9 @@ int main ( int argc, char **argv )
 
 	// -- process our bootup options.
 	if ( argc > 1 ) {
-		int y = argc;
+		int y = 0;
 
-		while ( y >= 0 ) {
+		while ( y < argc ) {
 			bool optionReal = false;
 			log_hd ( LOG_ALL, Format ( "Boot Option '%s' selected", argv[y] ) );
 
@@ -182,6 +182,7 @@ int main ( int argc, char **argv )
 				} else {
 					// -- an acceptable port will be assigned appropriately.
 					port = atoi ( C_STR ( np ) );
+					log_hd ( LOG_ALL, Format ( "\tCustom Port: %d has been selected!", port ) );
 				}
 				optionReal = true;
 			}
@@ -223,7 +224,7 @@ int main ( int argc, char **argv )
 			if ( !optionReal ) {
 				log_hd ( LOG_ALL, Format ( "Boot Option '%s' does not exist!", C_STR ( arggy ) ) );
 			}
-			y--;
+			y++;
 		}
 	}
 
@@ -504,7 +505,7 @@ void processDevCommands ( const std::string &kbHitStr )
 
 	argument = ChopString ( kbHitStr, command );
 
-	if ( SameString ( kbHitStr, "help" ) || kbHitStr.empty() ) {
+	if ( SameString ( command, "help" ) || kbHitStr.empty() ) {
 		std::cout << "+----------------DEVELOPER CONSOLE----------------+" << std::endl;
 		std::cout << "help              - Displays this message          " << std::endl;
 		std::cout << "shutdown          - Deploys the shutdown sequence  " << std::endl;
@@ -518,12 +519,12 @@ void processDevCommands ( const std::string &kbHitStr )
 		return;
 	}
 
-#ifdef _DEBUG_
+	//#ifdef _DEBUG_
 	std::cout << "---------------------------------------------------------------" << std::endl;
 	std::cout << "Developer issued command: " << command << std::endl;
 	std::cout << "Developer issued argument:" << argument << std::endl;
 	std::cout << "---------------------------------------------------------------" << std::endl;
-#endif
+	//#endif
 
 	if ( SameString ( kbHitStr, "sockets" ) ) {
 		Socket *d, *d_next;
@@ -537,7 +538,7 @@ void processDevCommands ( const std::string &kbHitStr )
 		return;
 	}
 
-	if ( SameString ( kbHitStr, "broadcast" ) ) {
+	if ( SameString ( command, "broadcast" ) ) {
 		if ( argument.empty() ) {
 			std::cout << "Broadcast what?" << std::endl;
 			return;

@@ -4282,8 +4282,11 @@ DefineCommand ( cmd_tweet )
 			// -- tweet on behalf of The Infected City
 			tweetStatement ( ch->queries.query_string );
 			writeBuffer ( "\r\nTweet has been added to the queue.\r\n", ch );
+
 			// -- remove our old data
-			PURGE_DATA ( ch->queries.query_string );
+			delete ch->queries.query_string;
+			ch->queries.query_string = NULL;
+
 			ch->queries.querycommand = 0;
 			return;
 		}
@@ -4291,7 +4294,8 @@ DefineCommand ( cmd_tweet )
 		// -- we are NOT doing it, so we clear out the memory applicable
 		// -- and attempt to avoid memory issues later on.
 		ch->queries.querycommand = 0;
-		PURGE_DATA ( ch->queries.query_string );
+		delete ch->queries.query_string;
+		ch->queries.query_string = NULL;
 		return;
 	}
 
@@ -4310,7 +4314,10 @@ DefineCommand ( cmd_tweet )
 	strcpy ( ch->queries.queryprompt, Format ( "Are you sure you want to tweet '%s' behalf of %s? (y/n)>", argument, "The Infected City" ) );
 
 	// -- Assign the new new string to push
-	PURGE_DATA ( ch->queries.query_string );
+	delete ch->queries.query_string;
+	ch->queries.query_string = NULL;
+
+	// -- push the new query data
 	ch->queries.query_string = assign_string ( argument );
 	ch->queries.querycommand = 1000;
 	return;
