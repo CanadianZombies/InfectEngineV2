@@ -78,7 +78,7 @@
 		} \
 	} while(0)
 #else
-#define ASSERT_THROW(exp, message) do { if(exp) { ; } else { ; } } while(0)
+#define ASSERT_THROW(exp, message) do { if(exp) { ; } else { throw std::runtime_error( Format("InfectEngine encountered a runtime error: %s, %s, %d: %s", __FILE__, __FUNCTION__, __LINE__, message } } while(0)
 #endif
 
 // -- lets log our errno string properly.
