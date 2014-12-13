@@ -5,7 +5,7 @@ DefineCommand ( cmd_os )
 {
 	std::string cmpstring ( "" );
 	cmpstring.append ( "---------------------------------------------------------\n\r" );
-	cmpstring.append ( Format ( "InfectEngine is compiled with:        g++\n\r" ) );
+	cmpstring.append ( Format ( "InfectEngine is compiled with:        %s\n\r", mudCompiler ? mudCompiler : "Suspected g++" ) );
 	//      cmpstring.append("Last Compile TimeStamp:            %s\n\r", __TIME_STAMP__ );
 	cmpstring.append ( Format ( "Nested Include Level:              %d\n\r", __INCLUDE_LEVEL__ ) );
 	cmpstring.append ( Format ( "Compiler Version:                  %s\n\r", __VERSION__ ) ) ;
