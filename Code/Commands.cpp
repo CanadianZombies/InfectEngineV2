@@ -47,8 +47,6 @@ bool	check_social	args ( ( Creature *ch, const char *command,
 #define LOG_ALWAYS	1
 #define LOG_NEVER	2
 
-
-
 /*
  * Log-all switch.
  */
@@ -326,7 +324,6 @@ const	struct	cmd_type	cmd_table	[] = {
 
 void attempt_staff_command ( Creature *ch, const std::string &pcomm, const std::string &argument )
 {
-
 	char logline[MAX_INPUT_LENGTH];		// -- for the relic spy code from ROM.
 	std::string staff_command = pcomm;
 	staff_command.erase ( 0, pcomm.find_first_not_of ( '/' ) );
@@ -493,7 +490,7 @@ void interpret ( Creature *ch, const char *argument )
 			||   fLogAll
 			||   cmd_table[cmd].log == LOG_ALWAYS ) {
 		wiznet ( Format ( "Log: %s %s", ch->name, logline ), ch, NULL, WIZ_SECURE, 0, get_trust ( ch ) );
-		log_hd ( LOG_SECURITY | LOG_COMMAND, Format ( "%s has executed: %s", ch->name, !IS_NULLSTR ( logline ) ? logline : "{SUSPECT LOG_NEVER, NO LOGLINE DATA RECEIVED}" ) );
+		log_hd ( LOG_COMMAND, Format ( "%s has executed: %s", ch->name, !IS_NULLSTR ( logline ) ? logline : "{SUSPECT LOG_NEVER, NO LOGLINE DATA RECEIVED}" ) );
 	}
 
 	if ( ch->desc != NULL && ch->desc->snoop_by != NULL ) {
@@ -571,9 +568,12 @@ void _cmd_function ( Creature *ch, CmdData *cmd_fun, const char *L_command, cons
 
 	try {
 		char command_string[MAX_OUTPUT_BUFFER] = {'\0'};
+
+		if(!cmd_fun) {	THROW_ERROR("cmd_fun is NULL");	}
+
 		// -- typically this should be an impossibility.  But just in-case
 		if ( strlen ( argument ) > MAX_OUTPUT_BUFFER ) {
-			throw ( "_cmd_function: Argument supplied exceeds MAX_OUTPUT_BUFFER length" );
+			THROW_ERROR ( "_cmd_function: Argument supplied exceeds MAX_OUTPUT_BUFFER length" );
 		}
 
 		strncpy ( command_string, argument, MAX_OUTPUT_BUFFER );
@@ -695,7 +695,6 @@ bool check_social ( Creature *ch, const char *command, const char *argument )
  */
 bool is_number ( const char *arg )
 {
-
 	if ( *arg == '\0' )
 	{ return FALSE; }
 
