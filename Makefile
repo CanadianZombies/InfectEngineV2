@@ -63,10 +63,12 @@ COLOUR_LGREY        =
 COLOUR_LWHITE	    =
 COLOUR_LCYAN        =
 endif
+
 #####################################################################################
 # DIRECTORIES
 BIN_DIR    = Bin
 BACKUP_DIR = Backups
+CMD_DIR    = Code/commands
 H_DIR      = Code/headers
 O_DIR      = Code/obj
 
@@ -89,6 +91,7 @@ VERSION_FILE            = Code/.version
 # Ensure we are built properly with the correct data
 BUILD_DATE              = $(shell date +'%Y%m%d')
 BUILD_NUM               = $(shell cat $(VERSION_FILE))
+BUILD_VERSION		= "ALPHA"
 
 # define our version (within the compiler flags)
 COMPILE_FLAGS          += -DBUILD_DATE=$(BUILD_DATE) -DBUILD_NUM=$(BUILD_NUM)
@@ -99,6 +102,7 @@ COMPILE_FLAGS          += -DBUILD_DATE=$(BUILD_DATE) -DBUILD_NUM=$(BUILD_NUM)
 # so to retain functionality of the backup, this is our goal
 BACKUP_NAME_PT1        = "backup-$(BUILD_DATE)"
 BACKUP_NAME_PT2        = "-$(BUILD_NUM).tgz"
+
 # put both groups together in our final attempt to create a unified backup
 BACKUP_NAME            = "$(BACKUP_NAME_PT1)$(BACKUP_NAME_PT2)"
 
@@ -115,10 +119,12 @@ ENGINE = InfectEngine
 # Generate a list of our required OBJECT files (.o)
 C_FILES                         = ${wildcard Code/*.c}
 CPP_FILES                       = ${wildcard Code/*.cpp}
+CMD_FILES			= ${wildcard $(CMD_DIR)/*.cpp}
 H_FILES 			= $(wildcard $(H_DIR)/*.h)
 
 OBJECT_FILES                    = $(patsubst %.c, $(O_DIR)/%.o, ${C_FILES})
 OBJECT_FILES                    += $(patsubst %.cpp, $(O_DIR)/%.o, ${CPP_FILES})
+OBJECT_FILES			+= $(patsubst %.cpp, $(O_DIR)/%.o, ${CMD_FILES})
 
 
 #####################################################################################
@@ -149,6 +155,7 @@ all:
 style:
 	@astyle --style=kr --indent=force-tab --indent-namespaces --indent-preprocessor --indent-col1-comments --indent-classes --indent-switches --indent-cases --pad-paren --pad-oper --add-one-line-brackets Code/*.cpp ${H_DIR}/*.h
 	@if [[ -n "$(shopt -s nullglob; cd Code; echo *.orig)" ]]; then mv Code/*.orig Code/orig ; fi
+	@if [[ -n "$(shopt -s nullglob; cd ${CMD_DIR}; echo *.orig)" ]]; then mv ${CMD_DIR}/*.orig Code/orig ; fi
 	@if [[ -n "$(shopt -s nullglob; cd ${H_DIR}; echo *.orig)" ]]; then mv ${H_DIR}/*.orig Code/orig ; fi
 	@echo "Files have been styled and moved like a boss!"
 
@@ -186,6 +193,7 @@ build: checkdirs style version ${ENGINE}
 checkdirs:
 	@if [ ! -d ${H_DIR} ]; then mkdir ${H_DIR}; fi
 	@if [ ! -d ${O_DIR} ]; then mkdir ${O_DIR}; fi
+	@if [ ! -d ${CMD_DIR} ]; then mkdir ${CMD_DIR}; fi	
 	@if [ ! -d ${BIN_DIR} ]; then mkdir ${BIN_DIR}; fi
 	@if [ ! -d ${BACKUP_DIR} ]; then mkdir ${BACKUP_DIR}; fi
 
@@ -193,7 +201,7 @@ checkdirs:
 #Count and report the total lines for the Mud!
 .PHONY: count
 count:
-	@wc -l ${H_DIR}/*.h Code/*.cpp Makefile
+	@wc -l ${H_DIR}/*.h Code/*.cpp  ${CMD_DIR}/*.cpp Makefile
 
 #####################################################################################
 #Generate our version file (generates a .version file, and a .hpp file)
@@ -201,9 +209,12 @@ count:
 version:
 	@if ! test -f $(VERSION_FILE); then echo 0 > $(VERSION_FILE); fi
 	@echo $$(($$(cat $(VERSION_FILE)) + 1)) > $(VERSION_FILE)
-	@echo "#ifndef __Version_Hpp" > Code/Version.h
-	@echo "#define __Version_hpp" >> Code/Version.h
+	@echo "#ifndef __VERSION_H" > Code/Version.h
+	@echo "#define __VERSION_H" >> Code/Version.h
 	@echo "const unsigned long mudVersion = $(shell cat $(VERSION_FILE))+1;" >> Code/Version.h
+	@echo "const char *mudBuildType = ${BUILD_VERSION};" >> Code/Version.h
+	@echo "const char *mudEngineName = ${ENGINE};" >> Code/Version.h
+	@echo "const char *mudBackupName = ${BACKUP_NAME};" >> Code/Version.h
 	@echo "#endif" >> Code/Version.h
 	@mv Code/Version.h $(H_DIR)/Version.h
 	@echo "$(COLOUR_LRED)New build number assigned, attempting to build: $(COLOUR_NORMAL)"
@@ -234,7 +245,7 @@ $(O_DIR)/%.o: %.cpp
 # a good copy for ourselves
 .PHONY: backup
 backup:
-	@tar -czf $(BACKUP_NAME) Code/*.cpp ${H_DIR}/*.h Makefile
+	@tar -czf $(BACKUP_NAME) Code/*.cpp ${CMD_DIR}/*.cpp ${H_DIR}/*.h Makefile
 	@uuencode $(BACKUP_NAME) $(BACKUP_NAME) |  mail -s "Compiler Backup ${BUILD_NUM}" theinfectedcity@gmail.com
 	@mv *.tgz ${BACKUP_DIR}
 	@echo "$(COLOUR_LRED)Backup completed.$(COLOUR_NORMAL)"
