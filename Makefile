@@ -215,6 +215,7 @@ version:
 	@echo "const char *mudBuildType = ${BUILD_VERSION};" >> Code/Version.h
 	@echo "const char *mudEngineName = ${ENGINE};" >> Code/Version.h
 	@echo "const char *mudBackupName = ${BACKUP_NAME};" >> Code/Version.h
+	@echo "const char *mudCompiler = ${COMPILER};" >> Code/Version.h
 	@echo "#endif" >> Code/Version.h
 	@mv Code/Version.h $(H_DIR)/Version.h
 	@echo "$(COLOUR_LRED)New build number assigned, attempting to build: $(COLOUR_NORMAL)"
