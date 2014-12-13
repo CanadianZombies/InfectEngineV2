@@ -521,7 +521,8 @@ HELP_DATA * help_lookup	args ( ( const char * ) );
 HELP_AREA * had_lookup	args ( ( const char * ) );
 
 void    make_treasure_chest args ( ( Creature *ch, Creature *victim, int level ) );
-
+RoomData *	find_location	args ( ( Creature *ch, const char *arg ) );
+void wiznet args ( ( const char *str, Creature *ch, Item *obj, long flag, long flag_skip, int min_level ) );
 
 // -- Commands
 Command ( cmd_about );
