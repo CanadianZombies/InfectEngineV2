@@ -3,14 +3,11 @@
 
 DefineCommand ( cmd_bamfin )
 {
-	char buf[MAX_STRING_LENGTH];
-
 	if ( !IS_NPC ( ch ) ) {
 		smash_tilde ( argument );
 
 		if ( argument[0] == '\0' ) {
-			snprintf ( buf, sizeof ( buf ), "Your poofin is %s\n\r", ch->pcdata->bamfin );
-			writeBuffer ( buf, ch );
+			writeBuffer ( Format( "Your poofin is %s\n\r", ch->pcdata->bamfin ), ch );
 			return;
 		}
 
@@ -19,11 +16,10 @@ DefineCommand ( cmd_bamfin )
 			return;
 		}
 
-		PURGE_DATA ( ch->pcdata->bamfin );
+		delete [] ch->pcdata->bamfin;
 		ch->pcdata->bamfin = assign_string ( argument );
 
-		snprintf ( buf, sizeof ( buf ), "Your poofin is now %s\n\r", ch->pcdata->bamfin );
-		writeBuffer ( buf, ch );
+		writeBuffer(Format("Your poofin is now %s\n\r", ch->pcdata->bamfin), ch );
 	}
 	return;
 }
