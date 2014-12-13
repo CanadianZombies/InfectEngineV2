@@ -12,7 +12,9 @@ DefineCommand ( cmd_os )
 #ifndef __APPLE__
 	cmpstring.append ( Format ( "Compiler Flags: %s\n\r", wrapstr ( COMPILED_WITH ) ) );
 #endif
-	//      cmpstring.append("Compiler Register Prefix:          %s\n\r", __REGISTER_PREFIX__);
+#if defined (__REGISTER_PREFIX__)
+	cmpstring.append("Compiler Register Prefix:          %s\n\r", __REGISTER_PREFIX__);
+#endif
 	cmpstring.append ( "---------------------------------------------------------\n\r" );
 	cmpstring.append ( "                   Compiler Specifics                    \n\r" );
 	cmpstring.append ( "---------------------------------------------------------\n\r" );
@@ -82,7 +84,6 @@ DefineCommand ( cmd_os )
 		found = false;
 	}
 
-	// *Am i smart.... Ya, i'd like to think so :P* //
 	if ( found ) {
 		cmpstring.append ( Format ( "Computer host name is %s\n\r", computer ) );
 		cmpstring.append ( Format ( "System is %s on %s hardware\n\r", uts.sysname, uts.machine ) );
