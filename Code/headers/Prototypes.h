@@ -511,6 +511,7 @@ void song_update args ( ( void ) );
 void load_songs	args ( ( void ) );
 
 void random_shop ( Creature *mob );
+RoomData *get_random_room ( Creature *ch );
 
 int	clan_lookup	args ( ( const char *name ) );
 int	position_lookup	args ( ( const char *name ) );
