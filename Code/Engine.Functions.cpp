@@ -3010,3 +3010,27 @@ const char *off_bit_name ( int off_flags )
 
 	return ( buf[0] != '\0' ) ? buf + 1 : "none";
 }
+
+
+/* random room generation procedure */
+RoomData  *get_random_room ( Creature *ch )
+{
+	RoomData *room;
+
+	for ( ; ; ) {
+		room = get_room_index ( Math::instance().range ( 0, 65535 ) );
+		if ( room != NULL )
+			if ( can_see_room ( ch, room )
+					&&   !room_is_private ( room )
+					&&   !IS_SET ( room->room_flags, ROOM_PRIVATE )
+					&&   !IS_SET ( room->room_flags, ROOM_SOLITARY )
+					&&   !IS_SET ( room->room_flags, ROOM_SAFE )
+					&&   ( IS_NPC ( ch ) || IS_SET ( ch->act, ACT_AGGRESSIVE )
+						   ||   !IS_SET ( room->room_flags, ROOM_LAW ) ) )
+			{ break; }
+	}
+
+	return room;
+}
+
+
