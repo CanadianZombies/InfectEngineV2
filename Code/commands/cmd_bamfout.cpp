@@ -7,7 +7,7 @@ DefineCommand ( cmd_bamfout )
 		smash_tilde ( argument );
 
 		if ( argument[0] == '\0' ) {
-			writeBuffer(Format("Your poofout is %s\n\r", ch->pcdata->bamfout), ch );
+			writeBuffer ( Format ( "Your poofout is %s\n\r", ch->pcdata->bamfout ), ch );
 			return;
 		}
 
@@ -19,7 +19,7 @@ DefineCommand ( cmd_bamfout )
 		delete [] ch->pcdata->bamfout;
 		ch->pcdata->bamfout = assign_string ( argument );
 
-		writeBuffer(Format("Your poofout is now %s\n\r", ch->pcdata->bamfout), ch );
+		writeBuffer ( Format ( "Your poofout is now %s\n\r", ch->pcdata->bamfout ), ch );
 	}
 	return;
 }

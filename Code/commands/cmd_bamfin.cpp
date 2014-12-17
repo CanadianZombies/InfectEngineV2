@@ -7,7 +7,7 @@ DefineCommand ( cmd_bamfin )
 		smash_tilde ( argument );
 
 		if ( argument[0] == '\0' ) {
-			writeBuffer ( Format( "Your poofin is %s\n\r", ch->pcdata->bamfin ), ch );
+			writeBuffer ( Format ( "Your poofin is %s\n\r", ch->pcdata->bamfin ), ch );
 			return;
 		}
 
@@ -19,7 +19,7 @@ DefineCommand ( cmd_bamfin )
 		delete [] ch->pcdata->bamfin;
 		ch->pcdata->bamfin = assign_string ( argument );
 
-		writeBuffer(Format("Your poofin is now %s\n\r", ch->pcdata->bamfin), ch );
+		writeBuffer ( Format ( "Your poofin is now %s\n\r", ch->pcdata->bamfin ), ch );
 	}
 	return;
 }

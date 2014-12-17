@@ -569,7 +569,7 @@ void _cmd_function ( Creature *ch, CmdData *cmd_fun, const char *L_command, cons
 	try {
 		char command_string[MAX_OUTPUT_BUFFER] = {'\0'};
 
-		if(!cmd_fun) {	THROW_ERROR("cmd_fun is NULL");	}
+		if ( !cmd_fun ) {	THROW_ERROR ( "cmd_fun is NULL" );	}
 
 		// -- typically this should be an impossibility.  But just in-case
 		if ( strlen ( argument ) > MAX_OUTPUT_BUFFER ) {

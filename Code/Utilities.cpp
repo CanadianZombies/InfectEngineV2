@@ -221,9 +221,9 @@ void _log_hd ( long logFlag, const char *mFile, const char *mFunction, int mLine
 		// -- No need to go any further if we are just outputting to the stdout
 		// -- otherwise we want our proper logs handled and we continue.
 		if ( IS_SET ( logFlag, LOG_DEBUG ) )
-		{ std::cout << "\t<< stdout << " << the_time << " << (" << debugCounter << ") " << logStr << std::endl; }
+		{ std::cout << "\tLog << " << the_time << " << (" << debugCounter << ") " << logStr << std::endl; }
 		else
-		{ std::cout << "<< stdout << " << the_time << " << " << logStr << std::endl; }
+		{ std::cout << "Log << " << the_time << " << " << logStr << std::endl; }
 
 		// -- establish the current-date for the logs, write the log to a pid within the directory.
 		struct stat st;

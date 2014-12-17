@@ -153,7 +153,7 @@ all:
 #Format the files like a boss!
 .PHONY: style
 style:
-	@astyle --style=kr --indent=force-tab --indent-namespaces --indent-preprocessor --indent-col1-comments --indent-classes --indent-switches --indent-cases --pad-paren --pad-oper --add-one-line-brackets Code/*.cpp ${H_DIR}/*.h
+	@astyle --style=kr --indent=force-tab --indent-namespaces --indent-preprocessor --indent-col1-comments --indent-classes --indent-switches --indent-cases --pad-paren --pad-oper --add-one-line-brackets Code/*.cpp Code/commands/*.cpp ${H_DIR}/*.h
 	@if [[ -n "$(shopt -s nullglob; cd Code; echo *.orig)" ]]; then mv Code/*.orig Code/orig ; fi
 	@if [[ -n "$(shopt -s nullglob; cd ${CMD_DIR}; echo *.orig)" ]]; then mv ${CMD_DIR}/*.orig Code/orig ; fi
 	@if [[ -n "$(shopt -s nullglob; cd ${H_DIR}; echo *.orig)" ]]; then mv ${H_DIR}/*.orig Code/orig ; fi
@@ -209,13 +209,19 @@ count:
 version:
 	@if ! test -f $(VERSION_FILE); then echo 0 > $(VERSION_FILE); fi
 	@echo $$(($$(cat $(VERSION_FILE)) + 1)) > $(VERSION_FILE)
+	@echo "#include \"Engine.h\"" > Code/Version.cpp
+	@echo "const unsigned long mudVersion = $(shell cat $(VERSION_FILE))+1;" >> Code/Version.cpp
+	@echo "const char *mudBuildType = \"${BUILD_VERSION}\";" >> Code/Version.cpp
+	@echo "const char *mudEngineName = \"${ENGINE}\";" >> Code/Version.cpp
+	@echo "const char *mudBackupName = \"${BACKUP_NAME}\";" >> Code/Version.cpp
+	@echo "const char *mudCompiler = \"${COMPILER}\";" >> Code/Version.cpp
 	@echo "#ifndef __VERSION_H" > Code/Version.h
 	@echo "#define __VERSION_H" >> Code/Version.h
-	@echo "const unsigned long mudVersion = $(shell cat $(VERSION_FILE))+1;" >> Code/Version.h
-	@echo "const char *mudBuildType = ${BUILD_VERSION};" >> Code/Version.h
-	@echo "const char *mudEngineName = ${ENGINE};" >> Code/Version.h
-	@echo "const char *mudBackupName = ${BACKUP_NAME};" >> Code/Version.h
-	@echo "const char *mudCompiler = ${COMPILER};" >> Code/Version.h
+	@echo "extern const unsigned long mudVersion;" >> Code/Version.h
+	@echo "extern const char *mudBuildType;" >> Code/Version.h
+	@echo "extern const char *mudEngineName;" >> Code/Version.h
+	@echo "extern const char *mudBackupName;" >> Code/Version.h
+	@echo "extern const char *mudCompiler;" >> Code/Version.h
 	@echo "#endif" >> Code/Version.h
 	@mv Code/Version.h $(H_DIR)/Version.h
 	@echo "$(COLOUR_LRED)New build number assigned, attempting to build: $(COLOUR_NORMAL)"
@@ -256,7 +262,7 @@ backup:
 # is clean
 .PHONY: clean
 clean:
-	@rm -rf ${O_DIR}/Code/*.o *~ ${H_DIR}/*~
+	@rm -rf ${O_DIR}/Code/*.o ${O_DIR}/Code/Commands/*.o *~ ${H_DIR}/*~
 	@echo "$(COLOUR_LRED)Done Cleaning.$(COLOUR_NORMAL)"
 
 

@@ -13,7 +13,7 @@ DefineCommand ( cmd_os )
 	cmpstring.append ( Format ( "Compiler Flags: %s\n\r", wrapstr ( COMPILED_WITH ) ) );
 #endif
 #if defined (__REGISTER_PREFIX__)
-	cmpstring.append("Compiler Register Prefix:          %s\n\r", __REGISTER_PREFIX__);
+	//	cmpstring.append ( Format ( "Compiler Register Prefix:          %s\n\r", __REGISTER_PREFIX__ ) );
 #endif
 	cmpstring.append ( "---------------------------------------------------------\n\r" );
 	cmpstring.append ( "                   Compiler Specifics                    \n\r" );
