@@ -3086,3 +3086,71 @@ void substitute_alias ( Socket *d, char *argument )
 	interpret ( d->character, buf );
 }
 
+void wiznet ( const char *str, Creature *ch, Item *obj,
+			  long flag, long flag_skip, int min_level )
+{
+	Socket *d;
+
+	for ( d = socket_list; d != NULL; d = d->next ) {
+		if ( d->connected == STATE_PLAYING
+				&&  IsStaff ( d->character )
+				&&  IS_SET ( d->character->wiznet, WIZ_ON )
+				&&  ( !flag || IS_SET ( d->character->wiznet, flag ) )
+				&&  ( !flag_skip || !IS_SET ( d->character->wiznet, flag_skip ) )
+				&&  get_trust ( d->character ) >= min_level
+				&&  d->character != ch ) {
+			if ( IS_SET ( d->character->wiznet, WIZ_PREFIX ) )
+			{ writeBuffer ( "\t", d->character ); }
+			act_new ( Format ( "\ac[\aYSTAFF\ac] \aW%s\an", str ), d->character, obj, ch, TO_CHAR, POS_DEAD );
+		}
+	}
+
+	return;
+}
+
+RoomData *find_location ( Creature *ch, const char *arg )
+{
+	Creature *victim;
+	Item *obj;
+
+	if ( is_number ( arg ) )
+	{ return get_room_index ( atoi ( arg ) ); }
+
+	if ( ( victim = get_char_world ( ch, arg ) ) != NULL )
+	{ return IN_ROOM ( victim ); }
+
+	if ( ( obj = get_obj_world ( ch, arg ) ) != NULL )
+	{ return obj->in_room; }
+
+	return NULL;
+}
+
+
+/* trust levels for load and clone */
+bool obj_check ( Creature *ch, Item *obj )
+{
+	if ( IS_TRUSTED ( ch, GOD )
+			|| ( IS_TRUSTED ( ch, IMMORTAL ) && obj->level <= 20 && obj->cost <= 1000 )
+			|| ( IS_TRUSTED ( ch, DEMI )	    && obj->level <= 10 && obj->cost <= 500 )
+			|| ( IS_TRUSTED ( ch, ANGEL )    && obj->level <=  5 && obj->cost <= 250 )
+			|| ( IS_TRUSTED ( ch, AVATAR )   && obj->level ==  0 && obj->cost <= 100 ) )
+	{ return TRUE; }
+	else
+	{ return FALSE; }
+}
+
+/* for clone, to insure that cloning goes many levels deep */
+void recursive_clone ( Creature *ch, Item *obj, Item *clone )
+{
+	Item *c_obj, *t_obj;
+
+
+	for ( c_obj = obj->contains; c_obj != NULL; c_obj = c_obj->next_content ) {
+		if ( obj_check ( ch, c_obj ) ) {
+			t_obj = create_object ( c_obj->pIndexData, 0 );
+			clone_object ( c_obj, t_obj );
+			obj_to_obj ( t_obj, clone );
+			recursive_clone ( ch, c_obj, t_obj );
+		}
+	}
+}
