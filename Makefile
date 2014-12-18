@@ -124,7 +124,7 @@ H_FILES 			= $(wildcard $(H_DIR)/*.h)
 
 OBJECT_FILES			= $(addprefix $(O_DIR)/, $(patsubst %.c, %.o, ${C_FILES}))
 OBJECT_FILES			+= $(addprefix $(O_DIR)/, $(patsubst %.cpp, %.o, ${CPP_FILES}))
-OBJECT_FILES			+= $(addprefix $(O_DIR)/, $(subst Code/commands,Code/,$(patsubst %.cpp, %.o, ${CMD_FILES})))
+OBJECT_FILES			+= $(addprefix $(O_DIR)/, $(subst Code/commands,,$(patsubst %.cpp, %.o, ${CMD_FILES})))
 
 ## OLD STYLE
 #OBJECT_FILES                    = $(patsubst %.c, $(O_DIR)/%.o, ${C_FILES})
