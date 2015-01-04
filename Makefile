@@ -122,14 +122,14 @@ CPP_FILES                       = ${wildcard Code/*.cpp}
 CMD_FILES			= ${wildcard $(CMD_DIR)/*.cpp}
 H_FILES 			= $(wildcard $(H_DIR)/*.h)
 
-OBJECT_FILES			= $(addprefix $(O_DIR)/, $(patsubst %.c, %.o, ${C_FILES}))
-OBJECT_FILES			+= $(addprefix $(O_DIR)/, $(patsubst %.cpp, %.o, ${CPP_FILES}))
-OBJECT_FILES			+= $(addprefix $(O_DIR)/, $(subst Code/commands,,$(patsubst %.cpp, %.o, ${CMD_FILES})))
+#OBJECT_FILES			= $(patsubst %.c, %.o, ${C_FILES})
+#OBJECT_FILES			+= $(patsubst %.cpp, %.o, ${CPP_FILES})
+#OBJECT_FILES			+= $(patsubst %.cpp, %.o, ${CMD_FILES})
 
 ## OLD STYLE
-#OBJECT_FILES                    = $(patsubst %.c, $(O_DIR)/%.o, ${C_FILES})
-#OBJECT_FILES                    += $(patsubst %.cpp, $(O_DIR)/%.o, ${CPP_FILES})
-#OBJECT_FILES			+= $(patsubst %.cpp, $(O_DIR)/%.o, ${CMD_FILES})
+OBJECT_FILES                    = $(patsubst %.c, $(O_DIR)/%.o, ${C_FILES})
+OBJECT_FILES                    += $(patsubst %.cpp, $(O_DIR)/%.o, ${CPP_FILES})
+OBJECT_FILES			+= $(patsubst %.cpp, $(O_DIR)/%.o, ${CMD_FILES})
 
 
 #####################################################################################

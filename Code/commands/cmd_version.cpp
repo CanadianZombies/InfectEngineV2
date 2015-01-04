@@ -11,11 +11,11 @@ DefineCommand ( cmd_version )
 	writeBuffer ( Format ( "| Written by: David Simmerson  (Omega)           |\n\r" ), ch );
 	writeBuffer ( Format ( "| Infect Engine Copyright (c) 2013-%4d.         |\n\r", ( tmt_ptr->tm_year + 1900 ) ), ch );
 	writeBuffer ( Format ( "+------------------------------------------------+\n\r" ), ch );
-  if(IsStaff(ch)) {
-  writeBuffer ( Format ( "| Engine Name:        %-25s  |\r\n", mudEngineName), ch );
-  writeBuffer ( Format ( "| Backup Name:        %-25s  |\r\n", mudBackupName), ch );
-  writeBuffer ( Format ( "| Compiled With:      %-25s  |\r\n", mudCompiler), ch );
-  writeBuffer ( Format ( "+------------------------------------------------+\n\r" ), ch );
-  }
+	if ( IsStaff ( ch ) ) {
+		writeBuffer ( Format ( "| Engine Name:        %-25s  |\r\n", mudEngineName ), ch );
+		writeBuffer ( Format ( "| Backup Name:        %-25s  |\r\n", mudBackupName ), ch );
+		writeBuffer ( Format ( "| Compiled With:      %-25s  |\r\n", mudCompiler ), ch );
+		writeBuffer ( Format ( "+------------------------------------------------+\n\r" ), ch );
+	}
 
 }

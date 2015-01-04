@@ -1896,6 +1896,9 @@ void random_shop ( Creature *mob )
 	if ( !IS_NPC ( mob ) ) { return; }
 	if ( !IS_SET ( mob->act, ACT_RANDOM_EQ ) ) { return; }
 
+	int max_rand = Math::instance().range ( 3, 5 );
+	int max_extra = Math::instance().range ( 1, 3 );
+	// -- a shop that is being completely randomly generated, its quite nice
 	if ( mob->pIndexData->pShop ) {
 		// -- completely random shop
 		if ( !IS_SET ( mob->random, RANDOM_WEAPON ) && !IS_SET ( mob->random, RANDOM_LIGHT )
@@ -1905,12 +1908,13 @@ void random_shop ( Creature *mob )
 				&& !IS_SET ( mob->random, RANDOM_WAIST ) && !IS_SET ( mob->random, RANDOM_WRIST )
 				&& !IS_SET ( mob->random, RANDOM_NECK ) && !IS_SET ( mob->random, RANDOM_SHIELD )
 				&& !IS_SET ( mob->random, RANDOM_WAND ) ) {
+
 			// -- generate a random shop-set
-			for ( int x = 0; x < 5; x++ ) {
+			for ( int x = 0; x < max_rand; x++ ) {
 				n_type = Math::instance().range ( 0, nelems ( type ) - 1 );
 				create_random ( mob, type[n_type] );
 				// -- possibly add more items to the shop
-				for ( int y = 0; y < 3; y++ ) {
+				for ( int y = 0; y < max_extra; y++ ) {
 					if ( Math::instance().range ( 0, 2 ) == 2 ) {
 						create_random ( mob, type[n_type] );
 					}
@@ -1921,7 +1925,7 @@ void random_shop ( Creature *mob )
 
 		if ( IS_SET ( mob->random, RANDOM_WEAPON ) ) {
 			create_random ( mob, "weapon" );
-			for ( int x = 0; x < 5; x++ ) {
+			for ( int x = 0; x < max_rand; x++ ) {
 				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
 					create_random ( mob, "weapon" );
 				}
@@ -1930,7 +1934,7 @@ void random_shop ( Creature *mob )
 
 		if ( IS_SET ( mob->random, RANDOM_LIGHT ) ) {
 			create_random ( mob, "light" );
-			for ( int x = 0; x < 5; x++ ) {
+			for ( int x = 0; x < max_rand; x++ ) {
 				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
 					create_random ( mob, "light" );
 				}
@@ -1940,25 +1944,22 @@ void random_shop ( Creature *mob )
 
 		if ( IS_SET ( mob->random, RANDOM_WAND ) ) {
 			create_random ( mob, "wand" );
-			for ( int x = 0; x < 5; x++ ) {
+			for ( int x = 0; x < max_rand; x++ ) {
 				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
 					create_random ( mob, "wand" );
 				}
 			}
 		}
 
-		// -- if the percent is over 91, we generate the random items here.
-		if ( Math::instance().percent() > 91 ) {
-			create_random ( mob, type[n_type] );
-			create_random ( mob, type[n_type] );
-			create_random ( mob, type[n_type] );
-			create_random ( mob, type[n_type] );
-			create_random ( mob, type[n_type] );
+		// -- if the percent is over 94, we generate the random items here.
+		if ( Math::instance().percent() > 94 ) {
+			for ( int x = 0; x < max_extra; x++ );
+			{ create_random ( mob, type[n_type] ); }
 		}
 
 		if ( IS_SET ( mob->random, RANDOM_HELM ) ) {
 			create_random ( mob, "helm" );
-			for ( int x = 0; x < 5; x++ ) {
+			for ( int x = 0; x < max_rand; x++ ) {
 				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
 					create_random ( mob, "helm" );
 				}
@@ -1966,7 +1967,7 @@ void random_shop ( Creature *mob )
 		}
 		if ( IS_SET ( mob->random, RANDOM_TORSO ) ) {
 			create_random ( mob, "torso" );
-			for ( int x = 0; x < 5; x++ ) {
+			for ( int x = 0; x < max_rand; x++ ) {
 				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
 					create_random ( mob, "torso" );
 				}
@@ -1974,7 +1975,7 @@ void random_shop ( Creature *mob )
 		}
 		if ( IS_SET ( mob->random, RANDOM_ARMS ) ) {
 			create_random ( mob, "arms" );
-			for ( int x = 0; x < 5; x++ ) {
+			for ( int x = 0; x < max_rand; x++ ) {
 				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
 					create_random ( mob, "arms" );
 				}
@@ -1983,7 +1984,7 @@ void random_shop ( Creature *mob )
 		}
 		if ( IS_SET ( mob->random, RANDOM_HANDS ) ) {
 			create_random ( mob, "hands" );
-			for ( int x = 0; x < 5; x++ ) {
+			for ( int x = 0; x < max_rand; x++ ) {
 				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
 					create_random ( mob, "hands" );
 				}
@@ -1991,7 +1992,7 @@ void random_shop ( Creature *mob )
 		}
 		if ( IS_SET ( mob->random, RANDOM_LEGS ) ) {
 			create_random ( mob, "legs" );
-			for ( int x = 0; x < 5; x++ ) {
+			for ( int x = 0; x < max_rand; x++ ) {
 				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
 					create_random ( mob, "legs" );
 				}
@@ -1999,7 +2000,7 @@ void random_shop ( Creature *mob )
 		}
 		if ( IS_SET ( mob->random, RANDOM_FEET ) ) {
 			create_random ( mob, "feet" );
-			for ( int x = 0; x < 5; x++ ) {
+			for ( int x = 0; x < max_rand; x++ ) {
 				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
 					create_random ( mob, "feet" );
 				}
@@ -2007,7 +2008,7 @@ void random_shop ( Creature *mob )
 		}
 		if ( IS_SET ( mob->random, RANDOM_WAIST ) ) {
 			create_random ( mob, "waist" );
-			for ( int x = 0; x < 5; x++ ) {
+			for ( int x = 0; x < max_rand; x++ ) {
 				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
 					create_random ( mob, "waist" );
 				}
@@ -2015,7 +2016,7 @@ void random_shop ( Creature *mob )
 		}
 		if ( IS_SET ( mob->random, RANDOM_ABOUT ) ) {
 			create_random ( mob, "about" );
-			for ( int x = 0; x < 5; x++ ) {
+			for ( int x = 0; x < max_rand; x++ ) {
 				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
 					create_random ( mob, "about" );
 				}
@@ -2023,7 +2024,7 @@ void random_shop ( Creature *mob )
 		}
 		if ( IS_SET ( mob->random, RANDOM_WRIST ) ) {
 			create_random ( mob, "wrist" );
-			for ( int x = 0; x < 5; x++ ) {
+			for ( int x = 0; x < max_rand; x++ ) {
 				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
 					create_random ( mob, "wrist" );
 				}
@@ -2034,7 +2035,7 @@ void random_shop ( Creature *mob )
 
 		if ( IS_SET ( mob->random, RANDOM_NECK ) ) {
 			create_random ( mob, "neck" );
-			for ( int x = 0; x < 5; x++ ) {
+			for ( int x = 0; x < max_rand; x++ ) {
 				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
 					create_random ( mob, "neck" );
 				}
@@ -2045,7 +2046,7 @@ void random_shop ( Creature *mob )
 
 		if ( IS_SET ( mob->random, RANDOM_SHIELD ) ) {
 			create_random ( mob, "shield" );
-			for ( int x = 0; x < 5; x++ ) {
+			for ( int x = 0; x < max_rand; x++ ) {
 				if ( Math::instance().range ( 0, 3 ) == Math::instance().range ( 0, 2 ) ) {
 					create_random ( mob, "shield" );
 				}

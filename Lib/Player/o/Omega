@@ -1,7 +1,7 @@
 #PLAYER
 Name Omega~
 Id   1407161012
-LogO 1418835715
+LogO 1420344304
 Vers 5
 Prom <%hhp %mm %vmv> ~
 Race human~
@@ -9,7 +9,7 @@ Sex  1
 Cla  3
 Levl 60
 Sec  9
-Plyd 6677292
+Plyd 6878770
 Not  0 0 0 0 0
 Scro 28
 Room 3
@@ -27,9 +27,9 @@ Prac 5
 Trai 3
 Save  -14
 Alig  0
-Hit   7
+Hit   8
 Dam   3
-ACs 77 77 77 92
+ACs 74 74 74 92
 Attr 25 25 25 25 25
 AMod 7 0 0 0 0
 Pass OmLtTe29L9oWQ~
@@ -457,6 +457,30 @@ Cost 67000
 Val  8 8 8 2 0
 Affc 'reserved'   1  56  -1   1   1          0
 Affc 'reserved'   1  56  -1   1  18          0
+End
+
+#O
+Vnum 36
+Nest 0
+Name training vest~
+ShD  a training vest~
+Desc You see a old training vest here.~
+Mat 0
+Requirements 0 0 0 0 0 0
+Wear 5
+Cost 0
+End
+
+#O
+Vnum 35
+Nest 0
+Name plastic sword~
+ShD  a plastic sword~
+Desc A plastic sword lays here.~
+Mat 0
+Requirements 0 0 0 0 0 0
+Wear 16
+Cost 360
 End
 
 #END
