@@ -37,20 +37,6 @@
 
 #include "Engine.h"
 
-/*
- * Malloc debugging stuff.
- */
-#if defined(sun)
-#undef MALLOC_DEBUG
-#endif
-
-#if defined(MALLOC_DEBUG)
-#include <malloc.h>
-extern	int	malloc_debug	args ( ( int  ) );
-extern	int	malloc_verify	args ( ( void ) );
-#endif
-
-
 #if defined(unix)
 #include <signal.h>
 #endif
@@ -71,11 +57,9 @@ const	char 	go_ahead_str	[] = { ( char ) IAC, ( char ) GA, '\0' };
 // -- Just incase
 int	close		args ( ( int fd ) );
 int	gettimeofday	args ( ( struct timeval *tp, struct timezone *tzp ) );
-/* int	read		args( ( int fd, char *buf, int nbyte ) ); */
 int	select		args ( ( int width, fd_set *readfds, fd_set *writefds,
-						 fd_set *exceptfds, struct timeval *timeout ) );
+				fd_set *exceptfds, struct timeval *timeout ) );
 int	socket		args ( ( int domain, int type, int protocol ) );
-/* int	write		args( ( int fd, char *buf, int nbyte ) ); */ /* read,write in unistd.h */
 
 /*
  * Global variables.
@@ -240,6 +224,7 @@ int main ( int argc, char **argv )
 			log_hd ( LOG_ALL, Format ( "InfectEngine is attached to pid %d", getpid() ) );
 		} else {
 			log_hd ( LOG_ERROR, Format ( "Could not write the pid number (%d) in InfectEngine.pid", getpid() ) );
+			raise(SIGSEGV);
 		}
 	}
 
@@ -279,7 +264,7 @@ int main ( int argc, char **argv )
 	close ( control );
 
 	log_hd ( LOG_ALL, "InfectEngine has terminated properly." );
-	exit ( 0 );
+	exit ( EXIT_SUCCESS );
 	return 0;
 }
 
@@ -389,8 +374,26 @@ void processInput ( )
 			} else if ( d->pEditString )
 			{ StringEditorOptions ( d->character, d->incomm ); }
 			else {
+				// -- check to see if we are banned or not.
+				static int cnterStatePlug = 0;
+				
 				switch ( d->connected ) {
 					case STATE_PLAYING:
+						cnterStatePlug++;
+						if(cnterStatePlug == 5) {
+							if ( check_ban ( d->host, BAN_ALL ) ) {
+								write_to_descriptor ( d->descriptor, "Your site has been banned from this mud.\n\r", 0 );
+								close_socket(d);
+								break;
+							}
+	
+							if ( check_ban ( dnew->host, BAN_TEMP ) ) {
+								write_to_descriptor ( d->descriptor, Format ( "Your login site is currently under a temporary site ban. It will be un-banned within an hour.\n\r" ), 0 );
+								close_socket(d);
+								break;
+							}					
+							cnterStatePlug = 0;
+						}
 						if ( !run_olc_editor ( d ) )
 						{ substitute_alias ( d, d->incomm ); }
 						break;
@@ -500,6 +503,7 @@ int kbhit ( void )
 
 void processDevCommands ( const std::string &kbHitStr )
 {
+	static bool debugConsole = false;
 	std::string command;
 	std::string argument;
 
@@ -512,6 +516,7 @@ void processDevCommands ( const std::string &kbHitStr )
 		std::cout << "sockets           - Lists all connected sockets    " << std::endl;
 		std::cout << "broadcast <msg>   - Broadcasts a message to all    " << std::endl;
 		std::cout << "version           - Displays the CME Version	 " << std::endl;
+		std::cout << "debug             - Adds debugging logs for dev console" << std::endl;
 		std::cout << "+-------------------------------------------------+" << std::endl;
 		std::cout << "Remember, please press 'RETURN' twice after each command!" << std::endl;
 		std::cout << "More developer commands are on-route in the near future!" << std::endl;
@@ -520,11 +525,19 @@ void processDevCommands ( const std::string &kbHitStr )
 	}
 
 	//#ifdef _DEBUG_
-	std::cout << "---------------------------------------------------------------" << std::endl;
-	std::cout << "Developer issued command: " << command << std::endl;
-	std::cout << "Developer issued argument:" << argument << std::endl;
-	std::cout << "---------------------------------------------------------------" << std::endl;
+	if(debugConsole) {
+		std::cout << "---------------------------------------------------------------" << std::endl;
+		std::cout << "Developer issued command: " << command << std::endl;
+		std::cout << "Developer issued argument:" << argument << std::endl;
+		std::cout << "---------------------------------------------------------------" << std::endl;
+	}
 	//#endif
+
+	if ( SameString ( kbHitStr, "debug" )) {
+		debugConsole != debugConsole;
+		std::cout << "Developer console debugger toggled." << std::endl;
+		return;
+	}
 
 	if ( SameString ( kbHitStr, "sockets" ) ) {
 		Socket *d, *d_next;
@@ -610,11 +623,6 @@ void RunMudLoop ( int control )
 	// -- run until we are shutdown
 	while ( !is_shutdown ) {
 
-#if defined(MALLOC_DEBUG)
-		if ( malloc_verify( ) != 1 )
-		{ abort( ); }
-#endif
-
 		processDevConsole();                            // -- attempt to read for developer input
 		acceptNewConnections ( control, null_time );    // -- attempt to detect new connections.
 		processBrokenSockets();                         // -- attempt to purge broken sockets
@@ -644,11 +652,7 @@ void RunMudLoop ( int control )
 
 		processSocketOutput();
 
-		/*
-		 * Synchronize to a clock.
-		 * Sleep( last_time + 1/PULSE_PER_SECOND - now ).
-		 * Careful here of signed versus unsigned arithmetic.
-		 */
+		// -- sync the clocking mechanism
 		{
 			struct timeval now_time;
 			long secDelta;
@@ -728,14 +732,15 @@ void init_descriptor ( int control )
 	dnew = new_descriptor();
 
 	dnew->descriptor	= desc;
-	dnew->connected	= STATE_GET_NAME;
+	dnew->connected		= STATE_GET_NAME;
 	dnew->showstr_head	= NULL;
-	dnew->showstr_point = NULL;
-	dnew->outsize	= 2000;
+	dnew->showstr_point 	= NULL;
+	dnew->outsize		= 2000;
 	dnew->pEdit		= NULL;			/* OLC */
 	dnew->pEditString	= NULL;			/* OLC */
-	dnew->pEditBackup = NULL;
-	dnew->editor	= 0;			/* OLC */
+	dnew->pEditBacku	= NULL;
+	dnew->editor		= 0;			/* OLC */
+	
 	ALLOC_DATA ( dnew->outbuf, char, dnew->outsize );
 	dnew->pProtocol     = ProtocolCreate();
 
@@ -781,12 +786,14 @@ void init_descriptor ( int control )
 		recycle_descriptor ( dnew );
 		return;
 	}
+	
 	if ( check_ban ( dnew->host, BAN_TEMP ) ) {
 		write_to_descriptor ( desc, Format ( "Your login site is currently under a temporary site ban. It will be un-banned within an hour.\n\r" ), 0 );
 		close ( desc );
 		recycle_descriptor ( dnew );
 		return;
 	}
+	
 	// -- add our sockets to the list
 	dnew->next		= socket_list;
 	socket_list		= dnew;
@@ -1358,10 +1365,7 @@ bool write_to_descriptor ( int desc, const char *txt, int length )
 	return TRUE;
 }
 
-
-/*
- * Deal with sockets that haven't logged in yet.
- */
+// -- micromanage sockets
 void nanny ( Socket *d, char *argument )
 {
 	Socket *d_old, *d_next;
@@ -1372,6 +1376,19 @@ void nanny ( Socket *d, char *argument )
 	char *p;
 	int iClass, race, i, weapon;
 	bool fOld;
+
+	// -- always check so we can boot people who are banned 
+	if ( check_ban ( d->host, BAN_ALL ) ) {
+		write_to_descriptor ( d->descriptor, "Your site has been banned from this mud.\n\r", 0 );
+		close_socket(d);
+		return;
+	}
+	
+	if ( check_ban ( dnew->host, BAN_TEMP ) ) {
+		write_to_descriptor ( d->descriptor, Format ( "Your login site is currently under a temporary site ban. It will be un-banned within an hour.\n\r" ), 0 );
+		close_socket(d);
+		return;
+	}
 
 	while ( isspace ( *argument ) )
 	{ argument++; }
