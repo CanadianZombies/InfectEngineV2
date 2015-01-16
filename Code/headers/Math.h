@@ -65,6 +65,9 @@ class Math : public Instance<Math>
 			t_type val = 100 * amount / max;
 			return val;
 		}
+		bool isBetween(int low, int high, int amount);
+		bool isBetween(long low, long high, long amount);
+		bool isBetween(double low, double high, double amount);
 };
 
 #endif
