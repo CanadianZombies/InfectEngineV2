@@ -153,3 +153,7 @@ int Math::interpolate ( int level, int value_00, int value_32 )
 	return value_00 + level * ( value_32 - value_00 ) / 32;
 }
 
+int Math::interpolate64 ( int level, int value_00, int value_32 )
+{
+	return value_00 + level * ( value_32 - value_00 ) / 64;
+}
