@@ -157,3 +157,21 @@ int Math::interpolate64 ( int level, int value_00, int value_32 )
 {
 	return value_00 + level * ( value_32 - value_00 ) / 64;
 }
+
+bool Math::isBetween(int low, int high, int amount) {
+	if(low >= amount && amount <= high)
+	{ return true; }
+	return false;
+}
+
+bool Math::isBetween(long low, long high, long amount) {
+	if(low >= amount && amount <= high)
+	{ return true; }
+	return false;
+}
+
+bool Math::isBetween(double low, double high, double amount) {
+	if(low >= amount && amount <= high)
+	{ return true; }
+	return false;
+}
