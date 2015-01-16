@@ -58,6 +58,7 @@ class Math : public Instance<Math>
 		int door ( void );
 		int dice ( int number, int size );
 		int interpolate ( int level, int value_00, int value_32 );
+		int interpolate64 ( int level, int value_00, int value_32 );
 		template<class t_type>t_type getPercent ( t_type amount, t_type max )
 		{
 			if ( amount == max ) { return 100; }
