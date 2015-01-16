@@ -52,6 +52,7 @@ void _Error ( const std::string &errorStr, const std::string &fileStr, const std
 
 void catchException ( bool willAbort, const std::string &file, const std::string &function, int lineATcatch )
 {
+#ifndef (_RAISE_ON_THROW_)
 	try {
 		throw;
 	} catch ( std::exception &e ) {
@@ -78,6 +79,10 @@ void catchException ( bool willAbort, const std::string &file, const std::string
 	}
 	errno = 0;
 	return;
+#else
+	// -- drop a corefile if we reach this.
+	raise(SIGSEGV);
+#endif
 }
 
 
