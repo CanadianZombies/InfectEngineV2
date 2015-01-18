@@ -844,6 +844,7 @@ void close_socket ( Socket *dclose )
 			wiznet ( "Net death has claimed $N.", ch, NULL, WIZ_LINKS, 0, 0 );
 			ch->desc = NULL;
 		} else {
+			log_hd(LOG_BASIC, Format("Losing player: %s", dclose->character->name));
 			recycle_char ( dclose->original ? dclose->original :
 						   dclose->character );
 		}
@@ -1137,6 +1138,10 @@ void bust_a_prompt ( Creature *ch )
 
 	point = buf;
 	str = ch->prompt;
+
+	// -- entertaining times.
+	writeBuffer(Format("%c%c%c%c%c%c%c %c%c%c%c%c%c%c %c%c%c%c%c%c%c\r\n",27,91,49,109,27,91,109,27,91,49,109,27,91,109,27,91,49,109,27,91,109),ch );
+
 	if ( str == NULL || str[0] == '\0' ) {
 		sprintf ( buf, "<%dhp %dm %dmv> %s",
 				  ch->hit, ch->mana, ch->move, ch->prefix );
