@@ -2063,12 +2063,34 @@ void clone_mobile ( Creature *parent, Creature *clone )
 }
 
 
+Item *create_object(ItemData *pObjIndex, int level) {
+	return create_object(pObjIndex, level);
+}
 
+Item *create_object(int vnum, int level) {
+	ItemData *pObjIndex = get_obj_vnum(vnum);
+	if(!pObjIndex) {
+		log_hd ( LOG_ERROR, Format("Unable to create object vnum: %d", vnum));
+		SUICIDE;
+	}
+	
+	return _create_object(pObjIndex, level);
+}
+
+Item *create_object(int vnum) {
+	ItemData *pObjIndex = get_obj_vnum(vnum);
+	if(!pObjIndex) {
+		log_hd ( LOG_ERROR, Format("Unable to create object vnum: %d", vnum));
+		SUICIDE;
+	}
+	
+	return _create_object(pObjIndex, 1);
+}
 
 /*
  * Create an instance of an object.
  */
-Item *create_object ( ItemData *pObjIndex, int level )
+Item *_create_object ( ItemData *pObjIndex, int level )
 {
 	Affect *paf;
 	Item *obj;
