@@ -1,5 +1,5 @@
 [![Stars](https://img.shields.io/github/stars/canadianzombies/InfectEngineV2.svg?style=plastic)](https://github.com/canadianzombies/InfectEngineV2/stargazers)
-[![Issues](https://img.shields.io/github/issues/canadianzombies/infectInfectEngineV2edcity?style=plastic)](https://github.com/canadianzombies/InfectEngineV2/issues)
+[![Issues](https://img.shields.io/github/issues/canadianzombies/InfectEngineV2?style=plastic)](https://github.com/canadianzombies/InfectEngineV2/issues)
 [![Size](https://img.shields.io/github/repo-size/canadianzombies/InfectEngineV2.svg?style=plastic)](https://github.com/canadianzombies/InfectEngineV2)
 [![Discord](https://img.shields.io/discord/234145231359049729?style=plastic)](https://discord.gg/bCsV7km9PE)
 [![Code style](https://img.shields.io/badge/code%20style-black-000000.svg?style=plastic)](https://github.com/psf/black)
